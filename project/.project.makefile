@@ -16,7 +16,7 @@ DIST_FILES			:=	./.env \
 
 include .make.env
 
-CMD_DOCKER_BASE	:= docker-compose -p $(DOCKER_BASENAME))
+CMD_DOCKER_BASE	:= docker-compose -p $(DOCKER_BASENAME)
 CMD_PHP			:= $(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) php
 THIS_FILE		:= $(firstword $(MAKEFILE_LIST))
 
@@ -83,7 +83,7 @@ down:
 
 .PHONY: enter
 enter:
-	@echo '$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) {{docker.shell}}'
+	@echo '$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) $(DOCKER_SHELL)'
 
 .PHONY: rebuild
 rebuild:
