@@ -13,6 +13,9 @@ DEPLOYER_DIRECTORY	:=	./deploy
 SHARED_DIRS			:=	var
 DIST_FILES			:=	./.env \
 						./docker-compose.local.yml
+GITFLOW_DEVELOP     :=  develop
+GITFLOW_FEATURE     :=  feature
+GITFLOW_HOTFIX      :=  hotfix
 
 include .make.env
 
