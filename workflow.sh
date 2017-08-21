@@ -38,14 +38,15 @@ case $1 in
         dpkg -i webtown-kunstmaan-installer.deb || quit
         cleanup
     ;;
-    # Local makefile
-    feature|hotfix|publish|push)
-        COMMAND="$1"
-        shift
-        # @todo Ez még nem jó, meg kell oldani az escape-et!
-        ARGS=$(escape "$@")
-        make -f ${DIR}/makefile ${COMMAND} ARGS="${ARGS}" || quit
-    ;;
+# @todo Egyelőre nem itt van megvalósítva. Jobb lenne, ha itt lenne, csak utána kellene nézni, hogy felül lehet-e írni egy makefile-ban a tartgetet azzal, hogy include-dal behúzunk alá egy másik makefile-t, máshonnan.
+#    # Local makefile
+#    feature|hotfix|publish|push)
+#        COMMAND="$1"
+#        shift
+#        # @todo Ez még nem jó, meg kell oldani az escape-et!
+#        ARGS=$(escape "$@")
+#        make -f ${DIR}/makefile ${COMMAND} ARGS="${ARGS}" || quit
+#    ;;
     # Project makefile
     *)
         COMMAND="$1"
