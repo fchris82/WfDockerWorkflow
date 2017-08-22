@@ -3,6 +3,49 @@
 list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
 
+# DOCKER COMMANDS
+.PHONY: __docker_up
+__docker_up:
+	$(CMD_DOCKER_BASE) up -d
+
+.PHONY: __docker_down
+__docker_down:
+	$(CMD_DOCKER_BASE) down
+
+.PHONY: __docker_enter
+__docker_enter: up
+	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) $(DOCKER_SHELL)
+
+.PHONY: __docker_rebuild
+__docker_rebuild: down
+	$(CMD_DOCKER_BASE) build --no-cache $(DOCKER_CLI_NAME)
+
+.PHONY: __docker_ps
+__docker_ps:
+	$(CMD_DOCKER_BASE) ps $(ARGS)
+
+.PHONY: __docker_docker-conig
+__docker_docker-config:
+	$(CMD_DOCKER_BASE) config
+
+# CONTAINER COMMANDS
+.PHONY: __container_php
+__container_php:
+	$(CMD_DOCKER_RUN) php $(ARGS)
+
+# make -f .project.makefile sf ARGS="doctrine:migrations:migrate -n" --> docker-compose -p chrisptest -e ablak=1 exec --user user engine php bin/console doctrine:migrations:migrate -n
+.PHONY: __container_sf
+__container_sf:
+	$(CMD_DOCKER_RUN) php bin/console $(ARGS)
+
+# make -f .project.makefile composer ARGS="install"
+.PHONY: __container_composer
+__container_composer:
+	$(CMD_DOCKER_RUN) composer $(ARGS)
+
+
+# GITFLOW COMMANDS
+
 # make -f .project.makefile __branch ORIGIN_BRANCH="develop" PREFIX="feature" ARGS="..."
 __branch:
     # @todo Checkolni kellene, hogy van-e uncommitted changes.
