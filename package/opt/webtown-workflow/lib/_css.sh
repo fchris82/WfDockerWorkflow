@@ -27,7 +27,7 @@ BOLD=$'\x1B[1m'
 # echo echo_fail "No"
 function echo_fail {
   # echo first argument in red
-  printf "${RED}✘ ${1}${RESTORE}\n"
+  printf "${LRED}✘ ${@}${RESTORE}\n"
 }
 
 # display a message in green with a tick by it
@@ -35,9 +35,12 @@ function echo_fail {
 # echo echo_fail "Yes"
 function echo_pass {
   # echo first argument in green
-  printf "${GREEN}✔ ${1}${RESTORE}\n"
+  printf "${GREEN}✔ ${@}${RESTORE}\n"
 }
 
+function echo_info {
+  printf "${YELLOW}» ${@}${RESTORE}\n"
+}
 # echo pass or fail
 # example
 # echo echo_if 1 "Passed"
@@ -66,5 +69,5 @@ function echo_block {
 # example
 # echo_title "Title of block"
 function echo_title {
-  echo_block "97;45m" " » ${1}"
+  echo_block "97;45m" " » ${@}"
 }

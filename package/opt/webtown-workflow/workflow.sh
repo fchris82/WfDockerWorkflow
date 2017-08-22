@@ -13,9 +13,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # CONFIG
-# @todo Ez majd a /etc/webtown-workflow könyvtárra mutasson!
-#CONFIG_PATH="/etc/webtown-kunstmaan-installer"
-CONFIG_PATH="${DIR}"
+CONFIG_PATH="/etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
@@ -24,9 +22,9 @@ CLONE_REPOSITORY=$(awk '/^repository/{print $3}' "${CONFIG}")
 # update parameters
 PROGRAM_REPOSITORY=$(awk '/^program_repository/{print $3}' "${CONFIG}")
 
-source ${DIR}/_css.sh
-source ${DIR}/_help.sh
-source ${DIR}/_functions.sh
+source ${DIR}/lib/_css.sh
+source ${DIR}/lib/_help.sh
+source ${DIR}/lib/_functions.sh
 
 case $1 in
     ""|-h|--help)
@@ -38,21 +36,29 @@ case $1 in
         dpkg -i webtown-kunstmaan-installer.deb || quit
         cleanup
     ;;
-# @todo Egyelőre nem itt van megvalósítva. Jobb lenne, ha itt lenne, csak utána kellene nézni, hogy felül lehet-e írni egy makefile-ban a tartgetet azzal, hogy include-dal behúzunk alá egy másik makefile-t, máshonnan.
-#    # Local makefile
-#    feature|hotfix|publish|push)
-#        COMMAND="$1"
-#        shift
-#        # @todo Ez még nem jó, meg kell oldani az escape-et!
-#        ARGS=$(escape "$@")
-#        make -f ${DIR}/makefile ${COMMAND} ARGS="${ARGS}" || quit
-#    ;;
     # Project makefile
     *)
         COMMAND="$1"
         shift
+
+        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo "0")
+        if [ "${PROJECT_ROOT_DIR}" == "0" ]; then
+            echo_fail "You are not in project directory! Git top level is missing!"
+            quit
+        fi
+
+        PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
+        if [ ! -f "${PROJECT_MAKEFILE}" ]; then
+            echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
+            quit
+        fi
+
         # @todo Ez még nem jó, meg kell oldani az escape-et!
         ARGS=$(escape "$@")
-        make -f ${WORKDIR}/makefile ${COMMAND} ARGS="${ARGS}" || quit
+
+        make -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
+            ARGS="${ARGS}" \
+            WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
+            WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" || quit
     ;;
 esac

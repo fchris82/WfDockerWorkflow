@@ -1,0 +1,2 @@
+#!/bin/bash
+ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
