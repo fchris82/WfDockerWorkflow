@@ -1,3 +1,4 @@
+# @todo A helpet még meg kell írni
 read -r -d '' HELP <<-EOM
 You can create a pure Kunstmaan bundle from standard edition or install one:
 

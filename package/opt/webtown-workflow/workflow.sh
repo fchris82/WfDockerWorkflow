@@ -56,7 +56,7 @@ case $1 in
         # @todo Ez még nem jó, meg kell oldani az escape-et!
         ARGS=$(escape "$@")
 
-        make -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
+        make $(make_params) -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
             ARGS="${ARGS}" \
             WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
             WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" || quit

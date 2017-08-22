@@ -81,7 +81,6 @@ if [ "200" != $TOKEN_CHECK ]; then
     read -s password
     echo ""
     echo "Connecting..."
-    # @todo Le kellene kezelni az elrontott jelszót és a többit
     PRIVATE_TOKEN=$(curl -s --request POST "${URL}/session?login=${username}&password=${password}" | jq -r .private_token)
     if [ "$PRIVATE_TOKEN" == "null" ]; then
         echo_fail "Invalid username or password!";

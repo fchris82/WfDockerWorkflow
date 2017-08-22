@@ -40,5 +40,22 @@ function quit {
     exit $?
 }
 
+# You can manage some make parameters with these env variables
+# Eg: MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
+function make_params {
+    PARAMS="";
+    if [ -z "$MAKE_DISABLE_SILENC" ]; then
+        PARAMS="${PARAMS} -s --no-print-directory"
+    fi
+    if [ ! -z "$MAKE_DEBUG_MODE" ]; then
+        PARAMS="${PARAMS} -d"
+    fi
+    if [ ! -z "$MAKE_ONLY_PRINT" ]; then
+        PARAMS="${PARAMS} -n"
+    fi
+
+    echo $PARAMS
+}
+
 # Handle CTRL + C
 trap quit SIGINT
