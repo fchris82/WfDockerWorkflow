@@ -1,13 +1,29 @@
 Webtown Kunstmaan Installer
 ===========================
 
-(Re)generate deb package:
+Dependencies:
 
-1. Change the version number in `package/DEBIAN/control` file
-2. Build the package:
-    ```bash
-    dpkg -b package webtown-workflow.deb
-    ```
+    sudo apt-get install dpkg-dev
+
+## (Re)generate deb package
+
+    make -s [build] (KEEPVERSION=1|VERSION=1.2)
+
+### Actions
+
+| Action           | Description                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| `build`          | **Default.** Build the package                                                          |
+| `versionupgrade` | Upgrade the version number in `package/DEBIAN/control` file.                            |
+
+### Parameters
+
+| Parameter       | Description                           |
+| -------------   | ------------------------------------- |
+| `KEEPVERSION=1` | Doesn't change the version number     |
+| `VERSION=(...)` | Set the new version number directly   |
+
+> If `KEEPVERSION` is setted then the `VERSION` doesn't matter.
 
 ## Installation
 
