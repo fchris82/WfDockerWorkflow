@@ -33,7 +33,7 @@ case $1 in
     # UPDATE the software
     -u|--update)
         cd /tmp && git archive --remote=${PROGRAM_REPOSITORY} HEAD webtown-workflow-installer.deb | tar -x || quit
-        dpkg -i webtown-kunstmaan-installer.deb || quit
+        sudo dpkg -i webtown-kunstmaan-installer.deb || quit
         cleanup
     ;;
     # Project makefile
