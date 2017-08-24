@@ -32,9 +32,10 @@ case $1 in
     ;;
     # UPDATE the software
     -u|--update)
-        cd /tmp && git archive --remote=${PROGRAM_REPOSITORY} HEAD webtown-workflow-installer.deb | tar -x || quit
-        sudo dpkg -i webtown-kunstmaan-installer.deb || quit
-        cleanup
+        PACKAGE_NAME=webtown-workflow.deb
+        cd /tmp && git archive --remote=${PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
+        sudo dpkg -i ${PACKAGE_NAME} || quit
+        rm -rf ${PACKAGE_NAME}
     ;;
     # Project makefile
     *)
