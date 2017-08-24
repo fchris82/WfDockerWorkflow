@@ -1,7 +1,38 @@
+define PROJECT_INFO
+Workflow Version:  \033[1;32m$(VERSION)\033[0m
+
+Docker
+======
+
+    Basename:      \033[32m$(DOCKER_BASENAME)\033[0m
+    Config files:  \033[33m$(DOCKER_CONFIG_FILES)\033[0m
+    Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
+
+    Shell:         \033[34m$(DOCKER_SHELL)\033[0m
+    Host:          \033[34m$(DOCKER_HOST)\033[0m
+    Port prefix:   \033[34m$(DOCKER_PORT_PREFIX)\033[0m
+
+endef
+export PROJECT_INFO
+
+.PHONY: info
+info::
+	@echo "$$PROJECT_INFO"
+
 # List all targets
 .PHONY: list
 list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
+
+.PHONY: dbdump
+dbdump:
+	$(CMD_DOCKER_RUN_CLI) $(DOCKER_DB_NAME) \
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) $(DB_NAME) > dbdump.sql
+
+.PHONY: dbimport
+dbimport: up
+	cat dbdump.sql | $(CMD_DOCKER_RUN_CLI) $(DOCKER_DB_NAME) \
+		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME)
 
 # DOCKER COMMANDS
 .PHONY: __docker_up
@@ -31,17 +62,17 @@ __docker_docker-config:
 # CONTAINER COMMANDS
 .PHONY: __container_php
 __container_php:
-	$(CMD_DOCKER_RUN) php $(ARGS)
+	$(CMD_DOCKER_RUN_CLI) php $(ARGS)
 
 # make -f .project.makefile sf ARGS="doctrine:migrations:migrate -n" --> docker-compose -p chrisptest -e ablak=1 exec --user user engine php bin/console doctrine:migrations:migrate -n
 .PHONY: __container_sf
 __container_sf:
-	$(CMD_DOCKER_RUN) php bin/console $(ARGS)
+	$(CMD_DOCKER_RUN_CLI) php bin/console $(ARGS)
 
 # make -f .project.makefile composer ARGS="install"
 .PHONY: __container_composer
 __container_composer:
-	$(CMD_DOCKER_RUN) composer $(ARGS)
+	$(CMD_DOCKER_RUN_CLI) composer $(ARGS)
 
 
 # GITFLOW COMMANDS
