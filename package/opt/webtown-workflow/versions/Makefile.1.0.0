@@ -27,13 +27,16 @@ list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
 
 .PHONY: dbdump
-dbdump:
-	$(CMD_DOCKER_RUN) $(DOCKER_DB_NAME) \
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) $(DB_NAME) > dbdump.sql
+dbdump: up
+	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) \
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database $(DB_NAME) > dbdump.sql
+    # Sajnos beleírja, hogy 'Warning: Using a password on the command line interface can be insecure.', ezt kivágjuk
+	dd if=dbdump.sql of=dbdump.sql~ bs=1 skip=$(head -n $(head dbdump.sql | grep -n ^Warning: | cut -d: -f1) dbdump.sql | wc -c)
+	mv dbdump.sql~ dbdump.sql
 
 .PHONY: dbimport
 dbimport: up
-	cat dbdump.sql | $(CMD_DOCKER_RUN) $(DOCKER_DB_NAME) \
+	cat dbdump.sql | $(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) \
 		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME)
 
 # DOCKER COMMANDS
@@ -44,6 +47,10 @@ __docker_up:
 .PHONY: __docker_down
 __docker_down:
 	$(CMD_DOCKER_BASE) down
+
+.PHONY: __docker_connect
+__docker_connect:
+	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARG)
 
 .PHONY: __docker_enter
 __docker_enter: up
