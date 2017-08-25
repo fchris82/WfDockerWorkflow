@@ -12,6 +12,8 @@ Docker
     Host:          \033[34m$(DOCKER_HOST)\033[0m
     Port prefix:   \033[34m$(DOCKER_PORT_PREFIX)\033[0m
 
+    Database URL:  \033[33m$(DB_URL)\033[0m
+
 endef
 export PROJECT_INFO
 
@@ -26,12 +28,12 @@ list:
 
 .PHONY: dbdump
 dbdump:
-	$(CMD_DOCKER_RUN_CLI) $(DOCKER_DB_NAME) \
+	$(CMD_DOCKER_RUN) $(DOCKER_DB_NAME) \
 		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) $(DB_NAME) > dbdump.sql
 
 .PHONY: dbimport
 dbimport: up
-	cat dbdump.sql | $(CMD_DOCKER_RUN_CLI) $(DOCKER_DB_NAME) \
+	cat dbdump.sql | $(CMD_DOCKER_RUN) $(DOCKER_DB_NAME) \
 		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME)
 
 # DOCKER COMMANDS

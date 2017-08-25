@@ -34,10 +34,11 @@ function cleanup {
 }
 
 function quit {
+    exitcode=$?
     cleanup
     echo_block "31;107m" " Something went wrong! The script doesn't run down!"
     showHelp
-    exit $?
+    exit $exitcode
 }
 
 # You can manage some make parameters with these env variables
