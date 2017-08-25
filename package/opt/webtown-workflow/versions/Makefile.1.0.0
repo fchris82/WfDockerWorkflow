@@ -17,6 +17,11 @@ Docker
 endef
 export PROJECT_INFO
 
+# DOCKER! Nem docker-compose! DB import-export esetén fontos, mert csak azzal működik.
+define DOCKER_EXEC
+docker exec -i $$($(CMD_DOCKER_BASE) ps -q $(1)) $(2)
+endef
+
 .PHONY: info
 info::
 	@echo "$$PROJECT_INFO"
@@ -26,18 +31,20 @@ info::
 list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
 
+# @todo Lehessen inkább paraméterezni, hogy hova kerüljön a fájl vagy mi legyen a neve.
 .PHONY: dbdump
 dbdump: up
-	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) \
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME) > dbdump.sql
+	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > dbdump.sql
     # Sajnos beleírja, hogy 'Warning: Using a password on the command line interface can be insecure.', ezt kivágjuk
 	dd if=dbdump.sql of=dbdump.sql~ bs=1 skip=$$(head -n $$(head dbdump.sql | grep -n ^Warning: | cut -d: -f1) dbdump.sql | wc -c)
 	mv dbdump.sql~ dbdump.sql
+	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
 dbimport: up
-	cat dbdump.sql | $(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) \
-		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME)
+	cat dbdump.sql | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
+		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME))
 
 # DOCKER COMMANDS
 .PHONY: __docker_up
