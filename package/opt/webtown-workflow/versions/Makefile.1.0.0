@@ -36,9 +36,6 @@ list:
 dbdump: up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > dbdump.sql
-    # Sajnos beleírja, hogy 'Warning: Using a password on the command line interface can be insecure.', ezt kivágjuk
-	dd if=dbdump.sql of=dbdump.sql~ bs=1 skip=$$(head -n $$(head dbdump.sql | grep -n ^Warning: | cut -d: -f1) dbdump.sql | wc -c)
-	mv dbdump.sql~ dbdump.sql
 	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
