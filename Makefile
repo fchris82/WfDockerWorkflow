@@ -16,3 +16,7 @@ versionupgrade:
 				echo "Version: $(VERSION)"
         endif
     endif
+
+.PHONY: tests
+tests:
+	$(MAKE) -f test/tests.mk

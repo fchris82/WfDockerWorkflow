@@ -76,8 +76,10 @@ MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 Általánosan tesztfuttatás:
 
 ```bash
-make -f test/tests.mk
+make tests
 ```
+
+> Ezt hívja egyébként: `make -f test/tests.mk`
 
 ## Test container
 

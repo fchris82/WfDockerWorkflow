@@ -5,13 +5,16 @@ define run
 docker-compose -f $(DOCKER_COMPOSE_FILE) run -v $(TEST_PROJECT_PATH):$(TEST_PROJECT_PATH) --rm test make -f /tmp/tests/$(1) TEST_PROJECT_PATH=$(TEST_PROJECT_PATH) $(2)
 endef
 
-all: base test.1.0.0 clean
+all: functions base test.1.0.0 clean
 
 rebuild:
 	docker-compose -f $(DOCKER_COMPOSE_FILE) build --no-cache test
 
 init:
 	mkdir -p $(TEST_PROJECT_PATH)
+
+functions:
+	./test/tests/functions.sh
 
 base:
 	$(call run,base.mk all)

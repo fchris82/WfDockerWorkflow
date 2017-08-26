@@ -54,7 +54,6 @@ case $1 in
             quit
         fi
 
-        # @todo Ez még nem jó, meg kell oldani az escape-et!
         ARGS=$(escape "$@")
 
         make $(make_params) -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
