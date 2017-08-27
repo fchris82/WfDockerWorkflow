@@ -33,6 +33,8 @@ case $1 in
     # UPDATE the software
     -u|--update)
         PACKAGE_NAME=webtown-workflow.deb
+        echo -e "\033[32mStarting upgrade from: \033[33m${PROGRAM_REPOSITORY}\033[0m"
+        echo -e "\033[Package:                  \033[33m${PACKAGE_NAME}\033[0m"
         cd /tmp && git archive --remote=${PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
         sudo dpkg -i ${PACKAGE_NAME} || quit
         rm -rf ${PACKAGE_NAME}
