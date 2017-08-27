@@ -60,9 +60,9 @@ function echo_if {
 # http://misc.flogisoft.com/bash/tip_colors_and_formatting
 function echo_block {
   CLASS=$'\x1B['${1}
-  echo -en "\n${CLASS}${CLREOL}\n"
+  echo -e "\n${CLASS}${CLREOL}"
   echo -e "${2}${CLREOL}"
-  echo -e "${RESTORE}\n"
+  echo -e "${CLREOL}${RESTORE}\n"
 }
 
 # echo a title

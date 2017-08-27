@@ -1,15 +1,20 @@
-# @todo A helpet még meg kell írni
 read -r -d '' HELP <<-EOM
-You can create a pure Kunstmaan bundle from standard edition or install one:
+${BOLD}${WHITE}
+↻ Webtown Workflow
+==================
+${RESTORE}
+Anywhere:
 
-  -r --repository   [arg]   $(tput setaf 2)Standard edition alternative repository$(tput sgr0)
-  -i --install      [arg]   $(tput setaf 2)Install from this repository$(tput sgr0)
+  -h --help                 $(tput setaf 2)Show this help$(tput sgr0)
+  -u --update               $(tput setaf 2)Self update. ${BOLD}You need sudo permission!$(tput sgr0)
 
-  -b --branch       [arg]   $(tput setaf 2)Branch name$(tput sgr0)
+${BOLD}${WHITE}Only any project directory:${RESTORE}
 
-  -u --update               $(tput setaf 2)Update the program. You need sudo permission!$(tput sgr0)
+  ${YELLOW}help${RESTORE}                      $(tput setaf 2)Show project workflow help. ${BOLD}Not this help!$(tput sgr0)
+  ${YELLOW}list${RESTORE}                      $(tput setaf 2)Show available commands in project$(tput sgr0)
+  ${YELLOW}info${RESTORE}                      $(tput setaf 2)Show some important project information$(tput sgr0)
 
-Eg: $(tput setaf 3)create-km-project.sh -i git@gitlab.webtown.hu:php/bssoil.git -b develop$(tput sgr0)
+Eg: $(tput setaf 3)wf help$(tput sgr0)
 EOM
 
 function showHelp {

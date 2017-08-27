@@ -119,8 +119,8 @@ test_db_export_import: build_project
 	sed -i "s/symfony_demo_user/symfony_demo_test_user/" dbdump.sql; \
 	MAKE_DISABLE_SILENC=1 wf dbimport; \
 	rm dbdump.sql; \
-	wf dbdump; \
-	cat dbdump.sql | grep symfony_demo_test_user; \
+	wf dbdump dbdump2.sql; \
+	cat dbdump2.sql | grep symfony_demo_test_user; \
 	cp dbdump.sql~ dbdump.sql; \
 	rm dbdump.sql~; \
 	wf dbimport

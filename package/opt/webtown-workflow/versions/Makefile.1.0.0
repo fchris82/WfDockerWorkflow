@@ -22,6 +22,10 @@ define DOCKER_EXEC
 docker exec -i $$($(CMD_DOCKER_BASE) ps -q $(1)) $(2)
 endef
 
+# Ezt használjuk az INVERZ grep-ben: egrep -v "\-\-($(ENABLED_GITFLOW_PARAMETERS))"
+#                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
+
 .PHONY: info
 info::
 	@echo "$$PROJECT_INFO"
@@ -31,16 +35,24 @@ info::
 list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
 
-# @todo Lehessen inkább paraméterezni, hogy hova kerüljön a fájl vagy mi legyen a neve.
+.PHONY: __validate_args_no_empty
+__validate_args_no_empty:
+    ifeq (,$(ARGS))
+		@echo "\n\033[31m❌ You can't call this method without argument!\033[0m"
+		exit 1
+    endif
+
 .PHONY: dbdump
-dbdump: up
+dbdump : ARGS ?= dbdump.sql
+dbdump : up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > dbdump.sql
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(ARGS)
 	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
-dbimport: up
-	cat dbdump.sql | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
+dbimport : ARGS ?= dbdump.sql
+dbimport : up
+	cat $(ARGS) | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME))
 
 # DOCKER COMMANDS
@@ -52,9 +64,10 @@ __docker_up:
 __docker_down:
 	$(CMD_DOCKER_BASE) down
 
+# $(ARGS) : a docker-compose container neve kell nekünk
 .PHONY: __docker_connect
-__docker_connect:
-	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARG)
+__docker_connect: __validate_args_no_empty
+	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARGS)
 
 .PHONY: __docker_enter
 __docker_enter: up
@@ -90,10 +103,29 @@ __container_composer:
 
 # GITFLOW COMMANDS
 
+# Check is there any uncommitted changes?
+__validate_git_uncommitted_changes:
+	$(WORKFLOW_BINARY_DIRECTORY)/git_uncommitted_changes.sh
+
+# Check the arguments and the last word!
+__validate_gitflow_args: __validate_args_no_empty
+    # Are there any invalid parameters? Eg: wf feature --disable-db --invalid new-feature
+	UNKNOWN_PARAMETERS="$$(echo "$(ARGS)" | egrep -oh "\-\-[^ ]+" | egrep -v "^\-\-($(ENABLED_GITFLOW_PARAMETERS))$$")"; \
+	if [ ! -z "$${UNKNOWN_PARAMETERS}" ]; then \
+		echo "\n\033[31m❌ There are some unknown parameter:\033[0m"; \
+		echo "\033[33m$${UNKNOWN_PARAMETERS}\033[0m"; \
+		exit 1; \
+	fi
+    # Is there an invalid name? Eg: wf hotfix --disable-db [missing name!]
+	INVALID_NAME="$$(echo "$(lastword $(ARGS))" | egrep "^[^a-z0-9]")"; \
+	if [ ! -z "$${INVALID_NAME}" ]; then \
+		echo "\n\033[31m❌ Invalid branch name: \033[33m$${INVALID_NAME}\033[0m"; \
+		echo "\033[94mYou have to finish the command with valid branch name!\033[0m"; \
+		exit 1; \
+	fi
+
 # make -f .project.makefile __branch ORIGIN_BRANCH="develop" PREFIX="feature" ARGS="..."
-__branch:
-    # @todo Checkolni kellene, hogy van-e uncommitted changes.
-    # @todo Checkolni kellene a név meglétét és kilépni, ha nincs meg vagy nem megfelelő formátumú.
+__branch: __validate_git_uncommitted_changes __validate_gitflow_args
     # !--from-this --> git fetch origin develop/develop
     # Leszedjük a legfrissebb develop verziót
     ifeq (,$(findstring --from-this,$(ARGS)))
@@ -175,8 +207,7 @@ __hotfix:
 	$(CMD_MAKE) __branch ARGS="$(ARGS)" ORIGIN_BRANCH="master" PREFIX="$(GITFLOW_HOTFIX)"
 
 .PHONY: __push
-__push:
-    # @todo Checkolni kellene, hogy van-e uncommitted changes.
+__push: __validate_git_uncommitted_changes
 	git push origin HEAD
 
 .PHONY: __publish

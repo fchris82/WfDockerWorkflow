@@ -37,7 +37,7 @@ function quit {
     exitcode=$?
     cleanup
     echo_block "31;107m" " Something went wrong! The script doesn't run down!"
-    showHelp
+    echo "${YELLOW}If you need some help call the ${BOLD}${WHITE}wf -h${RESTORE}${YELLOW} command!${RESTORE}"
     exit $exitcode
 }
 
