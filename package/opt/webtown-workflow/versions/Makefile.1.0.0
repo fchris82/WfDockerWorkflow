@@ -14,6 +14,9 @@ Docker
 
     Database URL:  \033[33m$(DB_URL)\033[0m
 
+    Docker environments:
+    \033[33m$(DOCKER_ENVIRONMENTS)\033[0m
+
 endef
 export PROJECT_INFO
 
