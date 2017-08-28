@@ -7,6 +7,7 @@ Anywhere:
 
   -h --help                 $(tput setaf 2)Show this help$(tput sgr0)
   -u --update               $(tput setaf 2)Self update. ${BOLD}You need sudo permission!$(tput sgr0)
+  --install-autocomplete    $(tput setaf 2)Install ZSH autocomplete$(tput sgr0)
 
 ${BOLD}${WHITE}Only any project directory:${RESTORE}
 

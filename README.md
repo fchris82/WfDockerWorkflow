@@ -1,6 +1,62 @@
 Webtown Kunstmaan Installer
 ===========================
 
+## Installation
+
+> You need `sudo` permission!
+
+1. Download the `deb` package from repository
+    ```bash
+    cd /tmp && git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD webtown-workflow.deb | tar -x
+    ```
+2. Install package:
+
+    ``` bash
+    sudo dpkg -i webtown-workflow.deb || sudo apt-get -f install && sudo dpkg -i webtown-workflow.deb
+    ```
+
+    A vége azért van ott, ha függőségi probléma lépne fel. Sajnos nem lehet máshogy megoldani.
+
+3. Remove `deb` file:
+    ```bash
+    rm -f webtown-workflow.deb && cd ~
+    ```
+
+### Upgrade the software
+
+> You need `sudo` permission!
+
+    wf -u
+
+### Autocomplete
+
+You can install autocomplete script to ZSH.
+
+    wf --install-autocomplete
+
+## Configuration
+
+If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/config` file
+
+## Usage
+
+```bash
+# Show help
+wf
+
+# Upgrade
+wf -u
+
+# ANY COMPATIBLE PROJECT DIRECTORY
+# Project help
+wf help
+
+# Project commands
+wf list
+```
+
+# ★ For developers
+
 ## (Re)generate deb package
 
     make -s [build] (KEEPVERSION=1|VERSION=1.2)
@@ -21,41 +77,6 @@ Webtown Kunstmaan Installer
 
 > If `KEEPVERSION` is setted then the `VERSION` doesn't matter.
 
-## Installation
-
-> You need `sudo` permission!
-
-1. Download the `deb` package from repository
-    ```bash
-    cd /tmp && git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD webtown-workflow.deb | tar -x
-    ```
-2. Install package:
-
-    ``` bash
-    sudo dpkg -i webtown-workflow.deb || sudo apt-get -f install && sudo dpkg -i webtown-workflow.deb
-    ```
-    
-    A vége azért van ott, ha függőségi probléma lépne fel. Sajnos nem lehet máshogy megoldani.
-
-3. Remove `deb` file:
-    ```bash
-    rm -f webtown-workflow.deb && cd ~
-    ```
-
-### Upgrade the software
-
-> You need `sudo` permission!
-
-    wf -u
-
-## Configuration
-
-If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/config` file
-
-## Usage
-
-A program önmagában nem működik!
-
 ## Debug mode
 
 You can debug the software with some env variables:
@@ -71,7 +92,7 @@ Eg:
 MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 ```
 
-# Tests
+## Tests
 
 Általánosan tesztfuttatás:
 
@@ -81,7 +102,7 @@ make tests
 
 > Ezt hívja egyébként: `make -f test/tests.mk`
 
-## Test container
+### Test container
 
 A tesztek egy container-ben futnak. Lásd: `test/docker-compose.yml`. Amennyiben módosítasz a `test/Dockerfile`-on, akkor mindenképpen
 futtasd a `rebuild` targetet:
@@ -90,7 +111,7 @@ futtasd a `rebuild` targetet:
 make -f test/tests.mk rebuild all
 ```
 
-## Tesztek írása
+### Tesztek írása
 
 **Teszt környezet/projekt**
 

@@ -39,6 +39,22 @@ case $1 in
         sudo dpkg -i ${PACKAGE_NAME} || quit
         rm -rf ${PACKAGE_NAME}
     ;;
+    --install-autocomplete)
+        if [ -d ~/.zsh ]; then
+            mkdir -p ~/.zsh/completion
+            ln -sf ${DIR}/zsh/autocomplete.sh ~/.zsh/completion/_wf
+            if [ $(echo "$fpath" | grep ~/.zsh/completion | wc -l) == 0 ]; then
+                echo -e "${ORANGE}You have to edit the ${GREEN}~/.zshrc${ORANGE} file and add this row:${RESTORE}"
+                echo -e "fpath=(~/.zsh/completion \$fpath)"
+            fi
+            if [ $(cat ~/.zshrc| egrep "^[^#]*compinit" | wc -l) == 0 ]; then
+                echo -e "${ORANGE}You have to edit the ${GREEN}~/.zshrc${ORANGE} file and add this row AFTER the fpath!${RESTORE}"
+                echo -e "autoload -Uz compinit && compinit -i"
+            fi
+        else
+            echo -e "You don't have installed the zsh! Nothing changed."
+        fi
+    ;;
     # Project makefile
     *)
         COMMAND="$1"
