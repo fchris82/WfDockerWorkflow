@@ -5,20 +5,17 @@ Docker
 ======
 
     Basename:      \033[32m$(DOCKER_BASENAME)\033[0m
-    Config files:  \033[33m$(DOCKER_CONFIG_FILES)\033[0m
+    Config files:  \033[33m$(DOCKER_CONFIG_FILES) $(DOCKER_USER_CONFIG_FILES)\033[0m
     Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
 
     Shell:         \033[34m$(DOCKER_SHELL)\033[0m
-    Host:          \033[34m$(DOCKER_HOST)\033[0m
+    Host:          \033[34m$(DOCKER_HTTP_HOST)\033[0m
     Port prefix:   \033[34m$(DOCKER_PORT_PREFIX)\033[0m
 
     Database URL:  \033[33m$(DB_URL)\033[0m
 
     Configured docker environments:
     \033[33m$(DOCKER_ENVIRONMENTS)\033[0m
-
-    Docker compose command base:
-    \033[33m$(CMD_DOCKER_BASE)\033[0m
 endef
 export PROJECT_INFO
 
@@ -34,6 +31,17 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 .PHONY: info
 info::
 	@echo "$$PROJECT_INFO"
+	@echo "\n    Docker compose command base:"
+	@RESTORE="\\\033[0m"; \
+		ENV_NAME="\\\033[33m"; \
+		ENV_VALUE="\\\033[37m"; \
+		CMD="\\\033[1;91m"; \
+		PARAMETER_NAME="\\\033[94m"; \
+		PARAMETER_VALUE="\\\033[92m"; \
+		echo "    "$$(echo "$(CMD_DOCKER_BASE)" \
+			| sed -e "s/\([^= ]*\)=\([^ ]*\)/$${ENV_NAME}\\1$${RESTORE}=$${ENV_VALUE}\\2$${RESTORE}/g" \
+			| sed -e "s/docker-compose/$${CMD}docker-compose$${RESTORE}/" \
+			| sed -e "s/\(\B--*[a-zA-Z0-9\-]*\) \([^ ]*\)/$${PARAMETER_NAME}\\1$${RESTORE} $${PARAMETER_VALUE}\\2$${RESTORE}/g")
 
 # List all targets
 .PHONY: list
@@ -76,7 +84,7 @@ __docker_down:
 # $(ARGS) : a docker-compose container neve kell nekünk
 .PHONY: __docker_connect
 __docker_connect: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARGS)
+	$(CMD_DOCKER_BASE) exec $(ARGS)
 
 .PHONY: __docker_enter
 __docker_enter: up
@@ -84,7 +92,7 @@ __docker_enter: up
 
 .PHONY: __docker_rebuild
 __docker_rebuild: down
-	$(CMD_DOCKER_BASE) build --no-cache $(DOCKER_CLI_NAME)
+	$(CMD_DOCKER_BASE) build --no-cache --pull $(DOCKER_CLI_NAME)
 
 .PHONY: __docker_ps
 __docker_ps:

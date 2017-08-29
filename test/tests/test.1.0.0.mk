@@ -82,7 +82,7 @@ test_info: build_project
 	wf info | grep localhost; \
 	\
 	cp .project.env .project.env~; \
-	echo "DOCKER_SHELL := /bin/zsh\nDOCKER_HOST := test.loc\nDOCKER_PORT_PREFIX := 10" > .project.env; \
+	echo "DOCKER_SHELL := /bin/zsh\nDOCKER_HTTP_HOST := test.loc\nDOCKER_PORT_PREFIX := 10" > .project.env; \
 	wf info | grep bin/zsh; \
 	wf info | grep test.loc; \
 	wf info | grep 10; \
