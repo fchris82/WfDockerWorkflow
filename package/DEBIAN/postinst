@@ -1,2 +1,4 @@
 #!/bin/bash
 ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
+cp /opt/webtown-workflow/var/webtown.hu.crt /usr/local/share/ca-certificates/
+update-ca-certificates

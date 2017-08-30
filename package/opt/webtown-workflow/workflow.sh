@@ -42,7 +42,7 @@ case $1 in
     --install-autocomplete)
         if [ -d ~/.zsh ]; then
             mkdir -p ~/.zsh/completion
-            ln -sf ${DIR}/zsh/autocomplete.sh ~/.zsh/completion/_wf
+            ln -sf ${DIR}/var/zsh/autocomplete.sh ~/.zsh/completion/_wf
             if [ $(echo "$fpath" | grep ${HOME}/.zsh/completion | wc -l) == 0 ]; then
                 echo -e "${YELLOW}You have to edit the ${GREEN}~/.zshrc${YELLOW} file and add this row:${RESTORE}"
                 echo -e "fpath=(~/.zsh/completion \$fpath)"
