@@ -5,17 +5,17 @@ ${BOLD}${WHITE}
 ${RESTORE}
 Anywhere:
 
-  -h --help                 $(tput setaf 2)Show this help$(tput sgr0)
-  -u --update               $(tput setaf 2)Self update. ${BOLD}You need sudo permission!$(tput sgr0)
-  --install-autocomplete    $(tput setaf 2)Install ZSH autocomplete$(tput sgr0)
+  -h --help                 ${GREEN}Show this help${RESTORE}
+  -u --update               ${GREEN}Self update. ${BOLD}You need sudo permission!${RESTORE}
+  --install-autocomplete    ${GREEN}Install ZSH autocomplete${RESTORE}
 
 ${BOLD}${WHITE}Only any project directory:${RESTORE}
 
-  ${YELLOW}help${RESTORE}                      $(tput setaf 2)Show project workflow help. ${BOLD}Not this help!$(tput sgr0)
-  ${YELLOW}list${RESTORE}                      $(tput setaf 2)Show available commands in project$(tput sgr0)
-  ${YELLOW}info${RESTORE}                      $(tput setaf 2)Show some important project information$(tput sgr0)
+  ${YELLOW}help${RESTORE}                      ${GREEN}Show project workflow help. ${BOLD}Not this help!${RESTORE}
+  ${YELLOW}list${RESTORE}                      ${GREEN}Show available commands in project${RESTORE}
+  ${YELLOW}info${RESTORE}                      ${GREEN}Show some important project information${RESTORE}
 
-Eg: $(tput setaf 3)wf help$(tput sgr0)
+Eg: ${YELLOW}wf help${RESTORE}
 EOM
 
 function showHelp {

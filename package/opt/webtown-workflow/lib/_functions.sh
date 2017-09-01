@@ -8,12 +8,15 @@ function escape {
 
 function lock {
     if [ -f $LOCKFILE ]; then
-        echo "$(tput setaf 1)$(tput setab 7) "
-        echo "$(tput setaf 1)$(tput setab 7)SCRIPT IS LOCKED!"
-        echo "$(tput setaf 1)$(tput setab 7)The script is running now by $(tput setab 2)$(tput setaf 0)$(stat -c \"%U\" $LOCKFILE)$(tput setab 7)$(tput setaf 1)!"
-        echo "$(tput setaf 1)$(tput setab 7)If you are sure that the lock file is 'wrong' - don't running a script - delete it by hand: $(tput setab 3)rm -f ${LOCKFILE}$(tput setab 7)"
-        echo "$(tput setaf 1)$(tput setab 7) "
-        echo "$(tput sgr0) "
+        CLASS=$'\x1B[31;107m'
+        echo -e "\n${CLASS}${CLREOL}"
+        echo -e "${CLREOL}"
+        echo -e "\e[1m SCRIPT IS LOCKED!${CLREOL}"
+        echo -e " =================\e[0m${CLASS}${CLREOL}"
+        echo -e "${CLREOL}"
+        echo -e " The script is running now by \e[30;42m$(stat -c \"%U\" $LOCKFILE)${CLASS}!${CLREOL}"
+        echo -e " If you are sure that the lock file is 'wrong' - don't running a script - delete it by hand: \e[43mrm -f ${LOCKFILE}${CLASS}${CLREOL}"
+        echo -e "${CLREOL}${RESTORE}\e[0m\n"
         exit 1
     else
         touch ${LOCKFILE} || quit
