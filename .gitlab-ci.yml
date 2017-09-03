@@ -1,7 +1,7 @@
-test:
-    scripts:
+test:deb:
+    script:
         - ORIGINAL_MD5=$(md5sum webtown-workflow.deb)
         - echo ${ORIGINAL_MD5}
         - make build KEEPVERSION=1
         - NEW_MD5=$(md5sum webtown-workflow.deb)
-        - if [[ ${ORIGINAL_MD5} != ${NEW_MD5} ]]; then echo "You didn't refresh the deb package! Run the 'make build' command adn commit the new deb package too!"; exit 1; fi
+        - if [[ ${ORIGINAL_MD5} != ${NEW_MD5} ]]; then echo "You didn't refresh the deb package! Run the 'make build' command and commit the new deb package too!"; exit 1; fi
