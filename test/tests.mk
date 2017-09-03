@@ -7,6 +7,9 @@ endef
 
 all: functions base test.1.0.0 clean
 
+# @todo Ebben a repo-ban el kellene helyezni egy DEPLOY SSH kulcsot a workflow-test projekthez, mert a gitlab-nál nem vagy nehezen tudjuk megoldani a kulcs átadását a többszörösöen beágyazott docker container-eken keresztül. Addig csak így külön tesztelhető.
+gitlab: functions clean
+
 rebuild:
 	docker-compose -f $(DOCKER_COMPOSE_FILE) build --no-cache test
 

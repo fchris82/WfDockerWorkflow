@@ -12,7 +12,7 @@ RUN apt-get update \
           $(lsb_release -cs) \
           stable" \
     && apt-get update \
-    #
+
     && apt-get install -y \
         git docker-ce make jq sudo \
     && COMPOSE_VER=$(curl -s -o /dev/null -I -w "%{redirect_url}\n" https://github.com/docker/compose/releases/latest | grep -oP "[0-9]+(\.[0-9]+)+$") \

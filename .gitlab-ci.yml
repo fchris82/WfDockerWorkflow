@@ -1,7 +1,14 @@
 test:deb:
     script:
-        - ORIGINAL_MD5=$(md5sum webtown-workflow.deb)
+        - rm -rf /tmp/out
+        - dpkg-deb -R webtown-workflow.deb /tmp/out
+        - ORIGINAL_MD5=$(find package -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
         - echo ${ORIGINAL_MD5}
-        - make build KEEPVERSION=1
-        - NEW_MD5=$(md5sum webtown-workflow.deb)
+        - NEW_MD5=$(find /tmp/out -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
+        - echo ${NEW_MD5}
+        - rm -rf /tmp/out
         - if [[ ${ORIGINAL_MD5} != ${NEW_MD5} ]]; then echo "You didn't refresh the deb package! Run the 'make build' command and commit the new deb package too!"; exit 1; fi
+
+test:tests:
+    script:
+        - make -f test/tests.mk gitlab
