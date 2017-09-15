@@ -1,5 +1,5 @@
 TEST_PROJECT_GIT_URL := git@gitlab.webtown.hu:webtown/workflow-test.git
-TEST_PROJECT_BRANCH := v1.0.0
+TEST_PROJECT_BRANCH := v1.1.0
 TEST_DIR := test
 DB_TEST_NAME := symfony_test
 DB_TEST_PASSWORD := root_test
@@ -70,6 +70,8 @@ test_list: build_project
 	wf list | grep php; \
 	wf list | grep composer; \
 	wf list | grep sf; \
+	wf list | grep exec; \
+	wf list | grep run; \
 	wf list
 
 # Info tesztelése
