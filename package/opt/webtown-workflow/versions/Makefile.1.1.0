@@ -84,11 +84,11 @@ __docker_down:
 # $(ARGS) : a docker-compose container neve kell nekünk
 .PHONY: __docker_exec
 __docker_exec: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) exec $(ARGS)
+	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARGS)
 
 .PHONY: __docker_run
 __docker_run: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) run $(ARGS)
+	$(CMD_DOCKER_BASE) run --user $(DOCKER_USER) $(ARGS)
 
 .PHONY: __docker_logs
 __docker_logs: __validate_args_no_empty
@@ -96,7 +96,7 @@ __docker_logs: __validate_args_no_empty
 
 .PHONY: __docker_enter
 __docker_enter: up
-	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) $(DOCKER_SHELL)
+	$(CMD_DOCKER_EXEC_CLI) $(DOCKER_SHELL)
 
 .PHONY: __docker_rebuild
 __docker_rebuild: down
@@ -117,7 +117,7 @@ __container_php:
 
 # make -f .project.makefile sf ARGS="doctrine:migrations:migrate -n" --> docker-compose -p chrisptest -e ablak=1 exec --user user engine php bin/console doctrine:migrations:migrate -n
 .PHONY: __container_sf
-__container_sf : SF_CONSOLE_CMD ?= bin/console
+__container_sf: SF_CONSOLE_CMD ?= bin/console
 __container_sf: up
 	$(CMD_DOCKER_EXEC_CLI) php $(SF_CONSOLE_CMD) $(ARGS)
 
