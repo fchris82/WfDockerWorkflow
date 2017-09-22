@@ -31,6 +31,14 @@ case $1 in
         showHelp
     ;;
     # UPDATE the software
+    --check-update)
+        LAST_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
+        PROGRAM_REPOSITORY=$(cat /etc/webtown-workflow/repository.txt)
+        CURRENT_VERSION=$(git archive --remote=${PROGRAM_REPOSITORY} HEAD package/DEBIAN/control | tar -xO | grep ^Version: | cut -d\  -f2)
+        if [ "${CURRENT_VERSION}" != "${LAST_VERSION}" ]; then
+            echo "There is a newer version from \033[1;34mwebtown-workflow\033[0m! \033[33m${CURRENT_VERSION}\033[0m vs \033[32m${LAST_VERSION}\033[0m Run the \033[1mwf -u\033[0m command for upgrade."
+        fi
+    ;;
     -u|--update)
         PACKAGE_NAME=webtown-workflow.deb
         echo -e "\033[32mStarting upgrade from: \033[33m${PROGRAM_REPOSITORY}\033[0m"

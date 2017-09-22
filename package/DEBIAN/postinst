@@ -2,3 +2,17 @@
 ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
 cp /opt/webtown-workflow/var/webtown.hu.crt /usr/local/share/ca-certificates/
 update-ca-certificates
+
+# Register upgrade check
+SHELL_SCRIPT_RCS=(/etc/bash.bashrc /etc/zsh/zshrc)
+for RC_FILE in ${SHELL_SCRIPT_RCS[@]}; do
+    if [ -f $RC_FILE ]; then
+        CMD="/opt/webtown-workflow/workflow.sh --check-update"
+        if ! grep -Fq "$CMD" $RC_FILE; then
+            echo "" >> $RC_FILE
+            echo "" >> $RC_FILE
+            echo "# Webtown Workflow update check" >> $RC_FILE
+            echo $CMD >> $RC_FILE
+        fi
+    fi
+done
