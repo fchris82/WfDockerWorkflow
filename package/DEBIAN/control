@@ -1,6 +1,6 @@
 Source: webtown-workflow
 Package: webtown-workflow
-Version: 0.33
+Version: 0.34
 Section: devel
 Priority: optional
 Architecture: all
