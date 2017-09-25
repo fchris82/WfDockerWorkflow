@@ -3,6 +3,9 @@ ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
 cp /opt/webtown-workflow/var/webtown.hu.crt /usr/local/share/ca-certificates/
 update-ca-certificates
 
+date +%s > /etc/webtown-workflow/lastupdate
+chmod 666 /etc/webtown-workflow/lastupdate
+
 # Register upgrade check
 SHELL_SCRIPT_RCS=(/etc/bash.bashrc /etc/zsh/zshrc)
 for RC_FILE in ${SHELL_SCRIPT_RCS[@]}; do
