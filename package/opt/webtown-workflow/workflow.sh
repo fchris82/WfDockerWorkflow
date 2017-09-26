@@ -35,7 +35,7 @@ case $1 in
         LAST_UPDATED_FOR=$((`date +%s` - `cat /etc/webtown-workflow/lastupdate`))
         # 10 óránként kérdezzük le
         if [ "$LAST_UPDATED_FOR" -gt "36000" ]; then
-            date +%s > /etc/webtown-project-wizard/lastupdate
+            date +%s > /etc/webtown-workflow/lastupdate
             echo "Check new Workflow version..."
             LAST_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
             CURRENT_VERSION=$(git archive --remote=${PROGRAM_REPOSITORY} HEAD package/DEBIAN/control | tar -xO | grep ^Version: | cut -d\  -f2)
