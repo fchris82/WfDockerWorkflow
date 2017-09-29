@@ -55,6 +55,10 @@ __validate_args_no_empty:
 		exit 1
     endif
 
+.PHONY: mysql
+mysql: up
+	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost $(DB_NAME)
+
 .PHONY: dbdump
 dbdump : ARGS ?= dbdump.sql
 dbdump : up
