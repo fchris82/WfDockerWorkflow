@@ -16,8 +16,11 @@ _wf() {
                 feature | hotfix)
                     _arguments '*: :(--from-this --disable-db --reload-d)'
                 ;;
-                connect | exec | run | logs)
-                    _arguments '2: :($(wf docker-compose config --services))' '3: :(/bin/bash)'
+                connect | enter | debug-enter | logs)
+                    _arguments '2: :($(wf docker-compose config --services))'
+                ;;
+                exec | run)
+                    _arguments '*: :($(wf docker-compose config --services))'
                 ;;
             esac
         ;;

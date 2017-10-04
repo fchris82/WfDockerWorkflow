@@ -60,16 +60,16 @@ mysql: up
 	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost $(DB_NAME)
 
 .PHONY: dbdump
-dbdump : ARGS ?= dbdump.sql
+dbdump : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
 dbdump : up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(ARGS)
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(FILE)
 	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
-dbimport : ARGS ?= dbdump.sql
+dbimport : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
 dbimport : up
-	cat $(ARGS) | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
+	cat $(FILE) | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME))
 
 # DOCKER COMMANDS
@@ -93,6 +93,11 @@ __docker_connect: __validate_args_no_empty
 .PHONY: __docker_enter
 __docker_enter: up
 	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(DOCKER_CLI_NAME) $(DOCKER_SHELL)
+
+.PHONY: __docker_debug_enter
+__docker_debug_enter: CONTAINER := $(if $(ARGS),$(ARGS),$(DOCKER_CLI_NAME))
+__docker_debug_enter: up
+	$(CMD_DOCKER_EXEC) $(CONTAINER) /bin/bash
 
 .PHONY: __docker_rebuild
 __docker_rebuild: down
