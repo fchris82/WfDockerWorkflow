@@ -48,6 +48,9 @@ info::
 list:
 	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
 
+.PHONY: restart
+restart: down up
+
 .PHONY: __validate_args_no_empty
 __validate_args_no_empty:
     ifeq (,$(ARGS))
