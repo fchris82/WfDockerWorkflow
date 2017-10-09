@@ -1,2 +1,4 @@
-# for self update:
+# For self update:
 program_repository = git@gitlab.webtown.hu:webtown/webtown-workflow.git
+# For proxy port. After change you have to run: 'wf --init-reverse-proxy' command!
+reverse_proxy_port = 80
