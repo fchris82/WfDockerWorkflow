@@ -19,3 +19,6 @@ for RC_FILE in ${SHELL_SCRIPT_RCS[@]}; do
         fi
     fi
 done
+
+# (Re)Start reverse proxy
+/opt/webtown-workflow/workflow.sh --init-reverse-proxy

@@ -8,6 +8,7 @@ Anywhere:
   -h --help                 ${GREEN}Show this help${RESTORE}
   -u --update               ${GREEN}Self update. ${BOLD}You need sudo permission!${RESTORE}
   --install-autocomplete    ${GREEN}Install ZSH autocomplete${RESTORE}
+  --init-reverse-proxy      ${GREEN}Init nginx reverse proxy with 'nginx-reverse-proxy' name${RESTORE}
 
 ${BOLD}${WHITE}Only any project directory:${RESTORE}
 

@@ -68,6 +68,20 @@ case $1 in
             echo -e "You don't have installed the zsh! Nothing changed."
         fi
     ;;
+    --init-reverse-proxy)
+        NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
+        if [[ -z "$NETWORK_EXISTS" ]]; then
+            docker network create --driver bridge reverse-proxy
+        fi
+        docker stop nginx-reverse-proxy
+        docker rm nginx-reverse-proxy
+        docker run -d -p 80:80 \
+            --name nginx-reverse-proxy \
+            --net reverse-proxy \
+            -v /var/run/docker.sock:/tmp/docker.sock:ro \
+            --restart always \
+            jwilder/nginx-proxy
+    ;;
     # Project makefile
     *)
         COMMAND="$1"
