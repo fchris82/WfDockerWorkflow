@@ -1,4 +1,44 @@
 #!/bin/bash
+# ----------------------------------------------------------------------------------------------------------------------
+#                                                   W I Z A R D
+# ----------------------------------------------------------------------------------------------------------------------
+
+########################################################################################################################
+#                                                                                                                      #
+#   @Permission problem                                                                                                #
+#                                                                                                                      #
+#   The composer run by root here! The cache and everything will be `root:root` The copied files have correct          #
+#   owners.                                                                                                            #
+#                                                                                                                      #
+#   The solution: we set the owner by a reference file!                                                                #
+#                                                                                                                      #
+########################################################################################################################
+
+
+# Set permissions
+REFERENCE="/opt/webtown-project-wizard/wizard.sh"
+
+USER=$(ls -ld ${REFERENCE} | cut -d\  -f3)
+GROUP="docker"
+
+setfacl -dR -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-project-wizard/symfony/var
+setfacl -R -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-project-wizard/symfony/var
+
+# Install
+SYMFONY_ENV=prod /opt/webtown-project-wizard/wizard.sh -i --no-dev
+
+# Set the permission!
+chown -R $(id -u ${USER}):$(getent group docker | cut -d: -f3) /opt/webtown-project-wizard/symfony/var
+chmod -R 777 /opt/webtown-project-wizard/symfony/var/cache
+chmod -R 777 /opt/webtown-project-wizard/symfony/var/logs
+
+# Create symlink
+ln -sf /opt/webtown-project-wizard/wizard.sh /usr/local/bin/wizard
+
+# ----------------------------------------------------------------------------------------------------------------------
+#                                                W O R K F L O W
+# ----------------------------------------------------------------------------------------------------------------------
+
 ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
 cp /opt/webtown-workflow/var/webtown.hu.crt /usr/local/share/ca-certificates/
 update-ca-certificates

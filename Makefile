@@ -1,6 +1,9 @@
+.PHONY: rebuild
+rebuild: build cleanup
+
 .PHONY: build
-build: versionupgrade
-	dpkg -b package webtown-workflow.deb
+build: versionupgrade rsync
+	dpkg -b tmp webtown-workflow.deb
 
 .PHONY: versionupgrade
 versionupgrade:
@@ -16,6 +19,20 @@ versionupgrade:
 				echo "Version: $(VERSION)"
         endif
     endif
+
+.PHONY: rsync
+rsync:
+	mkdir -p tmp
+	rsync -r --delete --force --filter=":- package/opt/webtown-project-wizard/symfony/.gitignore" package/* tmp
+
+.PHONY: cleanup
+cleanup:
+	rm -rf tmp
+
+# DEV!
+.PHONY: install
+install:
+	package/opt/webtown-workflow/wizard.sh --install
 
 .PHONY: tests
 tests:

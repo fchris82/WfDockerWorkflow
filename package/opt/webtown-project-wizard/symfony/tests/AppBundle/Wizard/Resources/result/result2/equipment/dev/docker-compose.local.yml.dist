@@ -1,0 +1,10 @@
+version: "2"
+
+services:
+    mysql:
+        ports:
+            - "${MYSQL_PUBLIC_PORT}:3306"
+
+    engine:
+        volumes:
+            - "~/.ssh:/var/www/.ssh"

@@ -1,0 +1,6 @@
+# Docker
+/.env
+/.project.env
+docker-compose.local.yml
+/{{ docker_data_dir }}/
+!/{{ docker_data_dir }}/.gitkeep

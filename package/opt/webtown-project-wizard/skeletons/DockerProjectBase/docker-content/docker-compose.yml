@@ -1,0 +1,85 @@
+version: "2"
+
+services:
+    web:
+        image: nginx:latest
+        depends_on:
+            - mysql
+            - engine
+            #- elasticsearch
+            #- mongodb
+        environment:
+            VIRTUAL_HOST: ${DOCKER_HTTP_HOST}
+        links:
+            - engine:php
+        volumes:
+            - "${BASE_DIRECTORY}/${PROJECT_DIR_NAME}:${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}"
+            - "${PROJECT_COMPOSE_DIR}/nginx/vhost.conf:/etc/nginx/conf.d/site.temp:ro"
+        command: /bin/bash -c "sed 's|__host__|${DOCKER_HTTP_HOST}|' /etc/nginx/conf.d/site.temp
+            | sed 's|__project_dir__|${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}|'
+            | sed 's|__debug__|${DOCKER_CONFIG_NGINX_DEBUG}|'
+            > /etc/nginx/conf.d/default.conf
+            && echo '${HTTP_AUTH_PASS}' > /etc/nginx/.htpasswd
+            && ${DOCKER_NGINX_COMMAND} -g 'daemon off;'"
+        networks:
+            - default
+
+    mysql:
+        image: mysql:5.6
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+        volumes:
+            - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
+        networks:
+            - default
+
+    #elasticsearch:
+    #    image: elasticsearch:1.7.6
+    #    volumes:
+    #        - "${DOCKER_DATA_DIR}/elasticsearch:/usr/share/elasticsearch/data"
+    #    networks:
+    #        - default
+    #
+    #mongodb:
+    #    image: mongo:3.2
+    #    volumes:
+    #        - "${DOCKER_DATA_DIR}/mongodb:/data/db"
+    #    networks:
+    #        - default
+
+    engine:
+        build:
+            context: ${PROJECT_COMPOSE_DIR}/engine
+            args:
+                - PHP_VERSION
+        environment:
+            - CI
+            - PHP_VERSION
+            - WWW_DATA_UID
+            - WWW_DATA_GID
+            - DATABASE_URL
+            - SYMFONY_ENV
+            - SYMFONY_DEBUG
+            - SYMFONY_CLASSLOADER_FILE
+            - SYMFONY_HTTP_CACHE
+            - SYMFONY_HTTP_CACHE_CLASS
+            - SYMFONY_TRUSTED_PROXIES
+        volumes:
+            # Full project files
+            - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
+            # Entrypoint file
+            - "${PROJECT_COMPOSE_DIR}/engine/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro"
+            # User SSH keys
+            - "${SSH_PATH}:/home/user/.ssh:ro"
+            # Git config fájl bekötése
+            - "~/.gitconfig:/home/user/.gitconfig:ro"
+            # Composer cache
+            - "~/.composer:/home/user/.composer"
+        tty: true
+        networks:
+            - default
+
+networks:
+    default:
+        driver: bridge

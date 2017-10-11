@@ -1,0 +1,160 @@
+stages:
+    - build
+    - test
+    - deploy
+    - cleanup
+
+cache:
+    key: ${CI_PIPELINE_ID}
+    untracked: true
+    paths:
+        - vendor
+        - var
+
+variables:
+    ###>> Adj a projektnek nevet (mint ha könyvtár nevet adnál!)
+    BASE_NAME: {{ project_name }}
+    ###<<
+    SYMFONY_CONSOLE_COMMAND: php app/console
+    SYMFONY_ENV: test
+    COMPOSE_PROJECT_NAME: ${BASE_NAME}pipeline${CI_PIPELINE_ID}
+    COMPOSE_HTTP_TIMEOUT: 300
+    # For debugging
+#    MAKE_DISABLE_SILENC: 1
+#    MAKE_DEBUG_MODE: 1
+
+before_script:
+    # Environment
+    - env
+    - locale
+    - echo $USER
+    - echo ~
+    - pwd
+    - docker version
+    - docker-compose version
+    - echo ${COMPOSE_PROJECT_NAME}
+
+.docker_init_and_stop: &docker_init_and_stop
+    before_script:
+        # Environment
+        - env
+        - locale
+        - echo $USER
+        - echo ~
+        - pwd
+        - docker version
+        - docker-compose version
+        - echo ${COMPOSE_PROJECT_NAME}
+        # Aliases
+        - shopt -s expand_aliases
+        - alias der="/opt/webtown-workflow/workflow.sh docker-compose exec -T engine"
+        - alias §="/opt/webtown-workflow/workflow.sh exec -T engine"
+        - alias §sf="/opt/webtown-workflow/workflow.sh exec -T engine php app/console"
+        # Docker
+        - docker ps
+        - /opt/webtown-workflow/workflow.sh docker-compose up -d engine mysql
+        - docker ps
+        - docker-compose ps
+        - der env
+        - der /usr/local/bin/entrypoint.sh --wait-for-init
+        - § cat .project.env
+        - printf "\n\n\n\n\tSTART\n\n\n\n\n"
+    after_script:
+        - printf "\n\n\n\n\tEND\n\n\n\n\n"
+        - /opt/webtown-workflow/workflow.sh docker-compose down --remove-orphans || true
+
+build:
+    stage: build
+    <<: *docker_init_and_stop
+    script:
+        # Init
+        ###>> Így kell inicializálni?
+        - cp -f app/config/parameters.gitlab-ci.yml app/config/parameters.yml
+        - /opt/webtown-workflow/workflow.sh init
+        - echo "SSH_PATH := ${SSH_PATH}" >> .project.env
+        - /opt/webtown-workflow/workflow.sh install
+        ###<<
+
+test:codeSniffer:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        ###>> A PHP-CS fixet így kell hívni?
+        - § bin/php-cs-fixer fix --dry-run --config=.php_cs.dist
+        ###<<
+
+test:database:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - §sf doctrine:mapping:info
+        - §sf doctrine:schema:validate
+        #- §sf doctrine:fixtures:load -n
+
+test:unittest:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - § bin/phpunit --debug
+
+test:phpmd:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - § bin/phpmd src text phpmd.xml --reportfile-xml phpmd-results.xml --reportfile-html phpmd-results.html
+    artifacts:
+        name: "${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}_${CI_PIPELINE_ID}"
+        expire_in: 2 week
+        when: on_failure
+        paths:
+            - phpmd-results.xml
+            - phpmd-results.html
+
+deploy:demo:
+    stage: deploy
+    <<: *docker_init_and_stop
+    script:
+        # Biztosra megyünk, úgyhogy ha ezt külön szeretnénk futtatni, akkor is jó legyen.
+        - § composer install -n
+        - § cp app/config/deployment/servers.yml.dist app/config/deployment/servers.yml
+        - § bin/dep deploy demo
+    environment:
+        name: staging
+        url: https://staging.example.com
+    ###>> Amennyiben a demo-t automatikusan szeretnéd frissíteni, akkor ezt törölheted.
+    when: manual
+    ###<<
+    only:
+        - develop
+
+###>> Ezt ki kell tölteni
+deploy:prod:
+    stage: deploy
+    <<: *docker_init_and_stop
+    script:
+        - echo "Deploy to production server"
+    environment:
+        name: production
+        url: https://example.com
+    when: manual
+    only:
+        - master
+###<<
+
+# This doesn't remove the image
+cleanup:auto:
+    stage: cleanup
+    script:
+        - /opt/webtown-workflow/workflow.sh docker-compose rm -v -f -s || true
+        - docker rm -v $(docker ps -a -q -f status=exited) || true
+        - docker volume rm $(docker volume ls -qf dangling=true) || true
+        - docker network rm $(docker network ls -q -f name="${COMPOSE_PROJECT_NAME}*") || true
+    when: always
+
+# This remove the images
+cleanup:images:
+    stage: cleanup
+    script:
+        # Ezt adtuk hozzá pluszban, ebben más, mint a cleanup
+        - docker rmi -f $(docker images -q "${COMPOSE_PROJECT_NAME}*" | sort -u) || true
+    when: manual

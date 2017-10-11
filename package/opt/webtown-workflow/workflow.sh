@@ -23,7 +23,7 @@ CLONE_REPOSITORY=$(awk '/^repository/{print $3}' "${CONFIG}")
 PROGRAM_REPOSITORY=$(awk '/^program_repository/{print $3}' "${CONFIG}")
 
 source ${DIR}/lib/_css.sh
-source ${DIR}/lib/_help.sh
+source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
 
 case $1 in
