@@ -13,7 +13,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 source ${DIR}/../webtown-workflow/lib/_css.sh
-source ${DIR}/lib/_wizard_help.sh
+source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
 source ${DIR}/../webtown-workflow/lib/_functions.sh
 
 BASE_RUN="docker-compose -f ${DIR}/symfony/docker-compose.yml run --rm \
