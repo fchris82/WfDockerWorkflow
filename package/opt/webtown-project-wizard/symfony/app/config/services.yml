@@ -84,11 +84,20 @@ services:
             - { name: wizard, group: 'Decorators', priority: 10 }
         public: true
 
-    AppBundle\Wizard\Docker\Wide:
+#    AppBundle\Wizard\Docker\Wide:
+#        arguments:
+#            - %skeleton_base_dir%
+#            - "@twig"
+#            - "@filesystem"
+#        tags:
+#            - { name: wizard, group: 'Decorators', priority: 11 }
+#        public: true
+
+    AppBundle\Wizard\Ez\EzBuildMakefileWizard:
         arguments:
             - %skeleton_base_dir%
             - "@twig"
             - "@filesystem"
         tags:
-            - { name: wizard, group: 'Decorators', priority: 11 }
+            - { name: wizard, group: 'Decorators', priority: 20 }
         public: true

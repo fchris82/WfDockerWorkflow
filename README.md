@@ -144,3 +144,167 @@ A tesztekhez csinálj takarító scriptet, lehetőleg ne szemeteld össze a gazd
 részteszteket futtatva ne kelljen mindent előlről létrehozni.
 
 > Mindenképpen figyelj a `<tab>`-okra, a `$$` jelekre és a több soros parancsoknál a `; \` záró részre!
+
+Webtown Project Wizard
+======================
+
+## Installation
+
+> You need `sudo` permission!
+
+1. Download the `deb` package from repository
+    ```bash
+    cd /tmp && git archive --remote=git@gitlab.webtown.hu:webtown/project-decorator-installer.git HEAD webtown-project-wizard.deb | tar -x
+    ```
+2. Install package:
+    ``` bash
+    sudo dpkg -i webtown-project-wizard.deb || sudo apt-get -f install && sudo dpkg -i webtown-project-wizard.deb
+    ```
+
+    A vége azért van ott, ha függőségi probléma lépne fel. Sajnos nem lehet máshogy megoldani.
+
+3. Remove `deb` file:
+    ```bash
+    rm -f webtown-project-wizard.deb && cd ~
+    ```
+
+### Upgrade the software
+
+> You need `sudo` permission!
+
+    wizard -u
+
+## Configuration
+
+If you wish alternative clone repository, change repository parameter in the `/etc/webtown-project-wizard/repository.txt` file
+
+## Usage
+
+    cd /base/project/src/directory
+    wizard
+
+# ★ For developers
+
+## Install
+
+You have to install symfony packages with composer:
+
+```bash
+make -s install
+```
+
+## (Re)generate deb package
+
+    make -s [rebuild] (KEEPVERSION=1|VERSION=1.2)
+
+### Actions
+
+| Action           | Description                                                                             |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| `rebuild`        | **Default.** Build the package **and** cleanup.                                         |
+| `build`          | Build the package **without** cleanup. Here you can check the `tmp` directory contains. |
+| `versionupgrade` | Upgrade the version number in `package/DEBIAN/control` file.                            |
+| `rsync`          | Copy package files to `tmp`  without some directories or files.                         |
+| `clean`          | Remove the `tmp` directory                                                              |
+| `install`        | For developers: install the symfony with composer                                       |
+
+### Parameters
+
+| Parameter       | Description                           |
+| -------------   | ------------------------------------- |
+| `KEEPVERSION=1` | Doesn't change the version number     |
+| `VERSION=(...)` | Set the new version number directly   |
+
+> If `KEEPVERSION` is setted then the `VERSION` doesn't matter.
+
+### Developing with Symfony
+
+Go to the symfony directory and there you can run the commands:
+
+```bash
+cd package/opt/webtown-project-wizard
+
+# Run tests
+wizard.sh -t
+
+# Rebuild docker containers and clean cache
+wizard.sh -r
+
+# Clean cache only
+rm -rf symfony/var/cache/*
+
+# Enter the container
+wizard.sh -e
+```
+
+If you want to test in a project, you have to use absolute path to wizard, eg:
+
+```bash
+/home/chris/www/webtown-workflow/package/opt/webtown-project-wizard/wizard.sh
+```
+
+#### Hogyan hozz létre új Wizard-ot?
+
+Minden Wizard alapvetően arról szól, hogy vmilyen úton-módon fájlokat hoz létre, átalakítja a könyvtár struktúrát vagy vmi hasonlót. Mindegyik Wizard-nak meg kell valósítania a
+`WizardInterface`-t, amelyiket "kiválaszthatónak" akarjuk, annak pedig a `PublicWizardInterface`-t is! Jelenleg a rendszer a következő alap wizárdokat ismeri és támogatja:
+
+**AppBundle\Wizard\BaseSkeletonWizard**
+
+A Skeleton Wizard-nál létre kell hozni egy könyvtárat a `/package/opt/webtown-project-wizard/symfony/src/AppBundle/Resources/skeletons` könyvtárban. Ez a könyvtár fog megfelelni a "projekt gyökerének". Az itt található
+könyvtár struktúrát fogja átmásolni a projektbe. Minden fájlt twig-ként kezel, tehát használhatod az `{% if ... %}` vagy a `{{ valtozo }}` megoldásokat. A változók megadását a `setVariables()` metódusban
+tudod megtenni, a `$this->ask()` segítségével bekérhetsz a felhasználótól is adatokat. Ez talán a legalkalmasabb a legtöbb feladatra.
+
+> **Tipp:** Megadhatsz több könyvtárat is, ahonnan másolnia kell, így az átfedésben lévő Wizard-oknál nem kell ugyanazt duplikálni. Erre láthatsz példát a `AppBundle/Wizard/Docker/Slim.php` és a
+> `AppBundle/Wizard/Docker/Wide/CreateEnvironmentsSkeleton.php` fájlban.
+
+**AppBundle\Wizard\BaseGitCloneWizard**
+
+Git clone-nal tud fájlokat leszedni. Ez leginkább akkor kellhet, amikor inicializálni szeretnél egy projektet.
+
+**AppBundle\Wizard\BaseChainWizard**
+
+Egymás után fűzhetsz wizardokat. Ezekkel komplexebb Wizardok hozhatóak létre, ráadásul van pár extra helper, amivel a futás során `git commit`-okat hozhatsz létre, vagy éppen `composer require`-rel
+telepíthetsz.
+
+```php
+<?php
+class WideExtra extends BaseChainWizard implements PublicWizardInterface
+{
+    protected function getWizardNames()
+    {
+        return [
+            // Ellenőrizzük, hogy "tiszta-e a terep". Ha nem, itt exception-t dob!
+            new CheckGitUncommittedChangesForChain(),
+            // Betöltünk egy tetszőleges Wizard-ot. Az alábbi nem public, nem készült belőle service!
+            new MoveProjectFiles($this->filesystem),
+            // Commitolunk egyet
+            new GitCommitWizardForChain('Move project files'),
+            // Meghívunk egy másik "unpublic" wizard-ot
+            new CreateEnvironmentsSkeleton($this->baseDir, $this->twig, $this->filesystem),
+
+            // Meghívunk egy PUBLIC wizardot, itt elég csak a név megadása
+            PhpCsFixSkeleton::class,
+            // Futtatjuk `composer require` parancsot
+            new ComposerInstallForChain($this),
+            // Csinálunk egy git commit-ot megint
+            new GitCommitWizardForChain('Add PHP-CS-FIXER'),
+        ];
+    }
+
+    // [...]
+}
+```
+
+**Egyéb, AppBundle\Wizard\BaseWizard**
+
+Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizard\BaseWizard`-ot kiindulási alapnak. A `build()`-ban garázdálkodhatunk szabadon.
+
+> #### Tipps
+>
+> The PHPStorm can't detect the symfony project. You have to switch on manualy.
+>   - Settings » Languages & Frameworks » PHP » Symfony ⟶ **Enable plugins for this project**
+>   - Set the directories with `package/opt/webtown-project-wizard/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
+>   - Settings » Other settings » Framework Integration ⟶ Select the **Symfony**
+>
+> You have to set `src` directory as *Source Root directory* and the `tests` directory as *Test Root directory*:
+>   - right click on the directory » Mark directory as... ⟶ \[select\]
