@@ -3,6 +3,10 @@
 #                                          C L E A N   O L D   W I Z A R D
 # ----------------------------------------------------------------------------------------------------------------------
 
+if dpkg -i | grep webtown-project-wizard; then
+    dpkg -r webtown-project-wizard
+fi
+
 if [ -d /opt/webtown-project-wizard/lib ]; then
     rm -rf /opt/webtown-project-wizard
 fi
