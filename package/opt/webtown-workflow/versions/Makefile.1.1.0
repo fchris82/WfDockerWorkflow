@@ -201,7 +201,7 @@ __branch: __validate_git_uncommitted_changes __validate_gitflow_args
 	$(foreach CL,$(COMPOSER_LOCK),$(CMD_MAKE) composer ARGS="install")
 
     # git checkout -B feature/[...] [origin/develop]
-	git checkout -B $(PREFIX)/$(lastword $(ARGS)) $(FROM_BRANCH)
+	git checkout -B --no-track $(PREFIX)/$(lastword $(ARGS)) $(FROM_BRANCH)
     # git pull <current-branch> (if exists on origin)
 	if [ $$(git ls-remote --heads origin | grep -c $$(git rev-parse --abbrev-ref HEAD)) != 0 ]; then git pull; fi;
 

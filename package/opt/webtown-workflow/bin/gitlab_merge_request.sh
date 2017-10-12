@@ -40,9 +40,9 @@ echo "Project path:          ${GREEN}${PROJECT_PATH}${RESTORE}"
 echo "Current branch:        ${GREEN}${CURRENT_BRANCH}${RESTORE}"
 echo ""
 echo "Update repositories..."
-git fetch origin master:master || exit 1
+git fetch -u origin master:master || exit 1
 echo_pass "origin/master"
-git fetch origin $DEVELOP_BRANCH_NAME:$DEVELOP_BRANCH_NAME || exit 1
+git fetch -u origin $DEVELOP_BRANCH_NAME:$DEVELOP_BRANCH_NAME || exit 1
 echo_pass "origin/${DEVELOP_BRANCH_NAME}"
 
 # Is there any diff with master?

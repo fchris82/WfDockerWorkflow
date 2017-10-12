@@ -155,10 +155,10 @@ __validate_gitflow_args: __validate_args_no_empty
 
 # make -f .project.makefile __branch ORIGIN_BRANCH="develop" PREFIX="feature" ARGS="..."
 __branch: __validate_git_uncommitted_changes __validate_gitflow_args
-    # !--from-this --> git fetch origin develop/develop
+    # !--from-this --> git fetch -u origin develop/develop
     # Leszedjük a legfrissebb develop verziót
     ifeq (,$(findstring --from-this,$(ARGS)))
-		git fetch origin $(ORIGIN_BRANCH):$(ORIGIN_BRANCH)
+		git fetch -u origin $(ORIGIN_BRANCH):$(ORIGIN_BRANCH)
 		$(eval FROM_BRANCH := origin/$(ORIGIN_BRANCH))
     else
         # git pull <current-branch> (if exists on origin)
