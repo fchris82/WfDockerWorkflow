@@ -53,6 +53,32 @@ Lehetőség van arra, hogy HTTP AUTH-tal levédd a felületet. Ehhez szükségü
                 - "${PROJECT_COMPOSE_DIR}/nginx/http_auth.conf:/etc/nginx/conf.d/http_auth.conf:ro"
     ```
 
+### Adatbázis elérés local-ban fix IP címmel
+
+Sajnos nem megoldható TCP kapcsolatoknál az nginx proxy, mert TCP alatt nincs domain, csak IP címünk. Jelenleg úgy lehet megoldani az adatbázisok ütközésének elkerülését, hogy létre kell hozni egy saját network-öt, megadott IP cím tartománnyal és azon belül kell megadni az adatbázis service-nek fix IP címet. A `10.*.*.*` formátumot kövesd! Ennek használatához szerkeszd a `docker-compose.local.yml` fájlt:
+
+```yml
+version: "2"
+
+services:
+    mysql:
+        # If you want to use fix IP. You have to uncomment the `networks.project` too at the bottom of this file!!!!
+        networks:
+            project:
+                ipv4_address: ${DOCKER_PROJECT_NETWORK}.2
+
+networks:
+    # If you want to use fix IP
+    project:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: ${DOCKER_PROJECT_NETWORK}.0/25
+                  gateway: ${DOCKER_PROJECT_NETWORK}.1
+```
+
+Ha a fenti példában a `DOCKER_PROJECT_NETWORK = 10.1.0`, akkor az adatbázist a `10.1.0.2` IP címen lehet elérni. Nyilván csak akkor, ha fut a container.
+
 ## Work
 
 | Parancs | Leírás |

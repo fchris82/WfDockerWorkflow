@@ -4,6 +4,10 @@ services:
 #    mysql:
 #        ports:
 #            - "${MYSQL_PUBLIC_PORT}:3306"
+#        # If you want to use fix IP. You have to uncomment the `networks.project` too at the bottom of this file!!!!
+#        networks:
+#            project:
+#                ipv4_address: ${DOCKER_PROJECT_NETWORK}.2
 
     web:
         networks:
@@ -31,3 +35,10 @@ networks:
     reverse-proxy:
         external:
             name: ${DOCKER_PROXY_NETWORK}
+#    # If you want to use fix IP
+#    project:
+#        driver: bridge
+#        ipam:
+#            config:
+#                - subnet: ${DOCKER_PROJECT_NETWORK}.0/25
+#                  gateway: ${DOCKER_PROJECT_NETWORK}.1

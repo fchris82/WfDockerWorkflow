@@ -31,6 +31,7 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 .PHONY: info
 info::
 	@echo "$$PROJECT_INFO"
+	@echo "\n    DB fix ip: \033[33m$$(docker inspect -f "{{range .NetworkSettings.Networks}}{{if .IPAMConfig}}{{.IPAddress}}{{end}}    {{end}}" $$($(CMD_DOCKER_BASE) ps -q $(DOCKER_DB_NAME)))\033[0m"
 	@echo "\n    Docker compose command base:"
 	@RESTORE="\\\033[0m"; \
 		ENV_NAME="\\\033[33m"; \
