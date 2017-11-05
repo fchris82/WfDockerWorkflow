@@ -17,6 +17,12 @@ ${BOLD}${WHITE}Only any project directory:${RESTORE}
   ${YELLOW}info${RESTORE}                      ${GREEN}Show some important project information${RESTORE}
 
 Eg: ${YELLOW}wf help${RESTORE}
+
+${BOLD}${WHITE}
+Debug reverse proxy
+===================
+${RESTORE}
+${YELLOW}docker exec nginx-reverse-proxy cat /etc/nginx/conf.d/default.conf${RESTORE}
 EOM
 
 function showHelp {
