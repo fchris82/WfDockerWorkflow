@@ -76,10 +76,12 @@ case $1 in
         fi
         docker stop nginx-reverse-proxy
         docker rm nginx-reverse-proxy
-        docker run -d -p ${REVERSE_PROXY_PORT}:80 \
+        docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
             --name nginx-reverse-proxy \
             --net reverse-proxy \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
+            -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
+            -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
             --restart always \
             jwilder/nginx-proxy
     ;;
