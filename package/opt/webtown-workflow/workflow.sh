@@ -90,13 +90,13 @@ case $1 in
         COMMAND="$1"
         shift
 
-        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo "0")
-        if [ "${PROJECT_ROOT_DIR}" == "0" ]; then
+        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
+        PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
+        # Deploy esetén nem biztos, hogy van .git könyvtár, ellenben ettől még a projekt fájl létezhet
+        if [ "${PROJECT_ROOT_DIR}" == "." ] && [ ! -f "${PROJECT_MAKEFILE}" ]; then
             echo_fail "You are not in project directory! Git top level is missing!"
             quit
         fi
-
-        PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
         if [ ! -f "${PROJECT_MAKEFILE}" ]; then
             echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
             quit

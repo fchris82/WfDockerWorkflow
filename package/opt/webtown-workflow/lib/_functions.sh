@@ -3,7 +3,19 @@
 LOCKFILE="/var/lock/`basename $0`"
 
 function escape {
-  echo "${@//\"/\\\"}"
+    C=();
+    whitespace="[[:space:]]"
+    for i in "$@"
+    do
+        if [[ $i =~ $whitespace ]]
+        then
+            i=\"$i\"
+        fi
+        C+=("$i")
+    done
+    echo ${C[*]}
+#
+#  echo "${C//\"/\\\"}"
 }
 
 function lock {
