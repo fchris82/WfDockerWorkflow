@@ -37,6 +37,7 @@ DB_NAME     := symfony
 DB_URL      := mysql://root:$(DB_PASSWORD)@$(DOCKER_DB_NAME)/$(DB_NAME)
 PHP_VERSION := {{ php_version }}
 
+{% if sf_version < 4 %}
 # Symfony environments. If you add new then you have to register it in the `docker-compose.yml` file (`environment` block) and add to CMD_DOCKER_ENV too!
 SYMFONY_ENV := prod
 SYMFONY_DEBUG :=
@@ -44,6 +45,7 @@ SYMFONY_CLASSLOADER_FILE :=
 SYMFONY_HTTP_CACHE :=
 SYMFONY_HTTP_CACHE_CLASS :=
 SYMFONY_TRUSTED_PROXIES :=
+{% endif %}
 
 # HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
 # Don't forget to escape the $ sign: $ --> \$$
@@ -154,12 +156,14 @@ CMD_DOCKER_ENV        := $(DOCKER_ENVIRONMENTS) \
                             MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
                             DB_NAME=$(DB_NAME) \
                             DATABASE_URL=$(DB_URL) \
+{% if sf_version < 4 %}
                             SYMFONY_ENV=$(SYMFONY_ENV) \
                             SYMFONY_DEBUG=$(SYMFONY_DEBUG) \
                             SYMFONY_CLASSLOADER_FILE=$(SYMFONY_CLASSLOADER_FILE) \
                             SYMFONY_HTTP_CACHE=$(SYMFONY_HTTP_CACHE) \
                             SYMFONY_HTTP_CACHE_CLASS=$(SYMFONY_HTTP_CACHE_CLASS) \
                             SYMFONY_TRUSTED_PROXIES=$(SYMFONY_TRUSTED_PROXIES) \
+{% endif %}
                             DOCKER_USER=$(DOCKER_USER) \
                             SSH_PATH=$(SSH_PATH) \
                             WWW_DATA_UID=$(WWW_DATA_UID) \

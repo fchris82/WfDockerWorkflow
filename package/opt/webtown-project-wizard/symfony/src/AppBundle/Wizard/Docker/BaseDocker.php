@@ -128,19 +128,32 @@ abstract class BaseDocker extends BaseSkeletonWizard
         $variables['php_version'] = $this->ask($phpVersionQuestion);
 
         $symfonyVersionQuestion = new ChoiceQuestion(
-            'Which symfony version do you want to use? [<info>3.*</info>]',
-            ['3.*', '2.* (eZ project!)'],
+            'Which symfony version do you want to use? [<info>4.*</info>]',
+            ['4.*', '3.* (eZ project!)', '2.* [deprecated]'],
             0
         );
         $symfonyVersion = $this->ask($symfonyVersionQuestion);
         switch ($symfonyVersion) {
-            case '3.*':
+            case '4.*':
+                $variables['sf_version']     = 4;
                 $variables['sf_console_cmd'] = 'bin/console';
-                $variables['shared_dirs'] = 'var';
+                $variables['shared_dirs']    = 'var';
+                $variables['web_directory']  = 'public';
+                $variables['index_file']     = 'index.php';
                 break;
-            case '2.* (eZ project!)':
+            case '3.* (eZ project!)':
+                $variables['sf_version']     = 3;
+                $variables['sf_console_cmd'] = 'bin/console';
+                $variables['shared_dirs']    = 'var';
+                $variables['web_directory']  = 'web';
+                $variables['index_file']     = 'app.php';
+                break;
+            case '2.* [deprecated]':
+                $variables['sf_version']     = 2;
                 $variables['sf_console_cmd'] = 'app/console';
-                $variables['shared_dirs'] = 'app/cache app/logs';
+                $variables['shared_dirs']    = 'app/cache app/logs';
+                $variables['web_directory']  = 'web';
+                $variables['index_file']     = 'app.php';
                 break;
             default:
                 throw new \InvalidArgumentException('Invalid selection! Missiong settings!');

@@ -148,32 +148,6 @@ részteszteket futtatva ne kelljen mindent előlről létrehozni.
 Webtown Project Wizard
 ======================
 
-## Installation
-
-> You need `sudo` permission!
-
-1. Download the `deb` package from repository
-    ```bash
-    cd /tmp && git archive --remote=git@gitlab.webtown.hu:webtown/project-decorator-installer.git HEAD webtown-project-wizard.deb | tar -x
-    ```
-2. Install package:
-    ``` bash
-    sudo dpkg -i webtown-project-wizard.deb || sudo apt-get -f install && sudo dpkg -i webtown-project-wizard.deb
-    ```
-
-    A vége azért van ott, ha függőségi probléma lépne fel. Sajnos nem lehet máshogy megoldani.
-
-3. Remove `deb` file:
-    ```bash
-    rm -f webtown-project-wizard.deb && cd ~
-    ```
-
-### Upgrade the software
-
-> You need `sudo` permission!
-
-    wizard -u
-
 ## Configuration
 
 If you wish alternative clone repository, change repository parameter in the `/etc/webtown-project-wizard/repository.txt` file
@@ -185,39 +159,7 @@ If you wish alternative clone repository, change repository parameter in the `/e
 
 # ★ For developers
 
-## Install
-
-You have to install symfony packages with composer:
-
-```bash
-make -s install
-```
-
-## (Re)generate deb package
-
-    make -s [rebuild] (KEEPVERSION=1|VERSION=1.2)
-
-### Actions
-
-| Action           | Description                                                                             |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| `rebuild`        | **Default.** Build the package **and** cleanup.                                         |
-| `build`          | Build the package **without** cleanup. Here you can check the `tmp` directory contains. |
-| `versionupgrade` | Upgrade the version number in `package/DEBIAN/control` file.                            |
-| `rsync`          | Copy package files to `tmp`  without some directories or files.                         |
-| `clean`          | Remove the `tmp` directory                                                              |
-| `install`        | For developers: install the symfony with composer                                       |
-
-### Parameters
-
-| Parameter       | Description                           |
-| -------------   | ------------------------------------- |
-| `KEEPVERSION=1` | Doesn't change the version number     |
-| `VERSION=(...)` | Set the new version number directly   |
-
-> If `KEEPVERSION` is setted then the `VERSION` doesn't matter.
-
-### Developing with Symfony
+## Developing with Symfony
 
 Go to the symfony directory and there you can run the commands:
 
@@ -243,7 +185,7 @@ If you want to test in a project, you have to use absolute path to wizard, eg:
 /home/chris/www/webtown-workflow/package/opt/webtown-project-wizard/wizard.sh
 ```
 
-#### Hogyan hozz létre új Wizard-ot?
+### Hogyan hozz létre új Wizard-ot?
 
 Minden Wizard alapvetően arról szól, hogy vmilyen úton-módon fájlokat hoz létre, átalakítja a könyvtár struktúrát vagy vmi hasonlót. Mindegyik Wizard-nak meg kell valósítania a
 `WizardInterface`-t, amelyiket "kiválaszthatónak" akarjuk, annak pedig a `PublicWizardInterface`-t is! Jelenleg a rendszer a következő alap wizárdokat ismeri és támogatja:
