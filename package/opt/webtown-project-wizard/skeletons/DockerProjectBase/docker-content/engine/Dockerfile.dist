@@ -1,5 +1,6 @@
 FROM ubuntu:16.04
 
+ARG TIMEZONE
 ENV LANG en_US.UTF-8
 RUN apt-get clean && apt-get update \
     && apt-get install -y locales wget curl software-properties-common ssh build-essential gosu \
@@ -10,6 +11,7 @@ RUN apt-get clean && apt-get update \
     && usermod -d /home/user www-data \
     && chown www-data /home/user \
     && touch /home/user/.gitignore && git config --global core.excludesfile '/home/user/.gitignore' \
+    && ln -snf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime && echo ${TIMEZONE} > /etc/timezone \
     && rm -rf /var/lib/apt/lists/*
 
 #RUN ssh-keyscan bitbucket.org > /root/.ssh/known_hosts

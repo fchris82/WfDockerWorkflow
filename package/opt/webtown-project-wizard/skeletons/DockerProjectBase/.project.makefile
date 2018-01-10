@@ -27,6 +27,7 @@ SHARED_DIRS			:=	{{ shared_dirs }}
 DIST_FILES			:=	.project.env \
 						$(DOCKER_PROVISIONING)/docker-compose.local.yml \
 						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/Dockerfile \
+						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/config/custom.php.ini \
 						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/config/xdebug.ini
 GITFLOW_DEVELOP :=  develop
 GITFLOW_FEATURE :=  feature
@@ -36,6 +37,14 @@ DB_PASSWORD := root
 DB_NAME     := symfony
 DB_URL      := mysql://root:$(DB_PASSWORD)@$(DOCKER_DB_NAME)/$(DB_NAME)
 PHP_VERSION := {{ php_version }}
+
+# PHP environments
+TIMEZONE               := Europe/Budapest
+PHP_MAX_EXECUTION_TIME := 30
+PHP_MEMORY_LIMIT       := 128M
+PHP_MAX_UPLOAD         := 50M
+PHP_MAX_FILE_UPLOADS   := 20
+PHP_MAX_POST           := 100M
 
 {% if sf_version < 4 %}
 # Symfony environments. If you add new then you have to register it in the `docker-compose.yml` file (`environment` block) and add to CMD_DOCKER_ENV too!
@@ -156,6 +165,12 @@ CMD_DOCKER_ENV        := $(DOCKER_ENVIRONMENTS) \
                             MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
                             DB_NAME=$(DB_NAME) \
                             DATABASE_URL=$(DB_URL) \
+                            TIMEZONE=$(TIMEZONE) \
+                            PHP_MAX_EXECUTION_TIME=$(PHP_MAX_EXECUTION_TIME) \
+                            PHP_MEMORY_LIMIT=$(PHP_MEMORY_LIMIT) \
+                            PHP_MAX_UPLOAD=$(PHP_MAX_UPLOAD) \
+                            PHP_MAX_FILE_UPLOADS=$(PHP_MAX_FILE_UPLOADS) \
+                            PHP_MAX_POST=$(PHP_MAX_POST) \
 {% if sf_version < 4 %}
                             SYMFONY_ENV=$(SYMFONY_ENV) \
                             SYMFONY_DEBUG=$(SYMFONY_DEBUG) \

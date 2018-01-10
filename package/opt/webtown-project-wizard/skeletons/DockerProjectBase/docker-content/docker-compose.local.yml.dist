@@ -22,9 +22,13 @@ services:
     engine:
         volumes:
             # Local settings
+            - "${PROJECT_COMPOSE_DIR}/engine/config/custom.php.ini:/etc/php/${PHP_VERSION}/cli/conf.d/99-custom.ini"
+            - "${PROJECT_COMPOSE_DIR}/engine/config/custom.php.ini:/etc/php/${PHP_VERSION}/fpm/conf.d/99-custom.ini"
             - "${PROJECT_COMPOSE_DIR}/engine/config/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini"
             - "${PROJECT_COMPOSE_DIR}/engine/config/xdebug.ini:/etc/php/${PHP_VERSION}/fpm/conf.d/xdebug.ini"
 #            # Global settings
+#            - "~/.docker/custom.php.ini:/etc/php/${PHP_VERSION}/cli/conf.d/99-custom.ini"
+#            - "~/.docker/custom.php.ini:/etc/php/${PHP_VERSION}/fpm/conf.d/99-custom.ini"
 #            - "~/.docker/xdebug.ini:/etc/php/${PHP_VERSION}/cli/conf.d/xdebug.ini"
 #            - "~/.docker/xdebug.ini:/etc/php/${PHP_VERSION}/fpm/conf.d/xdebug.ini"
         environment:

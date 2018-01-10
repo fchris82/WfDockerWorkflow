@@ -53,18 +53,27 @@ services:
             context: ${PROJECT_COMPOSE_DIR}/engine
             args:
                 - PHP_VERSION
+                - TIMEZONE
         environment:
             - CI
             - PHP_VERSION
             - WWW_DATA_UID
             - WWW_DATA_GID
             - DATABASE_URL
+            - TIMEZONE
+            - PHP_MAX_EXECUTION_TIME
+            - PHP_MEMORY_LIMIT
+            - PHP_MAX_UPLOAD
+            - PHP_MAX_FILE_UPLOADS
+            - PHP_MAX_POST
+{% if sf_version < 4 %}
             - SYMFONY_ENV
             - SYMFONY_DEBUG
             - SYMFONY_CLASSLOADER_FILE
             - SYMFONY_HTTP_CACHE
             - SYMFONY_HTTP_CACHE_CLASS
             - SYMFONY_TRUSTED_PROXIES
+{% endif %}
         volumes:
             # Full project files
             - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
