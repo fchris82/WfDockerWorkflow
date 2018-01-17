@@ -60,6 +60,10 @@ SYMFONY_TRUSTED_PROXIES :=
 # Don't forget to escape the $ sign: $ --> \$$
 HTTP_AUTH_PASS :=
 
+# A Gitlab CI miatt kell definiálni.
+SUDO              := sudo
+DOCKER_PSEUDO_TTY :=
+
 # Check if file exists
 -include .project.env
 
@@ -196,7 +200,7 @@ CMD_DOCKER_BASE       := $(CMD_DOCKER_ENV) docker-compose \
 CMD_DOCKER_RUN        := $(CMD_DOCKER_BASE) run --rm
 CMD_DOCKER_RUN_CLI    := $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
 CMD_DOCKER_EXEC       := $(CMD_DOCKER_BASE) exec
-CMD_DOCKER_EXEC_CLI   := $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
+CMD_DOCKER_EXEC_CLI   := $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
 
 # @@@ Edit
 .PHONY: init
