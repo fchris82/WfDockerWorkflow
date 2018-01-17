@@ -213,7 +213,10 @@ install: up
 #	$(CMD_MAKE) sf ARGS="ezplatform:install clean"
 #	$(CMD_MAKE) sf ARGS="kaliop:migration:migrate -n"
 	$(CMD_MAKE) sf ARGS="doctrine:migrations:migrate -n --allow-no-migration"
-#	$(CMD_MAKE) sf ARGS="doctrine:fixtures:load -n"
+#    # If you wish use it on dev and test mode
+#    ifneq ($(SYMFONY_ENV),"prod")
+#		$(CMD_MAKE) sf ARGS="doctrine:fixtures:load -n"
+#    endif
 #	$(CMD_DOCKER_EXEC_CLI) bundle install
 #	$(CMD_DOCKER_EXEC_CLI) npm install
 #	$(CMD_DOCKER_EXEC_CLI) bower install
