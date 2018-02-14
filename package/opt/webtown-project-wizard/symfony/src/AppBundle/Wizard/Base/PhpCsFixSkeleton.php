@@ -61,6 +61,6 @@ class PhpCsFixSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
 
     public function getComposerPackages()
     {
-        return [ComposerInstaller::COMPOSER_DEV => ['friendsofphp/php-cs-fixer:~2.3.3']];
+        return [ComposerInstaller::COMPOSER_DEV => ['friendsofphp/php-cs-fixer']];
     }
 }

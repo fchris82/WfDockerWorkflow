@@ -63,6 +63,6 @@ class PhpMdSkeleton extends BaseSkeletonWizard implements PublicWizardInterface
      */
     public function getComposerPackages()
     {
-        return [ComposerInstaller::COMPOSER_DEV => ['phpmd/phpmd:^2.6']];
+        return [ComposerInstaller::COMPOSER_DEV => ['phpmd/phpmd']];
     }
 }
