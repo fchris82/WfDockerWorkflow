@@ -4,7 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Wizard\Helper\ComposerInstaller;
 use AppBundle\Wizard\Manager;
-use AppBundle\Wizard\WizardInterface;
+use AppBundle\Wizard\PublicWizardInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
@@ -61,7 +61,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
         $choices = [];
         $wizardChoices = [];
         foreach ($wizards as $group => $groupWizards) {
-            /** @var WizardInterface $wizard */
+            /** @var PublicWizardInterface $wizard */
             foreach ($groupWizards as $name => $wizard) {
                 $output->writeln(sprintf('<comment>[%s]</comment> <info>%s</info>', $group, $wizard->getName()));
                 $output->writeln(sprintf('    %s', $wizard->getInfo()));

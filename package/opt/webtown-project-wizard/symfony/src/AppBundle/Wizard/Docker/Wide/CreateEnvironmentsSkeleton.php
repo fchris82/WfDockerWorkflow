@@ -98,9 +98,4 @@ class CreateEnvironmentsSkeleton extends BaseDocker
     {
         return [];
     }
-
-    public function getName()
-    {
-        return "Create docker wide environment";
-    }
 }

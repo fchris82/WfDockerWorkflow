@@ -14,8 +14,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface WizardInterface
 {
-    public function getName();
-
     public function isBuilt($targetProjectDirectory);
 
     /**
