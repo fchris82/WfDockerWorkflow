@@ -80,4 +80,9 @@ class MoveProjectFiles extends BaseWizard
 
         return $targetProjectDirectory;
     }
+
+    public function getName()
+    {
+        return 'Move project files';
+    }
 }
