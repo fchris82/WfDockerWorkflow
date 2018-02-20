@@ -43,7 +43,7 @@ class MoveProjectFiles extends BaseWizard
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

@@ -88,7 +88,7 @@ class EzBuildMakefileWizard extends BaseSkeletonWizard implements PublicWizardIn
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

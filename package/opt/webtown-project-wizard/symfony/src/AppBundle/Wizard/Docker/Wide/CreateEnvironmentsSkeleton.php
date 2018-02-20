@@ -94,7 +94,7 @@ class CreateEnvironmentsSkeleton extends BaseDocker
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

@@ -128,7 +128,7 @@ class Wizard implements WizardInterface, PublicWizardInterface
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         // TODO: Implement getComposerPackages() method.
     }

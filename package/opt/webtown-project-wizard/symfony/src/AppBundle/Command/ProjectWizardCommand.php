@@ -58,61 +58,51 @@ class ProjectWizardCommand extends ContainerAwareCommand
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
-        // GROUP
-        $groupNames = array_keys($wizards);
-        // Ha csak 1 csoport van, akkor rögtön "belelépünk" és nem kérdezzük meg, hogy melyiket szeretné használni.
-        if (count($wizards) == 1) {
-            $group = reset($groupNames);
-        } else {
-            $question = new ChoiceQuestion('Select group', $groupNames);
-            $group = $helper->ask($input, $output, $question);
-        }
-        $this->writeTitle($output, $group);
+        $choices = [];
+        $wizardChoices = [];
+        foreach ($wizards as $group => $groupWizards) {
+            /** @var WizardInterface $wizard */
+            foreach ($groupWizards as $name => $wizard) {
+                $output->writeln(sprintf('<comment>[%s]</comment> <info>%s</info>', $group, $wizard->getName()));
+                $output->writeln(sprintf('    %s', $wizard->getInfo()));
+                $output->writeln('');
 
-        // WIZARDS
-        /** @var WizardInterface $wizard */
-        foreach ($wizards[$group] as $name => $wizard) {
-            $output->writeln(sprintf('<info>%s</info>', $wizard->getName()));
-            $output->writeln(sprintf('    %s', $wizard->getInfo()));
-            $output->writeln('');
+                $key = sprintf('<comment>[%s]</comment> %s', $group, $wizard->getName());
+                $choices[] = $key;
+                $wizardChoices[$key] = $wizard;
+            }
         }
 
-        $wizardNames = array_keys($wizards[$group]);
-        // Ha az adott csoportban csak 1 Wizard van, akkor azt elindítjuk.
-        if (count($wizardNames) == 1) {
-            $selected = [reset($wizardNames)];
-        } else {
-            $question = new ChoiceQuestion('Select wizard', $wizardNames);
-            // @todo (Chris) Ezt lehet, hogy törölni kellene, mivel néhány Wizard ütközhet, ha egymás után hívjuk.
-            $question->setMultiselect(true);
-            $selected = $helper->ask($input, $output, $question);
-        }
+        $question = new ChoiceQuestion('Select wizard (multiselect!)', $choices);
+        // @todo (Chris) Ezt lehet, hogy törölni kellene, mivel néhány Wizard ütközhet, ha egymás után hívjuk.
+        $question->setMultiselect(true);
+        $selected = $helper->ask($input, $output, $question);
 
         // BUILDS
-        foreach ($selected as $wizardName) {
-            $wizard = $wizards[$group][$wizardName];
+        foreach ($selected as $key) {
+            $wizard = $wizardChoices[$key];
             $wizard
                 ->setCommand($this)
                 ->setInput($input)
                 ->setOutput($output);
 
-            $this->writeTitle($output, sprintf('[%s] %s', $group, $wizardName));
+            $this->writeTitle($output, $key);
             $output->writeln($wizard->getInfo());
 
             // @todo (Chris) Ez ne egy fix könyvtárra mutasson!
             $targetProjectDirectory = $wizard->build($_SERVER['PWD']);
 
             // A composer require paranccsal bekötjök azokat a programokat, amik szükségesek
-            ComposerInstaller::installComposerPackages($targetProjectDirectory, $wizard->getComposerPackages(), $output);
+            ComposerInstaller::installComposerPackages($targetProjectDirectory, $wizard->getRequireComposerPackages(), $output);
         }
     }
 
-    protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'comment')
+    protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'fg=white')
     {
         // 2 sort kihagyunk
         $output->writeln("\n");
         $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen($title))));
+        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen(strip_tags($title)))));
         $output->writeln('');
     }
 }

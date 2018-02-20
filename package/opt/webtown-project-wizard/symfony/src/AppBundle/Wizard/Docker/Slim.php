@@ -118,7 +118,7 @@ class Slim extends BaseDocker implements PublicWizardInterface
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

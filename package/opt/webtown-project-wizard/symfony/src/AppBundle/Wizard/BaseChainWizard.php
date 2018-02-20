@@ -92,7 +92,7 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
                     file_put_contents(__DIR__ . '/../../../log1.txt', print_r(array_slice($simple, 0, 5), true));
                 }
                 // Kigyűjtjük, hogy milyen composer csomagokat kell telepíteni. A `ComposerInstallForChain` osztállyal lehet futtatni
-                $this->composerPackages = $this->deepArrayMerge($this->composerPackages, $wizard->getComposerPackages());
+                $this->composerPackages = $this->deepArrayMerge($this->composerPackages, $wizard->getRequireComposerPackages());
             }
         }
 
@@ -101,7 +101,7 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
 
     public function installComposerPackages($targetProjectDirectory)
     {
-        $composerPackages = $this->getComposerPackages();
+        $composerPackages = $this->getRequireComposerPackages();
         ComposerInstaller::installComposerPackages($targetProjectDirectory, $composerPackages, $this->output);
 
         // Reset!
@@ -119,7 +119,7 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return $this->composerPackages;
     }

@@ -20,12 +20,24 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
 
     public function getInfo()
     {
-        return 'Add .gitlab-ci.yml';
+        return 'Initialize projet to Gitlab CI';
     }
 
     protected function setVariables($targetProjectDirectory)
     {
-        return ['project_name' => sprintf('project_%s', date('YmdHis'))];
+        $installedSfVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/symfony');
+        $sfConsoleCmd = version_compare($installedSfVersion, '3.0', '>=')
+            ? 'bin/console'
+            : 'app/console';
+        $sfBinDir = version_compare($installedSfVersion, '3.0', '>=')
+            ? 'vendor/bin'
+            : 'bin';
+
+        return [
+            'project_name' => sprintf('project_%s', date('YmdHis')),
+            'sf_console_cmd' => $sfConsoleCmd,
+            'sf_bin_dir' => $sfBinDir,
+        ];
     }
 
     protected function doWriteFile($targetPath, $fileContent, $relativePathName)
@@ -44,12 +56,48 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
         return 'GitlabCIProject';
     }
 
-    public function build($targetProjectDirectory)
+    protected function getTemplatesFinder($targetProjectDirectory)
     {
-        return parent::build($targetProjectDirectory);
+        $finder = parent::getTemplatesFinder($targetProjectDirectory);
+
+        $onlyIfExists = [
+            '.docker',
+        ];
+        foreach ($onlyIfExists as $directoryOrFileRelPath) {
+            $checkPath = $targetProjectDirectory . '/' . $directoryOrFileRelPath;
+            if (!$this->filesystem->exists($checkPath)) {
+                $finder->exclude($directoryOrFileRelPath);
+            }
+        }
+
+        return $finder;
     }
 
-    public function getComposerPackages()
+    /**
+     * @param $targetProjectDirectory
+     * @return string|void
+     * @throws \AppBundle\Exception\ProjectHasDecoratedException
+     */
+    public function build($targetProjectDirectory)
+    {
+        $this->currentProjectDirectory = $targetProjectDirectory;
+        $targetProjectDirectory = parent::build($targetProjectDirectory);
+
+        // Ha létezik parameters.yml, akkor annak is létrehozunk egy gitlab verziót
+        if ($this->filesystem->exists($targetProjectDirectory . '/app/config/parameters.yml.dist')) {
+            $this->filesystem->copy(
+                $targetProjectDirectory . '/app/config/parameters.yml.dist',
+                $targetProjectDirectory . '/app/config/parameters.gitlab-ci.yml'
+            );
+            $this->output->writeln(sprintf(
+                '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
+                 'app/config',
+                'parameters.gitlab-ci.yml'
+            ));
+        }
+    }
+
+    public function getRequireComposerPackages()
     {
         return [];
     }

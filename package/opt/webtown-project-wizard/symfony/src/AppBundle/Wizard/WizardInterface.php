@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface WizardInterface
 {
+    public function getName();
+
     public function isBuilt($targetProjectDirectory);
 
     /**
@@ -34,7 +36,7 @@ interface WizardInterface
      *
      * @return array
      */
-    public function getComposerPackages();
+    public function getRequireComposerPackages();
 
     /**
      * @param InputInterface $input

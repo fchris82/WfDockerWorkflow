@@ -48,6 +48,11 @@ services:
 #            - { name: wizard, group: 'Only builders', priority: 50 }
 #        public: true
 
+    AppBundle\Wizard\Symfony\SymfonyComposerBuildWizard:
+        tags:
+            - { name: wizard, group: 'Builders', priority: 50 }
+        public: true
+
     AppBundle\Wizard\Base\GitlabCISkeleton:
         arguments:
             - %skeleton_base_dir%
@@ -99,5 +104,5 @@ services:
             - "@twig"
             - "@filesystem"
         tags:
-            - { name: wizard, group: 'Decorators', priority: 20 }
+            - { name: wizard, group: 'Builders', priority: 20 }
         public: true

@@ -61,7 +61,7 @@ class PhpMdSkeleton extends BaseSkeletonWizard implements PublicWizardInterface
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [ComposerInstaller::COMPOSER_DEV => ['phpmd/phpmd']];
     }

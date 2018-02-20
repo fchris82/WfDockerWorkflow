@@ -130,7 +130,7 @@ class TestSkeletonWizard extends BaseSkeletonWizard
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

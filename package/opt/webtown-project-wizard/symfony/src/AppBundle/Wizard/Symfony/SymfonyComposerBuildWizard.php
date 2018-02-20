@@ -2,8 +2,8 @@
 /**
  * Created by IntelliJ IDEA.
  * User: chris
- * Date: 2017.09.07.
- * Time: 12:30.
+ * Date: 2018.02.19.
+ * Time: 11:52
  */
 
 namespace AppBundle\Wizard\Symfony;
@@ -12,18 +12,13 @@ use AppBundle\Wizard\BaseWizard;
 use AppBundle\Wizard\PublicWizardInterface;
 use Symfony\Component\Console\Question\Question;
 
-/**
- * Class SymfonyBuildWizard.
- *
- * Egy Symfony projektet hoz létre a `symfony` parancs segítségével.
- */
-class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
+class SymfonyComposerBuildWizard extends BaseWizard implements PublicWizardInterface
 {
     protected $askDirectory = true;
 
     public function getName()
     {
-        return 'Symfony';
+        return 'Symfony builder';
     }
 
     public function getInfo()
@@ -36,10 +31,15 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
         return false;
     }
 
+    /**
+     * @param $targetProjectDirectory
+     *
+     * @return string
+     */
     public function build($targetProjectDirectory)
     {
         $directoryQuestion = new Question('Add meg a könyvtárat, ahová szeretnéd telepíteni: ', '.');
-        $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>lts</info>, <info>demo</info>, <info>x.x</info>] ');
+        $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>x.x</info>] ');
 
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
@@ -47,25 +47,24 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
         $targetProjectDirectory = $targetProjectDirectory . DIRECTORY_SEPARATOR . $directory;
 
         $version = $this->ask($versionQuestion);
-        $command = '/usr/local/bin/symfony';
+
+        if (version_compare($version, '4', '<')) {
+            $package = 'symfony/framework-standard-edition';
+        } else {
+            $package = 'symfony/website-skeleton';
+        }
+
         $output = [];
         $this->execCmd(sprintf('mkdir -p %s', $targetProjectDirectory));
-        if ($version == 'demo') {
-            $this->execCmd(sprintf(
-                'cd %s && %s %s sf_demo && mv ./sf_demo/* . && mv ./sf_demo/.[!.]* . && rm -rf ./sf_demo',
+        $this->execCmd(
+            sprintf(
+                'cd %s && composer create-project %s . %s',
                 $targetProjectDirectory,
-                $command,
-                'demo'
-            ), $output);
-        } else {
-            $this->execCmd(sprintf(
-                'cd %s && %s %s . %s',
-                $targetProjectDirectory,
-                $command,
-                'new',
-                $version
-            ), $output);
-        }
+                $package,
+                $version ? '"' . $version . '"' : ''
+            ),
+            $output
+        );
         $this->output->writeln(implode("\n", $output));
 
         $output = [];
@@ -74,13 +73,21 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
         return $targetProjectDirectory;
     }
 
+    /**
+     * EZT ITT NE HASZNÁLD!
+     *
+     * ComposerInstaller::COMPOSER_DEV => [... dev packages ...]
+     * ComposerInstaller::COMPOSER_NODEV => [... nodev packages ...].
+     *
+     * Eg:
+     * <code>
+     *  return [ComposerInstaller::COMPOSER_DEV => ["friendsofphp/php-cs-fixer:~2.3.3"]];
+     * </code>
+     *
+     * @return array
+     */
     public function getRequireComposerPackages()
     {
         return [];
-    }
-
-    public function setAskDirectory($askDirectory)
-    {
-        $this->askDirectory = $askDirectory;
     }
 }

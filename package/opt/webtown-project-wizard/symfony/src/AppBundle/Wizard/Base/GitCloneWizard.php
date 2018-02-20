@@ -50,7 +50,7 @@ class GitCloneWizard extends BaseGitCloneWizard implements PublicWizardInterface
      *
      * @return array
      */
-    public function getComposerPackages()
+    public function getRequireComposerPackages()
     {
         return [];
     }

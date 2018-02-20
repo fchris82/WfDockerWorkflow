@@ -226,7 +226,7 @@ install: up
 #	$(CMD_DOCKER_EXEC_CLI) bower install
 #	$(CMD_DOCKER_EXEC_CLI) gulp build
 	$(CMD_MAKE) sf ARGS="assets:install --symlink"
-	$(CMD_MAKE) sf ARGS="assetic:dump"
+#	$(CMD_MAKE) sf ARGS="assetic:dump"
 	@echo "\033[32m✔ Now you can use the project!\033[0m"
 
 # @@@ Edit

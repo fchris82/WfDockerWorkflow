@@ -10,6 +10,7 @@ namespace AppBundle\Wizard;
 
 use AppBundle\Exception\ProjectHasDecoratedException;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -84,17 +85,17 @@ abstract class BaseSkeletonWizard extends BaseWizard
     abstract protected function doWriteFile($targetPath, $fileContent, $relativePathName);
 
     /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...].
+     * ComposerInstaller::COMPOSER_DEV => [... dev packages ...]
+     * ComposerInstaller::COMPOSER_NODEV => [... nodev packages ...].
      *
      * Eg:
      * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
+     *  return [ComposerInstaller::COMPOSER_DEV => ["friendsofphp/php-cs-fixer:~2.3.3"]];
      * </code>
      *
      * @return array
      */
-    abstract public function getComposerPackages();
+    abstract public function getRequireComposerPackages();
 
     /**
      * Az itt visszaadott fájllal ellenőrizzük, hogy az adott dekorátor lefutott-e már.
@@ -124,6 +125,13 @@ abstract class BaseSkeletonWizard extends BaseWizard
         return $this->filesystem->exists($testDirectory);
     }
 
+    /**
+     * @param string $targetProjectDirectory
+     *
+     * @return string
+     *
+     * @throws ProjectHasDecoratedException
+     */
     public function build($targetProjectDirectory)
     {
         if ($this->isBuilt($targetProjectDirectory)) {
@@ -139,7 +147,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
 
     protected function doBuildFiles($targetProjectDirectory, $templateVariables)
     {
-        foreach ($this->getTemplatesFinder() as $templateFile) {
+        foreach ($this->getTemplatesFinder($targetProjectDirectory) as $templateFile) {
             $targetPath = $this->doBuildFile($targetProjectDirectory, $templateFile, $templateVariables);
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
@@ -188,11 +196,13 @@ abstract class BaseSkeletonWizard extends BaseWizard
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @param string $targetProjectDirectory
      *
      * @return Finder
+     *
+     * @throws \InvalidArgumentException
      */
-    protected function getTemplatesFinder()
+    protected function getTemplatesFinder($targetProjectDirectory)
     {
         $directories = [];
         foreach ((array) $this->getSkeletonTemplateDirectory() as $directory) {
@@ -224,5 +234,36 @@ abstract class BaseSkeletonWizard extends BaseWizard
             ]);
         }
         $table->render();
+    }
+
+    /**
+     * Read the installed version number of a package.
+     *
+     * @param string $targetDirectory
+     *
+     * @param string $packageName
+     *
+     * @return string
+     */
+    protected function getComposerPackageVersion($targetDirectory, $packageName)
+    {
+        $composerLockPath = $targetDirectory . '/composer.lock';
+        if (!$this->filesystem->exists($composerLockPath)) {
+            throw new FileNotFoundException(sprintf('The composer.lock doesn\'t exist in the %s directory!', $targetDirectory));
+        }
+
+        $composer = json_decode(file_get_contents($composerLockPath), true);
+        foreach ($composer['packages'] as $package) {
+            if ($package['name'] == $packageName) {
+                $version = $package['version'];
+                if (preg_match('{[\d\.]+}', $version, $matches)) {
+                    return $matches[0];
+                } else {
+                    throw new \InvalidArgumentException(sprintf('The `%s` package is installed but the version number is invalid: `%s`', $packageName, $version));
+                }
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('The `%s` package isn\'t installed.', $packageName));
     }
 }

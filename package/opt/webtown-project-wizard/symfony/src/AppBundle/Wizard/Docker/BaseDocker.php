@@ -64,7 +64,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
 
     protected function doBuildFiles($targetProjectDirectory, $templateVariables)
     {
-        $finder = $this->getTemplatesFinder();
+        $finder = $this->getTemplatesFinder($targetProjectDirectory);
         $finder->exclude('docker-content');
         foreach ($finder as $templateFile) {
             if ($templateFile->getFilename() == 'docker-content') {
