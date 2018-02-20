@@ -58,7 +58,6 @@ before_script:
         - docker ps
         - /opt/webtown-workflow/workflow.sh docker-compose up -d engine mysql
         - docker ps
-        - docker-compose ps
         - der env
         - der /usr/local/bin/entrypoint.sh --wait-for-init
         - § cat .project.env
