@@ -63,7 +63,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
         foreach ($wizards as $group => $groupWizards) {
             /** @var PublicWizardInterface $wizard */
             foreach ($groupWizards as $name => $wizard) {
-                $output->writeln(sprintf('<comment>[%s]</comment> <info>%s</info>', $group, $wizard->getName()));
+                $output->writeln(sprintf('  <comment>[%s]</comment> <info>%s</info>', $group, $wizard->getName()));
                 $output->writeln(sprintf('    %s', $wizard->getInfo()));
                 $output->writeln('');
 

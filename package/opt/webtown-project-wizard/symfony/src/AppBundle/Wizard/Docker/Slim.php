@@ -91,11 +91,12 @@ class Slim extends BaseDocker implements PublicWizardInterface
      *  }
      * </code>.
      *
-     * @param $targetPath
-     * @param $fileContent
-     * @param $relativePathName
+     * @param string $targetPath
+     * @param string $fileContent
+     * @param string $relativePathName
+     * @param int    $permission
      */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName)
+    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
     {
         switch (strtolower($relativePathName)) {
             case '.gitignore':
@@ -104,6 +105,10 @@ class Slim extends BaseDocker implements PublicWizardInterface
                 break;
             default:
                 $this->filesystem->dumpFile($targetPath, $fileContent);
+
+                if ($permission) {
+                    $this->filesystem->chmod($targetPath, $permission);
+                }
         }
     }
 

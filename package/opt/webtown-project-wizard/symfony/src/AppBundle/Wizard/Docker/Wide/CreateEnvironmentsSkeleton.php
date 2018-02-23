@@ -65,11 +65,12 @@ class CreateEnvironmentsSkeleton extends BaseDocker
      *  }
      * </code>.
      *
-     * @param $targetPath
-     * @param $fileContent
-     * @param $relativePathName
+     * @param string $targetPath
+     * @param string $fileContent
+     * @param string $relativePathName
+     * @param int    $permission
      */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName)
+    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
     {
         switch ($relativePathName) {
             case MoveProjectFiles::TARGET_DIRECTORY . DIRECTORY_SEPARATOR . '.gitkeep':
@@ -78,8 +79,11 @@ class CreateEnvironmentsSkeleton extends BaseDocker
                 $this->filesystem->appendToFile($targetPath, $fileContent);
                 break;
             default:
-                // @todo (Chris) Ezt átírni intelligensre, hogy rákérdez, ha felülírna egy másik fájlt.
                 $this->filesystem->dumpFile($targetPath, $fileContent);
+
+                if ($permission) {
+                    $this->filesystem->chmod($targetPath, $permission);
+                }
         }
     }
 

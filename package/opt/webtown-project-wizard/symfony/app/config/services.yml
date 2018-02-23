@@ -80,6 +80,15 @@ services:
             - { name: wizard, group: 'Decorators' }
         public: true
 
+    AppBundle\Wizard\Docker\DevEnvironment:
+        arguments:
+            - %skeleton_base_dir%
+            - "@twig"
+            - "@filesystem"
+        tags:
+            - { name: wizard, group: 'Decorators', priority: 20 }
+        public: true
+
     AppBundle\Wizard\Docker\Slim:
         arguments:
             - %skeleton_base_dir%

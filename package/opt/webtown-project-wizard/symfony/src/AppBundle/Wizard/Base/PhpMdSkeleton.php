@@ -29,12 +29,6 @@ class PhpMdSkeleton extends BaseSkeletonWizard implements PublicWizardInterface
         return [];
     }
 
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName)
-    {
-        // @todo (Chris) Ezt átírni intelligensre, hogy rákérdez, ha felülírna egy másik fájlt.
-        $this->filesystem->dumpFile($targetPath, $fileContent);
-    }
-
     protected function getBuiltCheckFile()
     {
         return 'phpmd.xml';

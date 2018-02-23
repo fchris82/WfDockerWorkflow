@@ -56,28 +56,6 @@ class EzBuildMakefileWizard extends BaseSkeletonWizard implements PublicWizardIn
     }
 
     /**
-     * Eltérő fájloknál eltérő műveletet kell alkalmazni. Vhol simán létre kell hozni a fájlt, vhol viszont append-elni
-     * kell a már létezőt, párnál pedig YML-lel kell összefésülni az adatokat.
-     * <code>
-     *  switch ($targetPath) {
-     *      case '/this/is/an/existing/file':
-     *          $this->filesystem->appendToFile($targetPath, $fileContent);
-     *          break;
-     *      default:
-     *          $this->filesystem->dumpFile($targetPath, $fileContent);
-     *  }
-     * </code>.
-     *
-     * @param $targetPath
-     * @param $fileContent
-     * @param $relativePathName
-     */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName)
-    {
-        $this->filesystem->dumpFile($targetPath, $fileContent);
-    }
-
-    /**
      * 'dev' => [... dev packages ...]
      * 'nodev' => [... nodev packages ...].
      *

@@ -1,0 +1,11 @@
+dev
+mysql
+intl
+curl
+xml
+zip
+imagick
+gd
+mbstring
+mcrypt
+zip

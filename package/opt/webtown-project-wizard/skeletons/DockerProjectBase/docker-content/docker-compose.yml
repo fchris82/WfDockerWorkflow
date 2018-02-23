@@ -6,6 +6,7 @@ services:
         depends_on:
             - mysql
             - engine
+            - mail
             #- elasticsearch
             #- mongodb
         environment:
@@ -31,6 +32,12 @@ services:
             MYSQL_DATABASE: ${DB_NAME}
         volumes:
             - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
+        networks:
+            - default
+
+    # Mail setting: smtp://mail:25?encryption=&auth_mode= It maybe doesn't work inside a protected network (the server can't look out)!
+    mail:
+        image: tianon/exim4:latest
         networks:
             - default
 

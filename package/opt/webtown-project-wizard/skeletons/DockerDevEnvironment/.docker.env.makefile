@@ -3,12 +3,9 @@ PROJECT_DIRECOTRY			:=	{{ project_directory }}
 DOCKER_BASENAME				:=	$${USER}p$${PWD\#\#*/}
 DOCKER_DATA_DIR				:=	{{ docker_data_dir }}
 DOCKER_PROVISIONING			:=	{{ docker_provisioning }}
-DOCKER_CONFIG_FILES			:=	$(DOCKER_PROVISIONING)/docker-compose.yml \
-								$(DOCKER_PROVISIONING)/docker-compose.local.yml
-DOCKER_USER_CONFIG_FILES	:=
+DOCKER_CONFIG_FILES			:=	$(DOCKER_PROVISIONING)/docker-compose.yml
 DOCKER_ENVIRONMENTS	:=
 DOCKER_CLI_NAME		:=	engine
-DOCKER_DB_NAME		:=	mysql
 # Az aktuális projekt gazdája
 WWW_DATA_UID		:=	$$(stat -c '%u' .)
 # Az Docker group
@@ -17,26 +14,11 @@ WWW_DATA_GID		:=	$$(getent group docker | cut -d: -f3)
 SSH_PATH			:= ~/.ssh
 DOCKER_USER			:=	$(WWW_DATA_UID):$(WWW_DATA_GID)
 DOCKER_SHELL		:=	/bin/bash
-DOCKER_HTTP_HOST	:=	localhost
-DOCKER_PORT_PREFIX	:=	42
-DOCKER_PROXY_NETWORK:=	reverse-proxy
 DOCKER_DOC_ROOT		:=	/var/www
-DEPLOYER_DIRECTORY	:=	{{ deploy_directory }}
-SF_CONSOLE_CMD		:=	{{ sf_console_cmd }}
-SF_BIN_DIR			:=	{{ sf_bin_dir }}
-SHARED_DIRS			:=	{{ shared_dirs }}
-DIST_FILES			:=	.project.env \
-						$(DOCKER_PROVISIONING)/docker-compose.local.yml \
-						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/Dockerfile \
-						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/config/custom.php.ini \
-						$(DOCKER_PROVISIONING)/$(DOCKER_CLI_NAME)/config/xdebug.ini
 GITFLOW_DEVELOP :=  develop
 GITFLOW_FEATURE :=  feature
 GITFLOW_HOTFIX  :=  hotfix
 
-DB_PASSWORD := root
-DB_NAME     := symfony
-DB_URL      := mysql://root:$(DB_PASSWORD)@$(DOCKER_DB_NAME)/$(DB_NAME)
 PHP_VERSION := {{ php_version }}
 
 # PHP environments
@@ -46,20 +28,6 @@ PHP_MEMORY_LIMIT       := 128M
 PHP_MAX_UPLOAD         := 50M
 PHP_MAX_FILE_UPLOADS   := 20
 PHP_MAX_POST           := 100M
-
-{% if sf_version < 4 %}
-# Symfony environments. If you add new then you have to register it in the `docker-compose.yml` file (`environment` block) and add to CMD_DOCKER_ENV too!
-SYMFONY_ENV := prod
-SYMFONY_DEBUG :=
-SYMFONY_CLASSLOADER_FILE :=
-SYMFONY_HTTP_CACHE :=
-SYMFONY_HTTP_CACHE_CLASS :=
-SYMFONY_TRUSTED_PROXIES :=
-{% endif %}
-
-# HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
-# Don't forget to escape the $ sign: $ --> \$$
-HTTP_AUTH_PASS :=
 
 # A Gitlab CI miatt kell definiálni.
 SUDO              := sudo
@@ -164,120 +132,29 @@ CMD_DOCKER_ENV        := $(DOCKER_ENVIRONMENTS) \
                             PROJECT_COMPOSE_DIR=$(BASE_DIRECTORY)/$(DOCKER_PROVISIONING) \
                             DOCKER_DATA_DIR=$(BASE_DIRECTORY)/$(DOCKER_DATA_DIR) \
                             DOCKER_PORT_PREFIX=$(DOCKER_PORT_PREFIX) \
-                            DOCKER_HTTP_HOST=$(DOCKER_HTTP_HOST) \
-                            DOCKER_PROXY_NETWORK=$(DOCKER_PROXY_NETWORK) \
                             DOCKER_DOC_ROOT=$(DOCKER_DOC_ROOT) \
-                            MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
-                            DB_NAME=$(DB_NAME) \
-                            DATABASE_URL=$(DB_URL) \
                             TIMEZONE=$(TIMEZONE) \
                             PHP_MAX_EXECUTION_TIME=$(PHP_MAX_EXECUTION_TIME) \
                             PHP_MEMORY_LIMIT=$(PHP_MEMORY_LIMIT) \
                             PHP_MAX_UPLOAD=$(PHP_MAX_UPLOAD) \
                             PHP_MAX_FILE_UPLOADS=$(PHP_MAX_FILE_UPLOADS) \
                             PHP_MAX_POST=$(PHP_MAX_POST) \
-{% if sf_version < 4 %}
-                            SYMFONY_ENV=$(SYMFONY_ENV) \
-                            SYMFONY_DEBUG=$(SYMFONY_DEBUG) \
-                            SYMFONY_CLASSLOADER_FILE=$(SYMFONY_CLASSLOADER_FILE) \
-                            SYMFONY_HTTP_CACHE=$(SYMFONY_HTTP_CACHE) \
-                            SYMFONY_HTTP_CACHE_CLASS=$(SYMFONY_HTTP_CACHE_CLASS) \
-                            SYMFONY_TRUSTED_PROXIES=$(SYMFONY_TRUSTED_PROXIES) \
-{% endif %}
                             DOCKER_USER=$(DOCKER_USER) \
                             SSH_PATH=$(SSH_PATH) \
                             WWW_DATA_UID=$(WWW_DATA_UID) \
                             WWW_DATA_GID=$(WWW_DATA_GID) \
-                            PHP_VERSION=$(PHP_VERSION) \
-                            CI=$${CI} \
-                            HTTP_AUTH_PASS=$(HTTP_AUTH_PASS) \
-                            DOCKER_CONFIG_NGINX_DEBUG= \
-                            DOCKER_NGINX_COMMAND=nginx
+                            PHP_VERSION=$(PHP_VERSION)
 CMD_DOCKER_BASE       := $(CMD_DOCKER_ENV) docker-compose \
                             -p $(DOCKER_BASENAME) \
                             $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
-                            $(foreach file,$(DOCKER_USER_CONFIG_FILES),-f $(file)) \
                             --project-directory $(CURDIR)
 CMD_DOCKER_RUN        := $(CMD_DOCKER_BASE) run --rm
 CMD_DOCKER_RUN_CLI    := $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
 CMD_DOCKER_EXEC       := $(CMD_DOCKER_BASE) exec
 CMD_DOCKER_EXEC_CLI   := $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
 
-# @@@ Edit
-.PHONY: init
-init:
-	$(foreach file,$(DIST_FILES), cp -i $(file).dist $(file);)
-	@echo "\033[32m✔ Edit the new files before run the \033[94minstall\033[32m command:\033[0m"
-	@$(foreach file,$(DIST_FILES),echo "   - \033[33m$(file)\033[0m";)
-
-# @@@ Edit
-.PHONY: install
-install: up
-	$(CMD_MAKE) composer ARGS="install"
-	$(CMD_MAKE) sf ARGS="doctrine:database:create --if-not-exists"
-#	$(CMD_MAKE) sf ARGS="ezplatform:install clean"
-#	$(CMD_MAKE) sf ARGS="kaliop:migration:migrate -n"
-	$(CMD_MAKE) sf ARGS="doctrine:migrations:migrate -n --allow-no-migration"
-#    # If you wish use it on dev and test mode
-#    ifneq ($(SYMFONY_ENV),"prod")
-#		$(CMD_MAKE) sf ARGS="doctrine:fixtures:load -n"
-#    endif
-#	$(CMD_DOCKER_EXEC_CLI) bundle install
-#	$(CMD_DOCKER_EXEC_CLI) npm install
-#	$(CMD_DOCKER_EXEC_CLI) bower install
-#	$(CMD_DOCKER_EXEC_CLI) gulp build
-	$(CMD_MAKE) sf ARGS="assets:install --symlink"
-#	$(CMD_MAKE) sf ARGS="assetic:dump"
-	@echo "\033[32m✔ Now you can use the project!\033[0m"
-
-# @@@ Edit
-.PHONY: reinstall
-reinstall:
-	$(CMD_MAKE) sf ARGS="doctrine:database:drop --if-exists --force"
-	$(CMD_MAKE) install
-
-# @@@ Edit
-.PHONY: dep
-dep: up
-	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/dep $(ARGS)
-
-# @@@ Edit
-.PHONY: fast-test
-fast-test: up
-	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/php-cs-fixer fix --config=.php_cs.dist
-	SYMFONY_DEPRECATIONS_HELPER=disabled $(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpunit
-	$(CMD_MAKE) sf ARGS="doctrine:mapping:info"
-	$(CMD_MAKE) sf ARGS="doctrine:schema:validate"
-	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpmd src xml phpmd.xml | sed --unbuffered \
-         -e 's:<file name=\("[^>]*"\)>:<file name=\o033[1;36m\1\o033[0;39m>:g' \
-         -e 's:\(beginline\|endline\|rule\)=\("[^"]*"\):\o033[1;31m\1\o033[0;39m=\o033[33m\2\o033[39m:g'
-
-# @@@ Edit
-.PHONY: debug-servicecheck
-debug-servicecheck: up
-	$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) service php$(PHP_VERSION)-fpm status
-	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) service mysql status
-
 .PHONY: logs
 logs: __docker_logs
-
-.PHONY: mysql
-mysql: __mysql_connect
-
-# Újra tölti az adatbázist
-# Eg:
-# make -f .project.makefile dbreload FULL="1"
-# make -f .project.makefile dbreload ARGS="--full"
-.PHONY: dbreload
-dbreload: up
-    ifneq (,$(FULL)$(findstring --full,$(ARGS)))
-		$(CMD_MAKE) sf ARGS="doctrine:database:drop --if-exists --force"
-    endif
-	$(CMD_MAKE) sf ARGS="doctrine:database:create --if-not-exists"
-	$(CMD_MAKE) sf ARGS="doctrine:migrations:migrate -n"
-    ifneq (,$(FULL)$(findstring --full,$(ARGS)))
-		$(CMD_MAKE) sf ARGS="doctrine:fixtures:load -n"
-    endif
 
 .PHONY: up
 up: __docker_up
@@ -309,9 +186,6 @@ debug-docker-config: __docker_docker-config
 .PHONY: php
 php: __container_php
 
-.PHONY: sf
-sf: __container_sf
-
 .PHONY: composer
 composer: __container_composer
 
@@ -323,6 +197,3 @@ hotfix: __hotfix
 
 .PHONY: push
 push: __push
-
-.PHONY: publish
-publish: __publish

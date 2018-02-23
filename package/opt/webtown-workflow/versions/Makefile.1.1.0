@@ -8,9 +8,7 @@ Docker
     Config files:  \033[33m$(DOCKER_CONFIG_FILES) $(DOCKER_USER_CONFIG_FILES)\033[0m
     Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
 
-    Shell:         \033[34m$(DOCKER_SHELL)\033[0m
     Host:          \033[34m$(DOCKER_HTTP_HOST)\033[0m
-    Port prefix:   \033[34m$(DOCKER_PORT_PREFIX)\033[0m
 
     Database URL:  \033[33m$(DB_URL)\033[0m
 

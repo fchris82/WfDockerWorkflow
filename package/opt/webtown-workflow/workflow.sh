@@ -98,8 +98,14 @@ case $1 in
             quit
         fi
         if [ ! -f "${PROJECT_MAKEFILE}" ]; then
-            echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
-            quit
+            # If we are using "hidden" docker environment...
+            DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
+            if [ -f "${DOCKER_ENVIRONEMNT_MAKEFIILE}" ]; then
+                PROJECT_MAKEFILE="${DOCKER_ENVIRONEMNT_MAKEFIILE}";
+            else
+                echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
+                quit
+            fi
         fi
 
         ARGS=$(escape "$@")

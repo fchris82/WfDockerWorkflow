@@ -29,7 +29,25 @@ class PhpCsFixSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
         return [];
     }
 
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName)
+    /**
+     * Eltérő fájloknál eltérő műveletet kell alkalmazni. Vhol simán létre kell hozni a fájlt, vhol viszont append-elni
+     * kell a már létezőt, párnál pedig YML-lel kell összefésülni az adatokat.
+     * <code>
+     *  switch ($targetPath) {
+     *      case '/this/is/an/existing/file':
+     *          $this->filesystem->appendToFile($targetPath, $fileContent);
+     *          break;
+     *      default:
+     *          $this->filesystem->dumpFile($targetPath, $fileContent);
+     *  }
+     * </code>.
+     *
+     * @param string $targetPath
+     * @param string $fileContent
+     * @param string $relativePathName
+     * @param int    $permission
+     */
+    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
     {
         $append = [
             '.gitignore',
@@ -41,6 +59,10 @@ class PhpCsFixSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
             default:
                 // @todo (Chris) Ezt átírni intelligensre, hogy rákérdez, ha felülírna egy másik fájlt.
                 $this->filesystem->dumpFile($targetPath, $fileContent);
+
+                if ($permission) {
+                    $this->filesystem->chmod($targetPath, $permission);
+                }
         }
     }
 

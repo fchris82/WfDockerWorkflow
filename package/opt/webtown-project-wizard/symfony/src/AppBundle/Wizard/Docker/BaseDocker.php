@@ -102,12 +102,15 @@ abstract class BaseDocker extends BaseSkeletonWizard
                 $subPath,
                 $file->getRelativePathname(),
             ]);
-            $this->doWriteFile($targetPath, $fileContent, $file->getRelativePathname());
-
-            // Az entrypoint.sh-t futtathatóvá tesszük.
-            if (strpos($targetPath, 'entrypoint.sh') !== false) {
-                $this->filesystem->chmod($targetPath, 0755);
-            }
+            $this->doWriteFile(
+                $targetPath,
+                $fileContent,
+                $file->getRelativePathname(),
+                // Az .sh-ra végződő fájloknál adunk futási jogot
+                substr($targetPath, -3) == '.sh' || (fileperms($templateFile->getPathname()) & 0700 === 0700)
+                    ? 0755
+                    : null
+            );
 
             $targetPathInfo = new SplFileInfo($targetPath, $file->getRelativePath(), $file->getRelativePathname());
 
@@ -129,7 +132,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
 
         $symfonyVersionQuestion = new ChoiceQuestion(
             'Which symfony version do you want to use? [<info>4.*</info>]',
-            ['4.*', '3.* (eZ project!)', '2.* [deprecated]'],
+            ['4.*', '3.* (eZ project + LTE)', '2.* [deprecated]'],
             0
         );
         $symfonyVersion = $this->ask($symfonyVersionQuestion);
@@ -137,13 +140,15 @@ abstract class BaseDocker extends BaseSkeletonWizard
             case '4.*':
                 $variables['sf_version']     = 4;
                 $variables['sf_console_cmd'] = 'bin/console';
+                $variables['sf_bin_dir']     = 'vendor/bin';
                 $variables['shared_dirs']    = 'var';
                 $variables['web_directory']  = 'public';
                 $variables['index_file']     = 'index.php';
                 break;
-            case '3.* (eZ project!)':
+            case '3.* (eZ project + LTE)':
                 $variables['sf_version']     = 3;
                 $variables['sf_console_cmd'] = 'bin/console';
+                $variables['sf_bin_dir']     = 'vendor/bin';
                 $variables['shared_dirs']    = 'var';
                 $variables['web_directory']  = 'web';
                 $variables['index_file']     = 'app.php';
@@ -151,6 +156,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
             case '2.* [deprecated]':
                 $variables['sf_version']     = 2;
                 $variables['sf_console_cmd'] = 'app/console';
+                $variables['sf_bin_dir']     = 'bin';
                 $variables['shared_dirs']    = 'app/cache app/logs';
                 $variables['web_directory']  = 'web';
                 $variables['index_file']     = 'app.php';

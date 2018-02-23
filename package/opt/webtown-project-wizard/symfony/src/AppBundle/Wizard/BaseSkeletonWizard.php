@@ -78,11 +78,19 @@ abstract class BaseSkeletonWizard extends BaseWizard
      *  }
      * </code>.
      *
-     * @param $targetPath
-     * @param $fileContent
-     * @param $relativePathName
+     * @param string $targetPath
+     * @param string $fileContent
+     * @param string $relativePathName
+     * @param int    $permission
      */
-    abstract protected function doWriteFile($targetPath, $fileContent, $relativePathName);
+    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
+    {
+        $this->filesystem->dumpFile($targetPath, $fileContent);
+
+        if ($permission) {
+            $this->filesystem->chmod($targetPath, $permission);
+        }
+    }
 
     /**
      * ComposerInstaller::COMPOSER_DEV => [... dev packages ...]
@@ -172,7 +180,15 @@ abstract class BaseSkeletonWizard extends BaseWizard
             rtrim($targetProjectDirectory, DIRECTORY_SEPARATOR),
             $templateFile->getRelativePathname(),
         ]);
-        $this->doWriteFile($targetPath, $fileContent, $templateFile->getRelativePathname());
+        $this->doWriteFile(
+            $targetPath,
+            $fileContent,
+            $templateFile->getRelativePathname(),
+            // Az .sh-ra végződő vagy futási joggal rendelkező fájloknál adunk futási jogot
+            substr($targetPath, -3) == '.sh' || (fileperms($templateFile->getPathname()) & 0700 === 0700)
+                ? 0755
+                : null
+        );
 
         return new SplFileInfo($targetPath, $templateFile->getRelativePath(), $templateFile->getRelativePathname());
     }
