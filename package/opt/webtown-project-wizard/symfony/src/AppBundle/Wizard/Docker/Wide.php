@@ -49,6 +49,8 @@ use Symfony\Component\Filesystem\Filesystem;
  *  │
  *  └── .gitignore
  * </code>
+ *
+ * @deprecated Az ötletet először a EZ-től vettem, de aztán a tapasztalat azt mutatta, hogy ez az irány nem túl használható azzal, hogy a projekt a project könyvtárba kerül. Pl a PHPStorm fel sem ismeri így a Symfony projekteket. Környezet kialakításához pedig használd inkább a DevEnvironemnt osztályt.
  */
 class Wide extends BaseChainWizard implements PublicWizardInterface
 {
