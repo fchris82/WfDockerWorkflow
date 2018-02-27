@@ -76,11 +76,6 @@ class PhpCsFixSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
         return 'PhpCsFixer';
     }
 
-    public function build($targetProjectDirectory)
-    {
-        return parent::build($targetProjectDirectory);
-    }
-
     public function getRequireComposerPackages()
     {
         return [ComposerInstaller::COMPOSER_DEV => ['friendsofphp/php-cs-fixer']];
