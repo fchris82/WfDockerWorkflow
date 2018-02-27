@@ -34,7 +34,7 @@ class DeployerSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
             $kaliopVersion = false;
         }
         $variables['is_ez'] = $kaliopVersion ? true : false;
-        $variables['project_directory'] = basename($targetProjectDirectory);
+        $variables['project_directory'] = basename($this->getEnv('ORIGINAL_PWD'));
 
         return $variables;
     }

@@ -48,10 +48,16 @@ class SymfonyComposerBuildWizard extends BaseWizard implements PublicWizardInter
 
         $version = $this->ask($versionQuestion);
 
-        if (version_compare($version, '4', '<')) {
+        // Alapértelmezett adatok
+        $package = 'symfony/website-skeleton';
+        // Itt jegyezzük be, ha vmi config-ot módosítani kell. Elérhető configok: `composer config --list`
+        $composerConfigChanges = [];
+        if ($version && version_compare($version, '4', '<')) {
             $package = 'symfony/framework-standard-edition';
-        } else {
-            $package = 'symfony/website-skeleton';
+            // SF3-ban 5.4 van megadva, ami nekünk nagyon nem jó, régi
+            $composerConfigChanges = [
+                'platform.php' => '7.1',
+            ];
         }
 
         $output = [];
@@ -67,8 +73,19 @@ class SymfonyComposerBuildWizard extends BaseWizard implements PublicWizardInter
         );
         $this->output->writeln(implode("\n", $output));
 
+        // Composer config upgrade, eg: platform.php --> 7.1
+        if (count($composerConfigChanges) > 0) {
+            $output = [];
+            foreach ($composerConfigChanges as $key => $value) {
+                $this->execCmd(sprintf('cd %s && composer config %s %s', $targetProjectDirectory, $key, $value), $output);
+            }
+            $this->execCmd(sprintf('cd %s && composer update', $targetProjectDirectory), $output);
+            $this->output->writeln(implode("\n", $output));
+        }
+
         $output = [];
         $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory), $output);
+        $this->output->writeln(implode("\n", $output));
 
         return $targetProjectDirectory;
     }

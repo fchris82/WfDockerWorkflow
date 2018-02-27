@@ -119,4 +119,18 @@ abstract class BaseWizard implements WizardInterface
 
         return $output;
     }
+
+    /**
+     * A /package/opt/webtown-project-wizard/symfony/docker-compose.yml fájlban lehet átadni paramétereket, amik
+     * kellhetnek majd generálásoknál. Pl ORIGINAL_PWD .
+     *
+     * @param string      $name
+     * @param null|string $default
+     *
+     * @return null|string
+     */
+    protected function getEnv($name, $default = null)
+    {
+        return array_key_exists($name, $_ENV) ? $_ENV[$name] : $default;
+    }
 }

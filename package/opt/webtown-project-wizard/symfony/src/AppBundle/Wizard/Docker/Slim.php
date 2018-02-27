@@ -73,6 +73,7 @@ class Slim extends BaseDocker implements PublicWizardInterface
             'docker_data_dir'       => '.docker/.data',
             'docker_provisioning'   => '.docker',
             'deploy_directory'      => '.',
+            'project_name'          => basename($this->getEnv('ORIGINAL_PWD', '_')),
         ];
 
         return array_merge($variables, $defaults);
