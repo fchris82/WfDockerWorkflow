@@ -16,7 +16,9 @@ return PhpCsFixer\Config::create()
         'no_unreachable_default_argument_value' => true,
         'braces' => ['allow_single_line_closure' => true],
         'phpdoc_order' => true,
-        # Nem szeretnénk '.'-ot minden doccomment végére
+        // Problémát okozhat, ha törli nevet, pláne, ha többet szeretnénk megadni pl egy for ciklus előtt.
+        'phpdoc_var_without_name' => false,
+        // Nem szeretnénk '.'-ot minden doccomment végére
         'phpdoc_summary' => false,
         // Erre azért van szükség, mert pl a JMSTranslationBundle miatt elhelyezhetünk a kódon belül pl /** @Ignore */ -t
         'phpdoc_to_comment' => false,
