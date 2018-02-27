@@ -130,14 +130,23 @@ abstract class BaseDocker extends BaseSkeletonWizard
         $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.1</info>]', '7.1');
         $variables['php_version'] = $this->ask($phpVersionQuestion);
 
-        $symfonyVersionQuestion = new ChoiceQuestion(
-            'Which symfony version do you want to use? [<info>4.*</info>]',
-            ['4.*', '3.* (eZ project + LTE)', '2.* [deprecated]'],
-            0
-        );
-        $symfonyVersion = $this->ask($symfonyVersionQuestion);
-        switch ($symfonyVersion) {
-            case '4.*':
+        // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik
+        try {
+            $symfonyVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/symfony');
+        } catch (\Exception $e) {
+            $symfonyVersion = false;
+        }
+
+        if (!$symfonyVersion) {
+            $symfonyVersionQuestion = new ChoiceQuestion(
+                'Which symfony version do you want to use? [<info>4.*</info>]',
+                ['4.*', '3.* (eZ project + LTE)', '2.* [deprecated]'],
+                0
+            );
+            $symfonyVersion = $this->ask($symfonyVersionQuestion);
+        }
+        switch (substr($symfonyVersion, 0, 2)) {
+            case '4.':
                 $variables['sf_version']     = 4;
                 $variables['sf_console_cmd'] = 'bin/console';
                 $variables['sf_bin_dir']     = 'vendor/bin';
@@ -145,7 +154,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
                 $variables['web_directory']  = 'public';
                 $variables['index_file']     = 'index.php';
                 break;
-            case '3.* (eZ project + LTE)':
+            case '3.':
                 $variables['sf_version']     = 3;
                 $variables['sf_console_cmd'] = 'bin/console';
                 $variables['sf_bin_dir']     = 'vendor/bin';
@@ -153,7 +162,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
                 $variables['web_directory']  = 'web';
                 $variables['index_file']     = 'app.php';
                 break;
-            case '2.* [deprecated]':
+            case '2.':
                 $variables['sf_version']     = 2;
                 $variables['sf_console_cmd'] = 'app/console';
                 $variables['sf_bin_dir']     = 'bin';
