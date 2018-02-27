@@ -1,16 +1,13 @@
 prod:
     hostname:         matogrosso.webtown.hu
     stage:            prod
-    deploy_path:      /srv/support
+    deploy_path:      /srv/{{ project_directory }}
     user:             support
     identity_file:    ~
     branch:           master
     symfony_env:      prod
     'bin/php':        '/usr/local/php/php5.6/bin/php'
     'bin/composer':   '/usr/local/php/php5.6/bin/php /usr/local/bin/composer'
-    # Az app_dev.php-t megtartjuk a demo oldalon.
-    clear_paths:    ['web/config.php']
-    patches:        ['.deployer/tmp/matogrosso-htaccess.patch']
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:    /tmp/multiplexing.data
@@ -18,7 +15,7 @@ prod:
 demo:
     hostname:         amapa.webtown.hu
     stage:            demo
-    deploy_path:      /srv/docker/hte
+    deploy_path:      /srv/docker/{{ project_directory }}
     user:             fchris82
     # Ide húzzuk be az .ssh kulcsokat a gitlab-runner-ből, lásd `.docker/docker-compose.gitlab-ci.yml` fájl!
     identity_file:    /home/user/.ssh/id_rsa
@@ -27,7 +24,7 @@ demo:
     # A --no-dev-et kivettük belőle, mivel ez dev.
     composer_options: '{{composer_action}} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
     # WorkFlow-t használunk
-    roles:            workflow
+    roles:            [workflow, fixtures]
     # Ez fontos!
     git_tty:          false
     # Az alábbi egy biztonsági megoldás, hogy semmiképpen ne fussanak le ilyen parancsok.
@@ -36,6 +33,8 @@ demo:
     # írás jog
     writable_mode:          'chmod'
     writable_chmod_mode:    '777'
+    # Az app_dev.php-t megtartjuk a demo oldalon.
+    clear_paths:    ['web/config.php']
     # Ez a debug miatt kellhet
     env:
         MAKE_DISABLE_SILENC: 1

@@ -4,6 +4,7 @@ namespace Deployer;
 const ROLE_DEFAULT = 'default';
 const ROLE_WORKFLOW = 'workflow';
 const ROLE_BUILD = 'build';
+const ROLE_FIXTURE_RELOAD = 'fixtures';
 
 require 'vendor/deployer/deployer/recipe/symfony.php';
 require '.deployer/functions.php';
@@ -91,21 +92,33 @@ after('deploy:shared', 'deploy:wf');
 // Migrate database before symlink new release.
 task('database:build', function () {
     sf('doctrine:database:create','--if-not-exists');
+{% if is_ez %}
     // Csak akkor futtatjuk az ezplatform:install-t ha még nem létezik az adatbázis.
     run (sprintf(
         '%s || %s',
         buildSfCommand('doctrine:schema:validate', '--skip-mapping'),
         buildSfCommand('ezplatform:install', 'app')
     ));
+{% endif %}
     sf('doctrine:migrations:migrate','--allow-no-migration');
+{% if is_ez %}
     // A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
     sf('kaliop:migration:migrate','-u --default-language=hun-HU');
+{% endif %}
     //sf('doctrine:fixtures:load');
 })
-    ->desc('Build eZ database.')
+    ->desc('Build database.')
     ->onRoles(ROLE_DEFAULT)
 ;
 before('deploy:symlink', 'database:build');
+
+task('database:reload', function() {
+    run('wf reload --full');
+})
+    ->desc('Load the fixtures')
+    ->onRoles(ROLE_FIXTURE_RELOAD)
+;
+after('deploy:wf', 'database:reload');
 
 // Only SF
 $onlyDefaultTasks = [
