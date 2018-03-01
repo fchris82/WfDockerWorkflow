@@ -245,7 +245,7 @@ dep: up
 .PHONY: fast-test
 fast-test: up
 	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/php-cs-fixer fix --config=.php_cs.dist
-	SYMFONY_DEPRECATIONS_HELPER=disabled $(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpunit
+	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpunit
 	$(CMD_MAKE) sf ARGS="doctrine:mapping:info"
 	$(CMD_MAKE) sf ARGS="doctrine:schema:validate"
 	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpmd src xml phpmd.xml | sed --unbuffered \
