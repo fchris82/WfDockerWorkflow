@@ -1,11 +1,8 @@
-dev
-mysql
+pdo_mysql
 intl
 curl
 xml
 zip
-imagick
 gd
 mbstring
 mcrypt
-zip
