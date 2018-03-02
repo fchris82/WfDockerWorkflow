@@ -55,7 +55,9 @@ SYMFONY_CLASSLOADER_FILE :=
 SYMFONY_HTTP_CACHE :=
 SYMFONY_HTTP_CACHE_CLASS :=
 SYMFONY_TRUSTED_PROXIES :=
+SYMFONY_DEPRECATIONS_HELPER :=
 {% endif %}
+SYMFONY_LOAD_FIXTURE :=
 
 # HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
 # Don't forget to escape the $ sign: $ --> \$$
@@ -158,50 +160,68 @@ CMD_MAKE              := $(MAKE) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVER
 #    [...]
 #    DOCKER_CONFIG_NGINX_DEBUG=debug \
 #    DOCKER_NGINX_COMMAND=nginx-debug
-CMD_DOCKER_ENV        := $(DOCKER_ENVIRONMENTS) \
-                            BASE_DIRECTORY=$(BASE_DIRECTORY) \
-                            PROJECT_DIR_NAME=$(PROJECT_DIRECOTRY) \
-                            PROJECT_COMPOSE_DIR=$(BASE_DIRECTORY)/$(DOCKER_PROVISIONING) \
-                            DOCKER_DATA_DIR=$(BASE_DIRECTORY)/$(DOCKER_DATA_DIR) \
-                            DOCKER_PORT_PREFIX=$(DOCKER_PORT_PREFIX) \
-                            DOCKER_HTTP_HOST=$(DOCKER_HTTP_HOST) \
-                            DOCKER_PROXY_NETWORK=$(DOCKER_PROXY_NETWORK) \
-                            DOCKER_DOC_ROOT=$(DOCKER_DOC_ROOT) \
-                            MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
-                            DB_NAME=$(DB_NAME) \
-                            DATABASE_URL=$(DB_URL) \
-                            TIMEZONE=$(TIMEZONE) \
-                            PHP_MAX_EXECUTION_TIME=$(PHP_MAX_EXECUTION_TIME) \
-                            PHP_MEMORY_LIMIT=$(PHP_MEMORY_LIMIT) \
-                            PHP_MAX_UPLOAD=$(PHP_MAX_UPLOAD) \
-                            PHP_MAX_FILE_UPLOADS=$(PHP_MAX_FILE_UPLOADS) \
-                            PHP_MAX_POST=$(PHP_MAX_POST) \
+#
+# Azért használunk `define`-t, mert így meg tudjuk oldani, hogy bizonyos target-ek előtt átírjunk bizonyos változókat.
+# Ilyen változó lehet pl a `SYMFONY_DEPRECATIONS_HELPER`, amit pl a fast-test előtt átállítunk. Ha változókat használnánk,
+# akkor annak a módosítása ott már nem hatna, tehát nem tudnánk hatással lenni a futásra.
+define CMD_DOCKER_ENV
+    $(DOCKER_ENVIRONMENTS) \
+    BASE_DIRECTORY=$(BASE_DIRECTORY) \
+    PROJECT_DIR_NAME=$(PROJECT_DIRECOTRY) \
+    PROJECT_COMPOSE_DIR=$(BASE_DIRECTORY)/$(DOCKER_PROVISIONING) \
+    DOCKER_DATA_DIR=$(BASE_DIRECTORY)/$(DOCKER_DATA_DIR) \
+    DOCKER_PORT_PREFIX=$(DOCKER_PORT_PREFIX) \
+    DOCKER_HTTP_HOST=$(DOCKER_HTTP_HOST) \
+    DOCKER_PROXY_NETWORK=$(DOCKER_PROXY_NETWORK) \
+    DOCKER_DOC_ROOT=$(DOCKER_DOC_ROOT) \
+    MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
+    DB_NAME=$(DB_NAME) \
+    DATABASE_URL=$(DB_URL) \
+    TIMEZONE=$(TIMEZONE) \
+    PHP_MAX_EXECUTION_TIME=$(PHP_MAX_EXECUTION_TIME) \
+    PHP_MEMORY_LIMIT=$(PHP_MEMORY_LIMIT) \
+    PHP_MAX_UPLOAD=$(PHP_MAX_UPLOAD) \
+    PHP_MAX_FILE_UPLOADS=$(PHP_MAX_FILE_UPLOADS) \
+    PHP_MAX_POST=$(PHP_MAX_POST) \
 {% if sf_version < 4 %}
-                            SYMFONY_ENV=$(SYMFONY_ENV) \
-                            SYMFONY_DEBUG=$(SYMFONY_DEBUG) \
-                            SYMFONY_CLASSLOADER_FILE=$(SYMFONY_CLASSLOADER_FILE) \
-                            SYMFONY_HTTP_CACHE=$(SYMFONY_HTTP_CACHE) \
-                            SYMFONY_HTTP_CACHE_CLASS=$(SYMFONY_HTTP_CACHE_CLASS) \
-                            SYMFONY_TRUSTED_PROXIES=$(SYMFONY_TRUSTED_PROXIES) \
+    SYMFONY_ENV=$(SYMFONY_ENV) \
+    SYMFONY_DEBUG=$(SYMFONY_DEBUG) \
+    SYMFONY_CLASSLOADER_FILE=$(SYMFONY_CLASSLOADER_FILE) \
+    SYMFONY_HTTP_CACHE=$(SYMFONY_HTTP_CACHE) \
+    SYMFONY_HTTP_CACHE_CLASS=$(SYMFONY_HTTP_CACHE_CLASS) \
+    SYMFONY_TRUSTED_PROXIES=$(SYMFONY_TRUSTED_PROXIES) \
 {% endif %}
-                            DOCKER_USER=$(DOCKER_USER) \
-                            SSH_PATH=$(SSH_PATH) \
-                            WWW_DATA_UID=$(WWW_DATA_UID) \
-                            WWW_DATA_GID=$(WWW_DATA_GID) \
-                            PHP_VERSION=$(PHP_VERSION) \
-                            CI=$${CI} \
-                            HTTP_AUTH_PASS=$(HTTP_AUTH_PASS) \
-                            DOCKER_CONFIG_NGINX_DEBUG= \
-                            DOCKER_NGINX_COMMAND=nginx
-CMD_DOCKER_BASE       := $(CMD_DOCKER_ENV) docker-compose \
-                            -p $(DOCKER_BASENAME) \
-                            $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
-                            $(foreach file,$(DOCKER_USER_CONFIG_FILES),-f $(file)) \
-                            --project-directory $(CURDIR)
-CMD_DOCKER_RUN        := $(CMD_DOCKER_BASE) run --rm
-CMD_DOCKER_RUN_CLI    := $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
-CMD_DOCKER_EXEC       := $(CMD_DOCKER_BASE) exec
-CMD_DOCKER_EXEC_CLI   := $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
+    DOCKER_USER=$(DOCKER_USER) \
+    SSH_PATH=$(SSH_PATH) \
+    WWW_DATA_UID=$(WWW_DATA_UID) \
+    WWW_DATA_GID=$(WWW_DATA_GID) \
+    PHP_VERSION=$(PHP_VERSION) \
+    CI=$${CI} \
+    HTTP_AUTH_PASS=$(HTTP_AUTH_PASS) \
+    DOCKER_CONFIG_NGINX_DEBUG= \
+    DOCKER_NGINX_COMMAND=nginx
+endef
+define CMD_DOCKER_BASE
+    $(CMD_DOCKER_ENV) docker-compose \
+        -p $(DOCKER_BASENAME) \
+        $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
+        $(foreach file,$(DOCKER_USER_CONFIG_FILES),-f $(file)) \
+        --project-directory $(CURDIR)
+endef
+define CMD_DOCKER_RUN
+    $(CMD_DOCKER_BASE) run --rm
+endef
+# If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
+define CMD_DOCKER_RUN_CLI
+    $(CMD_DOCKER_RUN) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
+endef
+define CMD_DOCKER_EXEC
+    $(CMD_DOCKER_BASE) exec
+endef
+# If you want to run without user (as root), use the: `$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_EXEC_CLI) <cmd>`
+define CMD_DOCKER_EXEC_CLI
+    $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
+endef
 
 # @@@ Edit
 .PHONY: init
@@ -237,13 +257,15 @@ reinstall:
 	$(CMD_MAKE) install
 
 # @@@ Edit
-.PHONY: dep
-dep: up
-	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/dep $(ARGS)
+.PHONY: debug-servicecheck
+debug-servicecheck: up
+	$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) service php$(PHP_VERSION)-fpm status
+	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) service mysql status
 
 # @@@ Edit
 .PHONY: fast-test
-fast-test: up
+fast-test: SYMFONY_DEPRECATIONS_HELPER=disabled
+fast-test:
 	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/php-cs-fixer fix --config=.php_cs.dist
 	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpunit
 	$(CMD_MAKE) sf ARGS="doctrine:mapping:info"
@@ -251,12 +273,6 @@ fast-test: up
 	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/phpmd src xml phpmd.xml | sed --unbuffered \
          -e 's:<file name=\("[^>]*"\)>:<file name=\o033[1;36m\1\o033[0;39m>:g' \
          -e 's:\(beginline\|endline\|rule\)=\("[^"]*"\):\o033[1;31m\1\o033[0;39m=\o033[33m\2\o033[39m:g'
-
-# @@@ Edit
-.PHONY: debug-servicecheck
-debug-servicecheck: up
-	$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) service php$(PHP_VERSION)-fpm status
-	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) service mysql status
 
 .PHONY: logs
 logs: __docker_logs
@@ -314,6 +330,11 @@ sf: __container_sf
 
 .PHONY: composer
 composer: __container_composer
+
+# @todo
+.PHONY: dep
+dep: up
+	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/dep $(ARGS)
 
 .PHONY: feature
 feature: __feature
