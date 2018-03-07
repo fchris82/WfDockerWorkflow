@@ -34,10 +34,13 @@ GITFLOW_DEVELOP :=  develop
 GITFLOW_FEATURE :=  feature
 GITFLOW_HOTFIX  :=  hotfix
 
+PHP_VERSION := {{ php_version }}
 DB_PASSWORD := root
 DB_NAME     := symfony
 DB_URL      := mysql://root:$(DB_PASSWORD)@$(DOCKER_DB_NAME)/$(DB_NAME)
-PHP_VERSION := {{ php_version }}
+# For mysqld command! See the docker-compose.yml
+DB_CHARSET  := utf8
+DB_COLLATION := utf8_unicode_ci
 
 # PHP environments
 TIMEZONE               := Europe/Budapest
@@ -332,9 +335,10 @@ sf: __container_sf
 composer: __container_composer
 
 # @todo
+# Nem használható a `$(CMD_DOCKER_RUN_CLI) php vendor/bin/dep $(ARGS)`, mert mindenképpen root user kell itt nekünk
 .PHONY: dep
 dep: up
-	$(CMD_DOCKER_RUN_CLI) php $(SF_BIN_DIR)/dep $(ARGS)
+	$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) php $(SF_BIN_DIR)/dep $(ARGS)
 
 .PHONY: feature
 feature: __feature

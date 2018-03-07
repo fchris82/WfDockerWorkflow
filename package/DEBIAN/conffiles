@@ -1,2 +1,5 @@
 /etc/webtown-workflow/config
+/etc/webtown-workflow/docker-gen.cfg
 /etc/webtown-workflow/nginx.tmpl
+/etc/webtown-workflow/nginx-proxy-503.tmpl
+/etc/webtown-workflow/Procfile

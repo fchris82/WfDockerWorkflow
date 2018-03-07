@@ -32,6 +32,7 @@ services:
             MYSQL_DATABASE: ${DB_NAME}
         volumes:
             - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
+        command: mysqld --character-set-server=${DB_CHARSET} --collation-server=${DB_COLLATION} --character-set-client-handshake=${DB_CHARSET}
         networks:
             - default
 

@@ -58,8 +58,9 @@ __validate_args_no_empty:
     endif
 
 .PHONY: __mysql_connect
+__mysql_connect: DEFAULT_CHARSET := $(if $(DB_CHARSET),$(DB_CHARSET),utf8)
 __mysql_connect: up
-	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost $(DB_NAME)
+	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost --default-character-set=$(DEFAULT_CHARSET) $(DB_NAME)
 
 .PHONY: dbdump
 dbdump : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)

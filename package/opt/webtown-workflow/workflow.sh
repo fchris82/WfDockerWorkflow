@@ -81,9 +81,18 @@ case $1 in
             --net reverse-proxy \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
             -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
+            -v /etc/webtown-workflow/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
+            -v /etc/webtown-workflow/docker-gen.cfg:/app/docker-gen.cfg:ro \
+            -v /etc/webtown-workflow/Procfile:/app/Procfile:ro \
             -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
             --restart always \
             jwilder/nginx-proxy
+    ;;
+    -erp|--enter-reverse-proxy)
+        docker exec -i -t nginx-reverse-proxy /bin/bash
+    ;;
+    -scrp|--show-config-reverse-proxy)
+        docker exec -i -t nginx-reverse-proxy cat /etc/nginx/conf.d/default.conf
     ;;
     # Project makefile
     *)

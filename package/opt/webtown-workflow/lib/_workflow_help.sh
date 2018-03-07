@@ -5,10 +5,12 @@ ${BOLD}${WHITE}
 ${RESTORE}
 Anywhere:
 
-  -h --help                 ${GREEN}Show this help${RESTORE}
-  -u --update               ${GREEN}Self update. ${BOLD}You need sudo permission!${RESTORE}
-  --install-autocomplete    ${GREEN}Install ZSH autocomplete${RESTORE}
-  --init-reverse-proxy      ${GREEN}Init nginx reverse proxy with 'nginx-reverse-proxy' name${RESTORE}
+  -h    --help                      ${GREEN}Show this help${RESTORE}
+  -u    --update                    ${GREEN}Self update. ${BOLD}You need sudo permission!${RESTORE}
+        --install-autocomplete      ${GREEN}Install ZSH autocomplete${RESTORE}
+        --init-reverse-proxy        ${GREEN}Init nginx reverse proxy with 'nginx-reverse-proxy' name${RESTORE}
+  -erp  --enter-reverse-proxy       ${GREEN}Enter nginx reverse proxy with 'nginx-reverse-proxy' name${RESTORE}
+  -scrp --show-config-reverse-proxy ${GREEN}Show the current 'nginx-reverse-proxy' nginx config file${RESTORE}
 
 ${BOLD}${WHITE}Only any project directory:${RESTORE}
 
