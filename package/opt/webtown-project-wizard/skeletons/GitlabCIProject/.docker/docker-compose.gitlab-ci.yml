@@ -1,5 +1,5 @@
 # GitLab esetén CSAK ezt a fájlt használjuk! Nem tölti be az eredeti `docker-compose.yml`-t és a `docker-compose.local.yml`-t sem.
-version: "2"
+version: "2.1"
 
 services:
     mysql:

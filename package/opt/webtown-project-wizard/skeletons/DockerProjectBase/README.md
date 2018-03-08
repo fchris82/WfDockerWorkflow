@@ -58,7 +58,7 @@ Lehetőség van arra, hogy HTTP AUTH-tal levédd a felületet. Ehhez szükségü
 Sajnos nem megoldható TCP kapcsolatoknál az nginx proxy, mert TCP alatt nincs domain, csak IP címünk. Jelenleg úgy lehet megoldani az adatbázisok ütközésének elkerülését, hogy létre kell hozni egy saját network-öt, megadott IP cím tartománnyal és azon belül kell megadni az adatbázis service-nek fix IP címet. A `10.*.*.*` formátumot kövesd! Ennek használatához szerkeszd a `docker-compose.local.yml` fájlt:
 
 ```yml
-version: "2"
+version: "2.1"
 
 services:
     mysql:

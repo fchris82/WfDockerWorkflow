@@ -1,7 +1,14 @@
-version: "2"
+version: "2.1"
+
+x-base: &defaults
+    labels:
+        com.wf.basedirectory: ${BASE_DIRECTORY}
+    networks:
+        - default
 
 services:
     web:
+        <<: *defaults
         image: nginx:latest
         depends_on:
             - mysql
@@ -22,10 +29,9 @@ services:
             > /etc/nginx/conf.d/default.conf
             && echo '${HTTP_AUTH_PASS}' > /etc/nginx/.htpasswd
             && ${DOCKER_NGINX_COMMAND} -g 'daemon off;'"
-        networks:
-            - default
 
     mysql:
+        <<: *defaults
         image: mysql:5.6
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -33,30 +39,26 @@ services:
         volumes:
             - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
         command: mysqld --character-set-server=${DB_CHARSET} --collation-server=${DB_COLLATION} --character-set-client-handshake=${DB_CHARSET}
-        networks:
-            - default
 
     # Mail setting: smtp://mail:25?encryption=&auth_mode= It maybe doesn't work inside a protected network (the server can't look out)!
     mail:
+        <<: *defaults
         image: tianon/exim4:latest
-        networks:
-            - default
 
     #elasticsearch:
+    #    <<: *defaults
     #    image: elasticsearch:1.7.6
     #    volumes:
     #        - "${DOCKER_DATA_DIR}/elasticsearch:/usr/share/elasticsearch/data"
-    #    networks:
-    #        - default
     #
     #mongodb:
+    #    <<: *defaults
     #    image: mongo:3.2
     #    volumes:
     #        - "${DOCKER_DATA_DIR}/mongodb:/data/db"
-    #    networks:
-    #        - default
 
     engine:
+        <<: *defaults
         build:
             context: ${PROJECT_COMPOSE_DIR}/engine
             args:
@@ -94,8 +96,6 @@ services:
             # Composer cache
             - "~/.composer:/home/user/.composer"
         tty: true
-        networks:
-            - default
 
 networks:
     default:

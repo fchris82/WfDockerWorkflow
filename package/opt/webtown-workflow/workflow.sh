@@ -94,6 +94,9 @@ case $1 in
     -scrp|--show-config-reverse-proxy)
         docker exec -i -t nginx-reverse-proxy cat /etc/nginx/conf.d/default.conf
     ;;
+    -ps|--docker-ps)
+        docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
+    ;;
     # Project makefile
     *)
         COMMAND="$1"
