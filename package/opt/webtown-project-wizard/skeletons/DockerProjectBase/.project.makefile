@@ -338,7 +338,7 @@ composer: __container_composer
 # Nem használható a `$(CMD_DOCKER_RUN_CLI) php vendor/bin/dep $(ARGS)`, mert mindenképpen root user kell itt nekünk
 .PHONY: dep
 dep: up
-	$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) php $(SF_BIN_DIR)/dep $(ARGS)
+	$(CMD_DOCKER_EXEC_CLI) php $(SF_BIN_DIR)/dep $(ARGS)
 
 .PHONY: feature
 feature: __feature
