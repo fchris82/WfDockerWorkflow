@@ -1,0 +1,9 @@
+version: "2.1"
+
+services:
+    engine:
+        build:
+            context: ${PROJECT_COMPOSE_DIR}/engine
+            args:
+                - PHP_VERSION
+                - TIMEZONE

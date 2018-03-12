@@ -59,11 +59,9 @@ services:
 
     engine:
         <<: *defaults
-        build:
-            context: ${PROJECT_COMPOSE_DIR}/engine
-            args:
-                - PHP_VERSION
-                - TIMEZONE
+        # If this solution doesn't exist, add the `DOCKER_USER_CONFIG_FILES := $(DOCKER_PROVISIONING)/docker-compose.build.yml`
+        # line in the .project.env file!
+        image:  {{ docker_engine_repo_base }}/{{ docker_engine_repo_name }}
         environment:
             - CI
             - PHP_VERSION

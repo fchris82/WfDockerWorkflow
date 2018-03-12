@@ -1,4 +1,4 @@
-VERSION						:=	1.1.0
+VERSION						:=	1.2.0
 PROJECT_DIRECOTRY			:=	{{ project_directory }}
 DOCKER_BASENAME				:=	$${USER}p$${PWD\#\#*/}
 DOCKER_DATA_DIR				:=	{{ docker_data_dir }}
@@ -6,6 +6,7 @@ DOCKER_PROVISIONING			:=	{{ docker_provisioning }}
 DOCKER_CONFIG_FILES			:=	$(DOCKER_PROVISIONING)/docker-compose.yml \
 								$(DOCKER_PROVISIONING)/docker-compose.local.yml
 DOCKER_USER_CONFIG_FILES	:=
+DOCKER_BUILD_CONFIG_FILES	:=	$(DOCKER_PROVISIONING)/docker-compose.build.yml
 DOCKER_ENVIRONMENTS	:=
 DOCKER_CLI_NAME		:=	engine
 DOCKER_DB_NAME		:=	mysql
