@@ -68,6 +68,7 @@ case $1 in
             echo -e "You don't have installed the zsh! Nothing changed."
         fi
     ;;
+    # Reverse proxy handle and debug
     --init-reverse-proxy)
         NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
         REVERSE_PROXY_PORT=$(awk '/^reverse_proxy_port/{print $3}' "${CONFIG}")
