@@ -36,6 +36,30 @@ chmod -R 777 /opt/webtown-project-wizard/symfony/var/logs
 ln -sf /opt/webtown-project-wizard/wizard.sh /usr/local/bin/wizard
 
 # ----------------------------------------------------------------------------------------------------------------------
+#                                         R E C O N F I G   D O C K E R
+#               We have to register the insecure repository in the /etc/docker/daemon.json file!
+# ----------------------------------------------------------------------------------------------------------------------
+CONFIG_FILE="/etc/docker/daemon.json"
+touch ${CONFIG_FILE}
+REPO_INDEX=$(jq '."insecure-registries" | index("amapa.webtown.hu:5000")' ${CONFIG_FILE})
+# The daemon.json is empty
+if [ $(du -k "${CONFIG_FILE}" | cut -f 1) -eq 0 ]; then
+    echo '{"insecure-registries":["amapa.webtown.hu:5000"]}' > ${CONFIG_FILE}
+elif [[ "${REPO_INDEX}" == "null" ]]; then
+    # The daemon.json doesn't contain "insecure-registries" key. The jq can't write to used file, so we have to use a tmp file
+    if [[ $(jq '."insecure-registries"' ${CONFIG_FILE}) == "" ]]; then
+        jq . * {"insecure-registries":["amapa.webtown.hu:5000"]} ${CONFIG_FILE} > ${CONFIG_FILE}.tmp
+    # If the "insecure-registries" exists
+    else
+        jq '."insecure-registries" |=. + ["amapa.webtown.hu:5000"]' ${CONFIG_FILE} > ${CONFIG_FILE}.tmp
+    fi
+    # Override the original file
+    mv ${CONFIG_FILE}.tmp ${CONFIG_FILE}
+fi
+# Restart the docker service
+service docker restart
+
+# ----------------------------------------------------------------------------------------------------------------------
 #                                                W O R K F L O W
 # ----------------------------------------------------------------------------------------------------------------------
 

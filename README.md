@@ -1,5 +1,5 @@
-Webtown Kunstmaan Installer
-===========================
+Webtown Workflow Installer
+======================
 
 ## Installation
 
@@ -250,3 +250,32 @@ Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizar
 >
 > You have to set `src` directory as *Source Root directory* and the `tests` directory as *Test Root directory*:
 >   - right click on the directory » Mark directory as... ⟶ \[select\]
+
+Environment extra information
+=============================
+
+## Create a docker repository
+
+```
+docker run -d \
+  -p 5000:5000 \
+  --restart=always \
+  --name registry \
+  -v /mnt/registry:/var/lib/registry \
+  registry:2
+```
+
+> It is handled in `postinst` file:
+>
+> You should register the unsecure repository in your local computer in `/etc/docker/daemon.json` :
+>
+> ```
+> {
+> "insecure-registries":["amapa.webtown.hu:5000"]
+> }
+> ```
+>
+> You have to restart the docker:
+> ```
+> sudo service docker restart
+> ```
