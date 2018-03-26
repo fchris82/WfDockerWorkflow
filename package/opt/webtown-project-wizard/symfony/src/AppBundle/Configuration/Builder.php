@@ -1,0 +1,241 @@
+<?php
+/**
+ * Created by IntelliJ IDEA.
+ * User: chris
+ * Date: 2018.03.10.
+ * Time: 17:20
+ */
+
+namespace AppBundle\Configuration;
+
+
+use AppBundle\Skeleton\DockerComposeSkeletonFile;
+use AppBundle\Skeleton\MakefileSkeletonFile;
+use AppBundle\Skeleton\SkeletonFile;
+use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Yaml\Yaml;
+
+class Builder
+{
+    /**
+     * @var Filesystem
+     */
+    protected $fileSystem;
+
+    /**
+     * @var RecipeManager
+     */
+    protected $recipeManager;
+
+    /**
+     * @var string
+     */
+    protected $targetDirectory;
+
+    protected $makefiles = [];
+
+    protected $dockerComposeFiles = [];
+
+    /**
+     * Builder constructor.
+     * @param Filesystem $fileSystem
+     * @param RecipeManager $recipeManager
+     */
+    public function __construct(Filesystem $fileSystem, RecipeManager $recipeManager)
+    {
+        $this->fileSystem = $fileSystem;
+        $this->recipeManager = $recipeManager;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTargetDirectory()
+    {
+        return $this->targetDirectory;
+    }
+
+    /**
+     * @param string $targetDirectory
+     *
+     * @return $this
+     */
+    public function setTargetDirectory($targetDirectory)
+    {
+        $this->targetDirectory = $targetDirectory;
+
+        return $this;
+    }
+
+    /**
+     * @param array $config
+     * @param string $projectPath
+     * @param string $configHash
+     *
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \ReflectionException
+     */
+    public function build($config, $projectPath, $configHash)
+    {
+        if (!$this->targetDirectory) {
+            throw new \InvalidArgumentException('You have to call first the `setCachePath` function!');
+        }
+        // If the filename or directoryname starts with dot, we keep it. Eg: .data directory
+        $this->fileSystem->remove(Finder::create()->in($projectPath . '/' . $this->targetDirectory)->depth(0));
+
+        $this->buildRecipe($projectPath, 'base', $config);
+        foreach ($config['recipes'] as $recipe => $recipeConfig) {
+            $this->buildRecipe($projectPath, $recipe, $recipeConfig, $config);
+        }
+
+        $this->parseGlobalConfig($config);
+        $this->buildRecipe($projectPath, 'post_base', [
+            'services' => $this->parseAllDockerServices($projectPath, $this->dockerComposeFiles),
+        ], $config);
+        $this->buildProjectMakefile($projectPath, $configHash);
+    }
+
+    /**
+     * @param string $projectPath
+     * @param string $recipeName
+     * @param array $recipeConfig
+     * @param array $globalConfig
+     *
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     * @throws \ReflectionException
+     */
+    protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
+    {
+        /** @var BaseRecipe $recipe */
+        $recipe = $this->recipeManager->getRecipe($recipeName);
+
+        /** @var SkeletonFile[] $skeletonFiles */
+        $skeletonFiles = $recipe->build($projectPath, $recipeConfig, $globalConfig);
+
+        foreach ($skeletonFiles as $skeletonFile) {
+            $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
+            $this->fileSystem->dumpFile($projectPath . '/' . $fileTarget, $skeletonFile->getContents());
+
+            if ($skeletonFile instanceof MakefileSkeletonFile) {
+                $this->makefiles[] = $fileTarget;
+            } elseif ($skeletonFile instanceof DockerComposeSkeletonFile) {
+                $this->dockerComposeFiles[] = $fileTarget;
+            }
+        }
+    }
+
+    protected function parseGlobalConfig($config)
+    {
+        $this->dockerComposeFiles = array_merge($this->dockerComposeFiles, $config['docker_compose']);
+        $this->makefiles = array_merge($this->makefiles, $config['makefile']);
+    }
+
+    protected function getRelativeTargetFilePath($recipeName, SplFileInfo $fileInfo)
+    {
+        return sprintf('%s/%s/%s', $this->targetDirectory, $recipeName, $fileInfo->getRelativePathname());
+    }
+
+    /**
+     * Find all docker service name
+     *
+     * @param array $dockerComposeFiles
+     *
+     * @return array
+     */
+    protected function parseAllDockerServices($projectPath, $dockerComposeFiles)
+    {
+        $services = [];
+        foreach ($dockerComposeFiles as $dockerComposeFile) {
+            $config = Yaml::parse(file_get_contents(
+                $projectPath . '/' . $dockerComposeFile
+            ));
+            if (isset($config['services'])) {
+                $services = array_unique(array_merge($services, array_keys($config['services'])));
+            }
+        }
+
+        return $services;
+    }
+
+    /**
+     * @param string $projectPath
+     * @param string $versionHash The CRC32 hash of config yml file
+     */
+    protected function buildProjectMakefile($projectPath, $versionHash)
+    {
+        $path = sprintf('%s/%s/%s.Makefile', $projectPath, $this->targetDirectory, $versionHash);
+        $includeMakefiles = $this->makefileMultilineFormatter('include %s', $this->makefiles);
+        $dockerComposeFiles = array_map(function($v) {
+            return $v[0] == '/' ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
+        }, $this->dockerComposeFiles);
+        $dockerComposeFiles = $this->makefileMultilineFormatter('DOCKER_CONFIG_FILES := %s', $dockerComposeFiles);
+        $contents = <<<EOS
+PROJECT_WORKING_DIRECTORY := \$\${PWD}
+WF_TARGET_DIRECTORY := $this->targetDirectory
+
+# Makefiles
+$includeMakefiles
+
+# Docker files
+$dockerComposeFiles
+
+ORIGINAL_CMD_DOCKER_ENV := $(CMD_DOCKER_ENV)
+define CMD_DOCKER_ENV
+    $(ORIGINAL_CMD_DOCKER_ENV) \
+    WF_TARGET_DIRECTORY=$(WF_TARGET_DIRECTORY)
+endef
+
+define CMD_DOCKER_BASE
+    $(CMD_DOCKER_ENV) docker-compose \
+        -p $(DOCKER_BASENAME) \
+        $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
+        --project-directory $(CURDIR)
+endef
+define CMD_DOCKER_RUN
+    $(CMD_DOCKER_BASE) run --rm
+endef
+# If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
+define CMD_DOCKER_RUN_CLI
+    $(CMD_DOCKER_RUN) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
+endef
+define CMD_DOCKER_EXEC
+    $(CMD_DOCKER_BASE) exec
+endef
+# If you want to run without user (as root), use the: `$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_EXEC_CLI) <cmd>`
+define CMD_DOCKER_EXEC_CLI
+    $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
+endef
+EOS;
+
+        $this->fileSystem->dumpFile($path, $contents);
+    }
+
+    /**
+     * Formatting helper for makefiles, eg:
+     * <code>
+     *  # makefileMultilineFormatter('FOO := %s', ['value1', 'value2', 'value3'])
+     *  FOO := value1 \
+     *         value2 \
+     *         value3
+     * </code>
+     *
+     * @param string $pattern `printf` format pattern
+     * @param array  $array
+     *
+     * @return string
+     */
+    protected function makefileMultilineFormatter($pattern, $array)
+    {
+        $emptyPattern = sprintf($pattern, '');
+        $glue = sprintf(" \\\n%s", str_repeat(' ', strlen($emptyPattern)));
+
+        return sprintf($pattern, implode($glue, $array));
+    }
+}

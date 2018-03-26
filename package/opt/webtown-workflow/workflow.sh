@@ -13,7 +13,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # CONFIG
-CONFIG_PATH="/etc/webtown-workflow"
+CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
@@ -97,23 +97,47 @@ case $1 in
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
     ;;
+    --reconfigure)
+        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
+        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
+        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
+        PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
+        if [ -f "${PROJECT_CONFIG_FILE}" ]; then
+            CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
+            ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure --file ${WF_CONFIGURATION_FILE} --target-directory ${WF_WORKING_DIRECTORY} --config-hash ${CONFIG_HASH}
+        else
+            echo "The ${PROJECT_CONFIG_FILE} doesn't exist."
+        fi
+    ;;
     # Project makefile
     *)
         COMMAND="$1"
         shift
 
         PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
-        PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
+        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
+        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
         # Deploy esetén nem biztos, hogy van .git könyvtár, ellenben ettől még a projekt fájl létezhet
         if [ "${PROJECT_ROOT_DIR}" == "." ] && [ ! -f "${PROJECT_MAKEFILE}" ]; then
             echo_fail "You are not in project directory! Git top level is missing!"
             quit
         fi
-        if [ ! -f "${PROJECT_MAKEFILE}" ]; then
+        PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
+        if [ -f "${PROJECT_CONFIG_FILE}" ]; then
+            CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
+            PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.Makefile"
+            if [ ! -f "${PROJECT_MAKEFILE}" ]; then
+                ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure --file ${WF_CONFIGURATION_FILE} --target-directory ${WF_WORKING_DIRECTORY} --config-hash ${CONFIG_HASH}
+            fi
+        else
             # If we are using "hidden" docker environment...
             DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
+            # If we are using old version
+            OLD_PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
             if [ -f "${DOCKER_ENVIRONEMNT_MAKEFIILE}" ]; then
                 PROJECT_MAKEFILE="${DOCKER_ENVIRONEMNT_MAKEFIILE}";
+            elif [ -f "${OLD_PROJECT_MAKEFILE}" ]; then
+                PROJECT_MAKEFILE="${OLD_PROJECT_MAKEFILE}";
             else
                 echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
                 quit

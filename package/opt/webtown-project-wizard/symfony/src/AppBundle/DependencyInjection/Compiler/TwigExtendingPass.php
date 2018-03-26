@@ -7,13 +7,16 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class TwigExtendingPass implements CompilerPassInterface
 {
-    const TWIG_NAMESPACE = 'skeleton';
+    const SKELETON_TWIG_NAMESPACE = 'skeleton';
+    const RECIPE_TWIG_NAMESPACE = 'recipe';
 
     public function process(ContainerBuilder $container)
     {
-        $path = $container->getParameter('skeleton_base_dir');
+        $skeletonPath = $container->getParameter('skeleton_base_dir');
+        $recipePath = $container->getParameter('recipe_base_dir');
 
         $twigFilesystemLoaderDefinition = $container->getDefinition('twig.loader.filesystem');
-        $twigFilesystemLoaderDefinition->addMethodCall('addPath', [$path, self::TWIG_NAMESPACE]);
+        $twigFilesystemLoaderDefinition->addMethodCall('addPath', [$skeletonPath, self::SKELETON_TWIG_NAMESPACE]);
+        $twigFilesystemLoaderDefinition->addMethodCall('addPath', [$recipePath, self::RECIPE_TWIG_NAMESPACE]);
     }
 }

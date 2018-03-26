@@ -1,0 +1,5 @@
+version: "{{ config.docker_compose_version }}"
+
+services:
+    mail:
+        image: {{ image }}
