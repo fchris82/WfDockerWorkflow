@@ -30,6 +30,8 @@ services:
         environment:
             PHP_IDE_CONFIG: "serverName=${XDEBUG_IDE_SERVER_NAME}"
             XDEBUG_ENABLED: ${XDEBUG_ENABLED}
+#            # You can disable the composer xdebug: https://getcomposer.org/doc/articles/troubleshooting.md#xdebug-impact-on-composer
+#            COMPOSER_ALLOW_XDEBUG: 0
 
 networks:
     reverse-proxy:

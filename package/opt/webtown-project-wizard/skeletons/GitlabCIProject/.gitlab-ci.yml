@@ -122,7 +122,7 @@ deploy:demo:
         # Biztosra megyünk, úgyhogy ha ezt külön szeretnénk futtatni, akkor is jó legyen.
         - wf composer install -n
         - cp .deployer/hosts.yml.dist .deployer/hosts.yml
-        - wf dep deploy demo
+        - wf dep deploy demo --revision="${CI_BUILD_REF}"
     environment:
         name: staging
         url: https://staging.example.com
