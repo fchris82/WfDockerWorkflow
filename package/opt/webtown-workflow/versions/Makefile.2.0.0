@@ -66,6 +66,7 @@ docker-compose:
 __docker_up:
 	$(CMD_DOCKER_BASE) up -d
 
+# @todo (Chris) Ezt esetleg át kellene írni, hogy ne a docker-compose.yml alapján csinálja, mert az változhat, hanem mondjuk label vagy más azonosító alapján.
 .PHONY: __docker_down
 __docker_down:
 	$(CMD_DOCKER_BASE) down
