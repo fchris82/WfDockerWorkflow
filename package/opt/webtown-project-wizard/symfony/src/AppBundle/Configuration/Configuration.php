@@ -115,6 +115,11 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('commands')
+                    ->info('<comment>You can add extra <info>commands</info>.</comment>')
+                    ->useAttributeAsKey('command')
+                    ->variablePrototype()->end()
+                ->end()
                 ->append($this->addRecipesNode())
             ->end()
         ;

@@ -106,7 +106,7 @@ abstract class BaseRecipe
         throw new \Exception('Twig path not found');
     }
 
-    public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
+    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
     {
         if (is_string($recipeConfig)) {
             $recipeConfig = ['value' => $recipeConfig];
@@ -114,6 +114,7 @@ abstract class BaseRecipe
 
         return array_merge([
             'config' => $globalConfig,
+            'project_path' => $projectPath,
             'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/' . $this->getName(),
         ], $recipeConfig);
     }
