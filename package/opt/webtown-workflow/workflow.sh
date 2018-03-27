@@ -76,6 +76,7 @@ case $1 in
         fi
         docker stop nginx-reverse-proxy
         docker rm nginx-reverse-proxy
+        # @todo (Chris) Meg kellene oldani, hogy lehessen rajta keresztül feltölteni nagy fájlokat is, mert most nem enged át semmit, ami nagyobb, mint 1MB.
         docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
             --name nginx-reverse-proxy \
             --net reverse-proxy \
