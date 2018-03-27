@@ -10,6 +10,6 @@ services:
         volumes:
             - "./..:/usr/src/script"
             - "~/:/home/user:ro"
-            - "$PWD:/usr/src/myapp"
-        working_dir: /usr/src/myapp
+            - "$PWD:$PWD"
+        working_dir: $PWD
         entrypoint: /usr/src/script/symfony/bin/docker-entrypoint.sh
