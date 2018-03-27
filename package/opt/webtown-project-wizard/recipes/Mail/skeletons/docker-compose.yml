@@ -2,4 +2,4 @@ version: "{{ config.docker_compose.version }}"
 
 services:
     mail:
-        image: {{ image }}
+        image: tianon/exim4:latest

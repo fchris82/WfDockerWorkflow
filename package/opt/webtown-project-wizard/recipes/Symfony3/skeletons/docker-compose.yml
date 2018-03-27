@@ -13,7 +13,7 @@ services:
         command: {{ nginx_debug ? 'nginx-debug' : 'nginx' }} -g 'daemon off;'
 
     engine:
-        image:  {{ image | default('fchris82/symfony:' ~ version) }}
+        image:  fchris82/symfony:{{ version }}
         environment:
             CI: ${CI}
             WWW_DATA_UID: ${WWW_DATA_UID}
