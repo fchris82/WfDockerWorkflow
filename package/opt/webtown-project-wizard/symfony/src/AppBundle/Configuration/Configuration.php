@@ -73,7 +73,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('makefile')
                     ->info('<comment>You can add extra <info>makefile files</info>.</comment>')
-                    ->example('~/dev.Makefile')
+                    ->example('~/dev.mk')
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('docker_compose')

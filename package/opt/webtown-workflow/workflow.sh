@@ -104,7 +104,10 @@ case $1 in
         PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
         if [ -f "${PROJECT_CONFIG_FILE}" ]; then
             CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
-            ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure --file ${WF_CONFIGURATION_FILE} --target-directory ${WF_WORKING_DIRECTORY} --config-hash ${CONFIG_HASH}
+            ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure \
+                --file ${WF_CONFIGURATION_FILE} \
+                --target-directory ${WF_WORKING_DIRECTORY} \
+                --config-hash ${CONFIG_HASH}
         else
             echo "The ${PROJECT_CONFIG_FILE} doesn't exist."
         fi
@@ -125,7 +128,7 @@ case $1 in
         PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
         if [ -f "${PROJECT_CONFIG_FILE}" ]; then
             CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
-            PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.Makefile"
+            PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.mk"
             if [ ! -f "${PROJECT_MAKEFILE}" ]; then
                 ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure --file ${WF_CONFIGURATION_FILE} --target-directory ${WF_WORKING_DIRECTORY} --config-hash ${CONFIG_HASH}
             fi

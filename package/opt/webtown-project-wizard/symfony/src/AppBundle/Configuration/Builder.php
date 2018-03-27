@@ -11,6 +11,7 @@ namespace AppBundle\Configuration;
 
 use AppBundle\Exception\SkipRecipeException;
 use AppBundle\Skeleton\DockerComposeSkeletonFile;
+use AppBundle\Skeleton\ExecutableSkeletonFile;
 use AppBundle\Skeleton\MakefileSkeletonFile;
 use AppBundle\Skeleton\SkeletonFile;
 use Symfony\Component\Filesystem\Filesystem;
@@ -79,6 +80,7 @@ class Builder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws \ReflectionException
+     * @throws \Exception
      */
     public function build($config, $projectPath, $configHash)
     {
@@ -120,6 +122,7 @@ class Builder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      * @throws \ReflectionException
+     * @throws \Exception
      */
     protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
@@ -132,12 +135,19 @@ class Builder
 
             foreach ($skeletonFiles as $skeletonFile) {
                 $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
-                $this->fileSystem->dumpFile($projectPath . '/' . $fileTarget, $skeletonFile->getContents());
+                $fileFullTarget = $projectPath . '/' . $fileTarget;
+                $this->fileSystem->dumpFile($fileFullTarget, $skeletonFile->getContents());
 
-                if ($skeletonFile instanceof MakefileSkeletonFile) {
-                    $this->makefiles[] = $fileTarget;
-                } elseif ($skeletonFile instanceof DockerComposeSkeletonFile) {
-                    $this->dockerComposeFiles[] = $fileTarget;
+                switch (true) {
+                    case $skeletonFile instanceof MakefileSkeletonFile:
+                        $this->makefiles[] = $fileTarget;
+                        break;
+                    case $skeletonFile instanceof DockerComposeSkeletonFile:
+                        $this->dockerComposeFiles[] = $fileTarget;
+                        break;
+                    case $skeletonFile instanceof ExecutableSkeletonFile:
+                        $this->fileSystem->chmod($fileFullTarget, $skeletonFile->getPermission());
+                        break;
                 }
             }
         } catch (SkipRecipeException $e) {
@@ -145,6 +155,11 @@ class Builder
         }
     }
 
+    /**
+     * Handle the extra configuration files. Like additional `makefile` or `docker-compose.yml` file.
+     *
+     * @param $config
+     */
     protected function includeExtraFiles($config)
     {
         $this->dockerComposeFiles = array_merge(
@@ -154,13 +169,21 @@ class Builder
         $this->makefiles = array_merge($this->makefiles, $config['makefile']);
     }
 
+    /**
+     * Build the relative target path, like: `.wf/mysql/docker-compose.yml`
+     *
+     * @param string      $recipeName
+     * @param SplFileInfo $fileInfo
+     *
+     * @return string
+     */
     protected function getRelativeTargetFilePath($recipeName, SplFileInfo $fileInfo)
     {
         return sprintf('%s/%s/%s', $this->targetDirectory, $recipeName, $fileInfo->getRelativePathname());
     }
 
     /**
-     * Find all docker service name
+     * Find all docker service name through parsing the all included docker-compose.yml file.
      *
      * @param array $dockerComposeFiles
      *
@@ -187,10 +210,11 @@ class Builder
      */
     protected function buildProjectMakefile($projectPath, $versionHash)
     {
-        $path = sprintf('%s/%s/%s.Makefile', $projectPath, $this->targetDirectory, $versionHash);
+        $path = sprintf('%s/%s/%s.mk', $projectPath, $this->targetDirectory, $versionHash);
         $includeMakefiles = $this->makefileMultilineFormatter('include %s', $this->makefiles);
         $dockerComposeFiles = array_map(function($v) {
-            return $v[0] == '/' ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
+            // If the path start with `/` or `~` we won't change, else we put the project path before it
+            return in_array($v[0], ['/', '~']) ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
         }, $this->dockerComposeFiles);
         $dockerComposeFiles = $this->makefileMultilineFormatter('DOCKER_CONFIG_FILES := %s', $dockerComposeFiles);
         $contents = <<<EOS
