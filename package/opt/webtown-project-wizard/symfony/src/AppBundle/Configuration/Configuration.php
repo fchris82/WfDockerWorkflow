@@ -77,6 +77,7 @@ class Configuration implements ConfigurationInterface
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('docker_compose')
+                    ->info('<comment>Config the docker compose data.</comment>')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('version')
@@ -100,13 +101,17 @@ class Configuration implements ConfigurationInterface
                                     ],
                                 ],
                             ])
+                            ->beforeNormalization()
+                                ->ifNull()
+                                ->thenEmptyArray()
+                            ->end()
                             ->validate()
                                 ->ifTrue(function ($v) {
                                     return !is_array($v);
                                 })
                                 ->thenInvalid('You have to set array value!')
                             ->end()
-                            ->defaultValue([])
+                            ->defaultNull()
                         ->end()
                     ->end()
                 ->end()
