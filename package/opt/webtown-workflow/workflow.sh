@@ -97,7 +97,10 @@ case $1 in
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
     ;;
+    # You can call with symfony command verbose, like: wf --reconfigure -v
+    # @todo (Chris) Ezt inkább -- nélkül kellene, autocomplete-tel
     --reconfigure)
+        shift
         PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
         WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
         WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
@@ -107,7 +110,7 @@ case $1 in
             ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure \
                 --file ${WF_CONFIGURATION_FILE} \
                 --target-directory ${WF_WORKING_DIRECTORY} \
-                --config-hash ${CONFIG_HASH}
+                --config-hash ${CONFIG_HASH} ${@}
         else
             echo "The ${PROJECT_CONFIG_FILE} doesn't exist."
         fi

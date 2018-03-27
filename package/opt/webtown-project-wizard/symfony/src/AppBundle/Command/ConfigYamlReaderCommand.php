@@ -4,18 +4,15 @@ namespace AppBundle\Command;
 
 use AppBundle\Configuration\Builder;
 use AppBundle\Configuration\Configuration;
-use AppBundle\Configuration\RecipeManager;
-use AppBundle\Wizard\Helper\ComposerInstaller;
-use AppBundle\Wizard\Manager;
-use AppBundle\Wizard\PublicWizardInterface;
+use AppBundle\Event\ConfigurationEvents;
+use AppBundle\Event\DumpEvent;
+use AppBundle\Event\VerboseInfoEvent;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class ConfigYamlReaderCommand.
@@ -24,6 +21,16 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
 {
     const DEFAULT_CONFIG_FILE = '.wf.yml';
     const DEFAULT_TARGET_DIRECTORY = '.wf';
+
+    /**
+     * @var InputInterface
+     */
+    protected $input;
+
+    /**
+     * @var OutputInterface
+     */
+    protected $output;
 
     /**
      * {@inheritdoc}
@@ -47,9 +54,14 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->input = $input;
+        $this->output = $output;
+
         $baseDirectory = $input->getArgument('base');
         $configuration = $this->getContainer()->get(Configuration::class);
         $config = $configuration->loadConfig($input->getOption('file'), $baseDirectory);
+
+        $this->registerEventListeners($input, $output);
 
         $builder = $this->getContainer()->get(Builder::class);
         $builder
@@ -67,5 +79,68 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
         $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
         $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen(strip_tags($title)))));
         $output->writeln('');
+    }
+
+    /**
+     * @todo (Chris) Esetleg ezt az egész eseménykezelőst dolgot áthelyezhetnénk egy külön service-be, ami set-tel megkapja az input és output értékeket, majd az alapján cselekszik.
+     * Registering event listeners.
+     *
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
+    protected function registerEventListeners(InputInterface $input, OutputInterface $output)
+    {
+        $eventDispatcher = $this->getContainer()->get('debug.event_dispatcher');
+        if ($output->isVerbose()) {
+            $eventDispatcher->addListener(
+                ConfigurationEvents::VERBOSE_INFO,
+                [$this, 'verboseInfo']
+            );
+        }
+        $eventDispatcher->addListener(
+            ConfigurationEvents::BEFORE_DUMP,
+            [$this, 'insertGeneratedFileWarning']
+        );
+    }
+
+    /**
+     * Print verbose informations
+     *
+     * @param VerboseInfoEvent $event
+     */
+    public function verboseInfo(VerboseInfoEvent $event)
+    {
+        $info = $event->getInfo();
+        if (is_array($info)) {
+            $info = Yaml::dump($info, 4);
+        }
+        $this->output->writeln($info);
+    }
+
+    /**
+     * Add warnings to almost all configured file.
+     *
+     * @param DumpEvent $dumpEvent
+     */
+    public function insertGeneratedFileWarning(DumpEvent $dumpEvent)
+    {
+        $warning = sprintf(
+            'This is an auto generated file from `%s` config file! You shouldn\'t edit this.',
+            $this->input->getOption('file')
+        );
+        $ext = pathinfo($dumpEvent->getTargetPath(), PATHINFO_EXTENSION);
+
+        $commentPattern = "# %s\n\n";
+        switch ($ext) {
+            case 'css':
+                $commentPattern = "/* %s */\n\n";
+                break;
+            case 'sh':
+                // We skip this
+                return;
+        }
+
+        $newContents = sprintf($commentPattern, $warning) . $dumpEvent->getContents();
+        $dumpEvent->setContents($newContents);
     }
 }

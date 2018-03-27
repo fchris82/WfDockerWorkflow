@@ -9,11 +9,15 @@
 namespace AppBundle\Configuration;
 
 
+use AppBundle\Event\ConfigurationEvents;
+use AppBundle\Event\DumpEvent;
+use AppBundle\Event\VerboseInfoEvent;
 use AppBundle\Exception\SkipRecipeException;
 use AppBundle\Skeleton\DockerComposeSkeletonFile;
 use AppBundle\Skeleton\ExecutableSkeletonFile;
 use AppBundle\Skeleton\MakefileSkeletonFile;
 use AppBundle\Skeleton\SkeletonFile;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -32,6 +36,11 @@ class Builder
     protected $recipeManager;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $targetDirectory;
@@ -45,10 +54,11 @@ class Builder
      * @param Filesystem $fileSystem
      * @param RecipeManager $recipeManager
      */
-    public function __construct(Filesystem $fileSystem, RecipeManager $recipeManager)
+    public function __construct(Filesystem $fileSystem, RecipeManager $recipeManager, EventDispatcherInterface $eventDispatcher)
     {
         $this->fileSystem = $fileSystem;
         $this->recipeManager = $recipeManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -89,6 +99,10 @@ class Builder
         }
         // If the filename or directoryname starts with dot, we keep it. Eg: .data directory
         $this->fileSystem->remove(Finder::create()->in($projectPath . '/' . $this->targetDirectory)->depth(0));
+        $this->verboseInfo(sprintf(
+            '<info>The <comment>%s</comment> directory has been clean</info>',
+            $projectPath . '/' . $this->targetDirectory
+        ));
 
         // BASE
         $this->buildRecipe($projectPath, 'base', $config, $config);
@@ -108,6 +122,7 @@ class Builder
             'services' => $this->parseAllDockerServices($projectPath, $this->dockerComposeFiles),
         ], $config);
 
+        // @todo (Chris) Itt esetleg létrehozhatnánk egy README.md fájlt a .wf könyvtár alá, segítségként.
         $this->buildProjectMakefile($projectPath, $configHash);
     }
 
@@ -126,6 +141,12 @@ class Builder
      */
     protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
+        $this->verboseInfo(sprintf(
+            "\n<info>Starting build <comment>%s</comment> recipe</info>",
+            $recipeName
+        ));
+        $this->verboseInfo(['config' => $recipeConfig]);
+
         try {
             /** @var BaseRecipe $recipe */
             $recipe = $this->recipeManager->getRecipe($recipeName);
@@ -136,7 +157,14 @@ class Builder
             foreach ($skeletonFiles as $skeletonFile) {
                 $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
                 $fileFullTarget = $projectPath . '/' . $fileTarget;
-                $this->fileSystem->dumpFile($fileFullTarget, $skeletonFile->getContents());
+                // Dump files
+                $dumpEvent = new DumpEvent($fileFullTarget, $skeletonFile->getContents());
+                $this->eventDispatcher->dispatch(ConfigurationEvents::BEFORE_DUMP, $dumpEvent);
+                $this->fileSystem->dumpFile(
+                    $dumpEvent->getTargetPath(),
+                    $dumpEvent->getContents()
+                );
+                $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $fileTarget, get_class($skeletonFile)));
 
                 switch (true) {
                     case $skeletonFile instanceof MakefileSkeletonFile:
@@ -152,6 +180,7 @@ class Builder
             }
         } catch (SkipRecipeException $e) {
             // do nothing
+            $this->verboseInfo(sprintf('<comment>Skip the <options=underscore>%s</> recipe</comment>', $recipeName));
         }
     }
 
@@ -255,7 +284,15 @@ define CMD_DOCKER_EXEC_CLI
 endef
 EOS;
 
-        $this->fileSystem->dumpFile($path, $contents);
+        // Dump files
+        $dumpEvent = new DumpEvent($path, $contents);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::BEFORE_DUMP, $dumpEvent);
+        $this->fileSystem->dumpFile(
+            $dumpEvent->getTargetPath(),
+            $dumpEvent->getContents()
+        );
+
+        $this->verboseInfo(sprintf('<info>✔ The <comment>%s</comment> makefile has been created!</info>', $path));
     }
 
     /**
@@ -278,5 +315,15 @@ EOS;
         $glue = sprintf(" \\\n%s", str_repeat(' ', strlen($emptyPattern)));
 
         return sprintf($pattern, implode($glue, $array));
+    }
+
+    /**
+     * Print verbose informations. The $info may be array or string.
+     *
+     * @parameter string|array|null $info
+     */
+    protected function verboseInfo($info)
+    {
+        $this->eventDispatcher->dispatch(ConfigurationEvents::VERBOSE_INFO, new VerboseInfoEvent($info));
     }
 }
