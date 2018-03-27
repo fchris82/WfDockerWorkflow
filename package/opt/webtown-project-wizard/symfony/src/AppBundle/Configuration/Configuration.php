@@ -66,6 +66,7 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
+                // @todo (Chris) Ezt létre kellene hozni mkdir-ral még a futtató user-rel, generálásnál, különben root-tal jön létre esetleg, és abba nem fog tudni írni minden container.
                 ->scalarNode('docker_data_dir')
                     ->info('<comment>You can set an alternative docker data directory.</comment>')
                     ->cannotBeEmpty()
