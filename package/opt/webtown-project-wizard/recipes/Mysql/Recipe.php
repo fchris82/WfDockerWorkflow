@@ -48,11 +48,6 @@ class Recipe extends BaseRecipe
                     ->info('<comment>If you want to enable this container from outside set the port number.</comment>')
                     ->defaultNull()
                 ->end()
-                ->arrayNode('environment')
-                    ->info('<comment>You can set environment variables.</comment>')
-                    ->useAttributeAsKey('ENV_VAR')
-                    ->scalarPrototype()->end()
-                ->end()
             ->end()
         ;
 

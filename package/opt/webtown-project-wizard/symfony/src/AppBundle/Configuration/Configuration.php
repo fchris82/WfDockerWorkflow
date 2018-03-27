@@ -60,11 +60,6 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
-                ->scalarNode('docker_compose_version')
-                    ->info('<comment>You can change the docker compose file version.</comment>')
-                    ->cannotBeEmpty()
-                    ->defaultValue('3.4')
-                ->end()
                 // @todo (Chris) Ezt bele kellene tenni a "docker image nevekbe", ami most (user)p(dir)
                 ->scalarNode('name')
                     ->info('<comment>You have to set a name for the project.</comment>')
@@ -82,9 +77,38 @@ class Configuration implements ConfigurationInterface
                     ->scalarPrototype()->end()
                 ->end()
                 ->arrayNode('docker_compose')
-                    ->info('<comment>You can add extra <info>docker-compose.yml files</info>.</comment>')
-                    ->example('/home/user/dev.docker-compose.yml')
-                    ->scalarPrototype()->end()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('version')
+                            ->info('<comment>You can change the docker compose file version.</comment>')
+                            ->cannotBeEmpty()
+                            ->defaultValue('3.4')
+                        ->end()
+                        ->arrayNode('include')
+                            ->info('<comment>You can add extra <info>docker-compose.yml files</info>.</comment>')
+                            ->example('/home/user/dev.docker-compose.yml')
+                            ->scalarPrototype()->end()
+                            ->defaultValue([])
+                        ->end()
+                        ->variableNode('extension')
+                            ->info('<comment>Docker Compose yaml configuration. You mustn\'t use the <info>version</info> parameter, it will be automatically.</comment>')
+                            ->example([
+                                'services' => [
+                                    'web' => [
+                                        'volumes' => ['~/dev/nginx.conf:/etc/nginx/conf.d/custom.conf'],
+                                        'environment' => ['TEST' => '1'],
+                                    ],
+                                ],
+                            ])
+                            ->validate()
+                                ->ifTrue(function ($v) {
+                                    return !is_array($v);
+                                })
+                                ->thenInvalid('You have to set array value!')
+                            ->end()
+                            ->defaultValue([])
+                        ->end()
+                    ->end()
                 ->end()
                 ->append($this->addRecipesNode())
             ->end()

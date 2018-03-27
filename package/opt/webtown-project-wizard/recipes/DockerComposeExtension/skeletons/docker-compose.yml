@@ -1,5 +1,3 @@
 version: "{{ config.docker_compose.version }}"
 
-services:
-    mail:
-        image: {{ image }}
+{{ yaml_dump }}

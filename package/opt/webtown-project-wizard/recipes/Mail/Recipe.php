@@ -34,13 +34,6 @@ class Recipe extends BaseRecipe
 
         $rootNode
             ->info('<comment>SMTP e-mail sender.</comment>')
-            ->children()
-                ->scalarNode('image')
-                    ->info('<comment>You can change the image.</comment>')
-                    ->cannotBeEmpty()
-                    ->defaultValue('tianon/exim4:latest')
-                ->end()
-            ->end()
         ;
 
         return $rootNode;

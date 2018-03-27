@@ -9,6 +9,7 @@
 namespace AppBundle\Configuration;
 
 
+use AppBundle\Exception\SkipRecipeException;
 use AppBundle\Skeleton\DockerComposeSkeletonFile;
 use AppBundle\Skeleton\MakefileSkeletonFile;
 use AppBundle\Skeleton\SkeletonFile;
@@ -87,15 +88,22 @@ class Builder
         // If the filename or directoryname starts with dot, we keep it. Eg: .data directory
         $this->fileSystem->remove(Finder::create()->in($projectPath . '/' . $this->targetDirectory)->depth(0));
 
-        $this->buildRecipe($projectPath, 'base', $config);
+        // BASE
+        $this->buildRecipe($projectPath, 'base', $config, $config);
+        // PUBLIC RECIPES
         foreach ($config['recipes'] as $recipe => $recipeConfig) {
             $this->buildRecipe($projectPath, $recipe, $recipeConfig, $config);
         }
 
-        $this->parseGlobalConfig($config);
+        // INCLUDED FILES
+        $this->includeExtraFiles($config);
+        // DOCKER COMPOSE EXTENSION
+        $this->buildRecipe($projectPath, 'docker_compose_extension', [], $config);
+        // POST BASE
         $this->buildRecipe($projectPath, 'post_base', [
             'services' => $this->parseAllDockerServices($projectPath, $this->dockerComposeFiles),
         ], $config);
+
         $this->buildProjectMakefile($projectPath, $configHash);
     }
 
@@ -113,27 +121,34 @@ class Builder
      */
     protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
-        /** @var BaseRecipe $recipe */
-        $recipe = $this->recipeManager->getRecipe($recipeName);
+        try {
+            /** @var BaseRecipe $recipe */
+            $recipe = $this->recipeManager->getRecipe($recipeName);
 
-        /** @var SkeletonFile[] $skeletonFiles */
-        $skeletonFiles = $recipe->build($projectPath, $recipeConfig, $globalConfig);
+            /** @var SkeletonFile[] $skeletonFiles */
+            $skeletonFiles = $recipe->build($projectPath, $recipeConfig, $globalConfig);
 
-        foreach ($skeletonFiles as $skeletonFile) {
-            $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
-            $this->fileSystem->dumpFile($projectPath . '/' . $fileTarget, $skeletonFile->getContents());
+            foreach ($skeletonFiles as $skeletonFile) {
+                $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
+                $this->fileSystem->dumpFile($projectPath . '/' . $fileTarget, $skeletonFile->getContents());
 
-            if ($skeletonFile instanceof MakefileSkeletonFile) {
-                $this->makefiles[] = $fileTarget;
-            } elseif ($skeletonFile instanceof DockerComposeSkeletonFile) {
-                $this->dockerComposeFiles[] = $fileTarget;
+                if ($skeletonFile instanceof MakefileSkeletonFile) {
+                    $this->makefiles[] = $fileTarget;
+                } elseif ($skeletonFile instanceof DockerComposeSkeletonFile) {
+                    $this->dockerComposeFiles[] = $fileTarget;
+                }
             }
+        } catch (SkipRecipeException $e) {
+            // do nothing
         }
     }
 
-    protected function parseGlobalConfig($config)
+    protected function includeExtraFiles($config)
     {
-        $this->dockerComposeFiles = array_merge($this->dockerComposeFiles, $config['docker_compose']);
+        $this->dockerComposeFiles = array_merge(
+            $this->dockerComposeFiles,
+            $config['docker_compose']['include']
+        );
         $this->makefiles = array_merge($this->makefiles, $config['makefile']);
     }
 
