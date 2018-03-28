@@ -22,6 +22,9 @@ class Recipe extends HiddenRecipe
         return self::NAME;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function build($projectPath, $recipeConfig, $globalConfig)
     {
         // Start creating .sh files

@@ -12,6 +12,7 @@ namespace AppBundle\Configuration;
 use AppBundle\Event\BuildInitEvent;
 use AppBundle\Event\ConfigurationEvents;
 use AppBundle\Event\DumpEvent;
+use AppBundle\Event\FinishEvent;
 use AppBundle\Event\VerboseInfoEvent;
 use AppBundle\Exception\SkipRecipeException;
 use AppBundle\Skeleton\DockerComposeSkeletonFile;
@@ -131,7 +132,9 @@ class Builder
             'services' => $this->parseAllDockerServices($projectPath, $this->dockerComposeFiles),
         ], $config);
 
-        // @todo (Chris) Itt esetleg létrehozhatnánk egy README.md fájlt a .wf könyvtár alá, segítségként.
+        $finishEvent = new FinishEvent($this->fileSystem);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::FINISH, $finishEvent);
+
         return $this->buildProjectMakefile($projectPath, $configHash);
     }
 
