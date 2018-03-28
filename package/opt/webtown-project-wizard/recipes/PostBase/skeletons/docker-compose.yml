@@ -12,3 +12,5 @@ services:
 networks:
     default:
         driver: bridge
+        labels:
+            com.wf.basedirectory: ${BASE_DIRECTORY}

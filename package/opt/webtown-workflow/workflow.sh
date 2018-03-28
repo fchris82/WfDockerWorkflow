@@ -1,6 +1,6 @@
 #!/bin/bash
 # Debug mode:
-# set -x
+#set -x
 
 # DIRECTORIES
 WORKDIR=$(pwd)
@@ -25,6 +25,19 @@ PROGRAM_REPOSITORY=$(awk '/^program_repository/{print $3}' "${CONFIG}")
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
+
+# Switch on debug modes:
+#   wf -v sf docker:create:database -vvv
+#      ^^                           ^^^^
+#      Makefile debug mode          Symfony debug mode
+if [ "$1" == "-v" ]; then
+    MAKE_DISABLE_SILENC=1
+    shift
+elif [ "$1" == "-vvv" ]; then
+    MAKE_DISABLE_SILENC=1
+    MAKE_DEBUG_MODE=1
+    shift
+fi
 
 case $1 in
     ""|-h|--help)
@@ -76,7 +89,6 @@ case $1 in
         fi
         docker stop nginx-reverse-proxy
         docker rm nginx-reverse-proxy
-        # @todo (Chris) Meg kellene oldani, hogy lehessen rajta keresztül feltölteni nagy fájlokat is, mert most nem enged át semmit, ami nagyobb, mint 1MB.
         docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
             --name nginx-reverse-proxy \
             --net reverse-proxy \
@@ -102,18 +114,16 @@ case $1 in
     # @todo (Chris) Ezt inkább -- nélkül kellene, autocomplete-tel
     --reconfigure)
         shift
-        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
+        PROJECT_ROOT_DIR=$(get_project_root_dir)
         WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
         WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
-        PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
+        PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}")
+
         if [ -f "${PROJECT_CONFIG_FILE}" ]; then
-            CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
-            ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure \
-                --file ${WF_CONFIGURATION_FILE} \
-                --target-directory ${WF_WORKING_DIRECTORY} \
-                --config-hash ${CONFIG_HASH} ${@}
+            FORCE_OVERRIDE=1
+            create_makefile_from_config ${@}
         else
-            echo "The ${PROJECT_CONFIG_FILE} doesn't exist."
+            echo "The ${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE} doesn't exist."
         fi
     ;;
     # Project makefile
@@ -121,41 +131,18 @@ case $1 in
         COMMAND="$1"
         shift
 
-        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
+        PROJECT_ROOT_DIR=$(get_project_root_dir)
         WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
         WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
-        # Deploy esetén nem biztos, hogy van .git könyvtár, ellenben ettől még a projekt fájl létezhet
-        if [ "${PROJECT_ROOT_DIR}" == "." ] && [ ! -f "${PROJECT_MAKEFILE}" ]; then
-            echo_fail "You are not in project directory! Git top level is missing!"
-            quit
-        fi
-        PROJECT_CONFIG_FILE="${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}"
-        if [ -f "${PROJECT_CONFIG_FILE}" ]; then
-            CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
-            PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.mk"
-            if [ ! -f "${PROJECT_MAKEFILE}" ]; then
-                ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure --file ${WF_CONFIGURATION_FILE} --target-directory ${WF_WORKING_DIRECTORY} --config-hash ${CONFIG_HASH}
-            fi
-        else
-            # If we are using "hidden" docker environment...
-            DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
-            # If we are using old version
-            OLD_PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
-            if [ -f "${DOCKER_ENVIRONEMNT_MAKEFIILE}" ]; then
-                PROJECT_MAKEFILE="${DOCKER_ENVIRONEMNT_MAKEFIILE}";
-            elif [ -f "${OLD_PROJECT_MAKEFILE}" ]; then
-                PROJECT_MAKEFILE="${OLD_PROJECT_MAKEFILE}";
-            else
-                echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
-                quit
-            fi
-        fi
+        find_project_makefile || quit
 
         ARGS=$(escape "$@")
+        MAKE_EXTRA_PARAMS=$(make_params)
 
-        make $(make_params) -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
+        make ${MAKE_EXTRA_PARAMS} -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
             ARGS="${ARGS}" \
             WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
-            WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" || quit
+            WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" \
+            MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" || quit
     ;;
 esac

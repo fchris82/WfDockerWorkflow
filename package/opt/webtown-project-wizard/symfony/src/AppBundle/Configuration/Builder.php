@@ -9,6 +9,7 @@
 namespace AppBundle\Configuration;
 
 
+use AppBundle\Event\BuildInitEvent;
 use AppBundle\Event\ConfigurationEvents;
 use AppBundle\Event\DumpEvent;
 use AppBundle\Event\VerboseInfoEvent;
@@ -18,6 +19,7 @@ use AppBundle\Skeleton\ExecutableSkeletonFile;
 use AppBundle\Skeleton\MakefileSkeletonFile;
 use AppBundle\Skeleton\SkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -62,7 +64,7 @@ class Builder
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTargetDirectory()
     {
@@ -86,6 +88,8 @@ class Builder
      * @param string $projectPath
      * @param string $configHash
      *
+     * @return string
+     *
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
@@ -97,12 +101,17 @@ class Builder
         if (!$this->targetDirectory) {
             throw new \InvalidArgumentException('You have to call first the `setCachePath` function!');
         }
-        // If the filename or directoryname starts with dot, we keep it. Eg: .data directory
-        $this->fileSystem->remove(Finder::create()->in($projectPath . '/' . $this->targetDirectory)->depth(0));
-        $this->verboseInfo(sprintf(
-            '<info>The <comment>%s</comment> directory has been clean</info>',
-            $projectPath . '/' . $this->targetDirectory
-        ));
+
+        // INIT
+        foreach ($config['recipes'] as $recipe => $recipeConfig) {
+            $this->addRecipeEventSubscribers($projectPath, $recipe, $recipeConfig, $config);
+        }
+        $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectory, $configHash);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $initEvent);
+        $initEvent->setConfig($this->configReplaceParameters($initEvent->getConfig(), $initEvent->getParameters()));
+        // Init the directory structure
+        $this->initDirectoryStructure($initEvent);
+        $config = $initEvent->getConfig();
 
         // BASE
         $this->buildRecipe($projectPath, 'base', $config, $config);
@@ -123,10 +132,102 @@ class Builder
         ], $config);
 
         // @todo (Chris) Itt esetleg létrehozhatnánk egy README.md fájlt a .wf könyvtár alá, segítségként.
-        $this->buildProjectMakefile($projectPath, $configHash);
+        return $this->buildProjectMakefile($projectPath, $configHash);
     }
 
     /**
+     * Replace parameters in the values of $config.
+     *
+     * <code>
+     *  %wf.target_directory%/README.md --> .wf/README.md
+     * </code>
+     *
+     * @param mixed $config
+     * @param array $parameters
+     *
+     * @return mixed
+     */
+    protected function configReplaceParameters($config, $parameters)
+    {
+        if (is_array($config)) {
+            foreach ($config as $key => $value) {
+                $config[$key] = $this->configReplaceParameters($value, $parameters);
+            }
+        } elseif (is_string($config)) {
+            return strtr($config, $parameters);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Create directories:
+     *  - target
+     *  - data
+     * Or just clean up.
+     *
+     * @param BuildInitEvent $initEvent
+     */
+    protected function initDirectoryStructure(BuildInitEvent $initEvent)
+    {
+        $config = $initEvent->getConfig();
+        $fullTargetPath = $initEvent->getProjectPath() . '/' . $initEvent->getTargetDirectory();
+        // Create or clean the target directory
+        if (!$this->fileSystem->exists($fullTargetPath) || !is_dir($fullTargetPath)) {
+            $this->fileSystem->mkdir($fullTargetPath);
+            $this->verboseInfo(sprintf(
+                '<info>The <comment>%s</comment> directory has been created</info>',
+                $fullTargetPath
+            ));
+        } else {
+            // If the filename or directoryname starts with dot, we keep it. Eg: .data directory
+            $this->fileSystem->remove(Finder::create()->in($fullTargetPath)->depth(0));
+            $this->verboseInfo(sprintf(
+                '<info>The <comment>%s</comment> directory has been clean</info>',
+                $fullTargetPath
+            ));
+        }
+
+        $dataPath = $config['docker_data_dir'];
+        // If it is an relative path
+        if (!in_array($dataPath[0], ['/', '~'])) {
+            $dataPath = $initEvent->getProjectPath() . '/' . $dataPath;
+        }
+        if (!$this->fileSystem->exists($dataPath) || !is_dir($dataPath)) {
+            $this->fileSystem->mkdir($dataPath);
+        }
+        $config['docker_data_dir'] = $dataPath;
+        $initEvent->setConfig($config);
+    }
+
+    /**
+     * We can create a recipe with EventSubscriberInterface that can handle events!
+     *
+     * @param string $projectPath
+     * @param string $recipeName
+     * @param array  $recipeConfig
+     * @param array  $globalConfig
+     *
+     * @throws \AppBundle\Exception\MissingRecipeException
+     */
+    protected function addRecipeEventSubscribers($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
+    {
+        $this->verboseInfo(sprintf(
+            "\n<info>Register event listeners of <comment>%s</comment> recipe</info>",
+            $recipeName
+        ));
+
+        /** @var BaseRecipe $recipe */
+        $recipe = $this->recipeManager->getRecipe($recipeName);
+
+        if ($recipe instanceof EventSubscriberInterface) {
+            $this->eventDispatcher->addSubscriber($recipe);
+        }
+    }
+
+    /**
+     * Build a recipe.
+     *
      * @param string $projectPath
      * @param string $recipeName
      * @param array $recipeConfig
@@ -236,6 +337,8 @@ class Builder
     /**
      * @param string $projectPath
      * @param string $versionHash The CRC32 hash of config yml file
+     *
+     * @return string
      */
     protected function buildProjectMakefile($projectPath, $versionHash)
     {
@@ -293,6 +396,8 @@ EOS;
         );
 
         $this->verboseInfo(sprintf('<info>✔ The <comment>%s</comment> makefile has been created!</info>', $path));
+
+        return $path;
     }
 
     /**

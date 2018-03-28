@@ -6,5 +6,3 @@ services:
         environment:
             MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
             MYSQL_DATABASE: ${DB_NAME}
-        volumes:
-            - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"

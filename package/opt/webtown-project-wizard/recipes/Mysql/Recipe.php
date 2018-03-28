@@ -21,7 +21,6 @@ class Recipe extends BaseRecipe
         return self::NAME;
     }
 
-    // @todo (Chris) Esetleg ki lehetne kapcsolni, hogy a merevlemezen akarjon menteni.
     public function getConfig()
     {
         $rootNode = parent::getConfig();
@@ -40,9 +39,13 @@ class Recipe extends BaseRecipe
                     ->cannotBeEmpty()
                 ->end()
                 ->scalarNode('password')
-                    ->info('<comment>The <info>root</info> password</comment>')
+                    ->info('<comment>The <info>root</info> password.</comment>')
                     ->isRequired()
                     ->cannotBeEmpty()
+                ->end()
+                ->booleanNode('local_volume')
+                    ->info('<comment>You can switch the using local volume.</comment>')
+                    ->defaultTrue()
                 ->end()
                 ->integerNode('port')
                     ->info('<comment>If you want to enable this container from outside set the port number.</comment>')
@@ -56,7 +59,12 @@ class Recipe extends BaseRecipe
 
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        if (isset($config['port']) && $config['port'] > 0 && $fileInfo->getFilename() == 'docker-compose.port.yml') {
+        // Port settings
+        if ($fileInfo->getFilename() == 'docker-compose.port.yml' && isset($config['port']) && $config['port'] > 0) {
+            return new DockerComposeSkeletonFile($fileInfo);
+        }
+        // Volume settings
+        if ($fileInfo->getFilename() == 'docker-compose.volume.yml' && isset($config['local_volume']) && $config['local_volume']) {
             return new DockerComposeSkeletonFile($fileInfo);
         }
 

@@ -98,10 +98,10 @@ help:
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)
 
-BASE_DIRECTORY	:= $$(git rev-parse --show-toplevel || echo '.')
-THIS_FILE		:= $(firstword $(MAKEFILE_LIST))
+BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo '.')
+THIS_FILE       := $(firstword $(MAKEFILE_LIST))
 # @todo Ez nem kapja meg a debug paramétereket!
-CMD_MAKE              := $(MAKE) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)
+CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)
 
 # Docker commands
 # Ha szeretnéd az nginx-et debug módban futtatni, akkor írd át:
@@ -117,7 +117,7 @@ define CMD_DOCKER_ENV
     BASE_DIRECTORY=$(BASE_DIRECTORY) \
     PROJECT_DIR_NAME=$(PROJECT_DIRECOTRY) \
     PROJECT_COMPOSE_DIR=$(BASE_DIRECTORY)/$(DOCKER_PROVISIONING) \
-    DOCKER_DATA_DIR=$(BASE_DIRECTORY)/$(DOCKER_DATA_DIR) \
+    DOCKER_DATA_DIR=$(DOCKER_DATA_DIR) \
     DOCKER_DOC_ROOT=$(DOCKER_DOC_ROOT) \
     DOCKER_USER=$(DOCKER_USER) \
     SSH_PATH=$(SSH_PATH) \

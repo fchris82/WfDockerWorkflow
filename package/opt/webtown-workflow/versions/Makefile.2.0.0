@@ -1,14 +1,14 @@
 define PROJECT_INFO
-Workflow Version:  \033[1;32m$(VERSION)\033[0m
+\033[1mWorkflow Version:\033[0m  \033[1;32m$(VERSION)\033[0m
 
 Docker
 ======
 
     Basename:      \033[32m$(DOCKER_BASENAME)\033[0m
-    Config files:  \033[33m$(DOCKER_CONFIG_FILES) $(DOCKER_USER_CONFIG_FILES)\033[0m
+    Config files:  \033[33m$(foreach file,$(DOCKER_CONFIG_FILES),$(file)\n                  )\033[0m
     Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
 
-    Host:          \033[34m$(DOCKER_HTTP_HOST)\033[0m
+    Hosts:         $(foreach host,$(DOCKER_HTTP_HOST),\033[3m$(host)\033[0m | \033[34;1mhttp://$(host)\033[0m\n                  )
 
     Database URL:  \033[33m$(DB_URL)\033[0m
 
@@ -29,7 +29,6 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 .PHONY: info
 info::
 	@echo "$$PROJECT_INFO"
-	@echo "\n    DB fix ip: \033[33m$$(docker inspect -f "{{range .NetworkSettings.Networks}}{{if .IPAMConfig}}{{.IPAddress}}{{end}}    {{end}}" $$($(CMD_DOCKER_BASE) ps -q $(DOCKER_DB_NAME)))\033[0m"
 	@echo "\n    Docker compose command base:"
 	@RESTORE="\\\033[0m"; \
 		ENV_NAME="\\\033[33m"; \
@@ -66,9 +65,17 @@ docker-compose:
 __docker_up:
 	$(CMD_DOCKER_BASE) up -d
 
-# @todo (Chris) Ezt esetleg át kellene írni, hogy ne a docker-compose.yml alapján csinálja, mert az változhat, hanem mondjuk label vagy más azonosító alapján.
+# If something changes in yml files, then the `docker-compose down` maybe won't down all containers and networks.
+# This is why we use labels to down!
 .PHONY: __docker_down
+__docker_down: DOCKER_CONTAINERS := $$(docker ps  -a -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
+__docker_down: DOCKER_NETWORKS := $$(docker network ls -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
 __docker_down:
+	@echo "\033[1;32mStop and remove containers by label...\033[0m"
+	if [ ! -z "$(DOCKER_CONTAINERS)" ]; then docker stop $(DOCKER_CONTAINERS); docker rm $(DOCKER_CONTAINERS); fi
+	@echo "\033[1;32mRemove networks by label...\033[0m"
+	if [ ! -z "$(DOCKER_NETWORKS)" ]; then docker network rm $(DOCKER_NETWORKS); fi
+	@echo "\033[1;32mRemove remainders...\033[0m"
 	$(CMD_DOCKER_BASE) down
 
 # $(ARGS) : a docker-compose container neve kell nekünk
