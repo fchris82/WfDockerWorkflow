@@ -12,7 +12,6 @@ use AppBundle\Exception\MissingRecipeException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -46,6 +45,7 @@ class RecipeManager implements ContainerAwareInterface
     {
         if (!$this->recipes) {
             $finder = new Finder();
+            // @todo (Chris) Meg kellene oldani, hogy be lehessen húzni saját megoldásokat!
             $finder->in($this->recipesPath)->name('*.php');
             $this->recipes = [];
             /** @var SplFileInfo $recipeFile */
@@ -71,6 +71,13 @@ class RecipeManager implements ContainerAwareInterface
         return $this->recipes;
     }
 
+    /**
+     * @param string $recipeName
+     *
+     * @return BaseRecipe
+     *
+     * @throws MissingRecipeException
+     */
     public function getRecipe($recipeName)
     {
         $recipes = $this->getRecipes();
