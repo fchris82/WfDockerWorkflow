@@ -5,7 +5,7 @@ This is an auto generated directory. Please don't edit these files and don't com
 
 ## Base
 
-> You have to add `{{ wf_target_directory }}` and `{{ wf_config_file }}` the global `.gitignore` file!
+> You have to add `{{ wf_target_directory }}` and `{{ wf_config_file }}` to the global `.gitignore` file!
 
 The program try to find the `{{ wf_config_file }}`. If it doesn't exist it will check the `{{ wf_config_file }}.dist`.
 
