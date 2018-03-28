@@ -26,6 +26,7 @@ abstract class BaseRecipe
 
     /**
      * BaseRecipe constructor.
+     *
      * @param \Twig_Environment $twig
      */
     public function __construct(\Twig_Environment $twig)
