@@ -2,21 +2,11 @@
 
 namespace AppBundle\Command;
 
-use AppBundle\Configuration\Builder;
 use AppBundle\Configuration\Configuration;
-use AppBundle\Configuration\RecipeManager;
-use AppBundle\Wizard\Helper\ComposerInstaller;
-use AppBundle\Wizard\Manager;
-use AppBundle\Wizard\PublicWizardInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
-use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\Console\Helper\QuestionHelper;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**

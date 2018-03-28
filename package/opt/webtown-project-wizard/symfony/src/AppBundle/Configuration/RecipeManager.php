@@ -31,6 +31,7 @@ class RecipeManager implements ContainerAwareInterface
 
     /**
      * RecipeManager constructor.
+     *
      * @param string $recipesPath
      */
     public function __construct($recipesPath)
@@ -45,7 +46,7 @@ class RecipeManager implements ContainerAwareInterface
     {
         if (!$this->recipes) {
             $finder = new Finder();
-            // @todo (Chris) Meg kellene oldani, hogy be lehessen húzni saját megoldásokat!
+            // @todo (Chris) Meg kellene oldani, hogy be lehessen húzni saját megoldásokat! Pl a wizard.sh saját symfony-t húzhatna be, vagy a recipes könyvtár lenne konfigurálható.
             $finder->in($this->recipesPath)->name('*.php');
             $this->recipes = [];
             /** @var SplFileInfo $recipeFile */
