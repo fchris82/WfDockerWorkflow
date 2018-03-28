@@ -147,8 +147,9 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
             case 'css':
                 $commentPattern = "/* %s */\n\n";
                 break;
+            case 'md':
             case 'sh':
-                // We skip this
+                // We skip these
                 return;
         }
 

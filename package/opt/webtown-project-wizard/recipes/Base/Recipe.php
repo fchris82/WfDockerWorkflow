@@ -8,10 +8,10 @@
 
 namespace Recipes\Base;
 
+use AppBundle\Configuration\Environment;
 use AppBundle\Configuration\HiddenRecipe;
 use AppBundle\Event\ConfigurationEvents;
 use AppBundle\Event\DumpEvent;
-use AppBundle\Event\FinishEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -23,12 +23,24 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class Recipe extends HiddenRecipe implements EventSubscriberInterface
 {
-    // @todo (Chris) Ezeket vhogy kívülről kellene betölteni, csak sajnos "elrejtjük" a receptek elől jelenleg. Esetleg eseménykezelővel is betölthetjük a `EventSubscriberInterface` segítségével, ha vhol váltunk olyan eseményt a "bejegyzése" UTÁN, hogy szétszórjuk az adatokat, vagy esetleg lehetne egy service amit elér.
-    protected $targetDirectory = '.wf';
-
-    protected $configFile = '.wf.yml';
-
     const NAME = 'base';
+
+    /**
+     * @var Environment
+     */
+    protected $environment;
+
+    /**
+     * Recipe constructor.
+     *
+     * @param \Twig_Environment $twig
+     * @param Environment $environment
+     */
+    public function __construct(\Twig_Environment $twig, Environment $environment)
+    {
+        parent::__construct($twig);
+        $this->environment = $environment;
+    }
 
     public function getName()
     {
@@ -47,8 +59,8 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
     public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
     {
         return array_merge(parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig), [
-            'wf_target_directory' => $this->targetDirectory,
-            'wf_config_file' => $this->configFile,
+            'wf_target_directory' => $this->environment->getConfigValue(Environment::CONFIG_WORKING_DIRECTORY),
+            'wf_config_file' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
         ]);
     }
 
