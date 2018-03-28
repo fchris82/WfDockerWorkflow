@@ -8,6 +8,7 @@
 
 namespace AppBundle\Configuration;
 
+use AppBundle\Exception\MissingRecipeException;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -74,8 +75,7 @@ class RecipeManager implements ContainerAwareInterface
     {
         $recipes = $this->getRecipes();
         if (!array_key_exists($recipeName, $recipes)) {
-            // @todo (Chris) Itt inkább egyedi exception-t kellene dobni, aminél kilistázza az összes elérhető receptet az SF command
-            throw new InvalidArgumentException(sprintf('The `%s` recipe is missing!', $recipeName));
+            throw new MissingRecipeException(sprintf('The `%s` recipe is missing!', $recipeName));
         }
 
         return $recipes[$recipeName];

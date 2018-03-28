@@ -4,9 +4,11 @@ namespace AppBundle\Command;
 
 use AppBundle\Configuration\Builder;
 use AppBundle\Configuration\Configuration;
+use AppBundle\Configuration\RecipeManager;
 use AppBundle\Event\ConfigurationEvents;
 use AppBundle\Event\DumpEvent;
 use AppBundle\Event\VerboseInfoEvent;
+use AppBundle\Exception\MissingRecipeException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -64,12 +66,22 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
         $this->registerEventListeners($input, $output);
 
         $builder = $this->getContainer()->get(Builder::class);
-        $builder
-            ->setTargetDirectory($input->getOption('target-directory'))
-            ->build($config, $baseDirectory, $input->getOption('config-hash'))
-        ;
+        try {
+            $builder
+                ->setTargetDirectory($input->getOption('target-directory'))
+                ->build($config, $baseDirectory, $input->getOption('config-hash'))
+            ;
 
-        $output->writeln('<info>The (new) docker environment was build!</info>');
+            $output->writeln('<info>The (new) docker environment was build!</info>');
+
+        // It is maybe an impossible exception, but it will throw we catch it.
+        } catch (MissingRecipeException $e) {
+            $output->writeln('<comment>' . $e->getMessage() . '</comment>');
+            $output->writeln('The available recipes:');
+            foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
+                $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), get_class($recipe)));
+            }
+        }
     }
 
     protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'fg=white')
