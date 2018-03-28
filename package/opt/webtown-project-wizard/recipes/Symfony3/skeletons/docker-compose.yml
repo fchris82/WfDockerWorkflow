@@ -3,8 +3,6 @@ version: "{{ config.docker_compose.version }}"
 services:
     web:
         image: nginx:latest
-        environment:
-            VIRTUAL_HOST: ${DOCKER_HTTP_HOST}
         links:
             - engine:php
         volumes:
