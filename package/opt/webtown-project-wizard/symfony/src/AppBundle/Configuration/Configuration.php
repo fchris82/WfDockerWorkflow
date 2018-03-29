@@ -111,7 +111,7 @@ class Configuration implements ConfigurationInterface
                                 })
                                 ->thenInvalid('You have to set array value!')
                             ->end()
-                            ->defaultNull()
+                            ->defaultValue([])
                         ->end()
                     ->end()
                 ->end()

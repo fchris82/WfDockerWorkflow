@@ -57,7 +57,8 @@ case $1 in
         $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
     ;;
     --config-dump)
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config-dump -e ${SYMFONY_ENV:-prod}
+        shift
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config-dump -e ${SYMFONY_ENV:-prod} ${@}
     ;;
     # RUN wizard
     *)

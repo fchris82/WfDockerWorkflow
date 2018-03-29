@@ -4,6 +4,7 @@ namespace AppBundle\Command;
 
 use AppBundle\Configuration\Configuration;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -21,7 +22,8 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:config-dump')
-            ->setDescription('Project config dump.')
+            ->setDescription('Project config dump. Use the <comment>--no-ansi</comment> argument if you want to put it into a file!')
+            ->setHelp('Use the <info>--no-ansi</info> argument if you want to put it into a file!')
         ;
     }
 
@@ -36,15 +38,17 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
         $configuration = $this->getContainer()->get(Configuration::class);
         $dumper = new YamlReferenceDumper();
 
-        $io->writeln($dumper->dump($configuration));
-    }
+        // We show it if the user don't want to put it into a file!
+        if ($io->isDecorated()) {
+            $io->title('All available parameters');
+            $io->writeln('  Use the <info>--no-ansi</info> argument if you want to put it into a file!');
+        }
 
-    protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'fg=white')
-    {
-        // 2 sort kihagyunk
-        $output->writeln("\n");
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen(strip_tags($title)))));
-        $output->writeln('');
+        /** @var ArrayNode $rootNode */
+        $rootNode = $configuration->getConfigTreeBuilder()->buildTree();
+        // Show only the children
+        foreach ($rootNode->getChildren() as $node) {
+            $io->write($dumper->dumpNode($node));
+        }
     }
 }

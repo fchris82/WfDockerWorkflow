@@ -79,6 +79,7 @@ class Recipe extends BaseRecipe
                     ->defaultValue('~/.ssh')
                 ->end()
                 ->arrayNode('server')
+                    ->info('<comment>Server configuration</comment>')
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('host')
