@@ -1,6 +1,6 @@
 #!/bin/bash
 # Debug mode:
-# set -x
+#set -x
 
 # DIRECTORIES
 WORKDIR=$(pwd)
@@ -13,7 +13,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # CONFIG
-CONFIG_PATH="/etc/webtown-workflow"
+CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
@@ -25,6 +25,19 @@ PROGRAM_REPOSITORY=$(awk '/^program_repository/{print $3}' "${CONFIG}")
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
+
+# Switch on debug modes:
+#   wf -v sf docker:create:database -vvv
+#      ^^                           ^^^^
+#      Makefile debug mode          Symfony debug mode
+if [ "$1" == "-v" ]; then
+    MAKE_DISABLE_SILENC=1
+    shift
+elif [ "$1" == "-vvv" ]; then
+    MAKE_DISABLE_SILENC=1
+    MAKE_DEBUG_MODE=1
+    shift
+fi
 
 case $1 in
     ""|-h|--help)
@@ -99,34 +112,39 @@ case $1 in
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
     ;;
+    # You can call with symfony command verbose, like: wf --reconfigure -v
+    # @todo (Chris) Ezt inkább -- nélkül kellene, autocomplete-tel
+    --reconfigure)
+        shift
+        PROJECT_ROOT_DIR=$(get_project_root_dir)
+        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
+        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
+        PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}")
+
+        if [ -f "${PROJECT_CONFIG_FILE}" ]; then
+            FORCE_OVERRIDE=1
+            create_makefile_from_config ${@}
+        else
+            echo "The ${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE} doesn't exist."
+        fi
+    ;;
     # Project makefile
     *)
         COMMAND="$1"
         shift
 
-        PROJECT_ROOT_DIR=$(git rev-parse --show-toplevel || echo ".")
-        PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
-        # Deploy esetén nem biztos, hogy van .git könyvtár, ellenben ettől még a projekt fájl létezhet
-        if [ "${PROJECT_ROOT_DIR}" == "." ] && [ ! -f "${PROJECT_MAKEFILE}" ]; then
-            echo_fail "You are not in project directory! Git top level is missing!"
-            quit
-        fi
-        if [ ! -f "${PROJECT_MAKEFILE}" ]; then
-            # If we are using "hidden" docker environment...
-            DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
-            if [ -f "${DOCKER_ENVIRONEMNT_MAKEFIILE}" ]; then
-                PROJECT_MAKEFILE="${DOCKER_ENVIRONEMNT_MAKEFIILE}";
-            else
-                echo_fail "The project makefile doesn't exist in this path: ${PROJECT_MAKEFILE}"
-                quit
-            fi
-        fi
+        PROJECT_ROOT_DIR=$(get_project_root_dir)
+        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
+        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
+        find_project_makefile || quit
 
         ARGS=$(escape "$@")
+        MAKE_EXTRA_PARAMS=$(make_params)
 
-        make $(make_params) -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
+        make ${MAKE_EXTRA_PARAMS} -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \
             ARGS="${ARGS}" \
             WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
-            WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" || quit
+            WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" \
+            MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" || quit
     ;;
 esac

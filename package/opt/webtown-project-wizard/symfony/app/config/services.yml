@@ -1,7 +1,10 @@
 # Learn more about services, parameters and containers at
 # https://symfony.com/doc/current/service_container.html
 parameters:
+    # Docker path! We load to this path in the `docker-compose.yml` !!!
+    program_configuration_file: /etc/webtown-workflow/config
     skeleton_base_dir: %kernel.root_dir%/../../skeletons
+    recipe_base_dir: %kernel.root_dir%/../../recipes
 
 services:
     # default configuration for services in *this* file
@@ -22,10 +25,33 @@ services:
         # but if a service is unused, it's removed anyway
         exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
 
+    Recipes\:
+        resource: '../../../recipes/*'
+        public: true
+
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:
     #         $someArgument: 'some_value'
+
+    AppBundle\Configuration\Builder:
+        public: true
+
+    AppBundle\Configuration\Configuration:
+        public: true
+
+    AppBundle\Configuration\Environment:
+        arguments:
+            - "%program_configuration_file%"
+            - "@filesystem"
+
+    AppBundle\Configuration\RecipeManager:
+        arguments:
+            - "%recipe_base_dir%"
+        calls:
+            - method: setContainer
+              arguments:
+                - "@service_container"
 
     AppBundle\Wizard\Manager:
         public: true

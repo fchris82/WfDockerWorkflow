@@ -1,156 +1,25 @@
-define PROJECT_INFO
-Workflow Version:  \033[1;32m$(VERSION)\033[0m
-
-Docker
-======
-
-    Basename:      \033[32m$(DOCKER_BASENAME)\033[0m
-    Config files:  \033[33m$(DOCKER_CONFIG_FILES) $(DOCKER_USER_CONFIG_FILES)\033[0m
-    Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
-
-    Host:          \033[34m$(DOCKER_HTTP_HOST)\033[0m
-
-    Database URL:  \033[33m$(DB_URL)\033[0m
-
-    Configured docker environments:
-    \033[33m$(DOCKER_ENVIRONMENTS)\033[0m
-endef
-export PROJECT_INFO
-
-# DOCKER! Nem docker-compose! DB import-export esetén fontos, mert csak azzal működik.
-define DOCKER_EXEC
-docker exec -i $$($(CMD_DOCKER_BASE) ps -q $(1)) $(2)
-endef
-
+GITFLOW_BINARY_DIRECTORY := {{ binary_directory }}
 # Ezt használjuk az INVERZ grep-ben: egrep -v "\-\-($(ENABLED_GITFLOW_PARAMETERS))"
 #                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 
-.PHONY: info
-info::
-	@echo "$$PROJECT_INFO"
-	@echo "\n    DB fix ip: \033[33m$$(docker inspect -f "{{range .NetworkSettings.Networks}}{{if .IPAMConfig}}{{.IPAddress}}{{end}}    {{end}}" $$($(CMD_DOCKER_BASE) ps -q $(DOCKER_DB_NAME)))\033[0m"
-	@echo "\n    Docker compose command base:"
-	@RESTORE="\\\033[0m"; \
-		ENV_NAME="\\\033[33m"; \
-		ENV_VALUE="\\\033[37m"; \
-		CMD="\\\033[1;91m"; \
-		PARAMETER_NAME="\\\033[94m"; \
-		PARAMETER_VALUE="\\\033[92m"; \
-		echo "    "$$(echo "$(CMD_DOCKER_BASE)" \
-			| sed -e "s/\([^= ]*\)=\([^ ]*\)/$${ENV_NAME}\\1$${RESTORE}=$${ENV_VALUE}\\2$${RESTORE}/g" \
-			| sed -e "s/docker-compose/$${CMD}docker-compose$${RESTORE}/" \
-			| sed -e "s/\(\B--*[a-zA-Z0-9\-]*\) \([^ ]*\)/$${PARAMETER_NAME}\\1$${RESTORE} $${PARAMETER_VALUE}\\2$${RESTORE}/g")
+.PHONY: feature
+feature: __feature
 
-# List all targets
-.PHONY: list
-list:
-	$(CMD_MAKE) -p | awk -F':' '/^[a-zA-Z0-9][^$$#\/       =]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | grep -v '__$$' | sort
+.PHONY: hotfix
+hotfix: __hotfix
 
-.PHONY: restart
-restart: down up
+.PHONY: push
+push: __push
 
-.PHONY: __validate_args_no_empty
-__validate_args_no_empty:
-    ifeq (,$(ARGS))
-		@echo "\n\033[31m❌ You can't call this method without argument!\033[0m"
-		exit 1
-    endif
-
-.PHONY: __mysql_connect
-__mysql_connect: DEFAULT_CHARSET := $(if $(DB_CHARSET),$(DB_CHARSET),utf8)
-__mysql_connect: up
-	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost --default-character-set=$(DEFAULT_CHARSET) $(DB_NAME)
-
-.PHONY: dbdump
-dbdump : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
-dbdump : up
-	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(FILE)
-	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
-
-.PHONY: dbimport
-dbimport : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
-dbimport : up
-	cat $(FILE) | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
-		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME))
-
-# DOCKER COMMANDS
-.PHONY: docker-compose
-docker-compose:
-	$(CMD_DOCKER_BASE) $(ARGS)
-
-.PHONY: __docker_up
-__docker_up:
-	$(CMD_DOCKER_BASE) up -d
-
-.PHONY: __docker_down
-__docker_down:
-	$(CMD_DOCKER_BASE) down
-
-# $(ARGS) : a docker-compose container neve kell nekünk
-.PHONY: __docker_exec
-__docker_exec: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) exec --user $(DOCKER_USER) $(ARGS)
-
-.PHONY: __docker_run
-__docker_run: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) run --user $(DOCKER_USER) $(ARGS)
-
-.PHONY: __docker_logs
-__docker_logs: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) logs $(ARGS)
-
-.PHONY: __docker_enter
-__docker_enter: CONTAINER := $(if $(ARGS),$(ARGS) /bin/bash,$(DOCKER_CLI_NAME) $(DOCKER_SHELL))
-__docker_enter: up
-	$(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(CONTAINER)
-
-.PHONY: __docker_debug_enter
-__docker_debug_enter: CONTAINER := $(if $(ARGS),$(ARGS),$(DOCKER_CLI_NAME))
-__docker_debug_enter: up
-	$(CMD_DOCKER_EXEC) $(CONTAINER) /bin/bash
-
-.PHONY: __docker_rebuild
-__docker_rebuild: DOCKER_USER_CONFIG_FILES := $(DOCKER_BUILD_CONFIG_FILES)
-__docker_rebuild: down
-	$(CMD_DOCKER_BASE) build --no-cache --pull $(DOCKER_CLI_NAME)
-	$(CMD_DOCKER_BASE) push $(DOCKER_CLI_NAME)
-
-.PHONY: __docker_pull
-__docker_pull: down
-	$(CMD_DOCKER_BASE) pull $(DOCKER_CLI_NAME)
-
-.PHONY: __docker_ps
-__docker_ps:
-	$(CMD_DOCKER_BASE) ps $(ARGS)
-
-.PHONY: __docker_docker-conig
-__docker_docker-config:
-	$(CMD_DOCKER_BASE) config
-
-# CONTAINER COMMANDS
-.PHONY: __container_php
-__container_php:
-	$(CMD_DOCKER_RUN_CLI) php $(ARGS)
-
-# make -f .project.makefile sf ARGS="doctrine:migrations:migrate -n" --> docker-compose -p chrisptest -e ablak=1 exec --user user engine php bin/console doctrine:migrations:migrate -n
-.PHONY: __container_sf
-__container_sf: SF_CONSOLE_CMD ?= bin/console
-__container_sf: up
-	$(CMD_DOCKER_EXEC_CLI) php $(SF_CONSOLE_CMD) $(ARGS)
-
-# make -f .project.makefile composer ARGS="install"
-.PHONY: __container_composer
-__container_composer:
-	$(CMD_DOCKER_RUN_CLI) composer $(ARGS)
-
+.PHONY: publish
+publish: __publish
 
 # GITFLOW COMMANDS
 
 # Check is there any uncommitted changes?
 __validate_git_uncommitted_changes:
-	$(WORKFLOW_BINARY_DIRECTORY)/git_uncommitted_changes.sh
+	$(GITFLOW_BINARY_DIRECTORY)/git_uncommitted_changes.sh
 
 # Check the arguments and the last word!
 __validate_gitflow_args: __validate_args_no_empty
@@ -259,4 +128,4 @@ __push: __validate_git_uncommitted_changes
 __publish: push
 	DEVELOP_BRANCH_NAME=$(GITFLOW_DEVELOP) \
 		HOTFIX_BRANCH_PREFIX=$(GITFLOW_HOTFIX) \
-		$(WORKFLOW_BINARY_DIRECTORY)/gitlab_merge_request.sh
+		$(GITFLOW_BINARY_DIRECTORY)/gitlab_merge_request.sh

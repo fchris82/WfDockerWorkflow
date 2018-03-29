@@ -42,6 +42,15 @@ case $1 in
         $BASE_RUN cli php /usr/src/script/symfony/vendor/bin/phpunit -c /usr/src/script/symfony
         $BASE_RUN cli php /usr/src/script/symfony/vendor/bin/php-cs-fixer fix --config=/usr/src/script/symfony/.php_cs.dist
     ;;
+    # Rebuild config from the yml. See: workflow.sh .
+    # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
+    --reconfigure)
+        shift
+        $BASE_RUN cli php /usr/src/script/symfony/bin/console app:config ${@}
+    ;;
+    --config-dump)
+        $BASE_RUN cli php /usr/src/script/symfony/bin/console app:config-dump
+    ;;
     # RUN wizard
     *)
         $BASE_RUN cli php /usr/src/script/symfony/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}

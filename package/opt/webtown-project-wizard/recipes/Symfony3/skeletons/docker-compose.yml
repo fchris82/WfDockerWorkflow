@@ -1,0 +1,44 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+    web:
+        image: nginx:latest
+        links:
+            - engine:php
+        volumes:
+            - "${BASE_DIRECTORY}/${PROJECT_DIR_NAME}:${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}"
+            - "{{ recipe_path }}/etc/vhost.conf:/etc/nginx/conf.d/default.conf:ro"
+        command: {{ nginx_debug ? 'nginx-debug' : 'nginx' }} -g 'daemon off;'
+
+    engine:
+        image:  fchris82/symfony:{{ version }}
+        environment:
+            CI: ${CI}
+            WWW_DATA_UID: ${WWW_DATA_UID}
+            WWW_DATA_GID: ${WWW_DATA_GID}
+            DATABASE_URL: ${DATABASE_URL}
+            TIMEZONE:                     {{ environment.TIMEZONE                    | default('Europe/Budapest') }}
+            PHP_MAX_EXECUTION_TIME:       {{ environment.PHP_MAX_EXECUTION_TIME      | default('30') }}
+            PHP_MEMORY_LIMIT:             {{ environment.PHP_MEMORY_LIMIT            | default('128M') }}
+            PHP_MAX_UPLOAD:               {{ environment.PHP_MAX_UPLOAD              | default('50M') }}
+            PHP_MAX_FILE_UPLOADS:         {{ environment.PHP_MAX_FILE_UPLOADS        | default('20') }}
+            PHP_MAX_POST:                 {{ environment.PHP_MAX_POST                | default('100M') }}
+            SYMFONY_ENV:                  {{ environment.SYMFONY_ENV                 | default(env) }}
+            SYMFONY_DEBUG:                {{ environment.SYMFONY_DEBUG               | default('') }}
+            SYMFONY_CLASSLOADER_FILE:     {{ environment.SYMFONY_CLASSLOADER_FILE    | default('') }}
+            SYMFONY_HTTP_CACHE:           {{ environment.SYMFONY_HTTP_CACHE          | default('') }}
+            SYMFONY_HTTP_CACHE_CLASS:     {{ environment.SYMFONY_HTTP_CACHE_CLASS    | default('') }}
+            SYMFONY_TRUSTED_PROXIES:      {{ environment.SYMFONY_TRUSTED_PROXIES     | default('') }}
+            SYMFONY_DEPRECATIONS_HELPER:  {{ environment.SYMFONY_DEPRECATIONS_HELPER | default('') }}
+            PHP_IDE_CONFIG: "serverName={{ environment.XDEBUG_IDE_SERVER_NAME | default(xdebug_ide_server_name) }}"
+            XDEBUG_ENABLED: {{ xdebug ? '1' : '0' }}
+        volumes:
+            # Full project files
+            - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
+            # User SSH keys
+            - "{{ user_ssh_path }}:/home/user/.ssh:ro"
+            # Git config fájl bekötése
+            - "~/.gitconfig:/home/user/.gitconfig:ro"
+            # Composer cache
+            - "~/.composer:/home/user/.composer"
+        tty: true
