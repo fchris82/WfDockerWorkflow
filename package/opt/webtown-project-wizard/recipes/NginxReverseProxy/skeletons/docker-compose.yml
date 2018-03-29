@@ -5,7 +5,7 @@ services:
     {{ service }}:
         environment:
             VIRTUAL_HOST: {{ data.host }}
-            VIRTUAP_PORT: {{ data.port }}
+            VIRTUAL_PORT: {{ data.port }}
         networks:
             - reverse-proxy
 {% endfor %}
