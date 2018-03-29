@@ -115,7 +115,6 @@ __docker_debug_enter: up
 __docker_rebuild: DOCKER_USER_CONFIG_FILES := $(DOCKER_BUILD_CONFIG_FILES)
 __docker_rebuild: down
 	$(CMD_DOCKER_BASE) build --no-cache --pull $(DOCKER_CLI_NAME)
-	$(CMD_DOCKER_BASE) push $(DOCKER_CLI_NAME)
 
 .PHONY: __docker_pull
 __docker_pull: down
