@@ -82,6 +82,7 @@ case $1 in
             --net reverse-proxy \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
             -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
+            -v /etc/webtown-workflow/nginx-proxy.conf:/etc/nginx/proxy.conf:ro \
             -v /etc/webtown-workflow/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
             -v /etc/webtown-workflow/docker-gen.cfg:/app/docker-gen.cfg:ro \
             -v /etc/webtown-workflow/Procfile:/app/Procfile:ro \

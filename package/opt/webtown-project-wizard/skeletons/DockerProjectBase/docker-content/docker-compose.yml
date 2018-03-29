@@ -26,6 +26,7 @@ services:
         command: /bin/bash -c "sed 's|__host__|${DOCKER_HTTP_HOST}|' /etc/nginx/conf.d/site.temp
             | sed 's|__project_dir__|${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}|'
             | sed 's|__debug__|${DOCKER_CONFIG_NGINX_DEBUG}|'
+            | sed 's|__timeout__|${PHP_MAX_EXECUTION_TIME}|'
             > /etc/nginx/conf.d/default.conf
             && echo '${HTTP_AUTH_PASS}' > /etc/nginx/.htpasswd
             && ${DOCKER_NGINX_COMMAND} -g 'daemon off;'"
