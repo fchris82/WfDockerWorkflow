@@ -4,9 +4,9 @@ SF_CONSOLE_CMD		:= bin/console
 SF_BIN_DIR			:= vendor/bin
 SHARED_DIRS			:= var
 
-XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(xdebug_ide_server_name) }}
+XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}
 PHP_IDE_CONFIG := "serverName=${XDEBUG_IDE_SERVER_NAME}"
-XDEBUG_ENABLED := {{ xdebug ? '1' : '0' }}
+XDEBUG_ENABLED := {{ server.xdebug ? '1' : '0' }}
 
 # HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
 # Don't forget to escape the $ sign: $ --> \$$
