@@ -2,5 +2,5 @@ version: "{{ config.docker_compose.version }}"
 
 services:
     mysql:
-        port:
+        ports:
             - "{{ port }}:3306"
