@@ -1,4 +1,5 @@
 {{/* Annyiban más, hogy megadható egy LISTENED_PORT, és azt fogja használni, és ezt az adatot át is adja a Symfony-nak */}}
+{{/* + tudja kezelni a multi hostokat! */}}
 {{ $CurrentContainer := where $ "ID" .Docker.CurrentContainerID | first }}
 
 {{ define "upstream" }}
@@ -123,7 +124,7 @@ server {
 
 {{ $host := trim $host }}
 {{ $is_regexp := hasPrefix "~" $host }}
-{{ $upstream_name := when $is_regexp (sha1 $host) $host }}
+{{ $upstream_name := sha1 $host }}
 
 # {{ $host }}
 upstream {{ $upstream_name }} {
