@@ -8,7 +8,6 @@ export XDEBUG_CONFIG="idekey=PHPSTORM"
 
 # USER
 USER_ID=${LOCAL_USER_ID:-9001}
-echo "Starting with UID : $USER_ID"
 adduser -D -H -u $USER_ID user
 export HOME=/home/user
 
