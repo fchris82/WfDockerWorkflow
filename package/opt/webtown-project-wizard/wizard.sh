@@ -16,7 +16,14 @@ source ${DIR}/../webtown-workflow/lib/_css.sh
 source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
 source ${DIR}/../webtown-workflow/lib/_functions.sh
 
-BASE_RUN="docker-compose -f ${DIR}/symfony/docker-compose.yml run --rm \
+BASE_RUN="docker-compose \
+            -f ${DIR}/symfony/docker-compose.yml \
+            run --rm \
+            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3)"
+BASE_PROJECT_RUN="docker-compose \
+            -f ${DIR}/symfony/docker-compose.yml \
+            -f ${DIR}/symfony/docker-compose.project.yml \
+            run --rm \
             -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3)"
 
 case $1 in
@@ -46,13 +53,13 @@ case $1 in
     # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
     --reconfigure)
         shift
-        $BASE_RUN cli php /usr/src/script/symfony/bin/console app:config ${@}
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config ${@}
     ;;
     --config-dump)
-        $BASE_RUN cli php /usr/src/script/symfony/bin/console app:config-dump
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config-dump
     ;;
     # RUN wizard
     *)
-        $BASE_RUN cli php /usr/src/script/symfony/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}
     ;;
 esac

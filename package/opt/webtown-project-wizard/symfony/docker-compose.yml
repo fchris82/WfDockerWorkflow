@@ -12,6 +12,5 @@ services:
             - "~/:/home/user:ro"
             # We want to allow the configs from Symfony
             - "./../../../etc/webtown-workflow:/etc/webtown-workflow:ro"
-            - "$PWD:$PWD"
-        working_dir: $PWD
+        working_dir: /home/user
         entrypoint: /usr/src/script/symfony/bin/docker-entrypoint.sh
