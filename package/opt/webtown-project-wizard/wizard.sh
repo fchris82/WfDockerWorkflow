@@ -51,6 +51,7 @@ case $1 in
     ;;
     # Rebuild config from the yml. See: workflow.sh .
     # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
+    # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
     --reconfigure)
         shift
         $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
