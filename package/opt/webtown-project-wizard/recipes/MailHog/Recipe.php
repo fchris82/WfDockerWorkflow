@@ -6,7 +6,7 @@
  * Time: 22:23
  */
 
-namespace Recipes\Mail;
+namespace Recipes\MailHog;
 
 use AppBundle\Configuration\BaseRecipe;
 
@@ -19,7 +19,7 @@ use AppBundle\Configuration\BaseRecipe;
  */
 class Recipe extends BaseRecipe
 {
-    const NAME = 'mail';
+    const NAME = 'mailhog';
 
     public function getName()
     {
@@ -31,7 +31,7 @@ class Recipe extends BaseRecipe
         $rootNode = parent::getConfig();
 
         $rootNode
-            ->info('<comment>SMTP e-mail sender.</comment>')
+            ->info('<comment>MailHog e-mail catcher. You can use the ports 25 and 80.</comment>')
         ;
 
         return $rootNode;

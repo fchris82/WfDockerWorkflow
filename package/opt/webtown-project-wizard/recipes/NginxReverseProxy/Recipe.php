@@ -25,6 +25,7 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
 {
     const NAME = 'nginx_reverse_proxy';
 
+    const SERVICE_NAME_PARAMETER_NAME = '%service%';
     // We try to give a lazy solution with default host settings
     const PROJECT_NAME_PARAMETER_NAME = '%config.name%';
 
@@ -72,7 +73,12 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
                                     $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
                                     '.'
                                 );
-                                $defaultHost = static::PROJECT_NAME_PARAMETER_NAME . '.' . $defaultTld;
+                                $defaultHost = sprintf(
+                                    '%s.%s.%s',
+                                    static::SERVICE_NAME_PARAMETER_NAME,
+                                    static::PROJECT_NAME_PARAMETER_NAME,
+                                    $defaultTld
+                                );
                                 $defaultPort = 80;
 
                                 return [
@@ -82,6 +88,31 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
                                 ];
                             })
                             ->end()
+                        ->end()
+                        // Replace the service names in domains
+                        // @todo Vhol majd ellenőrizni kellene, hogy nem adtuk-e hozzá direktben az alapértelmezett domain-t.
+                        ->validate()
+                            ->always(function ($v) {
+                                // Create default host (only [project_name].[default_tld] for FIRST service
+                                $defaultTld = trim(
+                                    $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
+                                    '.'
+                                );
+                                $defaultHost = sprintf('%s.%s',static::PROJECT_NAME_PARAMETER_NAME, $defaultTld);
+                                $isFirst = true;
+                                // Add default to the first service
+                                foreach ($v as $serviceName => $settings) {
+                                    if ($isFirst && strpos($settings['host'], static::SERVICE_NAME_PARAMETER_NAME) === 0) {
+                                        $settings['host'] = $defaultHost . ' ' . $settings['host'];
+                                    }
+                                    $isFirst = false;
+
+                                    $settings['host'] = strtr($settings['host'], [static::SERVICE_NAME_PARAMETER_NAME => $serviceName]);
+                                    $v[$serviceName] = $settings;
+                                }
+
+                                return $v;
+                            })
                         ->end()
                         ->example([
                             'service1' => '~',

@@ -100,7 +100,6 @@ include $(BASE_MAKEFILE_PATH)
 
 BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo '.')
 THIS_FILE       := $(firstword $(MAKEFILE_LIST))
-# @todo Ez nem kapja meg a debug paramétereket!
 CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)
 
 # Docker commands

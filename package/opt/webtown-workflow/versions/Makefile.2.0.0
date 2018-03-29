@@ -8,7 +8,7 @@ Docker
     Config files:  \033[33m$(foreach file,$(DOCKER_CONFIG_FILES),$(file)\n                  )\033[0m
     Data dir:      \033[33m$(DOCKER_DATA_DIR)\033[0m
 
-    Hosts:         $(foreach host,$(DOCKER_HTTP_HOST),\033[3m$(host)\033[0m | \033[34;1mhttp://$(host)\033[0m\n                  )
+    Hosts:         $(foreach host,$(DOCKER_HTTP_HOST),\033[34;1mhttp://$(firstword $(subst :, ,$(host)))\033[0m | \033[3m$(lastword $(subst :, ,$(host)))\033[0m\n                  )
 
     Database URL:  \033[33m$(DB_URL)\033[0m
 
@@ -68,8 +68,8 @@ __docker_up:
 # If something changes in yml files, then the `docker-compose down` maybe won't down all containers and networks.
 # This is why we use labels to down!
 .PHONY: __docker_down
-__docker_down: DOCKER_CONTAINERS := $$(docker ps  -a -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
-__docker_down: DOCKER_NETWORKS := $$(docker network ls -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
+__docker_down: DOCKER_CONTAINERS := $$(docker ps -a --format "{{.Names}}" --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
+__docker_down: DOCKER_NETWORKS := $$(docker network ls --format "{{.Name}}" --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
 __docker_down:
 	@echo "\033[1;32mStop and remove containers by label...\033[0m"
 	if [ ! -z "$(DOCKER_CONTAINERS)" ]; then docker stop $(DOCKER_CONTAINERS); docker rm $(DOCKER_CONTAINERS); fi

@@ -20,9 +20,9 @@ recipes:
         settings:
 
             # Same solutin, different way
-            web: ~ # --> use the `name`: test-page.loc:80
+            web: ~ # --> use the `name`: `test-page.loc:80` AND `web.test-page.loc`
             # Only port
-            web: 81 # --> use the `name`: test-page.loc:81
+            web: 81 # --> use the `name`: `test-page.loc:81`AND `web.test-page.loc:81`
             # Direct set host and port
             web:
                 host: test.loc

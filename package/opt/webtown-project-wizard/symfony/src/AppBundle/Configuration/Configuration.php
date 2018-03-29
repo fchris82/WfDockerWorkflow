@@ -60,7 +60,6 @@ class Configuration implements ConfigurationInterface
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
-                // @todo (Chris) Ezt bele kellene tenni a "docker image nevekbe", ami most (user)p(dir) Vagy igazából kell ez?
                 ->scalarNode('name')
                     ->info('<comment>You have to set a name for the project.</comment>')
                     ->isRequired()
