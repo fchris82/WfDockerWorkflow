@@ -26,7 +26,7 @@ services:
         exclude: '../../src/AppBundle/{Entity,Repository,Tests}'
 
     Recipes\:
-        resource: '../../../recipes/*'
+        resource: '%recipe_base_dir%/*'
         public: true
 
     # add more services, or override services that need manual wiring
