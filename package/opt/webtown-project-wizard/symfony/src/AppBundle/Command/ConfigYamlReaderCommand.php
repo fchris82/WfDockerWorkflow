@@ -102,7 +102,7 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
      */
     protected function registerEventListeners(InputInterface $input, OutputInterface $output)
     {
-        $eventDispatcher = $this->getContainer()->get('debug.event_dispatcher');
+        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
         if ($output->isVerbose()) {
             $eventDispatcher->addListener(
                 ConfigurationEvents::VERBOSE_INFO,

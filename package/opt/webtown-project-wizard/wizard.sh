@@ -53,10 +53,10 @@ case $1 in
     # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
     --reconfigure)
         shift
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config ${@}
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
     ;;
     --config-dump)
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config-dump
+        $BASE_PROJECT_RUN cli php /usr/src/script/symfony/bin/console app:config-dump -e ${SYMFONY_ENV:-prod}
     ;;
     # RUN wizard
     *)
