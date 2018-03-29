@@ -16,6 +16,7 @@ use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Serializer\Exception\CircularReferenceException;
 
 abstract class BaseRecipe
 {
@@ -65,8 +66,13 @@ abstract class BaseRecipe
         $skeletonFiles = [];
         $templateVars = $this->getTemplateVars($projectPath, $recipeConfig, $globalConfig);
 
+        $skeletonFinder = Finder::create()
+            ->files()
+            ->in(static::getSkeletonPaths())
+            ->ignoreDotFiles(false);
+
         /** @var SplFileInfo $skeletonFileInfo */
-        foreach ($this->getSkeletons() as $skeletonFileInfo) {
+        foreach ($skeletonFinder as $skeletonFileInfo) {
             $skeletonFile = $this->buildSkeletonFile($skeletonFileInfo, $recipeConfig);
             $skeletonFile->setContents($this->parseTemplateFile(
                 $skeletonFileInfo,
@@ -147,12 +153,31 @@ abstract class BaseRecipe
      *
      * @throws \ReflectionException
      */
-    protected function getSkeletons()
+    public static function getSkeletonPaths()
     {
-        $refClass = new \ReflectionClass($this);
-        return Finder::create()
-            ->files()
-            ->in(dirname($refClass->getFileName()) . '/skeletons')
-            ->ignoreDotFiles(false);
+        $skeletonPaths = [];
+        foreach (static::getSkeletonParents() as $class) {
+            $skeletonPaths = array_merge($skeletonPaths, $class::getSkeletonPaths());
+        }
+        $uniquePaths = array_unique($skeletonPaths);
+        if ($uniquePaths != $skeletonPaths) {
+            throw new CircularReferenceException('There are circular references in skeleton path.');
+        }
+
+        $refClass = new \ReflectionClass(static::class);
+        $skeletonPath = dirname($refClass->getFileName()) . '/skeletons';
+        if (is_dir($skeletonPath)) {
+            $skeletonPaths[] = $skeletonPath;
+        }
+
+        return $skeletonPaths;
+    }
+
+    /**
+     * @return array|BaseRecipe[]
+     */
+    public static function getSkeletonParents()
+    {
+        return [];
     }
 }

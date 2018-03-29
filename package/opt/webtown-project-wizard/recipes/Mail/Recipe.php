@@ -25,7 +25,7 @@ class Recipe extends BaseRecipe
 
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     public function getConfig()

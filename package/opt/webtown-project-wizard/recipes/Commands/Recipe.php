@@ -19,7 +19,7 @@ class Recipe extends HiddenRecipe
 
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**

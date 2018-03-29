@@ -20,10 +20,23 @@ use AppBundle\Configuration\BaseRecipe;
 class Recipe extends BaseRecipe
 {
     const NAME = 'symfony3';
+    const SF_CONSOLE_COMMAND = 'bin/console';
+    const SF_BIN_DIR = 'vendor/bin';
 
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
+    }
+
+    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+    {
+        return array_merge(
+            [
+                'sf_console_command' => static::SF_CONSOLE_COMMAND,
+                'sf_bin_dir' => static::SF_BIN_DIR,
+            ],
+            parent::getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+        );
     }
 
     public function getConfig()

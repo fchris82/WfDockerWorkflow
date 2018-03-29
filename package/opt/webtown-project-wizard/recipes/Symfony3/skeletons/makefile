@@ -1,7 +1,7 @@
 DOCKER_CLI_NAME		:= engine
 DOCKER_DOC_ROOT		:= /var/www
-SF_CONSOLE_CMD		:= bin/console
-SF_BIN_DIR			:= vendor/bin
+SF_CONSOLE_CMD		:= {{ sf_console_command }}
+SF_BIN_DIR			:= {{ sf_bin_dir }}
 SHARED_DIRS			:= var
 
 XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}

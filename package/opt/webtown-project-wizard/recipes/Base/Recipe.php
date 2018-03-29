@@ -44,7 +44,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
 
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     /**
@@ -97,8 +97,8 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
     public function changeReadmeMdPath(DumpEvent $dumpEvent)
     {
         $path = $dumpEvent->getTargetPath();
-        if (strpos($path, '/' . self::NAME . '/README.md') > 0) {
-            $dumpEvent->setTargetPath(str_replace('/' . self::NAME . '/README.md', '/README.md', $path));
+        if (strpos($path, '/' . static::NAME . '/README.md') > 0) {
+            $dumpEvent->setTargetPath(str_replace('/' . static::NAME . '/README.md', '/README.md', $path));
         }
     }
 }

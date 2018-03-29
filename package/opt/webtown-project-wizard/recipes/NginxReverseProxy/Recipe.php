@@ -47,7 +47,7 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
 
     public function getName()
     {
-        return self::NAME;
+        return static::NAME;
     }
 
     public function getConfig()
@@ -72,7 +72,7 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
                                     $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
                                     '.'
                                 );
-                                $defaultHost = self::PROJECT_NAME_PARAMETER_NAME . '.' . $defaultTld;
+                                $defaultHost = static::PROJECT_NAME_PARAMETER_NAME . '.' . $defaultTld;
                                 $defaultPort = 80;
 
                                 return [
@@ -126,6 +126,6 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
     public function findProjectName(BuildInitEvent $buildInitEvent)
     {
         $config = $buildInitEvent->getConfig();
-        $buildInitEvent->setParameter(self::PROJECT_NAME_PARAMETER_NAME, $config['name']);
+        $buildInitEvent->setParameter(static::PROJECT_NAME_PARAMETER_NAME, $config['name']);
     }
 }
