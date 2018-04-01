@@ -8,10 +8,10 @@
 
 namespace Recipes\Base;
 
-use AppBundle\Configuration\Environment;
-use AppBundle\Configuration\HiddenRecipe;
-use AppBundle\Event\ConfigurationEvents;
-use AppBundle\Event\DumpEvent;
+use App\Configuration\Environment;
+use Recipes\HiddenRecipe;
+use App\Event\ConfigurationEvents;
+use App\Event\DumpEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -54,7 +54,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
      *
      * @return array
      *
-     * @see \AppBundle\Configuration\Builder::build()
+     * @see \App\Configuration\Builder::build()
      */
     public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
     {

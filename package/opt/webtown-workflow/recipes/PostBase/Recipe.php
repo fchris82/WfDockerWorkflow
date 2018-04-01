@@ -8,7 +8,7 @@
 
 namespace Recipes\PostBase;
 
-use AppBundle\Configuration\HiddenRecipe;
+use Recipes\HiddenRecipe;
 
 /**
  * Class Recipe

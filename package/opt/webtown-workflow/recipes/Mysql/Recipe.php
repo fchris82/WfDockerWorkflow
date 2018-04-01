@@ -8,8 +8,8 @@
 
 namespace Recipes\Mysql;
 
-use AppBundle\Configuration\BaseRecipe;
-use AppBundle\Skeleton\DockerComposeSkeletonFile;
+use Recipes\BaseRecipe;
+use App\Skeleton\DockerComposeSkeletonFile;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Recipe extends BaseRecipe

@@ -1,3 +1,0 @@
-/equipment/.data/*
-!/equipment/.data/.gitkeep
-/equipment/*/docker-compose.local.yml

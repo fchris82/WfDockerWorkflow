@@ -8,7 +8,7 @@
 
 namespace Recipes\MailHog;
 
-use AppBundle\Configuration\BaseRecipe;
+use Recipes\BaseRecipe;
 
 /**
  * Class Recipe

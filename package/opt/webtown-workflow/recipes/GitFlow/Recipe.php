@@ -8,7 +8,7 @@
 
 namespace Recipes\GitFlow;
 
-use AppBundle\Configuration\BaseRecipe;
+use Recipes\BaseRecipe;
 
 /**
  * Class Recipe

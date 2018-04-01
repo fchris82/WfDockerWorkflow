@@ -8,8 +8,8 @@
 
 namespace Recipes\DockerComposeExtension;
 
-use AppBundle\Configuration\HiddenRecipe;
-use AppBundle\Exception\SkipRecipeException;
+use Recipes\HiddenRecipe;
+use App\Exception\SkipRecipeException;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -46,7 +46,7 @@ class Recipe extends HiddenRecipe
      *
      * @throws SkipRecipeException
      *
-     * @see \AppBundle\Configuration\Builder::build()
+     * @see \App\Configuration\Builder::build()
      */
     public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
     {

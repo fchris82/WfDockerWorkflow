@@ -8,10 +8,10 @@
 
 namespace Recipes\NginxReverseProxy;
 
-use AppBundle\Configuration\BaseRecipe;
-use AppBundle\Configuration\Environment;
-use AppBundle\Event\BuildInitEvent;
-use AppBundle\Event\ConfigurationEvents;
+use Recipes\BaseRecipe;
+use App\Configuration\Environment;
+use App\Event\BuildInitEvent;
+use App\Event\ConfigurationEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**

@@ -8,9 +8,9 @@
 
 namespace Recipes\Commands;
 
-use AppBundle\Configuration\HiddenRecipe;
-use AppBundle\Skeleton\ExecutableSkeletonFile;
-use AppBundle\Skeleton\SkeletonFile;
+use Recipes\HiddenRecipe;
+use App\Skeleton\ExecutableSkeletonFile;
+use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Recipe extends HiddenRecipe
@@ -67,11 +67,13 @@ class Recipe extends HiddenRecipe
     {
         $fileName = $commandName . '.sh';
         $newSplFileInfo = new SplFileInfo($fileName, '', $fileName);
-        $skeletonFile = new ExecutableSkeletonFile($newSplFileInfo);
-        $skeletonFile->setContents($this->parseTemplateFile(
+        $templateContent = $this->parseTemplateFile(
             $tmpFileInfo,
             $templateVars
-        ));
+        );
+        $outputFormatter = new OutputFormatter(true);
+        $skeletonFile = new ExecutableSkeletonFile($newSplFileInfo);
+        $skeletonFile->setContents($outputFormatter->format($templateContent));
 
         return $skeletonFile;
     }
