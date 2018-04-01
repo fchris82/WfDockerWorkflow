@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+    cli:
+        build:
+          context: .
+        environment:
+            - HOME=/home/user
+            - ORIGINAL_PWD=$PWD
+        volumes:
+            - "./..:/usr/src/script"
+            - "~/:/home/user:ro"
+            # We want to allow the configs from Symfony
+            - "./../../../etc/webtown-workflow:/etc/webtown-workflow:ro"
+        working_dir: /home/user
+        entrypoint: /usr/src/script/symfony/bin/docker-entrypoint.sh
