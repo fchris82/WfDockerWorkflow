@@ -21,16 +21,16 @@ REFERENCE="/opt/webtown-workflow/wizard.sh"
 USER=$(ls -ld ${REFERENCE} | cut -d\  -f3)
 GROUP="docker"
 
-setfacl -dR -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-workflow/symfony/var
-setfacl -R -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-workflow/symfony/var
+setfacl -dR -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-workflow/symfony4/var
+setfacl -R -m g:"docker":rwX -m u:$USER:rwX /opt/webtown-workflow/symfony4/var
 
 # Install
 SYMFONY_ENV=prod /opt/webtown-workflow/wizard.sh -i --no-dev
 
 # Set the permission!
-chown -R $(id -u ${USER}):$(getent group docker | cut -d: -f3) /opt/webtown-workflow/symfony/var
-chmod -R 777 /opt/webtown-workflow/symfony/var/cache
-chmod -R 777 /opt/webtown-workflow/symfony/var/logs
+chown -R $(id -u ${USER}):$(getent group docker | cut -d: -f3) /opt/webtown-workflow/symfony4/var
+chmod -R 777 /opt/webtown-workflow/symfony4/var/cache
+chmod -R 777 /opt/webtown-workflow/symfony4/var/logs
 
 # Create symlink
 ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard
