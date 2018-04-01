@@ -34,7 +34,9 @@ class Configuration implements ConfigurationInterface
     public function loadConfig($configFile, $pwd)
     {
         $ymlParser = new Parser();
-        $ymlFilePath = $pwd . '/' . $configFile;
+        $ymlFilePath = file_exists($configFile) && is_file($configFile)
+            ? $configFile
+            : $pwd . '/' . $configFile;
         $baseConfig = $ymlParser->parseFile($ymlFilePath);
 
         $processor = new Processor();
