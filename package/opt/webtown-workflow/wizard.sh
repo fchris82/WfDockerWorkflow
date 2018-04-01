@@ -37,7 +37,7 @@ case $1 in
     -i|--install)
         shift
         $BASE_RUN -w /opt/webtown-workflow/symfony4 \
-            -e SYMFONY_ENV=${SYMFONY_ENV:-prod} \
+            -e APP_ENV=${APP_ENV:-prod} \
             cli composer install ${@}
     ;;
     # REBUILD the docker container
@@ -54,11 +54,11 @@ case $1 in
     # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
     --reconfigure)
         shift
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config -e ${APP_ENV:-prod} ${@}
     ;;
     --config-dump)
         shift
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump -e ${APP_ENV:-prod} ${@}
     ;;
     debug)
         shift
@@ -66,6 +66,6 @@ case $1 in
     ;;
     # RUN wizard
     *)
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard -e ${APP_ENV:-prod} ${@}
     ;;
 esac
