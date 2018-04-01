@@ -9,7 +9,7 @@ _wf() {
 
     case $state in
         command)
-            _arguments '1: :($(wf list) --init-reverse-proxy -erp --enter-reverse-proxy -scrp --show-config-reverse-proxy -ps --docker-ps)'
+            _arguments '1: :($(wf list) --init-reverse-proxy -erp --enter-reverse-proxy -scrp --show-config-reverse-proxy -ps --docker-ps --reconfigure)'
         ;;
         parameters)
             case $words[2] in
