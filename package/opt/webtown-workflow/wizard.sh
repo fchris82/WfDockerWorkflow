@@ -19,7 +19,7 @@ source ${DIR}/../webtown-workflow/lib/_functions.sh
 BASE_RUN="docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             run --rm \
-            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3)"
+            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) -e APP_ENV=${APP_ENV:-prod}"
 BASE_PROJECT_RUN="docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             -f ${DIR}/symfony4/docker-compose.project.yml \
@@ -60,9 +60,9 @@ case $1 in
         shift
         $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump -e ${APP_ENV:-prod} ${@}
     ;;
-    debug)
+    --debug)
         shift
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console ${@}
+        $BASE_PROJECT_RUN cli ${@}
     ;;
     # RUN wizard
     *)
