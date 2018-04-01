@@ -4,6 +4,7 @@ namespace App\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Twig\Loader\FilesystemLoader;
 
 class TwigExtendingPass implements CompilerPassInterface
 {
@@ -15,7 +16,7 @@ class TwigExtendingPass implements CompilerPassInterface
         $skeletonPath = $container->getParameter('skeleton_base_dir');
         $recipePath = $container->getParameter('recipe_base_dir');
 
-        $twigFilesystemLoaderDefinition = $container->getDefinition('twig.loader.filesystem');
+        $twigFilesystemLoaderDefinition = $container->getDefinition('twig.loader.native_filesystem');
         $twigFilesystemLoaderDefinition->addMethodCall('addPath', [$skeletonPath, self::SKELETON_TWIG_NAMESPACE]);
         $twigFilesystemLoaderDefinition->addMethodCall('addPath', [$recipePath, self::RECIPE_TWIG_NAMESPACE]);
     }

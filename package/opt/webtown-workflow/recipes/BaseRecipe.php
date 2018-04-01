@@ -6,7 +6,7 @@
  * Time: 22:00
  */
 
-namespace App\Configuration;
+namespace Recipes;
 
 use App\Skeleton\DockerComposeSkeletonFile;
 use App\Skeleton\MakefileSkeletonFile;

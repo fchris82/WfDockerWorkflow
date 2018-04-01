@@ -36,7 +36,7 @@ case $1 in
     ;;
     -i|--install)
         shift
-        $BASE_RUN -w /usr/src/script/symfony4 \
+        $BASE_RUN -w /opt/webtown-workflow/symfony4 \
             -e SYMFONY_ENV=${SYMFONY_ENV:-prod} \
             cli composer install ${@}
     ;;
@@ -46,22 +46,26 @@ case $1 in
         docker-compose -f ${DIR}/symfony4/docker-compose.yml build --no-cache
     ;;
     -t|--test)
-        $BASE_RUN cli php /usr/src/script/symfony4/vendor/bin/phpunit -c /usr/src/script/symfony4
-        $BASE_RUN cli php /usr/src/script/symfony4/vendor/bin/php-cs-fixer fix --config=/usr/src/script/symfony4/.php_cs.dist
+        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/phpunit -c /opt/webtown-workflow/symfony4
+        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
     ;;
     # Rebuild config from the yml. See: workflow.sh .
     # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
     # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
     --reconfigure)
         shift
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony4/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config -e ${SYMFONY_ENV:-prod} ${@}
     ;;
     --config-dump)
         shift
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony4/bin/console app:config-dump -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump -e ${SYMFONY_ENV:-prod} ${@}
+    ;;
+    debug)
+        shift
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console ${@}
     ;;
     # RUN wizard
     *)
-        $BASE_PROJECT_RUN cli php /usr/src/script/symfony4/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}
+        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard -e ${SYMFONY_ENV:-prod} ${@}
     ;;
 esac

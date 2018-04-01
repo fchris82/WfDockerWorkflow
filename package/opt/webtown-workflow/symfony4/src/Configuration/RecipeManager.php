@@ -9,6 +9,7 @@
 namespace App\Configuration;
 
 use App\Exception\MissingRecipeException;
+use Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -51,6 +52,10 @@ class RecipeManager implements ContainerAwareInterface
             $this->recipes = [];
             /** @var SplFileInfo $recipeFile */
             foreach ($finder as $recipeFile) {
+                // Skip the files in route!
+                if ($recipeFile->getRelativePath() == '') {
+                    continue;
+                }
                 $fullClass = sprintf(
                     'Recipes\\%s\\Recipe',
                     str_replace('/', '\\', $recipeFile->getRelativePath())

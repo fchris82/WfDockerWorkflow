@@ -8,7 +8,7 @@
 
 namespace Recipes\Symfony3;
 
-use AppBundle\Configuration\BaseRecipe;
+use Recipes\BaseRecipe;
 
 /**
  * Class Recipe

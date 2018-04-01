@@ -6,13 +6,12 @@
  * Time: 17:08
  */
 
-namespace AppBundle\Configuration;
-
+namespace Recipes;
 
 abstract class HiddenRecipe extends BaseRecipe
 {
     public function getConfig()
     {
-        throw new \Exception('The hidden recipe doesn\'t have config!');
+        throw new \Exception('The hidden recipes don\'t have and don\'t need config!');
     }
 }

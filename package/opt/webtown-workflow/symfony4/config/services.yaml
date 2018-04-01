@@ -3,8 +3,8 @@
 parameters:
     # Docker path! We load to this path in the `docker-compose.yml` !!!
     program_configuration_file: /etc/webtown-workflow/config
-    skeleton_base_dir: %kernel.root_dir%/../../skeletons
-    recipe_base_dir: %kernel.root_dir%/../../recipes
+    skeleton_base_dir: '%kernel.root_dir%/../../skeletons'
+    recipe_base_dir: '%kernel.root_dir%/../../recipes'
 
 services:
     # default configuration for services in *this* file
@@ -28,119 +28,119 @@ services:
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
 
-    AppBundle\Configuration\Builder:
+    App\Configuration\Builder:
         public: true
 
-    AppBundle\Configuration\Configuration:
+    App\Configuration\Configuration:
         public: true
 
-    AppBundle\Configuration\Environment:
+    App\Configuration\Environment:
         arguments:
-            - "%program_configuration_file%"
-            - "@filesystem"
+            - '%program_configuration_file%'
+            - '@filesystem'
 
-    AppBundle\Configuration\RecipeManager:
+    App\Configuration\RecipeManager:
         arguments:
-            - "%recipe_base_dir%"
+            - '%recipe_base_dir%'
         calls:
             - method: setContainer
               arguments:
-                - "@service_container"
+                - '@service_container'
 
-    AppBundle\Wizard\Manager:
+    App\Wizard\Manager:
         public: true
 
-#    AppBundle\Wizard\Symfony\SymfonyProjectChainWizard:
+#    App\Wizard\Symfony\SymfonyProjectChainWizard:
 #        public: true
 #        tags:
 #            - { name: wizard, group: 'Full builder wizards', priority: 100 }
 #
-#    AppBundle\Wizard\Base\GitCloneWizard:
+#    App\Wizard\Base\GitCloneWizard:
 #        arguments:
-#            - "@filesystem"
+#            - '@filesystem'
 #            - 'git@github.com:fchris82/symfony-demo.git'
 #        tags:
 #            - { name: wizard, group: 'Only builders', priority: 50 }
 #        public: true
 #
-#    AppBundle\Wizard\Symfony\SymfonyBuildWizard:
+#    App\Wizard\Symfony\SymfonyBuildWizard:
 #        tags:
 #            - { name: wizard, group: 'Only builders', priority: 50 }
 #        public: true
 
-    AppBundle\Wizard\Symfony\SymfonyComposerBuildWizard:
+    App\Wizard\Symfony\SymfonyComposerBuildWizard:
         tags:
             - { name: wizard, group: 'Builders', priority: 50 }
         public: true
 
-    AppBundle\Wizard\Base\GitlabCISkeleton:
+    App\Wizard\Base\GitlabCISkeleton:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
         public: true
 
-    AppBundle\Wizard\Base\PhpCsFixSkeleton:
+    App\Wizard\Base\PhpCsFixSkeleton:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
         public: true
 
-    AppBundle\Wizard\Base\PhpMdSkeleton:
+    App\Wizard\Base\PhpMdSkeleton:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
         public: true
 
-    AppBundle\Wizard\Base\DeployerSkeleton:
+    App\Wizard\Base\DeployerSkeleton:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: -10 }
         public: true
 
-    AppBundle\Wizard\Docker\DevEnvironment:
+    App\Wizard\Docker\DevEnvironment:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: 20 }
         public: true
 
-    AppBundle\Wizard\Docker\Slim:
+    App\Wizard\Docker\Slim:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: 10 }
         public: true
 
-#    AppBundle\Wizard\Docker\Wide:
+#    App\Wizard\Docker\Wide:
 #        arguments:
-#            - %skeleton_base_dir%
-#            - "@twig"
-#            - "@filesystem"
+#            - '%skeleton_base_dir%'
+#            - '@twig'
+#            - '@filesystem'
 #        tags:
 #            - { name: wizard, group: 'Decorators', priority: 11 }
 #        public: true
 
-    AppBundle\Wizard\Ez\EzBuildMakefileWizard:
+    App\Wizard\Ez\EzBuildMakefileWizard:
         arguments:
-            - %skeleton_base_dir%
-            - "@twig"
-            - "@filesystem"
+            - '%skeleton_base_dir%'
+            - '@twig'
+            - '@filesystem'
         tags:
             - { name: wizard, group: 'Builders', priority: 20 }
         public: true
