@@ -12,7 +12,9 @@ use Recipes\BaseRecipe;
 use Recipes\HiddenRecipe;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
 use Symfony\Component\Yaml\Parser;
 
 class Configuration implements ConfigurationInterface
@@ -25,6 +27,16 @@ class Configuration implements ConfigurationInterface
     protected $recipeManager;
 
     /**
+     * @var Parser
+     */
+    protected $ymlParser;
+
+    /**
+     * @var array|string
+     */
+    protected $importCache = [];
+
+    /**
      * Configuration constructor.
      * @param RecipeManager $recipeManager
      */
@@ -33,13 +45,15 @@ class Configuration implements ConfigurationInterface
         $this->recipeManager = $recipeManager;
     }
 
-    public function loadConfig($configFile, $pwd)
+    public function loadConfig($configFile, $pwd = null)
     {
-        $ymlParser = new Parser();
+        if (is_null($pwd)) {
+            $pwd = dirname($configFile);
+        }
         $ymlFilePath = file_exists($configFile) && is_file($configFile)
             ? $configFile
             : $pwd . '/' . $configFile;
-        $baseConfig = $ymlParser->parseFile($ymlFilePath);
+        $baseConfig = $this->readConfig($ymlFilePath);
 
         $processor = new Processor();
         $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $baseConfig]);
@@ -59,6 +73,12 @@ class Configuration implements ConfigurationInterface
 
         $rootNode
             ->children()
+                ->arrayNode('imports')
+                    ->info('<comment>You can import some other <info>yml</info> files.</comment>')
+                    ->example(['.wf.base.yml'])
+                    ->scalarPrototype()->end()
+                    ->defaultValue([])
+                ->end()
                 ->scalarNode('version')
                     ->info('<comment>Which WF Makefile version do you want to use?</comment>')
                     ->isRequired()
@@ -130,11 +150,98 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
+    protected function getYmlParser()
+    {
+        if (!$this->ymlParser) {
+            $this->ymlParser = new Parser();
+        }
+
+        return $this->ymlParser;
+    }
+
+    protected function readConfig($ymlFilePath)
+    {
+        $baseConfig = $this->getYmlParser()->parseFile($ymlFilePath);
+
+        return $this->handleImports($baseConfig, $ymlFilePath);
+    }
+
+    protected function handleImports($baseConfig, $baseConfigYmlFullPath)
+    {
+        $sourceDirectory = dirname($baseConfigYmlFullPath);
+        if (array_key_exists('imports', $baseConfig)) {
+            foreach ($baseConfig['imports'] as $importYml) {
+                if (!file_exists($importYml) || !is_file($importYml)) {
+                    $importYmlAlt = $sourceDirectory . '/' . $importYml;
+                    if (!file_exists($importYmlAlt) || !is_file($importYmlAlt)) {
+                        throw new InvalidConfigurationException(sprintf('The `%s` and `%s` configuration file doesn\'t exist either!', $importYml, $importYmlAlt));
+                    }
+
+                    $importYml = $importYmlAlt;
+                }
+
+                $importYml = realpath($importYml);
+                if (in_array($importYml, $this->importCache)) {
+                    $this->importCache[] = $importYml;
+                    throw new FileLoaderImportCircularReferenceException($this->importCache);
+                }
+                $this->importCache[] = $importYml;
+
+                $importConfig = $this->readConfig($importYml);
+                $baseConfig = $this->configDeepMerge($importConfig, $baseConfig);
+
+                array_pop($this->importCache);
+            }
+        }
+
+        return $baseConfig;
+    }
+
+    protected function configDeepMerge($baseConfig, $overrideConfig)
+    {
+        foreach ($overrideConfig as $key => $value) {
+            if ($this->isConfigLeaf($value) || !array_key_exists($key, $baseConfig)) {
+                $baseConfig[$key] = $value;
+            } else {
+                $baseConfig[$key] = $this->configDeepMerge($baseConfig[$key], $value);
+            }
+        }
+
+        return $baseConfig;
+    }
+
+    protected function isConfigLeaf($value)
+    {
+        // Not array or empty array
+        if (!is_array($value) || $value === []) {
+            return true;
+        }
+        // It is a sequential array, like a list
+        if (array_keys($value) === range(0, count($value) - 1)) {
+            return $value;
+        }
+
+        return false;
+    }
+
     protected function addRecipesNode()
     {
         $treeBuilder = new TreeBuilder();
         $node = $treeBuilder->root('recipes');
-        $node->info('<comment>The configs of recipes</comment>');
+        $node
+            ->info('<comment>The configs of recipes. If you want to disable one from import, set the false value!</comment>')
+            ->beforeNormalization()
+                ->always(function ($v) {
+                    foreach ($v as $service => $value) {
+                        if ($value === false) {
+                            unset($v[$service]);
+                        }
+                    }
+
+                    return $v;
+                })
+            ->end()
+        ;
 
         /** @var BaseRecipe $recipe */
         foreach ($this->recipeManager->getRecipes() as $recipe) {

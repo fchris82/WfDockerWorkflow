@@ -8,7 +8,7 @@ RUN apk update \
     && apk add  --no-cache libmcrypt libmcrypt-dev openssh-client icu-dev \
     libxml2-dev freetype-dev libpng-dev libjpeg-turbo-dev g++ make autoconf su-exec
 
-# Install XDEBUG
+## Install XDEBUG
 #RUN docker-php-source extract \
 #    && pecl install xdebug \
 #    && docker-php-ext-enable xdebug \

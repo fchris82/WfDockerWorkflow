@@ -46,8 +46,8 @@ case $1 in
         docker-compose -f ${DIR}/symfony4/docker-compose.yml build --no-cache
     ;;
     -t|--test)
-        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/phpunit -c /opt/webtown-workflow/symfony4
-        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
+        $BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4
+#        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
     ;;
     # Rebuild config from the yml. See: workflow.sh .
     # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.

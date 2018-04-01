@@ -159,6 +159,20 @@ If you wish alternative clone repository, change repository parameter in the `/e
 
 # ★ For developers
 
+## Composer
+
+If you want to run composer command, go to SF directory and run the command:
+
+```
+cd [project]/package/opt/webtown-workflow/symfony4
+docker run --rm --interactive --tty \
+    --volume $PWD/..:/app \
+    --workdir /app/symfony4 \
+    --user $(id -u):$(id -g) \
+    -e APP_ENV=dev \
+    composer require --dev symfony/phpunit-bridge
+```
+
 ## Developing with Symfony
 
 Go to the symfony directory and there you can run the commands:
