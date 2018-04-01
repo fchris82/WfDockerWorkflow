@@ -24,7 +24,7 @@ BASE_PROJECT_RUN="docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             -f ${DIR}/symfony4/docker-compose.project.yml \
             run --rm \
-            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3)"
+            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) -e APP_ENV=${APP_ENV:-prod}"
 
 case $1 in
     -h|--help)
