@@ -23,7 +23,7 @@ versionupgrade:
 .PHONY: rsync
 rsync:
 	mkdir -p tmp
-	rsync -r --delete --force --filter=":- package/opt/webtown-project-wizard/symfony/.gitignore" package/* tmp
+	rsync -r --delete --force --filter=":- package/opt/webtown-workflow/symfony/.gitignore" package/* tmp
 
 .PHONY: cleanup
 cleanup:

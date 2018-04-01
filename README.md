@@ -150,7 +150,7 @@ Webtown Project Wizard
 
 ## Configuration
 
-If you wish alternative clone repository, change repository parameter in the `/etc/webtown-project-wizard/repository.txt` file
+If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/repository.txt` file
 
 ## Usage
 
@@ -164,7 +164,7 @@ If you wish alternative clone repository, change repository parameter in the `/e
 Go to the symfony directory and there you can run the commands:
 
 ```bash
-cd package/opt/webtown-project-wizard
+cd package/opt/webtown-workflow
 
 # Run tests
 wizard.sh -t
@@ -182,7 +182,7 @@ wizard.sh -e
 If you want to test in a project, you have to use absolute path to wizard, eg:
 
 ```bash
-/home/chris/www/webtown-workflow/package/opt/webtown-project-wizard/wizard.sh
+/home/chris/www/webtown-workflow/package/opt/webtown-workflow/wizard.sh
 ```
 
 ### Hogyan hozz létre új Wizard-ot?
@@ -192,7 +192,7 @@ Minden Wizard alapvetően arról szól, hogy vmilyen úton-módon fájlokat hoz 
 
 **AppBundle\Wizard\BaseSkeletonWizard**
 
-A Skeleton Wizard-nál létre kell hozni egy könyvtárat a `/package/opt/webtown-project-wizard/symfony/src/AppBundle/Resources/skeletons` könyvtárban. Ez a könyvtár fog megfelelni a "projekt gyökerének". Az itt található
+A Skeleton Wizard-nál létre kell hozni egy könyvtárat a `/package/opt/webtown-workflow/symfony/src/AppBundle/Resources/skeletons` könyvtárban. Ez a könyvtár fog megfelelni a "projekt gyökerének". Az itt található
 könyvtár struktúrát fogja átmásolni a projektbe. Minden fájlt twig-ként kezel, tehát használhatod az `{% if ... %}` vagy a `{{ valtozo }}` megoldásokat. A változók megadását a `setVariables()` metódusban
 tudod megtenni, a `$this->ask()` segítségével bekérhetsz a felhasználótól is adatokat. Ez talán a legalkalmasabb a legtöbb feladatra.
 
@@ -245,7 +245,7 @@ Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizar
 >
 > The PHPStorm can't detect the symfony project. You have to switch on manualy.
 >   - Settings » Languages & Frameworks » PHP » Symfony ⟶ **Enable plugins for this project**
->   - Set the directories with `package/opt/webtown-project-wizard/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
+>   - Set the directories with `package/opt/webtown-workflow/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
 >   - Settings » Other settings » Framework Integration ⟶ Select the **Symfony**
 >
 > You have to set `src` directory as *Source Root directory* and the `tests` directory as *Test Root directory*:

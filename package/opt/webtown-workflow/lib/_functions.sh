@@ -125,7 +125,7 @@ function create_makefile_from_config {
     CONFIG_HASH=$(crc32 ${PROJECT_CONFIG_FILE})
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
-        ${DIR}/../webtown-project-wizard/wizard.sh --reconfigure \
+        ${DIR}/../webtown-workflow/wizard.sh --reconfigure \
             --file ${PROJECT_CONFIG_FILE} \
             --target-directory ${WF_WORKING_DIRECTORY} \
             --config-hash ${CONFIG_HASH} ${@} || quit

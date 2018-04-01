@@ -121,7 +121,7 @@ abstract class BaseWizard implements WizardInterface
     }
 
     /**
-     * A /package/opt/webtown-project-wizard/symfony/docker-compose.yml fájlban lehet átadni paramétereket, amik
+     * A /package/opt/webtown-workflow/symfony/docker-compose.yml fájlban lehet átadni paramétereket, amik
      * kellhetnek majd generálásoknál. Pl ORIGINAL_PWD .
      *
      * @param string      $name
