@@ -17,14 +17,14 @@ CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
-# defaults
-CLONE_REPOSITORY=$(awk '/^repository/{print $3}' "${CONFIG}")
-# update parameters
-PROGRAM_REPOSITORY=$(awk '/^program_repository/{print $3}' "${CONFIG}")
-
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
+
+# defaults
+CLONE_REPOSITORY=$(get_config 'repository')
+# update parameters
+PROGRAM_REPOSITORY=$(get_config 'program_repository')
 
 # Switch on debug modes:
 #   wf -v sf docker:create:database -vvv
@@ -84,7 +84,7 @@ case $1 in
     # Reverse proxy handle and debug
     --init-reverse-proxy)
         NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
-        REVERSE_PROXY_PORT=$(awk '/^reverse_proxy_port/{print $3}' "${CONFIG}")
+        REVERSE_PROXY_PORT=$(get_config 'reverse_proxy_port')
         if [[ -z "$NETWORK_EXISTS" ]]; then
             docker network create --driver bridge reverse-proxy
         fi
@@ -117,8 +117,8 @@ case $1 in
     --reconfigure)
         shift
         PROJECT_ROOT_DIR=$(get_project_root_dir)
-        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
-        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
+        WF_WORKING_DIRECTORY=$(get_config 'working_directory')
+        WF_CONFIGURATION_FILE=$(get_config 'configuration_file')
         PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}")
 
         if [ -f "${PROJECT_CONFIG_FILE}" ]; then
@@ -134,8 +134,8 @@ case $1 in
         shift
 
         PROJECT_ROOT_DIR=$(get_project_root_dir)
-        WF_WORKING_DIRECTORY=$(awk '/^working_directory/{print $3}' "${CONFIG}")
-        WF_CONFIGURATION_FILE=$(awk '/^configuration_file/{print $3}' "${CONFIG}")
+        WF_WORKING_DIRECTORY=$(get_config 'working_directory')
+        WF_CONFIGURATION_FILE=$(get_config 'configuration_file')
         find_project_makefile || quit
 
         ARGS=$(escape "$@")

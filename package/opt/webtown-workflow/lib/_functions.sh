@@ -132,5 +132,12 @@ function create_makefile_from_config {
     fi
 }
 
+function get_config {
+    local _name_="${1}"
+    local _config_="${DIR}/../../etc/webtown-workflow/config"
+
+    echo $(awk '/^'${_name_}'/{print $3}' "${_config_}")
+}
+
 # Handle CTRL + C
 trap quit SIGINT

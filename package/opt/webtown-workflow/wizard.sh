@@ -1,6 +1,6 @@
 #!/bin/bash
 # Debug mode:
-# set -x
+#set -x
 
 # DIRECTORIES
 WORKDIR=$(pwd)
@@ -16,15 +16,23 @@ source ${DIR}/../webtown-workflow/lib/_css.sh
 source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
 source ${DIR}/../webtown-workflow/lib/_functions.sh
 
-BASE_RUN="docker-compose \
+# You can use the `--dev` to enable it without edit config
+APP_ENV=$(get_config 'symfony_env')
+XDEBUG_ENABLED=$(get_config 'xdebug_enabled')
+if [ "$1" == "--dev" ]; then
+    shift
+    APP_ENV="dev"
+    XDEBUG_ENABLED="1"
+fi
+
+DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${APP_ENV:-prod} XDEBUG_ENABLED=${XDEBUG_ENABLED:-0}"
+BASE_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
-            run --rm \
-            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) -e APP_ENV=${APP_ENV:-prod}"
-BASE_PROJECT_RUN="docker-compose \
+            run --rm"
+BASE_PROJECT_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             -f ${DIR}/symfony4/docker-compose.project.yml \
-            run --rm \
-            -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) -e APP_ENV=${APP_ENV:-prod}"
+            run --rm"
 
 case $1 in
     -h|--help)
@@ -32,21 +40,19 @@ case $1 in
     ;;
     # For debugging
     -e|--enter)
-        $BASE_RUN cli /bin/bash
+        eval "$BASE_RUN cli /bin/bash"
     ;;
     -i|--install)
         shift
-        $BASE_RUN -w /opt/webtown-workflow/symfony4 \
-            -e APP_ENV=${APP_ENV:-prod} \
-            cli composer install ${@}
+        eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@}"
     ;;
     # REBUILD the docker container
     -r|--rebuild)
         rm -rf ${DIR}/symfony4/var/cache/*
-        docker-compose -f ${DIR}/symfony4/docker-compose.yml build --no-cache
+        eval "$DOCKER_COMPOSE_ENV docker-compose -f ${DIR}/symfony4/docker-compose.yml build --no-cache"
     ;;
     -t|--test)
-        $BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4
+        eval "$BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4"
 #        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
     ;;
     # Rebuild config from the yml. See: workflow.sh .
@@ -54,18 +60,18 @@ case $1 in
     # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
     --reconfigure)
         shift
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config -e ${APP_ENV:-prod} ${@}
+        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
     ;;
     --config-dump)
         shift
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump -e ${APP_ENV:-prod} ${@}
+        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
     ;;
     --debug)
         shift
-        $BASE_PROJECT_RUN cli ${@}
+        eval "$BASE_PROJECT_RUN cli ${@}"
     ;;
     # RUN wizard
     *)
-        $BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard -e ${APP_ENV:-prod} ${@}
+        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
     ;;
 esac
