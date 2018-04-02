@@ -83,29 +83,25 @@ case $1 in
     ;;
     # Reverse proxy handle and debug
     --init-reverse-proxy)
-        if [ -d /etc/docker ]; then
-            NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
-            REVERSE_PROXY_PORT=$(get_config 'reverse_proxy_port')
-            if [[ -z "$NETWORK_EXISTS" ]]; then
-                docker network create --driver bridge reverse-proxy
-            fi
-            docker stop nginx-reverse-proxy
-            docker rm nginx-reverse-proxy
-            docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
-                --name nginx-reverse-proxy \
-                --net reverse-proxy \
-                -v /var/run/docker.sock:/tmp/docker.sock:ro \
-                -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
-                -v /etc/webtown-workflow/nginx-proxy.conf:/etc/nginx/proxy.conf:ro \
-                -v /etc/webtown-workflow/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
-                -v /etc/webtown-workflow/docker-gen.cfg:/app/docker-gen.cfg:ro \
-                -v /etc/webtown-workflow/Procfile:/app/Procfile:ro \
-                -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
-                --restart always \
-                jwilder/nginx-proxy
-        else
-            echo "You are running this command in dind mode (docker in docker). We don't
+        NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
+        REVERSE_PROXY_PORT=$(get_config 'reverse_proxy_port')
+        if [[ -z "$NETWORK_EXISTS" ]]; then
+            docker network create --driver bridge reverse-proxy
         fi
+        docker stop nginx-reverse-proxy
+        docker rm nginx-reverse-proxy
+        docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
+            --name nginx-reverse-proxy \
+            --net reverse-proxy \
+            -v /var/run/docker.sock:/tmp/docker.sock:ro \
+            -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
+            -v /etc/webtown-workflow/nginx-proxy.conf:/etc/nginx/proxy.conf:ro \
+            -v /etc/webtown-workflow/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
+            -v /etc/webtown-workflow/docker-gen.cfg:/app/docker-gen.cfg:ro \
+            -v /etc/webtown-workflow/Procfile:/app/Procfile:ro \
+            -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
+            --restart always \
+            jwilder/nginx-proxy
     ;;
     -erp|--enter-reverse-proxy)
         docker exec -i -t nginx-reverse-proxy /bin/bash
