@@ -44,7 +44,11 @@ case $1 in
     ;;
     -i|--install)
         shift
-        eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@}"
+        if [ -x "$(which composer)" ]; then
+            cd /opt/webtown-workflow/symfony4 && composer install ${@}
+        else
+            eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@}"
+        fi
     ;;
     # REBUILD the docker container
     -r|--rebuild)
@@ -52,7 +56,7 @@ case $1 in
         eval "$DOCKER_COMPOSE_ENV docker-compose -f ${DIR}/symfony4/docker-compose.yml build --no-cache"
     ;;
     -t|--test)
-        eval "$BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4"
+#        eval "$BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4"
 #        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
     ;;
     # Rebuild config from the yml. See: workflow.sh .
@@ -60,11 +64,13 @@ case $1 in
     # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
     --reconfigure)
         shift
-        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
+        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
+        php /opt/webtown-workflow/symfony4/bin/console app:config ${@}
     ;;
     --config-dump)
         shift
-        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
+        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
+        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}
     ;;
     --debug)
         shift
@@ -72,6 +78,7 @@ case $1 in
     ;;
     # RUN wizard
     *)
-        eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
+        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}
     ;;
 esac

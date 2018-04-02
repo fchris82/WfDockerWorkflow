@@ -1,5 +1,9 @@
+> ```
+> LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${APP_ENV:-prod} XDEBUG_ENABLED=${XDEBUG_ENABLED:-0} docker-compose -f /home/chris/www/webtown-workflow/docker/docker-compose.yml -f /home/chris/www/webtown-workflow/docker/docker-compose.project.yml run --rm cli wf
+> ```
+
 Webtown Workflow Installer
-======================
+==========================
 
 ## Installation
 

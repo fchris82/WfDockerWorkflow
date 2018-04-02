@@ -30,7 +30,6 @@ if [ -d /opt/webtown-workflow/symfony4/var ]; then
     chmod -R 777 /opt/webtown-workflow/symfony4/var/cache
     chmod -R 777 /opt/webtown-workflow/symfony4/var/log
 fi
-chown -R ${USER}:${GROUP} /opt/webtown-workflow/symfony4
 
 # Create symlink
 ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard
