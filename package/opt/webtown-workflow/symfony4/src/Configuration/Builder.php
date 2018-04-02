@@ -339,7 +339,7 @@ class Builder
 
     /**
      * @param string $projectPath
-     * @param string $versionHash The CRC32 hash of config yml file
+     * @param string $versionHash The cksum hash of config yml file
      *
      * @return string
      */
