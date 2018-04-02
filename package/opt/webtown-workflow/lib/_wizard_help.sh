@@ -1,15 +1,21 @@
 read -r -d '' HELP <<-EOM
 You can create or decorate custom project to use docker, Gitlab CI or other tool:
 
-  -h --help               $(tput setaf 2)Help, show this$(tput sgr0)
-  -i --install            $(tput setaf 2)"Composer install" in symfony directory!$(tput sgr0)
+  -h --help               ${GREEN}Help, show this${RESTORE}
+  -i --install            ${GREEN}"Composer install" in symfony directory!${RESTORE}
 
-  -r --rebuild            $(tput setaf 2)Clear SF cache and rebuild the docker container!$(tput sgr0)
-  -e --enter              $(tput setaf 2)For debugging. Enter the docker container.$(tput sgr0)
+  -r --rebuild            ${GREEN}Clear SF cache and rebuild the docker container!${RESTORE}
+  -e --enter              ${GREEN}For debugging. Enter the docker container.${RESTORE}
 
   Without any parameter just start the wizard!
 
-Eg: $(tput setaf 3)wizard -i$(tput sgr0)
+Special argument:
+
+  ${CYAN}--config-dump${RESTORE}    ${GREEN}In a project directory this will show the all available configs. You can put it a file to edit with ${BOLD}--no-ansi${GREEN}${RESTORE}
+  ${CYAN}--dev${RESTORE}            ${GREEN}For debugging. You can use this before every command! It can switch on ${BOLD}xdebug${GREEN} and ${BOLD}SF dev${GREEN} mode.${RESTORE}
+
+Eg: ${YELLOW}wizard -i${RESTORE} or with dev ${YELLOW}wizard ${BOLD}--dev${YELLOW} -i${RESTORE}
+    ${YELLOW}wizard --config-dump ${BOLD}--no-ansi${YELLOW} > .wf.yml${RESTORE}
 EOM
 
 function showHelp {
