@@ -123,6 +123,7 @@ define CMD_DOCKER_ENV
     WWW_DATA_UID=$(WWW_DATA_UID) \
     WWW_DATA_GID=$(WWW_DATA_GID) \
     PHP_VERSION=$(PHP_VERSION) \
+    SUDO=$(SUDO) \
     CI=$${CI}
 endef
 
