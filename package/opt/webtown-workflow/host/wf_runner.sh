@@ -33,5 +33,5 @@ docker run -it \
             ${DOCKER_COMPOSE_ENV} \
             -w ${WORKDIR} \
             -v ${WORKDIR}:${WORKDIR} \
-            -v /~:/home/user \
+            -v ~/:/home/user \
             fchris82/wf ${CMD} ${@}
