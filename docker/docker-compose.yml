@@ -2,6 +2,7 @@ version: '2'
 
 services:
     cli:
+        image: fchris82/wf
         build:
             context: ../.
         environment:

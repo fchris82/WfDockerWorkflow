@@ -30,9 +30,18 @@ cleanup:
 	rm -rf tmp
 
 # DEV!
-.PHONY: install
-install:
-	package/opt/webtown-workflow/wizard.sh --install
+.PHONY: enter
+enter:
+	package/opt/webtown-workflow/host/wf_runner.sh /bin/bash
+
+.PHONY: build_docker
+build_docker:
+	docker-compose -f docker/docker-compose.yml build --no-cache
+
+.PHONY: push_docker
+push_docker:
+	docker login
+	docker-compose -f docker/docker-compose.yml push
 
 .PHONY: tests
 tests:
