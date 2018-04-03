@@ -1,6 +1,6 @@
 #!/bin/bash
 # Install alias
-ln -sf /opt/webtown-workflow/host/install.sh /usr/local/bin/install
+ln -sf /opt/webtown-workflow/host/install.sh /usr/local/bin/wf-install
 
 # ----------------------------------------------------------------------------------------------------------------------
 #                                                   W I Z A R D
