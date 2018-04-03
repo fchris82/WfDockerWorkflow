@@ -1,5 +1,5 @@
 #!/bin/bash
-# docker run -it -e USER_SHELL=${SHELL} -v /~:/home/user fchris82/wf install
+# docker run -it -e USER_SHELL=${SHELL} -v /~:/home/user fchris82/wf wf-install
 
 ALIAS_WF="alias wf='~/.webtown-workflow/bin/wf_runner.sh wf'"
 ALIAS_WIZARD="alias wizard='~/.webtown-workflow/bin/wf_runner.sh wizard'"
