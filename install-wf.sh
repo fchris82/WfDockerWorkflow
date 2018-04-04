@@ -1,5 +1,16 @@
 #!/bin/bash
 
+#-- Vars
+RESTORE=$'\x1B[0m'
+# Clear to end of line: http://www.isthe.com/chongo/tech/comp/ansi_escapes.html
+CLREOL=$'\x1B[K'
+# Colors
+RED=$'\x1B[00;31m'
+GREEN=$'\x1B[00;32m'
+YELLOW=$'\x1B[00;33m'
+WHITE=$'\x1B[01;37m'
+BOLD=$'\x1B[1m'
+
 # Refresh
 if [ "${1}" != "--no-pull" ]; then
     docker pull fchris82/wf
@@ -19,13 +30,14 @@ fi
 
 # Add commands to path!
 COMMAND_PATH=~/.webtown-workflow/bin/commands
-[[ ":$PATH:" != *":${COMMAND_PATH}:"* ]] && export PATH="${COMMAND_PATH}:${PATH}"
+mkdir -p ~/bin
+ln -sf $COMMAND_PATH/* ~/bin
 
 # Install autocomplete
 if [ -d ~/.zsh ]; then
     mkdir -p ~/.zsh/completion
     ln -sf ~/.webtown-workflow/bin/zsh_autocomplete.sh ~/.zsh/completion/_wf
-    if [ $(echo "$fpath" | grep /.zsh/completion | wc -l) == 0 ]; then
+    if [ $(cat ~/.zshrc| egrep "^[^#]*fpath[^#]*/.zsh/completion" | wc -l) == 0 ]; then
         echo -e "${YELLOW}You have to edit the ${GREEN}~/.zshrc${YELLOW} file and add this row:${RESTORE}"
         echo -e "fpath=(~/.zsh/completion \$fpath)"
     fi
@@ -36,3 +48,5 @@ if [ -d ~/.zsh ]; then
 else
     echo -e "You don't have installed the zsh! Nothing changed."
 fi
+
+echo -e "${GREEN}Install success${RESTORE}"

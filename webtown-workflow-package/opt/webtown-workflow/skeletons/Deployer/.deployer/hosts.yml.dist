@@ -42,7 +42,7 @@ demo:
         DOCKER_HTTP_HOST         := {{ project_directory }}.amapa.webtown.hu
         # Symfony environments
         SYMFONY_ENV              := dev
-        DOCKER_ENVIRONMENTS      := XDEBUG_ENABLED=0 XDEBUG_IDE_SERVER_NAME=Docker DOCKER_PROJECT_NETWORK=10.0.1
+        DOCKER_ENVIRONMENTS      := WF_XDEBUG_ENABLED=0 XDEBUG_IDE_SERVER_NAME=Docker DOCKER_PROJECT_NETWORK=10.0.1
         DOCKER_BASENAME          := chrisphtedemo
         DOCKER_USER_CONFIG_FILES := $(DOCKER_PROVISIONING)/docker-compose.deployer.yml
         SUDO                     :=

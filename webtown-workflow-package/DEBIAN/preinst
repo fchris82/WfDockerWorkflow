@@ -4,6 +4,11 @@ if [ -d /opt/webtown-workflow/symfony ]; then
     rm -rf /opt/webtown-workflow/symfony
 fi
 
+# REMOVE old config
+if [ -f /etc/webtown-workflow/config ]; then
+    rm -rf /etc/webtown-workflow/config
+fi
+
 # ----------------------------------------------------------------------------------------------------------------------
 #                                          C L E A N   O L D   W I Z A R D
 # ----------------------------------------------------------------------------------------------------------------------

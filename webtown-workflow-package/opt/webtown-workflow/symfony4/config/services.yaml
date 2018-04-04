@@ -34,11 +34,6 @@ services:
     App\Configuration\Configuration:
         public: true
 
-    App\Configuration\Environment:
-        arguments:
-            - '%program_configuration_file%'
-            - '@filesystem'
-
     App\Configuration\RecipeManager:
         arguments:
             - '%recipe_base_dir%'

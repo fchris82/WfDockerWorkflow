@@ -84,7 +84,7 @@ function get_project_root_dir {
 #  3. .docker.env.makefile
 #  4. .project.makefile
 function find_project_makefile {
-    PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}")
+    PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME}")
     if [ "${PROJECT_CONFIG_FILE}" == "null" ]; then
         # If we are using "hidden" docker environment...
         DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
@@ -123,20 +123,13 @@ function get_project_configuration_file {
 
 function create_makefile_from_config {
     CONFIG_HASH=$(cksum ${PROJECT_CONFIG_FILE} | awk '{ print $1 }')
-    PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY}/${CONFIG_HASH}.mk"
+    PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
         ${DIR}/../webtown-workflow/wizard.sh --reconfigure \
             --file ${PROJECT_CONFIG_FILE} \
-            --target-directory ${WF_WORKING_DIRECTORY} \
+            --target-directory ${WF_WORKING_DIRECTORY_NAME} \
             --config-hash ${CONFIG_HASH} ${@} || quit
     fi
-}
-
-function get_config {
-    local _name_="${1}"
-    local _config_="${DIR}/../../etc/webtown-workflow/config"
-
-    echo $(awk '/^'${_name_}'/{print $3}' "${_config_}")
 }
 
 # Handle CTRL + C

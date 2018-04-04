@@ -24,15 +24,33 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 # You can use the `--dev` to enable it without edit config
 if [ "$1" == "--dev" ]; then
     shift
-    APP_ENV="dev"
-    XDEBUG_ENABLED="1"
+    WF_SYMFONY_ENV="dev"
+    WF_XDEBUG_ENABLED="1"
 fi
 
-DOCKER_COMPOSE_ENV="-e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) -e APP_ENV=${APP_ENV:-prod} -e XDEBUG_ENABLED=${XDEBUG_ENABLED:-0}"
-docker run -it \
+WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
+DOCKER_COMPOSE_ENV=" \
+    -e LOCAL_USER_ID=$(id -u) \
+    -e USER_GROUP=$(getent group docker | cut -d: -f3) \
+    -e APP_ENV=${WF_SYMFONY_ENV:-prod} \
+    -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED:-0}"
+WORKFLOW_CONFIG=" \
+    -e WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY} \
+    -e WF_WORKING_DIRECTORY_NAME=${WF_WORKING_DIRECTORY_NAME} \
+    -e WF_CONFIGURATION_FILE_NAME=${WF_CONFIGURATION_FILE_NAME} \
+    -e WF_SYMFONY_ENV=${WF_SYMFONY_ENV} \
+    -e WF_XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
+    -e WF_DEFAULT_LOCAL_TLD=${WF_DEFAULT_LOCAL_TLD}"
+if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ]; then
+    WORKFLOW_CONFIG="--env-file ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env"
+fi
+if [ "${CI:-0}" == "0" ]; then
+    TTY="-it"
+fi
+docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
             -w ${WORKDIR} \
             -v ${WORKDIR}:${WORKDIR} \
             -v ~/:/home/user \
-            -v ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/config:/etc/webtown-workflow \
+            ${WORKFLOW_CONFIG} \
             fchris82/wf ${CMD} ${@}

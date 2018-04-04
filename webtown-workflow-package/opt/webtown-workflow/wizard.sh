@@ -17,15 +17,15 @@ source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
 source ${DIR}/../webtown-workflow/lib/_functions.sh
 
 # You can use the `--dev` to enable it without edit config
-APP_ENV=$(get_config 'symfony_env')
-XDEBUG_ENABLED=$(get_config 'xdebug_enabled')
+WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
+WF_XDEBUG_ENABLED=${WF_XDEBUG_ENABLED:-0}
 if [ "$1" == "--dev" ]; then
     shift
-    APP_ENV="dev"
-    XDEBUG_ENABLED="1"
+    WF_SYMFONY_ENV="dev"
+    WF_XDEBUG_ENABLED="1"
 fi
 
-DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${APP_ENV:-prod} XDEBUG_ENABLED=${XDEBUG_ENABLED:-0}"
+DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${WF_SYMFONY_ENV} XDEBUG_ENABLED=${WF_XDEBUG_ENABLED}"
 BASE_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             run --rm"
@@ -33,6 +33,10 @@ BASE_PROJECT_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             -f ${DIR}/symfony4/docker-compose.project.yml \
             run --rm"
+
+if [ "${CI:-0}" != "0" ]; then
+    DISABLE_TTY="--no-ansi --no-interaction"
+fi
 
 case $1 in
     -h|--help)
@@ -65,12 +69,12 @@ case $1 in
     --reconfigure)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config ${@}
+        php /opt/webtown-workflow/symfony4/bin/console app:config ${@} ${DISABLE_TTY}
     ;;
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}
+        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${DISABLE_TTY}
     ;;
     --debug)
         shift
@@ -79,6 +83,6 @@ case $1 in
     # RUN wizard
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@} ${DISABLE_TTY}
     ;;
 esac

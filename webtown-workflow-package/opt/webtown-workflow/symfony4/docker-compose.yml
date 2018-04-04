@@ -7,8 +7,8 @@ services:
         environment:
             - HOME=/home/user
             - ORIGINAL_PWD=$PWD
-            - APP_ENV=$APP_ENV
-            - XDEBUG_ENABLED=$XDEBUG_ENABLED
+            - WF_SYMFONY_ENV=$APP_ENV
+            - WF_XDEBUG_ENABLED=$XDEBUG_ENABLED
             - LOCAL_USER_ID=$LOCAL_USER_ID
             - USER_GROUP=$USER_GROUP
         volumes:

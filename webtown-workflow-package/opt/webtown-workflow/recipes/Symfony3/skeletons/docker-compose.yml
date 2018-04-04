@@ -31,7 +31,7 @@ services:
             SYMFONY_TRUSTED_PROXIES:      ~
             SYMFONY_DEPRECATIONS_HELPER:  ~
             PHP_IDE_CONFIG: "serverName={{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}"
-            XDEBUG_ENABLED: {{ server.xdebug ? '1' : '0' }}
+            WF_XDEBUG_ENABLED: {{ server.xdebug ? '1' : '0' }}
         volumes:
             # Full project files
             - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"

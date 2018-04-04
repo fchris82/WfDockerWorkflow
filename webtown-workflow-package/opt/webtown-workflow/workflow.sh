@@ -21,11 +21,6 @@ source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
 
-# defaults
-CLONE_REPOSITORY=$(get_config 'repository')
-# update parameters
-PROGRAM_REPOSITORY=$(get_config 'program_repository')
-
 # Switch on debug modes:
 #   wf -v sf docker:create:database -vvv
 #      ^^                           ^^^^
@@ -51,7 +46,7 @@ case $1 in
             date +%s > /etc/webtown-workflow/lastupdate
             echo "Check new Workflow version..."
             LAST_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
-            CURRENT_VERSION=$(git archive --remote=${PROGRAM_REPOSITORY} HEAD package/DEBIAN/control | tar -xO | grep ^Version: | cut -d\  -f2)
+            CURRENT_VERSION=$(git archive --remote=${WF_PROGRAM_REPOSITORY} HEAD package/DEBIAN/control | tar -xO | grep ^Version: | cut -d\  -f2)
             if [ "${CURRENT_VERSION}" != "${LAST_VERSION}" ]; then
                 echo -e "There is a newer version from \033[1;34mwebtown-workflow\033[0m! \033[33m${CURRENT_VERSION}\033[0m vs \033[32m${LAST_VERSION}\033[0m Run the \033[1mwf -u\033[0m command for upgrade."
             fi
@@ -59,9 +54,9 @@ case $1 in
     ;;
     -u|--update)
         PACKAGE_NAME=webtown-workflow.deb
-        echo -e "\033[32mStarting upgrade from: \033[33m${PROGRAM_REPOSITORY}\033[0m"
+        echo -e "\033[32mStarting upgrade from: \033[33m${WF_PROGRAM_REPOSITORY}\033[0m"
         echo -e "\033[32mPackage:               \033[33m${PACKAGE_NAME}\033[0m"
-        cd /tmp && git archive --remote=${PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
+        cd /tmp && git archive --remote=${WF_PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
         sudo dpkg -i ${PACKAGE_NAME} || quit
         rm -rf ${PACKAGE_NAME}
     ;;
@@ -73,15 +68,13 @@ case $1 in
     --reconfigure)
         shift
         PROJECT_ROOT_DIR=$(get_project_root_dir)
-        WF_WORKING_DIRECTORY=$(get_config 'working_directory')
-        WF_CONFIGURATION_FILE=$(get_config 'configuration_file')
-        PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE}")
+        PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME}")
 
         if [ -f "${PROJECT_CONFIG_FILE}" ]; then
             FORCE_OVERRIDE=1
             create_makefile_from_config ${@}
         else
-            echo "The ${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE} doesn't exist."
+            echo "The ${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME} doesn't exist."
         fi
     ;;
     # Project makefile
@@ -90,8 +83,6 @@ case $1 in
         shift
 
         PROJECT_ROOT_DIR=$(get_project_root_dir)
-        WF_WORKING_DIRECTORY=$(get_config 'working_directory')
-        WF_CONFIGURATION_FILE=$(get_config 'configuration_file')
         find_project_makefile || quit
 
         ARGS=$(escape "$@")

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # XDEBUG
-if [ "${XDEBUG_ENABLED}" == "1" ]; then
+if [ "${WF_XDEBUG_ENABLED}" == "1" ]; then
     mkdir -p /tmp/php.conf.d
     echo "xdebug.remote_host = $(/sbin/ip route|awk '/default/ { print $3 }')" > /tmp/php.conf.d/xdebug.ini
     export PHP_INI_SCAN_DIR=$PHP_INI_DIR/conf.d:/tmp/php.conf.d

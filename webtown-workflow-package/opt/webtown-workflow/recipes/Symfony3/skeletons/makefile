@@ -6,7 +6,7 @@ SHARED_DIRS			:= var
 
 XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}
 PHP_IDE_CONFIG := "serverName=${XDEBUG_IDE_SERVER_NAME}"
-XDEBUG_ENABLED := {{ server.xdebug ? '1' : '0' }}
+WF_XDEBUG_ENABLED := {{ server.xdebug ? '1' : '0' }}
 
 # HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
 # Don't forget to escape the $ sign: $ --> \$$
@@ -15,7 +15,7 @@ HTTP_AUTH_PASS :=
 ORIGINAL_CMD_DOCKER_ENV := $(CMD_DOCKER_ENV)
 define CMD_DOCKER_ENV
     $(ORIGINAL_CMD_DOCKER_ENV) \
-    XDEBUG_ENABLED=$(XDEBUG_ENABLED) \
+    WF_XDEBUG_ENABLED=$(WF_XDEBUG_ENABLED) \
     PHP_IDE_CONFIG=$(PHP_IDE_CONFIG)
 endef
 
