@@ -1,7 +1,9 @@
 #!/bin/bash
 
 # Refresh
-#docker pull fchris82/wf
+if [ "${1}" != "--no-pull" ]; then
+    docker pull fchris82/wf
+fi
 # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
 docker run -it \
  -v ~/:/home/user \
