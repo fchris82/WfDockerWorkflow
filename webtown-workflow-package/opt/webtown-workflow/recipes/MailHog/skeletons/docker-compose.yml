@@ -1,0 +1,5 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+    mailhog:
+        image: mailhog/mailhog:latest

@@ -1,0 +1,31 @@
+version: "2.1"
+
+services:
+    web:
+        image: nginx:latest
+        ports:
+            - "${HTTP_PORT}:80"
+        depends_on:
+            - mysql
+            - engine
+        links:
+            - engine:php
+        volumes:
+            - "${PROJECT_DIR}:/var/www"
+            - "${PROJECT_COMPOSE_DIR}/nginx/vhost.conf:/etc/nginx/conf.d/site.conf"
+
+    mysql:
+        image: mysql:5.6
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
+
+    engine:
+        image: jvancoillie/php-fpm-symfony
+        environment:
+          - DATABASE_URL
+        volumes:
+            - "${PWD}:/var/www/html/symfony"
+        working_dir: /var/www/html/symfony/${PROJECT_DIR}
+        tty: true

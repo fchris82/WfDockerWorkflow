@@ -1,0 +1,101 @@
+version: "2.1"
+
+x-base: &defaults
+    labels:
+        com.wf.basedirectory: ${BASE_DIRECTORY}
+    networks:
+        - default
+
+services:
+    web:
+        <<: *defaults
+        image: nginx:latest
+        depends_on:
+            - mysql
+            - engine
+            - mail
+            #- elasticsearch
+            #- mongodb
+        environment:
+            VIRTUAL_HOST: ${DOCKER_HTTP_HOST}
+        links:
+            - engine:php
+        volumes:
+            - "${BASE_DIRECTORY}/${PROJECT_DIR_NAME}:${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}"
+            - "${PROJECT_COMPOSE_DIR}/nginx/vhost.conf:/etc/nginx/conf.d/site.temp:ro"
+        command: /bin/bash -c "sed 's|__host__|${DOCKER_HTTP_HOST}|' /etc/nginx/conf.d/site.temp
+            | sed 's|__project_dir__|${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}|'
+            | sed 's|__debug__|${DOCKER_CONFIG_NGINX_DEBUG}|'
+            | sed 's|__timeout__|${PHP_MAX_EXECUTION_TIME}|'
+            > /etc/nginx/conf.d/default.conf
+            && echo '${HTTP_AUTH_PASS}' > /etc/nginx/.htpasswd
+            && ${DOCKER_NGINX_COMMAND} -g 'daemon off;'"
+
+    mysql:
+        <<: *defaults
+        image: mysql:5.6
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${DB_NAME}
+        volumes:
+            - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"
+        command: mysqld --character-set-server=${DB_CHARSET} --collation-server=${DB_COLLATION} --character-set-client-handshake=${DB_CHARSET}
+
+    # Mail setting: smtp://mail:25?encryption=&auth_mode= It maybe doesn't work inside a protected network (the server can't look out)!
+    mail:
+        <<: *defaults
+        image: tianon/exim4:latest
+
+    #elasticsearch:
+    #    <<: *defaults
+    #    image: elasticsearch:1.7.6
+    #    volumes:
+    #        - "${DOCKER_DATA_DIR}/elasticsearch:/usr/share/elasticsearch/data"
+    #
+    #mongodb:
+    #    <<: *defaults
+    #    image: mongo:3.2
+    #    volumes:
+    #        - "${DOCKER_DATA_DIR}/mongodb:/data/db"
+
+    engine:
+        <<: *defaults
+        # If this solution doesn't exist, add the `DOCKER_USER_CONFIG_FILES := $(DOCKER_PROVISIONING)/docker-compose.build.yml`
+        # line in the .project.env file!
+        image:  {{ docker_engine_repo_base }}/{{ docker_engine_repo_name }}
+        environment:
+            - CI
+            - PHP_VERSION
+            - WWW_DATA_UID
+            - WWW_DATA_GID
+            - DATABASE_URL
+            - TIMEZONE
+            - PHP_MAX_EXECUTION_TIME
+            - PHP_MEMORY_LIMIT
+            - PHP_MAX_UPLOAD
+            - PHP_MAX_FILE_UPLOADS
+            - PHP_MAX_POST
+{% if sf_version < 4 %}
+            - SYMFONY_ENV
+            - SYMFONY_DEBUG
+            - SYMFONY_CLASSLOADER_FILE
+            - SYMFONY_HTTP_CACHE
+            - SYMFONY_HTTP_CACHE_CLASS
+            - SYMFONY_TRUSTED_PROXIES
+{% endif %}
+        volumes:
+            # Full project files
+            - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
+            # Entrypoint file
+            - "${PROJECT_COMPOSE_DIR}/engine/entrypoint.sh:/usr/local/bin/entrypoint.sh:ro"
+            # User SSH keys
+            - "${SSH_PATH}:/home/user/.ssh:ro"
+            # Git config fájl bekötése
+            - "~/.gitconfig:/home/user/.gitconfig:ro"
+            # Composer cache
+            - "~/.composer:/home/user/.composer"
+        tty: true
+
+networks:
+    default:
+        driver: bridge

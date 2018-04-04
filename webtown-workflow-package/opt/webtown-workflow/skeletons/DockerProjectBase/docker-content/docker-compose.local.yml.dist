@@ -1,0 +1,46 @@
+version: "2.1"
+
+services:
+#    mysql:
+#        ports:
+#            - "${MYSQL_PUBLIC_PORT}:3306"
+#        # If you want to use fix IP. You have to uncomment the `networks.project` too at the bottom of this file!!!!
+#        networks:
+#            project:
+#                ipv4_address: ${DOCKER_PROJECT_NETWORK}.2
+
+    web:
+        networks:
+            - reverse-proxy
+#        ports:
+#            - "${DOCKER_PORT_PREFIX}80:80"
+#        volumes:
+#            # Switch on the HTTP AUTH
+#            - "${PROJECT_COMPOSE_DIR}/nginx/http_auth.conf:/etc/nginx/conf.d/http_auth.conf:ro"
+
+    # If you want to use xdebug, uncomment this block. (create before a base xdebug.ini file in your home directory!
+    engine:
+        volumes:
+            # Local settings. By custom file use ini.dist!!! file, because it is a dist file, not real ini!
+            - "${PROJECT_COMPOSE_DIR}/engine/config/custom.php.ini:/usr/local/etc/php/conf.d/99-custom.ini.dist"
+            - "${PROJECT_COMPOSE_DIR}/engine/config/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini.dist"
+#            # Global settings. By custom file use ini.dist!!! file, because it is a dist file, not real ini!
+#            - "~/.docker/custom.php.ini:/usr/local/etc/php/conf.d/99-custom.ini.dist"
+#            - "~/.docker/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini"
+        environment:
+            PHP_IDE_CONFIG: "serverName=${XDEBUG_IDE_SERVER_NAME}"
+            XDEBUG_ENABLED: ${XDEBUG_ENABLED}
+#            # You can disable the composer xdebug: https://getcomposer.org/doc/articles/troubleshooting.md#xdebug-impact-on-composer
+#            COMPOSER_ALLOW_XDEBUG: 0
+
+networks:
+    reverse-proxy:
+        external:
+            name: ${DOCKER_PROXY_NETWORK}
+#    # If you want to use fix IP
+#    project:
+#        driver: bridge
+#        ipam:
+#            config:
+#                - subnet: ${DOCKER_PROJECT_NETWORK}.0/25
+#                  gateway: ${DOCKER_PROJECT_NETWORK}.1

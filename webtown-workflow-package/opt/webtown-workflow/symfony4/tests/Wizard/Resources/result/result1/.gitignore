@@ -1,0 +1,7 @@
+
+# Docker
+/.env
+/.project.env
+docker-compose.local.yml
+//*
+!//.gitkeep

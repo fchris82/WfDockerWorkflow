@@ -1,6 +1,56 @@
-> ```
-> LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${APP_ENV:-prod} XDEBUG_ENABLED=${XDEBUG_ENABLED:-0} docker-compose -f /home/chris/www/webtown-workflow/docker/docker-compose.yml build --no-cache
-> ```
+Nginx Reverse Proxy
+===================
+
+Install the deb package:
+
+    sudo dpkg -i nginx-reverse-proxy.deb
+
+Build package:
+
+    make rebuild_proxy
+
+Webtown Workflow
+================
+
+Use the `install-wf.sh` installer:
+
+    wget .../installer-wf.sh | sh
+
+Build:
+
+    make rebuild_wf
+    make build_docker
+    make push_docker
+
+
+OLD Uninstall
+=============
+
+- remove:
+```
+sudo dpkg -r webtown-workflow
+```
+- nginx-proxy reset
+```
+docker stop nginx-reverse-proxy
+docker rm nginx-reverse-proxy
+docker network rm reverse-proxy
+```
+- (/etc/bash.bashrc /etc/zsh/zshrc) fájlokból az update check törlése:
+```
+sudo vi /etc/zsh/zshrc
+sudo vi /etc/bash.bashrc
+sudo rm -rf /usr/local/bin/wf
+sudo rm -rf /usr/local/bin/wizard
+rm -rf ~/.zsh/completion/_wf
+```
+
+
+
+
+
+
+
 
 Webtown Workflow Installer
 ==========================

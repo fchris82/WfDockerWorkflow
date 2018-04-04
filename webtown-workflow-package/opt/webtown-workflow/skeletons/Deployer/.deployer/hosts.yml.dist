@@ -1,0 +1,54 @@
+prod:
+    hostname:         matogrosso.webtown.hu
+    stage:            prod
+    deploy_path:      /srv/{{ project_directory }}
+    user:             support
+    identity_file:    ~
+    branch:           master
+    symfony_env:      prod
+    'bin/php':        '/usr/local/php/php5.6/bin/php'
+    'bin/composer':   '/usr/local/php/php5.6/bin/php /usr/local/bin/composer'
+    sshOptions:
+        # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
+        ControlPath:    /tmp/multiplexing.data
+
+demo:
+    hostname:         amapa.webtown.hu
+    stage:            demo
+    deploy_path:      /srv/docker/{{ project_directory }}
+    user:             fchris82
+    # Ide húzzuk be az .ssh kulcsokat a gitlab-runner-ből, lásd `.docker/docker-compose.gitlab-ci.yml` fájl!
+    identity_file:    /home/user/.ssh/id_rsa
+    branch:           develop
+    symfony_env:      dev
+    # A --no-dev-et kivettük belőle, mivel ez dev.
+    composer_options: '{{composer_action}} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
+    # WorkFlow-t használunk
+    roles:            [workflow, fixtures]
+    # Ez fontos!
+    git_tty:          false
+    # Az alábbi egy biztonsági megoldás, hogy semmiképpen ne fussanak le ilyen parancsok.
+    'bin/php':        '# php'
+    'bin/composer':   '# composer'
+    # írás jog
+    writable_mode:          'chmod'
+    writable_chmod_mode:    '777'
+    # Az app_dev.php-t megtartjuk a demo oldalon.
+    clear_paths:    ['web/config.php']
+    # Ez a debug miatt kellhet
+    env:
+        MAKE_DISABLE_SILENC: 1
+    workflow_project_config: |
+        DOCKER_HTTP_HOST         := {{ project_directory }}.amapa.webtown.hu
+        # Symfony environments
+        SYMFONY_ENV              := dev
+        DOCKER_ENVIRONMENTS      := XDEBUG_ENABLED=0 XDEBUG_IDE_SERVER_NAME=Docker DOCKER_PROJECT_NETWORK=10.0.1
+        DOCKER_BASENAME          := chrisphtedemo
+        DOCKER_USER_CONFIG_FILES := $(DOCKER_PROVISIONING)/docker-compose.deployer.yml
+        SUDO                     :=
+        DOCKER_PSEUDO_TTY        := -T
+    sshOptions:
+        # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
+        ControlPath:            /tmp/multiplexing.data
+        # Szintén az előbbi indok miatt szükséges egy írható és olvasható, előre kitöltött known_hosts. Tartalom hozzáadása: `ssh-keyscan -t rsa amapa.webtown.hu`
+        UserKnownHostsFile:     .deployer/known_hosts

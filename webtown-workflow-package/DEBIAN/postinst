@@ -1,0 +1,75 @@
+#!/bin/bash
+# Install alias
+ln -sf /opt/webtown-workflow/host/install.sh /usr/local/bin/wf-install
+
+# ----------------------------------------------------------------------------------------------------------------------
+#                                                   W I Z A R D
+# ----------------------------------------------------------------------------------------------------------------------
+
+########################################################################################################################
+#                                                                                                                      #
+#   @Permission problem                                                                                                #
+#                                                                                                                      #
+#   The composer run by root here! The cache and everything will be `root:root` The copied files have correct          #
+#   owners.                                                                                                            #
+#                                                                                                                      #
+#   The solution: we set the owner by a reference file!                                                                #
+#                                                                                                                      #
+########################################################################################################################
+
+
+# Set permissions
+REFERENCE="/opt/webtown-workflow/wizard.sh"
+
+# @todo (Chris) Ezt kívülről kellene megkapni.
+USER=$(ls -ld ${REFERENCE} | cut -d\  -f3)
+# @todo (Chris) Ezt kívülről kellene megkapni.
+GROUP="docker"
+
+# Install
+APP_ENV=prod /opt/webtown-workflow/wizard.sh -i --no-dev
+
+# Set the permission if needed
+if [ -d /opt/webtown-workflow/symfony4/var ]; then
+    chown -R $(id -u ${USER}):$(getent group docker | cut -d: -f3) /opt/webtown-workflow/symfony4/var
+    chmod -R 777 /opt/webtown-workflow/symfony4/var/cache
+    chmod -R 777 /opt/webtown-workflow/symfony4/var/log
+fi
+
+# Create symlink
+ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard
+
+# ----------------------------------------------------------------------------------------------------------------------
+#                                         R E C O N F I G   D O C K E R
+#               We have to register the insecure repository in the /etc/docker/daemon.json file!
+# ----------------------------------------------------------------------------------------------------------------------
+# There isn't installed docker, when you are using it in dind (docker in docker)!
+#if [ -d /etc/docker ]; then
+#    CONFIG_FILE="/etc/docker/daemon.json"
+#    touch ${CONFIG_FILE}
+#    REPO_INDEX=$(jq '."insecure-registries" | index("amapa.webtown.hu:5000")' ${CONFIG_FILE})
+#    # The daemon.json is empty
+#    if [ $(du -k "${CONFIG_FILE}" | cut -f 1) -eq 0 ]; then
+#        echo '{"insecure-registries":["amapa.webtown.hu:5000"]}' > ${CONFIG_FILE}
+#    elif [[ "${REPO_INDEX}" == "null" ]]; then
+#        # The daemon.json doesn't contain "insecure-registries" key. The jq can't write to used file, so we have to use a tmp file
+#        if [[ $(jq '."insecure-registries"' ${CONFIG_FILE}) == "" ]]; then
+#            jq . * {"insecure-registries":["amapa.webtown.hu:5000"]} ${CONFIG_FILE} > ${CONFIG_FILE}.tmp
+#        # If the "insecure-registries" exists
+#        else
+#            jq '."insecure-registries" |=. + ["amapa.webtown.hu:5000"]' ${CONFIG_FILE} > ${CONFIG_FILE}.tmp
+#        fi
+#        # Override the original file
+#        mv ${CONFIG_FILE}.tmp ${CONFIG_FILE}
+#    fi
+#    # Restart the docker service
+#    service docker restart
+#fi
+
+# ----------------------------------------------------------------------------------------------------------------------
+#                                                W O R K F L O W
+# ----------------------------------------------------------------------------------------------------------------------
+
+ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
+cp /opt/webtown-workflow/var/webtown.hu.crt /usr/local/share/ca-certificates/
+update-ca-certificates

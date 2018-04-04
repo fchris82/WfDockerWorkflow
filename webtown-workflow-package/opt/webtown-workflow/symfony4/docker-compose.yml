@@ -1,0 +1,20 @@
+version: '2'
+
+services:
+    cli:
+        build:
+          context: .
+        environment:
+            - HOME=/home/user
+            - ORIGINAL_PWD=$PWD
+            - APP_ENV=$APP_ENV
+            - XDEBUG_ENABLED=$XDEBUG_ENABLED
+            - LOCAL_USER_ID=$LOCAL_USER_ID
+            - USER_GROUP=$USER_GROUP
+        volumes:
+            - "./..:/opt/webtown-workflow"
+            - "~/:/home/user:ro"
+            # We want to allow the configs from Symfony
+            - "./../../../etc/webtown-workflow:/etc/webtown-workflow:ro"
+        working_dir: /home/user
+        entrypoint: /opt/webtown-workflow/symfony4/bin/docker-entrypoint.sh
