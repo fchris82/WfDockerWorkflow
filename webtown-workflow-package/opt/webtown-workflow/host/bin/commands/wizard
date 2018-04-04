@@ -1,0 +1,3 @@
+#!/bin/bash
+
+~/.webtown-workflow/bin/workflow_runner.sh wizard

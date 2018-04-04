@@ -16,6 +16,11 @@ Use the `install-wf.sh` installer:
 
     wget .../installer-wf.sh | sh
 
+To uninstall:
+
+    export PATH=$(p=$(echo $PATH | tr ":" "\n" | grep -v "/.webtown-workflow/bin/commands$" | tr "\n" ":"); echo ${p%:})
+    rm -rf ~/.webtown-workflow
+
 Build:
 
     make rebuild_wf

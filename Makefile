@@ -42,7 +42,7 @@ build_proxy: versionupgrade
 # DEV!
 .PHONY: enter
 enter:
-	webtown-workflow-package/opt/webtown-workflow/host/wf_runner.sh /bin/bash
+	webtown-workflow-package/opt/webtown-workflow/host/workflow_runner.sh /bin/bash
 
 .PHONY: build_docker
 build_docker:

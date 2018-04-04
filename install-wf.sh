@@ -11,29 +11,9 @@ docker run -it \
  fchris82/wf \
  /opt/webtown-workflow/host/copy_binaries_to_host.sh
 
-ALIAS_WF="alias wf='~/.webtown-workflow/bin/wf_runner.sh wf'"
-ALIAS_WIZARD="alias wizard='~/.webtown-workflow/bin/wf_runner.sh wizard'"
-
-# Register aliases
-RC_FILE=~/.$(basename ${SHELL:-bash})rc
-if [ ! -f ${RC_FILE} ]; then
-    RC_FILE=~/.bashrc
-    if [ ! -f ${RC_FILE} ]; then
-        echo "We don't find your rc file! You have to register your aliases by hand!"
-        echo ""
-        echo "${ALIAS_WF}"
-        echo "${ALIAS_WIZARD}"
-    fi
-fi
-if [ -f ${RC_FILE} ]; then
-    if [[ -z $(grep -w ${RC_FILE} -e 'alias wf=') ]]; then
-        echo "${ALIAS_WF}" >> ${RC_FILE}
-    fi
-    if [[ -z $(grep -w ${RC_FILE} -e 'alias wizard=') ]]; then
-        echo "${ALIAS_WIZARD}" >> ${RC_FILE}
-    fi
-    echo "We registered the wf and wizard aliases in ${RC_FILE}"
-fi
+# Add commands to path!
+COMMAND_PATH=~/.webtown-workflow/bin/commands
+[[ ":$PATH:" != *":${COMMAND_PATH}:"* ]] && export PATH="${COMMAND_PATH}:${PATH}"
 
 # Install autocomplete
 if [ -d ~/.zsh ]; then
