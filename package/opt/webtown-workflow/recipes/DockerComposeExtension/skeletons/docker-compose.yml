@@ -1,3 +1,0 @@
-version: "{{ config.docker_compose.version }}"
-
-{{ yaml_dump }}

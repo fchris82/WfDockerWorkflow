@@ -1,7 +1,0 @@
-version: '2'
-
-services:
-    cli:
-        volumes:
-            - "$PWD:$PWD"
-        working_dir: $PWD

@@ -1,2 +1,0 @@
-SUDO :=
-DOCKER_PSEUDO_TTY := -T
