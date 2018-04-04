@@ -34,5 +34,5 @@ docker run -it \
             -w ${WORKDIR} \
             -v ${WORKDIR}:${WORKDIR} \
             -v ~/:/home/user \
-            -v ~/.webtown-workflow/config:/etc/webtown-workflow \
+            -v ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/config:/etc/webtown-workflow \
             fchris82/wf ${CMD} ${@}
