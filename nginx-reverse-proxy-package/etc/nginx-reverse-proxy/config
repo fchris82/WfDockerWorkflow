@@ -1,0 +1,4 @@
+# For proxy port. After change you have to run: 'wf --init-reverse-proxy' command!
+reverse_proxy_port = 80
+# Default DNS local proxy TLD:
+default_local_tld = .loc

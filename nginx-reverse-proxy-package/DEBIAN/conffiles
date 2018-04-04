@@ -1,0 +1,6 @@
+/etc/nginx-reverse-proxy/config
+/etc/nginx-reverse-proxy/docker-gen.cfg
+/etc/nginx-reverse-proxy/nginx.tmpl
+/etc/nginx-reverse-proxy/nginx-proxy.conf
+/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl
+/etc/nginx-reverse-proxy/Procfile

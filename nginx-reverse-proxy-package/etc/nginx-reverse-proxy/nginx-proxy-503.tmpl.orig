@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>jwilder/nginx-proxy</title>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <div class="jumbotron">
+          <h1 class="display-4">∅ Missing or unavailable service</h1>
+          <p class="lead">This is an auto generated error page from the <code>nginx-reverse-proxy</code>. Maybe you forgot the <kbd>wf up</kbd> command or something went wrong.
+          You can check the running containers with the <kbd>wf ps</kbd> or the <kbd>docker ps</kbd> command.</p>
+          <hr class="my-4">
+          <p>Current allowed hosts:</p>
+          <ul>
+{{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
+{{/* Get the VIRTUAL_PROTO defined by containers w/ the same vhost, falling back to "http" */}}
+{{ $proto := trim (or (first (groupByKeys $containers "Env.VIRTUAL_PROTO")) "http") }}
+            <li><a href="{{ trim $proto }}://{{ trim $host}}">{{ trim $proto }}://{{ trim $host}}</a></li>
+{{ else }}
+            <li><mark>There are not any available services!</mark></li>
+{{ end }}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
