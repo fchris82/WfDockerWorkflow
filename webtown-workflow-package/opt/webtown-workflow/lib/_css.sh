@@ -1,7 +1,3 @@
-#-- Vars
-RESTORE=$'\x1B[0m'
-# Clear to end of line: http://www.isthe.com/chongo/tech/comp/ansi_escapes.html
-CLREOL=$'\x1B[K'
 # Colors
 RED=$'\x1B[00;31m'
 GREEN=$'\x1B[00;32m'
@@ -20,7 +16,10 @@ LPURPLE=$'\x1B[01;35m'
 LCYAN=$'\x1B[01;36m'
 WHITE=$'\x1B[01;37m'
 BOLD=$'\x1B[1m'
-
+# Clear to end of line: http://www.isthe.com/chongo/tech/comp/ansi_escapes.html
+CLREOL=$'\x1B[K'
+#-- Vars
+RESTORE=$'\x1B[0m'
 
 # display a message in red with a cross by it
 # example

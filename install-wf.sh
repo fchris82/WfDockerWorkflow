@@ -1,15 +1,15 @@
 #!/bin/bash
 
-#-- Vars
-RESTORE=$'\x1B[0m'
-# Clear to end of line: http://www.isthe.com/chongo/tech/comp/ansi_escapes.html
-CLREOL=$'\x1B[K'
 # Colors
 RED=$'\x1B[00;31m'
 GREEN=$'\x1B[00;32m'
 YELLOW=$'\x1B[00;33m'
 WHITE=$'\x1B[01;37m'
 BOLD=$'\x1B[1m'
+# Clear to end of line: http://www.isthe.com/chongo/tech/comp/ansi_escapes.html
+CLREOL=$'\x1B[K'
+#-- Vars
+RESTORE=$'\x1B[0m'
 
 # Refresh
 if [ "${1}" != "--no-pull" ]; then
@@ -22,8 +22,8 @@ fi
 if [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
     docker run -it \
-     -v ~/:/home/user \
-     -e LOCAL_USER_ID=$(id -u) -e USER_GROUP=$(getent group docker | cut -d: -f3) \
+     -v ~/:${HOME} \
+     -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_HOME=${HOME} -e USER_GROUP=$(getent group docker | cut -d: -f3) \
      fchris82/wf \
      /opt/webtown-workflow/host/copy_binaries_to_host.sh
 fi

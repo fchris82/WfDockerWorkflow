@@ -6,13 +6,16 @@ services:
         build:
             context: ../.
         environment:
-            - HOME=/home/user
+            - HOME=${LOCAL_HOME}
             - ORIGINAL_PWD=$PWD
             - APP_ENV=$APP_ENV
             - XDEBUG_ENABLED=$XDEBUG_ENABLED
             - LOCAL_USER_ID=$LOCAL_USER_ID
+            - LOCAL_USER_NAME=$LOCAL_USER_NAME
+            - LOCAL_HOME=${LOCAL_HOME}
             - USER_GROUP=$USER_GROUP
         volumes:
             - "/etc/webtown-workflow/config:/etc/webtown-workflow/config"
-            - "~/:/home/user:ro"
-        working_dir: /home/user
+            - "~/:${LOCAL_HOME}:ro"
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        working_dir: ${LOCAL_HOME}

@@ -49,17 +49,8 @@ class Recipe extends BaseRecipe
                 ->end()
                 ->integerNode('port')
                     ->info('<comment>If you want to enable this container from outside set the port number.</comment>')
-                    ->defaultNull()
+                    ->defaultValue(0)
                 ->end()
-            ->end()
-            ->beforeNormalization()
-                ->always(function ($v) {
-                    if (isset($v['port']) && !$v['port']) {
-                        unset($v['port']);
-                    }
-
-                    return $v;
-                })
             ->end()
         ;
 

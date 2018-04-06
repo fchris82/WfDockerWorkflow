@@ -9,7 +9,17 @@ ARG LOCALE=en_US
 
 # Az acl csak azért kell, hogy a parancsot megtalálja, a setfacl NEM MŰKÖDIK docker image-ben!
 RUN apt-get update && apt-get install -y jq make ca-certificates curl git acl libarchive-zip-perl locales vim \
-    libmcrypt-dev openssh-client libxml2-dev libpng-dev g++ make autoconf gettext ca-certificates wget && \
+    libmcrypt-dev openssh-client libxml2-dev libpng-dev g++ make autoconf gettext ca-certificates wget \
+    apt-transport-https software-properties-common && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
+    add-apt-repository \
+          "deb [arch=amd64] https://download.docker.com/linux/debian \
+          $(lsb_release -cs) \
+          stable" && \
+    apt-get update && apt-get install -y docker-ce && \
+    COMPOSE_VER=$(curl -s -o /dev/null -I -w "%{redirect_url}\n" https://github.com/docker/compose/releases/latest | grep -oP "[0-9]+(\.[0-9]+)+$") && \
+    curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/releases/download/$COMPOSE_VER/docker-compose-$(uname -s)-$(uname -m) && \
+    chmod +x /usr/local/bin/docker-compose && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
     echo "${LOCALE}.UTF-8 UTF-8" >> /etc/locale.gen && \

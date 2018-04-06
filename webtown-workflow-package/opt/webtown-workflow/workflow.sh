@@ -17,6 +17,7 @@ CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
+source ${DIR}/../webtown-workflow/lib/_debug.sh
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
@@ -92,6 +93,7 @@ case $1 in
             ARGS="${ARGS}" \
             WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
             WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" \
-            MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" || quit
+            MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" \
+            DEBUG="${DEBUG}" || quit
     ;;
 esac

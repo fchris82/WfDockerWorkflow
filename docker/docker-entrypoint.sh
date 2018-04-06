@@ -15,10 +15,10 @@ fi
 
 # USER
 USER_ID=${LOCAL_USER_ID:-9001}
-useradd -u $USER_ID user
-export HOME=/home/user
+useradd -u $USER_ID ${LOCAL_USER_NAME} -G docker
+export HOME=${LOCAL_HOME}
 
 [[ -f /opt/webtown-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/.env
 [[ -f /opt/webtown-workflow/symfony4/var ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/var
 
-gosu user "$@"
+gosu ${LOCAL_USER_NAME} "$@"

@@ -27,6 +27,28 @@ Build:
     make build_docker
     make push_docker
 
+## Debug modes
+
+You can call commands with `DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and
+then you will be able to analyse the program.
+
+`DEBUG=1`
+
+- echo bash **path** of files and docker container host (simple bash trace)
+- add symfony commands `-vvv` argument
+- remove (!) makefile calls `-s --no-print-directory` arguments
+
+`DEBUG=2`
+
+- ~`DEBUG=2`
+- In bash scripts: `set -x`
+
+`DEBUG=3`
+
+- ~`DEBUG=2`
+- Add makefile calls `-d` (debug) argument
+
+
 
 OLD Uninstall
 =============

@@ -1,7 +1,4 @@
 #!/bin/bash
-# Debug mode:
-#set -x
-
 # DIRECTORIES
 WORKDIR=$(pwd)
 SOURCE="${BASH_SOURCE[0]}"
@@ -12,6 +9,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+source ${DIR}/../webtown-workflow/lib/_debug.sh
 source ${DIR}/../webtown-workflow/lib/_css.sh
 source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
 source ${DIR}/../webtown-workflow/lib/_functions.sh
@@ -25,7 +23,7 @@ if [ "$1" == "--dev" ]; then
     WF_XDEBUG_ENABLED="1"
 fi
 
-DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${WF_SYMFONY_ENV} XDEBUG_ENABLED=${WF_XDEBUG_ENABLED}"
+DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) LOCAL_USER_NAME=${USER} LOCAL_HOME=${HOME} USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${WF_SYMFONY_ENV} XDEBUG_ENABLED=${WF_XDEBUG_ENABLED}"
 BASE_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             run --rm"
@@ -51,7 +49,7 @@ case $1 in
         if [ -x "$(which composer)" ]; then
             cd /opt/webtown-workflow/symfony4 && composer install ${@}
         else
-            eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@}"
+            eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}"
         fi
     ;;
     # REBUILD the docker container
@@ -69,12 +67,12 @@ case $1 in
     --reconfigure)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config ${@} ${DISABLE_TTY}
+        php /opt/webtown-workflow/symfony4/bin/console app:config ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${DISABLE_TTY}
+        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     --debug)
         shift
@@ -83,6 +81,6 @@ case $1 in
     # RUN wizard
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@} ${DISABLE_TTY}
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
 esac
