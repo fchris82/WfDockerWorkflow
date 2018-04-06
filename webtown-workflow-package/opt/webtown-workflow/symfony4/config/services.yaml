@@ -41,6 +41,7 @@ services:
             - method: setContainer
               arguments:
                 - '@service_container'
+        public: true
 
     App\Wizard\Manager:
         public: true

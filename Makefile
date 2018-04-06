@@ -48,6 +48,9 @@ enter:
 build_docker:
 	docker-compose -f docker/docker-compose.yml build --no-cache
 
+fast_build_docker:
+	docker-compose -f docker/docker-compose.yml build
+
 .PHONY: push_docker
 push_docker: USER_IS_LOGGED_IN := `cat ~/.docker/config.json | jq '.auths."https://index.docker.io/v1/"'`
 push_docker:

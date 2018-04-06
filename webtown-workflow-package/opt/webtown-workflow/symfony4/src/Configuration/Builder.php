@@ -122,7 +122,7 @@ class Builder
         }
 
         // COMMANDS
-        $this->buildRecipe($projectPath, 'bin', [], $config);
+        $this->buildRecipe($projectPath, 'commands', [], $config);
         // INCLUDED FILES
         $this->includeExtraFiles($config);
         // DOCKER COMPOSE EXTENSION

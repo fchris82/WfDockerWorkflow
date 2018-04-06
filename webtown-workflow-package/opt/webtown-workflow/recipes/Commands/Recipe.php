@@ -15,7 +15,7 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class Recipe extends HiddenRecipe
 {
-    const NAME = 'bin';
+    const NAME = 'commands';
 
     public function getName()
     {

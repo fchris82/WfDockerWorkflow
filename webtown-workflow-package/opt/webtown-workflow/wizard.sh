@@ -23,7 +23,14 @@ if [ "$1" == "--dev" ]; then
     WF_XDEBUG_ENABLED="1"
 fi
 
-DOCKER_COMPOSE_ENV="LOCAL_USER_ID=$(id -u) LOCAL_USER_NAME=${USER} LOCAL_HOME=${HOME} USER_GROUP=$(getent group docker | cut -d: -f3) APP_ENV=${WF_SYMFONY_ENV} XDEBUG_ENABLED=${WF_XDEBUG_ENABLED}"
+DOCKER_COMPOSE_ENV=" \
+    LOCAL_USER_ID=$(id -u) \
+    LOCAL_USER_NAME=${USER} \
+    LOCAL_HOME=${HOME} \
+    USER_GROUP=$(getent group docker | cut -d: -f3) \
+    APP_ENV=${WF_SYMFONY_ENV} \
+    XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
+    SYMFONY_DEPRECATIONS_HELPER=${SYMFONY_DEPRECATIONS_HELPER}"
 BASE_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.yml \
             run --rm"
