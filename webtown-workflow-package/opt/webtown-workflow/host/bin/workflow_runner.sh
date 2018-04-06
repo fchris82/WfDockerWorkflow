@@ -75,7 +75,7 @@ WORKFLOW_CONFIG=" \
 if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ]; then
     WORKFLOW_CONFIG="--env-file ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env"
 fi
-if [ "${CI}" == "0" ]; then
+if [ "${CI}" == "0" ] && [ -t 1 ]; then
     TTY="-it"
 fi
 
