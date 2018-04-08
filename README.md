@@ -27,6 +27,25 @@ Build:
     make build_docker
     make push_docker
 
+Debug: You have to use the `--develop` argument
+
+    cd [project_dir]
+    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop [wf|wizard|...] [...etc...]
+    
+Or you can create a symlink:
+
+    mkdir -p ~/bin
+    ln -s [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
+    cd [project_dir]
+    workflow_runner_test --develop [wf|wizard|...] [...etc...]
+    
+Or you can create a symlink with makefile:
+
+    cd [workflow_root_path]
+    make init-test
+    cd [project_dir]
+    workflow_runner_test --develop [wf|wizard|...] [...etc...]
+
 ## Debug modes
 
 You can call commands with `DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and

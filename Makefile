@@ -42,7 +42,13 @@ build_proxy: versionupgrade
 # DEV!
 .PHONY: enter
 enter:
-	webtown-workflow-package/opt/webtown-workflow/host/workflow_runner.sh /bin/bash
+	webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh /bin/bash
+
+.PHONY: init-test
+init-test:
+	mkdir -p ~/bin
+	ln -s $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
+	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wizard --install
 
 .PHONY: build_docker
 build_docker:
