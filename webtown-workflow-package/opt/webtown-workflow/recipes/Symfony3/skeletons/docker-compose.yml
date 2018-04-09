@@ -17,15 +17,16 @@ services:
             LOCAL_USER_ID: ${LOCAL_USER_ID}
             LOCAL_USER_NAME: ${LOCAL_USER_NAME}
             LOCAL_USER_HOME: ${LOCAL_USER_HOME}
+            COMPOSER_HOME: ${LOCAL_USER_HOME}
             WWW_DATA_UID: ${WWW_DATA_UID}
             WWW_DATA_GID: ${WWW_DATA_GID}
             DATABASE_URL: ${DATABASE_URL}
             TIMEZONE:                     {{ server.timezone }}
             PHP_MAX_EXECUTION_TIME:       {{ server.timeout }}
             PHP_MEMORY_LIMIT:             128M
-            PHP_MAX_UPLOAD:               {{ server.max_post_size }}
+            PHP_UPLOAD_MAX_FILESIZE:      {{ server.max_post_size }}
             PHP_MAX_FILE_UPLOADS:         10
-            PHP_MAX_POST:                 {{ server.max_post_size }}
+            PHP_POST_MAX_SIZE:            {{ server.max_post_size }}
             SYMFONY_ENV:                  {{ env }}
             SYMFONY_DEBUG:                ~
             SYMFONY_CLASSLOADER_FILE:     ~

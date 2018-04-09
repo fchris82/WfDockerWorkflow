@@ -70,6 +70,7 @@ CHAIN_VARIABLE_NAMES=(
     'LOCAL_USER_ID'
     'LOCAL_USER_NAME'
     'LOCAL_USER_HOME'
+    'COMPOSER_HOME'
     'USER_GROUP'
     'CI'
     'WEBTOWN_WORKFLOW_BASE_PATH'
@@ -84,6 +85,7 @@ DOCKER_COMPOSE_ENV=" \
     -e LOCAL_USER_ID=$(id -u) \
     -e LOCAL_USER_NAME=${USER} \
     -e LOCAL_USER_HOME=${HOME} \
+    -e COMPOSER_HOME=${HOME} \
     -e USER_GROUP=$(getent group docker | cut -d: -f3) \
     -e APP_ENV=${WF_SYMFONY_ENV} \
     -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \

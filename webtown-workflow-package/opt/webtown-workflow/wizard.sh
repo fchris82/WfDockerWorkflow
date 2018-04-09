@@ -26,7 +26,7 @@ fi
 DOCKER_COMPOSE_ENV=" \
     LOCAL_USER_ID=$(id -u) \
     LOCAL_USER_NAME=${USER} \
-    LOCAL_HOME=${HOME} \
+    LOCAL_USER_HOME=${HOME} \
     USER_GROUP=$(getent group docker | cut -d: -f3) \
     APP_ENV=${WF_SYMFONY_ENV} \
     XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \

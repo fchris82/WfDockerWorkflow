@@ -36,6 +36,7 @@ Or you can create a symlink:
 
     mkdir -p ~/bin
     ln -s [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
+    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wizard --install
     cd [project_dir]
     workflow_runner_test --develop [wf|wizard|...] [...etc...]
     
