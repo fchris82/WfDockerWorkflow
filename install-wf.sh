@@ -1,5 +1,15 @@
 #!/bin/bash
 
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+
+set -x
+
 # Colors
 RED=$'\x1B[00;31m'
 GREEN=$'\x1B[00;32m'
@@ -18,8 +28,11 @@ else
     shift
 fi
 
+# If we want to use the local and fresh files
+if [ -f ${DIR}/webtown-workflow-package/opt/webtown-workflow/host/copy_binaries_to_host.sh ]; then
+    ${DIR}/webtown-workflow-package/opt/webtown-workflow/host/copy_binaries_to_host.sh
 # If the docker is available
-if [ -S /var/run/docker.sock ]; then
+elif [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
     docker run -it \
      -v ~/:${HOME} \
