@@ -18,6 +18,7 @@ services:
             LOCAL_USER_NAME: ${LOCAL_USER_NAME}
             LOCAL_USER_HOME: ${LOCAL_USER_HOME}
             COMPOSER_HOME: ${LOCAL_USER_HOME}
+            LOCALE: {{ server.locale }}
             WWW_DATA_UID: ${WWW_DATA_UID}
             WWW_DATA_GID: ${WWW_DATA_GID}
             DATABASE_URL: ${DATABASE_URL}

@@ -27,6 +27,7 @@ endef
 
 # @todo (Chris) A php és a composer parancs esetén itt korábban `$(CMD_DOCKER_RUN_CLI) php $(ARGS)` szerepelt, azaz nem az EXEC volt hívva. Viszont ha nem az exec van hívva, akkor az ENTRYPOINT vagy nem fut le, vagy vmi más problémája van, a lényeg, hogy nem működik a `dep` parancs, mert nem találja a ~/.ssh könyvtárat.
 .PHONY: php
+php: DOCKER_USER="www-data"
 php:
 	$(CMD_DOCKER_RUN_CLI) php $(ARGS)
 
@@ -35,5 +36,6 @@ sf: up
 	$(CMD_DOCKER_EXEC_CLI) php $(SF_CONSOLE_CMD) $(ARGS)
 
 .PHONY: composer
+composer: DOCKER_USER="www-data"
 composer:
 	$(CMD_DOCKER_RUN_CLI) composer $(ARGS)

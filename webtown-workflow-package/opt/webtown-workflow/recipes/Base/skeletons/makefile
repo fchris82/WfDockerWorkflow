@@ -10,7 +10,7 @@ WWW_DATA_UID		:=	$$(stat -c '%u' .)
 WWW_DATA_GID		:=	$$(getent group docker | cut -d: -f3)
 # Docker user
 SSH_PATH			:= ~/.ssh
-DOCKER_USER			:=	$(WWW_DATA_UID):$(WWW_DATA_GID)
+DOCKER_USER			:=
 DOCKER_SHELL		:=	/bin/bash
 SHARED_DIRS			:=
 

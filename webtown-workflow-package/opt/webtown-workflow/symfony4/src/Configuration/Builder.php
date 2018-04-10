@@ -379,7 +379,7 @@ define CMD_DOCKER_RUN
 endef
 # If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
 define CMD_DOCKER_RUN_CLI
-    $(CMD_DOCKER_RUN) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
+    $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
 endef
 define CMD_DOCKER_EXEC
     $(CMD_DOCKER_BASE) exec
