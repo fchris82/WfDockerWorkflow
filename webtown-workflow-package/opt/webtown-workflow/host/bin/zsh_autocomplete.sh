@@ -9,7 +9,7 @@ _wf() {
 
     case $state in
         command)
-            _arguments '1: :($(wf list) -ps --docker-ps --reconfigure)'
+            _arguments '1: :($([[ -f .wf/autocomplete ]] && echo $(<.wf/autocomplete) || wf list) -ps --docker-ps --reconfigure)'
         ;;
         parameters)
             case $words[2] in

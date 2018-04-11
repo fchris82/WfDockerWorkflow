@@ -9,9 +9,11 @@
 namespace Recipes\Base;
 
 use App\Configuration\Environment;
+use App\Event\FinishEvent;
 use Recipes\HiddenRecipe;
 use App\Event\ConfigurationEvents;
 use App\Event\DumpEvent;
+use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -31,15 +33,21 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
     protected $environment;
 
     /**
+     * @var ProcessHelper
+     */
+    protected $processHelper;
+
+    /**
      * Recipe constructor.
      *
      * @param \Twig_Environment $twig
      * @param Environment $environment
      */
-    public function __construct(\Twig_Environment $twig, Environment $environment)
+    public function __construct(\Twig_Environment $twig, Environment $environment, ProcessHelper $processHelper)
     {
         parent::__construct($twig);
         $this->environment = $environment;
+        $this->processHelper = $processHelper;
     }
 
     public function getName()
@@ -61,6 +69,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         return array_merge(parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig), [
             'wf_target_directory' => $this->environment->getConfigValue(Environment::CONFIG_WORKING_DIRECTORY),
             'wf_config_file' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
+            'wf_list' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
         ]);
     }
 
@@ -85,7 +94,13 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return [
-            ConfigurationEvents::BEFORE_DUMP => 'changeReadmeMdPath',
+            ConfigurationEvents::BEFORE_DUMP => [
+                ['changeReadmeMdPath'],
+                ['changeAutocompletePath'],
+            ],
+            ConfigurationEvents::FINISH => [
+                ['fillAutocomplete'],
+            ]
         ];
     }
 
@@ -100,5 +115,24 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         if (strpos($path, '/' . static::NAME . '/README.md') > 0) {
             $dumpEvent->setTargetPath(str_replace('/' . static::NAME . '/README.md', '/README.md', $path));
         }
+    }
+
+    /**
+     * We want to move the README.md to target root!
+     *
+     * @param DumpEvent $dumpEvent
+     */
+    public function changeAutocompletePath(DumpEvent $dumpEvent)
+    {
+        // @todo (Chris) A fillAutocomplete-tel van értelme. Addig csak zavarna, hogy üres.
+//        $path = $dumpEvent->getTargetPath();
+//        if (strpos($path, '/' . static::NAME . '/autocomplete') > 0) {
+//            $dumpEvent->setTargetPath(str_replace('/' . static::NAME . '/autocomplete', '/autocomplete', $path));
+//        }
+    }
+
+    public function fillAutocomplete(FinishEvent $finishEvent)
+    {
+        // @todo (Chris) Itt futtatni kellene a wf list parancsot, hogy létrejöjjön az autocomplete fájl!
     }
 }

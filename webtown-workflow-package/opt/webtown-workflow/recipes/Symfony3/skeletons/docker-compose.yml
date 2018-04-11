@@ -14,6 +14,8 @@ services:
         image:  fchris82/symfony:{{ version }}
         environment:
             CI: ${CI}
+            DOCKER_USER: ${DOCKER_USER}
+            DEBUG: ${DEBUG}
             LOCAL_USER_ID: ${LOCAL_USER_ID}
             LOCAL_USER_NAME: ${LOCAL_USER_NAME}
             LOCAL_USER_HOME: ${LOCAL_USER_HOME}
