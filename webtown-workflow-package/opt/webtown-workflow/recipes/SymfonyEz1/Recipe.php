@@ -8,16 +8,9 @@
 
 namespace Recipes\SymfonyEz1;
 
-use Recipes\Symfony3\Recipe as BaseRecipe;
+use Recipes\Symfony2\Recipe as BaseRecipe;
 
 class Recipe extends BaseRecipe
 {
     const NAME = 'symfony_ez1';
-    const SF_CONSOLE_COMMAND = 'app/console';
-    const SF_BIN_DIR = 'bin';
-
-    public static function getSkeletonParents()
-    {
-        return [BaseRecipe::class];
-    }
 }
