@@ -32,6 +32,7 @@ php:
 	$(CMD_DOCKER_RUN_CLI) php $(ARGS)
 
 .PHONY: sf
+sf: DOCKER_USER="www-data"
 sf: up
 	$(CMD_DOCKER_EXEC_CLI) php $(SF_CONSOLE_CMD) $(ARGS)
 
