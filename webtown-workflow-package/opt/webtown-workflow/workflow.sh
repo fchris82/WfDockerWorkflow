@@ -53,6 +53,9 @@ case $1 in
             fi
         fi
     ;;
+    -v|--version)
+        dpkg -l | grep webtown-workflow | awk '{ print "Webtown Workflow " $3 }'
+    ;;
     -u|--update)
         PACKAGE_NAME=webtown-workflow.deb
         echo -e "\033[32mStarting upgrade from: \033[33m${WF_PROGRAM_REPOSITORY}\033[0m"
@@ -64,9 +67,8 @@ case $1 in
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
     ;;
-    # You can call with symfony command verbose, like: wf --reconfigure -v
-    # @todo (Chris) Ezt inkább -- nélkül kellene, autocomplete-tel
-    --reconfigure)
+    # You can call with symfony command verbose, like: wf reconfigure -v
+    reconfigure)
         shift
         PROJECT_ROOT_DIR=$(get_project_root_dir)
         PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME}")

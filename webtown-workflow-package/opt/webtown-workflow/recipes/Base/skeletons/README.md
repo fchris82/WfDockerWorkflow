@@ -33,7 +33,7 @@ If you want to create a custom init file:
 | `wf help` | You can list a **project** help |
 | `wf list` | List the available project commands! |
 | `wf info` | Show basic informations about the project! |
-| `wf --reconfigure` | It can rebuild the "framework" from config yml. |
+| `wf reconfigure` | It can rebuild the "framework" from config yml. |
 
 Docker (compose) commands:
 

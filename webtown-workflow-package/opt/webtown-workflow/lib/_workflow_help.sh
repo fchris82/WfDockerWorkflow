@@ -20,7 +20,7 @@ ${BOLD}${WHITE}Only any project directory:${RESTORE}
   ${YELLOW}help${RESTORE}                      ${GREEN}Show project workflow help. ${BOLD}Not this help!${RESTORE}
   ${YELLOW}list${RESTORE}                      ${GREEN}Show available commands in project${RESTORE}
   ${YELLOW}info${RESTORE}                      ${GREEN}Show some important project information${RESTORE}
-  ${YELLOW}--reconfigure${RESTORE}             ${GREEN}Rebuild the project config${RESTORE}
+  ${YELLOW}reconfigure${RESTORE}               ${GREEN}Rebuild the project config. ${BOLD}You can use symfony args: wf reconfigure -v${RESTORE}
 
 Eg: ${YELLOW}wf help${RESTORE}
 EOM
