@@ -89,11 +89,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         return [
             ConfigurationEvents::BEFORE_DUMP => [
                 ['changeReadmeMdPath'],
-                ['changeAutocompletePath'],
             ],
-            ConfigurationEvents::FINISH => [
-                ['fillAutocomplete'],
-            ]
         ];
     }
 
@@ -108,24 +104,5 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         if (strpos($path, '/' . static::NAME . '/README.md') > 0) {
             $dumpEvent->setTargetPath(str_replace('/' . static::NAME . '/README.md', '/README.md', $path));
         }
-    }
-
-    /**
-     * We want to move the README.md to target root!
-     *
-     * @param DumpEvent $dumpEvent
-     */
-    public function changeAutocompletePath(DumpEvent $dumpEvent)
-    {
-        // @todo (Chris) A fillAutocomplete-tel van értelme. Addig csak zavarna, hogy üres.
-//        $path = $dumpEvent->getTargetPath();
-//        if (strpos($path, '/' . static::NAME . '/autocomplete') > 0) {
-//            $dumpEvent->setTargetPath(str_replace('/' . static::NAME . '/autocomplete', '/autocomplete', $path));
-//        }
-    }
-
-    public function fillAutocomplete(FinishEvent $finishEvent)
-    {
-        // @todo (Chris) Itt futtatni kellene a wf list parancsot, hogy létrejöjjön az autocomplete fájl!
     }
 }
