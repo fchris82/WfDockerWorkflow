@@ -13,7 +13,6 @@ use App\Event\FinishEvent;
 use Recipes\HiddenRecipe;
 use App\Event\ConfigurationEvents;
 use App\Event\DumpEvent;
-use Symfony\Component\Console\Helper\ProcessHelper;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -33,21 +32,15 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
     protected $environment;
 
     /**
-     * @var ProcessHelper
-     */
-    protected $processHelper;
-
-    /**
      * Recipe constructor.
      *
      * @param \Twig_Environment $twig
      * @param Environment $environment
      */
-    public function __construct(\Twig_Environment $twig, Environment $environment, ProcessHelper $processHelper)
+    public function __construct(\Twig_Environment $twig, Environment $environment)
     {
         parent::__construct($twig);
         $this->environment = $environment;
-        $this->processHelper = $processHelper;
     }
 
     public function getName()
