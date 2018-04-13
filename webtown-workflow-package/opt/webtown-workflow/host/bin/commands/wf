@@ -14,6 +14,14 @@ case $1 in
     --enter)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh /bin/bash
     ;;
+    -u|--update)
+        git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO | bash
+#        echo -e "\033[32mStarting upgrade from: \033[33m${WF_PROGRAM_REPOSITORY}\033[0m"
+#        echo -e "\033[32mPackage:               \033[33m${PACKAGE_NAME}\033[0m"
+#        cd /tmp && git archive --remote=${WF_PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
+#        sudo dpkg -i ${PACKAGE_NAME} || quit
+#        rm -rf ${PACKAGE_NAME}
+    ;;
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}
     ;;

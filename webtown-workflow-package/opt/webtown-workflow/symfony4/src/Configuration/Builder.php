@@ -355,6 +355,8 @@ class Builder
         $contents = <<<EOS
 PROJECT_WORKING_DIRECTORY := \$\${PWD}
 WF_TARGET_DIRECTORY := $this->targetDirectory
+# Export the debug value
+export DEBUG
 
 # Makefiles
 $includeMakefiles
@@ -375,18 +377,18 @@ define CMD_DOCKER_BASE
         --project-directory $(CURDIR)
 endef
 define CMD_DOCKER_RUN
-    $(CMD_DOCKER_BASE) run --rm
+    $(CMD_DOCKER_BASE) run --rm $(DOCKER_PSEUDO_TTY)
 endef
 # If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
 define CMD_DOCKER_RUN_CLI
     $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
 endef
 define CMD_DOCKER_EXEC
-    $(CMD_DOCKER_BASE) exec
+    $(CMD_DOCKER_BASE) exec $(DOCKER_PSEUDO_TTY)
 endef
 # If you want to run without user (as root), use the: `$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_EXEC_CLI) <cmd>`
 define CMD_DOCKER_EXEC_CLI
-    $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_PSEUDO_TTY) $(DOCKER_CLI_NAME)
+    $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
 endef
 EOS;
 

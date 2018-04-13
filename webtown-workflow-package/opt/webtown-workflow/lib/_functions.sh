@@ -13,9 +13,7 @@ function escape {
         fi
         C+=("$i")
     done
-    echo ${C[*]}
-#
-#  echo "${C//\"/\\\"}"
+    echo "${C[*]//\"/\\\"}"
 }
 
 function lock {
@@ -60,7 +58,7 @@ function quit {
 # Eg: MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 function make_params {
     PARAMS="";
-    if [ -z "$MAKE_DISABLE_SILENC" ] || [ ${DEBUG:-0} -ge 1 ]; then
+    if [ -z "$MAKE_DISABLE_SILENC" ] && [ ${DEBUG:-0} -lt 1 ]; then
         PARAMS="${PARAMS} -s --no-print-directory"
     fi
     if [ ! -z "$MAKE_DEBUG_MODE" ] || [ ${DEBUG:-0} -ge 3 ]; then

@@ -53,16 +53,8 @@ case $1 in
             fi
         fi
     ;;
-    -v|--version)
+    --version)
         dpkg -l | grep webtown-workflow | awk '{ print "Webtown Workflow " $3 }'
-    ;;
-    -u|--update)
-        PACKAGE_NAME=webtown-workflow.deb
-        echo -e "\033[32mStarting upgrade from: \033[33m${WF_PROGRAM_REPOSITORY}\033[0m"
-        echo -e "\033[32mPackage:               \033[33m${PACKAGE_NAME}\033[0m"
-        cd /tmp && git archive --remote=${WF_PROGRAM_REPOSITORY} HEAD ${PACKAGE_NAME} | tar -x || quit
-        sudo dpkg -i ${PACKAGE_NAME} || quit
-        rm -rf ${PACKAGE_NAME}
     ;;
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)

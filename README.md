@@ -14,20 +14,26 @@ Webtown Workflow
 
 Use the `install-wf.sh` installer:
 
-    wget .../installer-wf.sh | sh
+    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD installer-wf.sh | tar -x | sh
 
-To uninstall:
+### Uninstall
 
     export PATH=$(p=$(echo $PATH | tr ":" "\n" | grep -v "/.webtown-workflow/bin/commands$" | tr "\n" ":"); echo ${p%:})
     rm -rf ~/.webtown-workflow
 
-Build:
+### Build
 
     make rebuild_wf
     make build_docker
     make push_docker
 
-Debug: You have to use the `--develop` argument
+OR:
+
+    make rebuild_wf build_docker push_docker
+
+### Debug
+
+You have to use the `--develop` argument
 
     cd [project_dir]
     [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop [wf|wizard|...] [...etc...]

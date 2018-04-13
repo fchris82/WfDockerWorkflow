@@ -1,14 +1,28 @@
+stages:
+    - build
+    - test
+
+build:
+    stage: build
+    artifacts:
+        - install-wf.sh
+
 test:deb:
+    stage: test
     script:
-        - rm -rf /tmp/out
-        - dpkg-deb -R webtown-workflow.deb /tmp/out
-        - ORIGINAL_MD5=$(find package -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
+        - rm -rf /tmp/deb
+        - rm -rf /tmp/original
+        - dpkg-deb -R webtown-workflow.deb /tmp/deb
+        - rsync -r --delete --force --filter=":- webtown-workflow-package/opt/webtown-workflow/symfony/.gitignore" webtown-workflow-package/* /tmp/original
+        - ORIGINAL_MD5=$(find /tmp/original -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
         - echo ${ORIGINAL_MD5}
-        - NEW_MD5=$(find /tmp/out -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
+        - NEW_MD5=$(find /tmp/deb -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
         - echo ${NEW_MD5}
-        - rm -rf /tmp/out
+        - rm -rf /tmp/deb
+        - rm -rf /tmp/original
         - if [[ ${ORIGINAL_MD5} != ${NEW_MD5} ]]; then echo "You didn't refresh the deb package! Run the 'make build' command and commit the new deb package too!"; exit 1; fi
 
 test:tests:
+    stage: test
     script:
         - make -f test/tests.mk gitlab

@@ -2,7 +2,8 @@ FROM composer
 
 RUN mkdir -p /usr/local/bin \
     && curl -LsS https://symfony.com/installer -o /usr/local/bin/symfony \
-    && chmod a+x /usr/local/bin/symfony
+    && chmod a+x /usr/local/bin/symfony \
+    && composer global require hirak/prestissimo
 
 RUN apk update \
     && apk add  --no-cache libmcrypt libmcrypt-dev openssh-client icu-dev \

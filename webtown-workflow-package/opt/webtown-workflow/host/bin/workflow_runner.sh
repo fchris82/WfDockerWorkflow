@@ -30,7 +30,8 @@ shift
 
 # DIRECTORIES
 WORKDIR=$(pwd)
-if [[ ! ${WORKDIR} =~ ^/(home|etc|var|tmp)/ ]] && [ "${1}" != "-h" ] && [ "${1}" != "--help" ]; then
+GLOBAL_COMMANDS=("-h" "--help" "--version")
+if [[ ! ${WORKDIR} =~ ^/(home|etc|var|tmp)/ ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
     echo -e "\033[1;37mYou can only work in \033[33m/home\033[37m, \033[33m/etc\033[37m, \033[33m/var\033[37m and \033[33m/tmp\033[37m directories! The \033[31m${WORKDIR}\033[37m is out of this space!\033[0m"
     exit 1
 fi
@@ -51,7 +52,7 @@ if [ "$1" == "--dev" ]; then
 fi
 
 # set defaults
-USER=${USER:-${LOCAL_USER_NAME}}
+USER=${USER:-${LOCAL_USER_NAME:-$(id -u -n)}}
 HOME=${HOME:-${LOCAL_USER_HOME}}
 WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
 CI=${CI:-0}
