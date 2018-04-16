@@ -9,6 +9,7 @@
 namespace Recipes\Symfony3;
 
 use Recipes\BaseRecipe;
+use Symfony\Component\Finder\SplFileInfo;
 
 /**
  * Class Recipe
@@ -73,10 +74,10 @@ class Recipe extends BaseRecipe
                         ->end()
                     ->end()
                 ->end()
-                ->scalarNode('user_ssh_path')
-                    ->info('<comment>Here you can change the .ssh files source</comment>')
+                ->booleanNode('share_base_user_configs')
+                    ->info('<comment>Here you can switch off or on to use user\'s .gitconfig, .ssh and .composer configs. Maybe you should switch off on CI.</comment>')
                     ->cannotBeEmpty()
-                    ->defaultValue('~/.ssh')
+                    ->defaultTrue()
                 ->end()
                 ->arrayNode('server')
                     ->info('<comment>Server configuration</comment>')
@@ -123,5 +124,15 @@ class Recipe extends BaseRecipe
         ;
 
         return $rootNode;
+    }
+
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    {
+        // Volume settings
+        if ($fileInfo->getFilename() == 'docker-compose.user-volumes.yml' && isset($config['share_base_user_configs']) && $config['share_base_user_configs'] > 0) {
+            return new DockerComposeSkeletonFile($fileInfo);
+        }
+
+        return parent::buildSkeletonFile($fileInfo, $config);
     }
 }

@@ -43,10 +43,3 @@ services:
         volumes:
             # Full project files
             - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
-            # User SSH keys
-            - "${LOCAL_USER_HOME}/.ssh:${LOCAL_USER_HOME}/.ssh:ro"
-            # Git config fájl bekötése
-            - "${LOCAL_USER_HOME}/.gitconfig:${LOCAL_USER_HOME}/.gitconfig:ro"
-            # Composer cache
-            - "${LOCAL_USER_HOME}/.composer:${LOCAL_USER_HOME}/.composer"
-        tty: true
