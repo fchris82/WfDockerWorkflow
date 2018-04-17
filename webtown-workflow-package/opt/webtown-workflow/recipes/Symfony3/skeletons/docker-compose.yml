@@ -44,3 +44,5 @@ services:
         volumes:
             # Full project files
             - "${BASE_DIRECTORY}:${DOCKER_DOC_ROOT}"
+        # It is important to avoid "Exit 0"
+        tty: true
