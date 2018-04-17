@@ -8,6 +8,7 @@
 
 namespace Recipes\Symfony3;
 
+use App\Skeleton\DockerComposeSkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -76,7 +77,6 @@ class Recipe extends BaseRecipe
                 ->end()
                 ->booleanNode('share_base_user_configs')
                     ->info('<comment>Here you can switch off or on to use user\'s .gitconfig, .ssh and .composer configs. Maybe you should switch off on CI.</comment>')
-                    ->cannotBeEmpty()
                     ->defaultTrue()
                 ->end()
                 ->arrayNode('server')

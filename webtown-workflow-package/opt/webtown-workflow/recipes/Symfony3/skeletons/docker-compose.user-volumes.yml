@@ -9,4 +9,5 @@ services:
             - "${LOCAL_USER_HOME}/.gitconfig:${LOCAL_USER_HOME}/.gitconfig:ro"
             # Composer cache
             - "${LOCAL_USER_HOME}/.composer:${LOCAL_USER_HOME}/.composer"
+            - "${LOCAL_USER_HOME}/cache:${LOCAL_USER_HOME}/cache"
         tty: true

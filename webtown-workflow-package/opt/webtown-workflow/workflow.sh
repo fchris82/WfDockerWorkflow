@@ -80,7 +80,7 @@ case $1 in
         PROJECT_ROOT_DIR=$(get_project_root_dir)
         find_project_makefile || quit
 
-        ARGS=$(escape "$@")
+        ARGS=$(escape $@)
         MAKE_EXTRA_PARAMS=$(make_params)
 
         make ${MAKE_EXTRA_PARAMS} -f ${PROJECT_MAKEFILE} -C ${PROJECT_ROOT_DIR} ${COMMAND} \

@@ -31,6 +31,10 @@ php: DOCKER_USER="www-data"
 php:
 	$(CMD_DOCKER_RUN_CLI) php $(ARGS)
 
+php-exec: DOCKER_USER="www-data"
+php-exec: up
+	$(CMD_DOCKER_EXEC_CLI) php $(ARGS)
+
 .PHONY: sf
 sf: DOCKER_USER="www-data"
 sf: up
