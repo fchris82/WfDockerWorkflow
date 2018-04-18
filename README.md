@@ -63,7 +63,7 @@ Or you can create a symlink with makefile:
     cd [project_dir]
     workflow_runner_test --develop [wf|wizard|...] [...etc...]
 
-## Debug modes
+### Debug modes
 
 You can call commands with `DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and
 then you will be able to analyse the program.
@@ -108,12 +108,39 @@ sudo rm -rf /usr/local/bin/wizard
 rm -rf ~/.zsh/completion/_wf
 ```
 
+Gitlab CI Deploy(er)
+====================
+
+Create an SSH key, and add private key to Secrets (eg: `SSH_PRIVATE_KEY` and `SSH_KNOWN_HOSTS`):
+
+    ssh-keyscan -H [host]
+
+In `.gitlab-ci.yml` file:
+
+```yaml
+deploy:demo:
+    stage: deploy
+    script:
+        - ENGINE=$(DEBUG=0 wf ps -q engine)
+        - SSH_PATH=/usr/local/etc/ssh
+        # Create SSH path (with root user!)
+        - docker exec -i $ENGINE mkdir -p $SSH_PATH
+        - docker exec -i $ENGINE chown $(id -u) $SSH_PATH
+        # Create SSH files (with "gitlab user")
+        - docker exec -i -u $(id -u) $ENGINE chmod 700 $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_PRIVATE_KEY' | tr -d '\r' > $SSH_PATH/id_rsa"
+        - docker exec -i -u $(id -u) $ENGINE chmod 600 $SSH_PATH/id_rsa
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KNOWN_HOSTS' > $SSH_PATH/known_hosts"
+        # Reconfigure the SSH
+        - docker exec -i $ENGINE bash -c "echo '    IdentityFile $SSH_PATH/id_rsa' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE bash -c "echo '    UserKnownHostsFile $SSH_PATH/known_hosts' >> /etc/ssh/ssh_config"
+        # Check changes
+        - docker exec -i $ENGINE cat /etc/ssh/ssh_config
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+```
 
 
-
-
-
-
+--------------------------------------------------------------------
 
 Webtown Workflow Installer
 ==========================

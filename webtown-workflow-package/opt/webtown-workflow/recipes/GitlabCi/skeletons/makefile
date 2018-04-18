@@ -1,2 +1,3 @@
+DOCKER_BASENAME := $${LOCAL_USER_NAME:-${gitlabci}}p$${PWD\#\#*/}
 SUDO :=
 DOCKER_PSEUDO_TTY := -T
