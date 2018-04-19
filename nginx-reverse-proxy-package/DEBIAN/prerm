@@ -1,0 +1,5 @@
+#!/bin/bash
+
+docker stop nginx-reverse-proxy
+docker rm nginx-reverse-proxy
+docker network rm reverse-proxy

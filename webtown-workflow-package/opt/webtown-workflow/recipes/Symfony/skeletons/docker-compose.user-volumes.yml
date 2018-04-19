@@ -1,0 +1,12 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+    engine:
+        volumes:
+            # User SSH keys
+            - "${LOCAL_USER_HOME}/.ssh:${LOCAL_USER_HOME}/.ssh:ro"
+            # Git config fájl bekötése
+            - "${LOCAL_USER_HOME}/.gitconfig:${LOCAL_USER_HOME}/.gitconfig:ro"
+            # Composer cache
+            - "${LOCAL_USER_HOME}/.composer:${LOCAL_USER_HOME}/.composer"
+            - "${LOCAL_USER_HOME}/cache:${LOCAL_USER_HOME}/cache"

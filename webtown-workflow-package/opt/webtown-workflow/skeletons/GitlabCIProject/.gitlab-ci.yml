@@ -1,0 +1,184 @@
+stages:
+    - build
+    - test
+    - deploy
+    - cleanup
+
+cache:
+    key: ${CI_PIPELINE_ID}
+    untracked: true
+    paths:
+        - vendor
+        - var
+
+variables:
+    ###>> Adj a projektnek nevet (mint ha könyvtár nevet adnál!)
+    BASE_NAME: {{ project_name }}
+    BIN_DIRECTORY: {{ sf_bin_dir }}
+    ###<<
+    SYMFONY_ENV: test
+    COMPOSE_PROJECT_NAME: ${BASE_NAME}pipeline${CI_PIPELINE_ID}
+    COMPOSE_HTTP_TIMEOUT: 300
+    # For debugging
+#    MAKE_DISABLE_SILENC: 1
+#    MAKE_DEBUG_MODE: 1
+    # This is an integer between 0 and 3
+#    DEBUG: 2
+
+.debug:
+    script:
+        # Environment
+        - env
+        - locale
+        - echo $USER
+        - echo ~
+        - pwd
+        - docker version
+        - docker-compose version
+        - wf --version
+        - echo ${COMPOSE_PROJECT_NAME}
+
+.docker_init_and_stop: &docker_init_and_stop
+    before_script:
+        - wf up
+        - wf docker-compose exec -T engine /usr/local/bin/entrypoint.sh --wait-for-init
+        - printf "\n\n\n\n\tSTART\n\n\n\n\n"
+    after_script:
+        - printf "\n\n\n\n\tEND\n\n\n\n\n"
+        - wf docker-compose down --remove-orphans || true
+
+.deploy:
+    script: &deploy
+        # check required parameters
+        ###>> Az SSH_KNOWN_HOSTS-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak: `ssh-keyscan -H matogrosso.webtown.hu`
+        ###   Az SSH_KEY-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak!
+        - [[ -z "$SSH_KEY" ]] && echo "You have to set the SSH_KEY parameter!" && exit 1
+        - [[ -z "$SSH_KNOWN_HOSTS" ]] && echo "You have to set the SSH_KNOWN_HOSTS parameter!" && exit 1
+        - [[ -z "$STAGE" ]] && echo "You have to set the STAGE parameter!" && exit 1
+        ###<<
+        # init
+        - wf composer install
+        # Set SSH parameters
+        - ENGINE=$(DEBUG=0 wf ps -q engine)
+        - SSH_PATH=/usr/local/etc/ssh
+        - echo "docker exec -i -u $(id -u) $ENGINE mkdir -p $SSH_PATH"
+        - docker exec -i $ENGINE mkdir -p $SSH_PATH
+        - docker exec -i $ENGINE chown $(id -u) $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE chmod 700 $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KEY' | tr -d '\r' > $SSH_PATH/id_rsa"
+        - docker exec -i -u $(id -u) $ENGINE chmod 600 $SSH_PATH/id_rsa
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KNOWN_HOSTS' > $SSH_PATH/known_hosts"
+        - docker exec -i $ENGINE bash -c "echo '    IdentityFile $SSH_PATH/id_rsa' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE bash -c "echo '    UserKnownHostsFile $SSH_PATH/known_hosts' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE cat /etc/ssh/ssh_config
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+        # Set servers.yml
+        - cp .deployer/hosts.yml.dist .deployer/hosts.yml
+        # change the ~/.ssh base directory to the /usr/local/etc/ssh directory
+        - sed -e 's:~/.ssh/:/usr/local/etc/ssh/:' -i .deployer/hosts.yml
+        # Deploy
+        - echo "wf dep deploy ${STAGE} --revision='${CI_BUILD_REF}'"
+#        - wf dep deploy -vvv ${STAGE} --revision="${CI_BUILD_REF}"
+        - wf dep deploy ${STAGE} --revision="${CI_BUILD_REF}"
+
+build:
+    stage: build
+    script:
+        # Init
+        ###>> Így kell inicializálni?
+        - wf reconfigure
+        - cp -f app/config/parameters.gitlab-ci.yml app/config/parameters.yml
+        - wf init
+        - cp -f .wf.gitlab-ci.yml .wf.yml
+        - wf up
+        - wf ps
+        - wf composer install -n
+        - wf sf doctrine:database:create --if-not-exists
+        - wf sf doctrine:migrations:migrate -n
+        ###<<
+
+test:codeSniffer:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        ###>> A PHP-CS fixet így kell hívni?
+        - wf php ${BIN_DIRECTORY}/php-cs-fixer fix --dry-run --config=.php_cs.dist
+        ###<<
+
+test:database:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - wf sf doctrine:mapping:info
+        - wf sf doctrine:schema:validate
+        #- wf sf doctrine:fixtures:load -n
+
+test:unittest:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - wf php ${BIN_DIRECTORY}/phpunit --debug
+
+test:phpmd:
+    stage: test
+    <<: *docker_init_and_stop
+    script:
+        - wf php ${BIN_DIRECTORY}/phpmd src xml phpmd.xml --reportfile-xml phpmd-results.xml --reportfile-html phpmd-results.html | sed --unbuffered
+            -e 's:<file name=\("[^>]*"\)>:<file name=\o033[1;36m\1\o033[0;39m>:g'
+            -e 's:\(beginline\|endline\|rule\)=\("[^"]*"\):\o033[1;31m\1\o033[0;39m=\o033[33m\2\o033[39m:g'
+    artifacts:
+        name: "${CI_JOB_NAME}_${CI_COMMIT_REF_NAME}_${CI_PIPELINE_ID}"
+        expire_in: 2 week
+        when: on_failure
+        paths:
+            - phpmd-results.xml
+            - phpmd-results.html
+
+deploy:demo:
+    stage: deploy
+    <<: *docker_init_and_stop
+    variables:
+        SSH_KEY:    ${SSH_DEMO_DEPLOY_KEY}
+        STAGE:      demo
+    script: *deploy
+    environment:
+        name: demo
+        url:  https://demo.example.com
+    ###>> Amennyiben a demo-t automatikusan szeretnéd frissíteni, akkor ezt törölheted.
+    when: manual
+    ###<<
+    only:
+        - develop
+
+###>> Ezt ki kell tölteni
+deploy:prod:
+    stage: deploy
+    <<: *docker_init_and_stop
+    script:
+        - echo "Deploy to production server"
+    environment:
+        name: production
+        url: https://example.com
+    when: manual
+    only:
+        - master
+###<<
+
+# This doesn't remove the image
+cleanup:auto:
+    stage: cleanup
+    script:
+        - wf docker-compose rm -v -f -s || true
+        - docker rm -v $(docker ps -a -q -f status=exited) || true
+        - docker volume rm $(docker volume ls -qf dangling=true) || true
+        - docker network rm $(docker network ls -q -f name="${COMPOSE_PROJECT_NAME}*") || true
+    when: always
+
+# This remove the images
+cleanup:images:
+    stage: cleanup
+    script:
+        # Ezt adtuk hozzá pluszban, ebben más, mint a cleanup
+        - docker rmi -f $(docker images -q "${COMPOSE_PROJECT_NAME}*" | sort -u) || true
+    when: manual

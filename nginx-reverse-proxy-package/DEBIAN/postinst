@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# (Re)Start the proxy
+/opt/nginx-reverse-proxy/proxy.sh restart
+
+ln -sf /opt/nginx-reverse-proxy/proxy.sh /usr/local/bin/nginx-reverse-proxy
+
+echo -e "-----------------"
+echo -e "The \033[1mnginx-reverse-proxy\033[0m is installed! Docker network name: \033[32mreverse-proxy\033[0m ."
+echo -e "  Configuration files: \033[33m/etc/nginx-reverse-proxy/*\033[0m --> run to restart: \033[33mnginx-reverse-proxy \033[1mrestart\033[0m"
+echo -e "  Show current nginx configuration file: \033[33mnginx-reverse-proxy \033[1mshow-config\033[0m"
+echo -e "  Enter to docker image: \033[33mnginx-reverse-proxy \033[1menter\033[0m"

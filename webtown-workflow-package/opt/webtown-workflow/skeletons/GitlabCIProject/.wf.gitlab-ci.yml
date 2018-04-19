@@ -1,0 +1,24 @@
+imports:
+    - .wf.yml.dist
+
+# The configs of recipes
+recipes:
+    gitlab_ci: ~
+
+    # Symfony 3 recipe
+    {{ sf_recipe_name|default('????symfony????') }}:
+        # Symfony environment.
+        env:     dev
+        server:
+            # You can switch on and off the xdebug.
+            xdebug:         false
+            # You can switch on and off debug mode. IMPORTANT! The debug mode makes lot of logs!
+            nginx_debug:    false
+
+    # Include a MySQL service
+    mysql:
+        # disable ports
+        port: 0
+
+    git_flow: false
+    nginx_reverse_proxy: false

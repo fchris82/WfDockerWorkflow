@@ -1,0 +1,12 @@
+Source: docker-nginx-reverse-proxy
+Package: docker-nginx-reverse-proxy
+Version: 1.0
+Section: devel
+Priority: optional
+Architecture: all
+Essential: no
+Depends: docker-ce
+Maintainer: Webtown <info@webtown.hu>
+Description: Webtown GitFlow workflow supporter package
+Homepage: https://gitlab.webtown.hu/webtown/webtown-workflow
+Installed-Size: 30000

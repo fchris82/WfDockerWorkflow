@@ -1,0 +1,13 @@
+# For self update:
+WF_PROGRAM_REPOSITORY=git@gitlab.webtown.hu:webtown/webtown-workflow.git
+
+# Directory structure
+WF_WORKING_DIRECTORY_NAME=.wf
+WF_CONFIGURATION_FILE_NAME=.wf.yml
+
+# Symfony . You can use the --dev argument to change it once through run!
+WF_SYMFONY_ENV=prod
+WF_XDEBUG_ENABLED=0
+
+# Default DNS local proxy TLD:
+WF_DEFAULT_LOCAL_TLD=.loc

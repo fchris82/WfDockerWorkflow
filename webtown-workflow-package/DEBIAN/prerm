@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# If the new docker-nginx-reverse-proxy doesn't installed yet
+if [ $(dpkg -l | egrep "^ii +docker-nginx-reverse-proxy" | wc -l) == 0 ]; then
+    docker stop nginx-reverse-proxy
+    docker rm nginx-reverse-proxy
+    docker network rm reverse-proxy
+fi
+
+rm -rf /usr/local/bin/wf
+rm -rf /usr/local/bin/wizard
+rm -rf ~/.zsh/completion/_wf
+
+SHELL_SCRIPT_RCS=(/etc/bash.bashrc /etc/zsh/zshrc)
+for RC_FILE in ${SHELL_SCRIPT_RCS[@]}; do
+    if [ -f $RC_FILE ]; then
+        CMD="/opt/webtown-project-wizard/wizard.sh --check-update"
+        sed -i "/# Webtown Project Wizard update check/d" $RC_FILE
+        sed -i "\|${CMD}|d" $RC_FILE
+    fi
+done

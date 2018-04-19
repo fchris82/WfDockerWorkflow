@@ -1,5 +1,206 @@
+Nginx Reverse Proxy
+===================
+
+Install the deb package:
+
+    sudo dpkg -i nginx-reverse-proxy.deb
+
+Build package:
+
+    make rebuild_proxy
+
+Webtown Workflow
+================
+
+Use the `install-wf.sh` installer:
+
+    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD installer-wf.sh | tar -x | sh
+
+### Uninstall
+
+    export PATH=$(p=$(echo $PATH | tr ":" "\n" | grep -v "/.webtown-workflow/bin/commands$" | tr "\n" ":"); echo ${p%:})
+    rm -rf ~/.webtown-workflow
+
+### Developers: build
+
+    make rebuild_wf
+    make build_docker
+    make push_docker
+
+OR:
+
+    make rebuild_wf build_docker push_docker
+
+### Upgrade
+
+Default:
+
+    wf -u
+
+From custom branch:
+
+    wf -u [branch-name]
+
+### Debug
+
+You have to use the `--develop` argument
+
+    cd [project_dir]
+    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop [wf|wizard|...] [...etc...]
+
+Or you can create a symlink:
+
+    mkdir -p ~/bin
+    ln -s [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
+    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wizard --install
+    cd [project_dir]
+    workflow_runner_test --develop [wf|wizard|...] [...etc...]
+    
+Or you can create a symlink with makefile:
+
+    cd [workflow_root_path]
+    make init-test
+    cd [project_dir]
+    workflow_runner_test --develop [wf|wizard|...] [...etc...]
+
+### Debug modes
+
+You can call commands with `DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and
+then you will be able to analyse the program.
+
+`DEBUG=1`
+
+- echo bash **path** of files and docker container host (simple bash trace)
+- add symfony commands `-vvv` argument
+- remove (!) makefile calls `-s --no-print-directory` arguments
+
+`DEBUG=2`
+
+- ~`DEBUG=2`
+- In bash scripts: `set -x`
+
+`DEBUG=3`
+
+- ~`DEBUG=2`
+- Add makefile calls `-d` (debug) argument
+
+OLD Uninstall
+=============
+
+- remove:
+```
+sudo dpkg -r webtown-workflow
+```
+- nginx-proxy reset
+```
+docker stop nginx-reverse-proxy
+docker rm nginx-reverse-proxy
+docker network rm reverse-proxy
+```
+- (/etc/bash.bashrc /etc/zsh/zshrc) fájlokból az update check törlése:
+```
+sudo vi /etc/zsh/zshrc
+sudo vi /etc/bash.bashrc
+sudo rm -rf /usr/local/bin/wf
+sudo rm -rf /usr/local/bin/wizard
+rm -rf ~/.zsh/completion/_wf
+```
+
+Gitlab CI Deploy(er)
+====================
+
+Create an SSH key, and add private key to Secrets (eg: `SSH_PRIVATE_KEY` and `SSH_KNOWN_HOSTS`):
+
+    ssh-keyscan -H [host]
+
+In `.gitlab-ci.yml` file:
+
+```yaml
+deploy:demo:
+    stage: deploy
+    script:
+        - ENGINE=$(DEBUG=0 wf ps -q engine)
+        - SSH_PATH=/usr/local/etc/ssh
+        # Create SSH path (with root user!)
+        - docker exec -i $ENGINE mkdir -p $SSH_PATH
+        - docker exec -i $ENGINE chown $(id -u) $SSH_PATH
+        # Create SSH files (with "gitlab user")
+        - docker exec -i -u $(id -u) $ENGINE chmod 700 $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_PRIVATE_KEY' | tr -d '\r' > $SSH_PATH/id_rsa"
+        - docker exec -i -u $(id -u) $ENGINE chmod 600 $SSH_PATH/id_rsa
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KNOWN_HOSTS' > $SSH_PATH/known_hosts"
+        # Reconfigure the SSH
+        - docker exec -i $ENGINE bash -c "echo '    IdentityFile $SSH_PATH/id_rsa' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE bash -c "echo '    UserKnownHostsFile $SSH_PATH/known_hosts' >> /etc/ssh/ssh_config"
+        # Check changes
+        - docker exec -i $ENGINE cat /etc/ssh/ssh_config
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+```
+
+Cookbook
+========
+
+## Symfony recipes
+
+### Custom xdebug config
+
+Create your own `xdebug.ini` in your home and get to project (yes, you must use `dist` in container!):
+
+```yaml
+[...]
+
+docker_compose:
+    extension:
+        services:
+            engine:
+                volumes:
+                    - "~/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini.dist:ro"
+```
+
+> You don't have to look after the value of `xdebug.remote_host`. It will be configured automatically.
+
+### Use custom Dockerfile
+
+Create your custom Dockerfile (eg `.docker/engine/Dockerfile`):
+
+```dockerfile
+FROM fchris82/symfony:php7.1
+
+RUN apt-get update \
+    && apt-get install -y libcurl4-openssl-dev make \
+        gcc pkg-config libreadline-dev libgdbm-dev zlib1g-dev \
+        libyaml-dev libffi-dev libgmp-dev openssl libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# PHP ext
+RUN docker-php-ext-install pcntl shmop \
+    && pecl install mongo && echo "extension=mongo.so" > /usr/local/etc/php/conf.d/mongo.ini
+```
+
+Register it in `.wf.yml.dist` file:
+
+```yaml
+docker_compose:
+    extension:
+        services:
+            engine:
+                # override the original image name!
+                image: project_name
+                # set the Dockerfile
+                build:
+                    context: '%wf.project_path%/.docker/engine'
+                    dockerfile: Dockerfile
+
+            mongodb:
+                image: mongo:3.2
+                volumes:
+                    - "%wf.project_path%/.docker/.data/mongodb:/data/db"
+```
+
+--------------------------------------------------------------------
+
 Webtown Workflow Installer
-======================
+==========================
 
 ## Installation
 
