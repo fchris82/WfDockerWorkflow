@@ -22,24 +22,11 @@ variables:
     # For debugging
 #    MAKE_DISABLE_SILENC: 1
 #    MAKE_DEBUG_MODE: 1
+    # This is an integer between 0 and 3
+#    DEBUG: 2
 
-before_script:
-    # Environment
-    - env
-    - locale
-    - echo $USER
-    - echo ~
-    - pwd
-    - docker version
-    - docker-compose version
-    - echo ${COMPOSE_PROJECT_NAME}
-    # Aliases
-    - shopt -s expand_aliases
-    - alias der="/opt/webtown-workflow/workflow.sh docker-compose exec -T engine"
-    - alias wf="/opt/webtown-workflow/workflow.sh"
-
-.docker_init_and_stop: &docker_init_and_stop
-    before_script:
+.debug:
+    script:
         # Environment
         - env
         - locale
@@ -48,34 +35,67 @@ before_script:
         - pwd
         - docker version
         - docker-compose version
+        - wf --version
         - echo ${COMPOSE_PROJECT_NAME}
-        # Aliases
-        - shopt -s expand_aliases
-        - alias der="/opt/webtown-workflow/workflow.sh docker-compose exec -T engine"
-        - alias wf="/opt/webtown-workflow/workflow.sh"
-        - alias §="/opt/webtown-workflow/workflow.sh exec -T engine"
-        # Docker
-        - docker ps
-        - /opt/webtown-workflow/workflow.sh docker-compose up -d engine mysql
-        - docker ps
-        - der env
-        - der /usr/local/bin/entrypoint.sh --wait-for-init
-        - § cat .project.env
+
+.docker_init_and_stop: &docker_init_and_stop
+    before_script:
+        - wf up
+        - wf docker-compose exec -T engine /usr/local/bin/entrypoint.sh --wait-for-init
         - printf "\n\n\n\n\tSTART\n\n\n\n\n"
     after_script:
         - printf "\n\n\n\n\tEND\n\n\n\n\n"
-        - /opt/webtown-workflow/workflow.sh docker-compose down --remove-orphans || true
+        - wf docker-compose down --remove-orphans || true
+
+.deploy:
+    script: &deploy
+        # check required parameters
+        ###>> Az SSH_KNOWN_HOSTS-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak: `ssh-keyscan -H matogrosso.webtown.hu`
+        ###   Az SSH_KEY-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak!
+        - [[ -z "$SSH_KEY" ]] && echo "You have to set the SSH_KEY parameter!" && exit 1
+        - [[ -z "$SSH_KNOWN_HOSTS" ]] && echo "You have to set the SSH_KNOWN_HOSTS parameter!" && exit 1
+        - [[ -z "$STAGE" ]] && echo "You have to set the STAGE parameter!" && exit 1
+        ###<<
+        # init
+        - wf composer install
+        # Set SSH parameters
+        - ENGINE=$(DEBUG=0 wf ps -q engine)
+        - SSH_PATH=/usr/local/etc/ssh
+        - echo "docker exec -i -u $(id -u) $ENGINE mkdir -p $SSH_PATH"
+        - docker exec -i $ENGINE mkdir -p $SSH_PATH
+        - docker exec -i $ENGINE chown $(id -u) $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE chmod 700 $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KEY' | tr -d '\r' > $SSH_PATH/id_rsa"
+        - docker exec -i -u $(id -u) $ENGINE chmod 600 $SSH_PATH/id_rsa
+        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KNOWN_HOSTS' > $SSH_PATH/known_hosts"
+        - docker exec -i $ENGINE bash -c "echo '    IdentityFile $SSH_PATH/id_rsa' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE bash -c "echo '    UserKnownHostsFile $SSH_PATH/known_hosts' >> /etc/ssh/ssh_config"
+        - docker exec -i $ENGINE cat /etc/ssh/ssh_config
+        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
+        # Set servers.yml
+        - cp .deployer/hosts.yml.dist .deployer/hosts.yml
+        # change the ~/.ssh base directory to the /usr/local/etc/ssh directory
+        - sed -e 's:~/.ssh/:/usr/local/etc/ssh/:' -i .deployer/hosts.yml
+        # Deploy
+        - echo "wf dep deploy ${STAGE} --revision='${CI_BUILD_REF}'"
+#        - wf dep deploy -vvv ${STAGE} --revision="${CI_BUILD_REF}"
+        - wf dep deploy ${STAGE} --revision="${CI_BUILD_REF}"
 
 build:
     stage: build
     script:
         # Init
         ###>> Így kell inicializálni?
+        - wf reconfigure
         - cp -f app/config/parameters.gitlab-ci.yml app/config/parameters.yml
-        - /opt/webtown-workflow/workflow.sh init
-        - cp -f .project.gitlab-ci.env .project.env
-        - echo "SSH_PATH := ${SSH_PATH}" >> .project.env
-        - /opt/webtown-workflow/workflow.sh install
+        - wf init
+        - cp -f .wf.gitlab-ci.yml .wf.yml
+        - wf up
+        - wf ps
+        - wf composer install -n
+        - wf sf doctrine:database:create --if-not-exists
+        - wf sf doctrine:migrations:migrate -n
         ###<<
 
 test:codeSniffer:
@@ -118,14 +138,13 @@ test:phpmd:
 deploy:demo:
     stage: deploy
     <<: *docker_init_and_stop
-    script:
-        # Biztosra megyünk, úgyhogy ha ezt külön szeretnénk futtatni, akkor is jó legyen.
-        - wf composer install -n
-        - cp .deployer/hosts.yml.dist .deployer/hosts.yml
-        - wf dep deploy demo --revision="${CI_BUILD_REF}"
+    variables:
+        SSH_KEY:    ${SSH_DEMO_DEPLOY_KEY}
+        STAGE:      demo
+    script: *deploy
     environment:
-        name: staging
-        url: https://staging.example.com
+        name: demo
+        url:  https://demo.example.com
     ###>> Amennyiben a demo-t automatikusan szeretnéd frissíteni, akkor ezt törölheted.
     when: manual
     ###<<
@@ -150,7 +169,7 @@ deploy:prod:
 cleanup:auto:
     stage: cleanup
     script:
-        - /opt/webtown-workflow/workflow.sh docker-compose rm -v -f -s || true
+        - wf docker-compose rm -v -f -s || true
         - docker rm -v $(docker ps -a -q -f status=exited) || true
         - docker volume rm $(docker volume ls -qf dangling=true) || true
         - docker network rm $(docker network ls -q -f name="${COMPOSE_PROJECT_NAME}*") || true
