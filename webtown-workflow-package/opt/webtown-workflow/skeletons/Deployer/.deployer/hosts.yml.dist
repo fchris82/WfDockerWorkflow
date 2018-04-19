@@ -38,17 +38,8 @@ demo:
     # Ez a debug miatt kellhet
     env:
         MAKE_DISABLE_SILENC: 1
-    workflow_project_config: |
-        DOCKER_HTTP_HOST         := {{ project_directory }}.amapa.webtown.hu
-        # Symfony environments
-        SYMFONY_ENV              := dev
-        DOCKER_ENVIRONMENTS      := WF_XDEBUG_ENABLED=0 XDEBUG_IDE_SERVER_NAME=Docker DOCKER_PROJECT_NETWORK=10.0.1
-        DOCKER_BASENAME          := chrisphtedemo
-        DOCKER_USER_CONFIG_FILES := $(DOCKER_PROVISIONING)/docker-compose.deployer.yml
-        SUDO                     :=
-        DOCKER_PSEUDO_TTY        := -T
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:            /tmp/multiplexing.data
         # Szintén az előbbi indok miatt szükséges egy írható és olvasható, előre kitöltött known_hosts. Tartalom hozzáadása: `ssh-keyscan -t rsa amapa.webtown.hu`
-        UserKnownHostsFile:     .deployer/known_hosts
+        UserKnownHostsFile:     /var/www/.deployer/known_hosts

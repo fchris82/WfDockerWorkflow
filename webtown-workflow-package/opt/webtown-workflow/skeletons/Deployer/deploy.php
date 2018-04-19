@@ -11,10 +11,10 @@ require '.deployer/functions.php';
 require '.deployer/wf.php';
 
 // Project name
-set('application', 'ininfo');
+set('application', '{{ project_name | default('???') }}');
 
 // Project repository
-set('repository', 'git@gitlab.webtown.hu:php/hte.git');
+set('repository', '{{ remote_url | default('???') }}');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 //set('git_tty', true);
@@ -24,29 +24,22 @@ set('default_timeout', 600);
 
 // Shared files/dirs between deploys
 add('shared_files', [
-    '.project.env',
-    '.docker/docker-compose.local.yml',
-    '.docker/engine/config/custom.php.ini',
-    '.docker/engine/config/xdebug.ini',
+    '.wf.yml',
 ]);
 /**
  * Nem lehet symlink a Dockerfile! Valójában a `shared_files`-ben lenne a helye, de sajnos a docker nem tud azzal működni:
  * @see https://github.com/docker/compose/issues/5315
  */
-add('copy_dirs', [
-    '.docker/engine/Dockerfile',
-]);
+//add('copy_dirs', [
+//    '.docker/engine/Dockerfile',
+//]);
 add('shared_dirs', [
     'web/var',
-    '.docker/.data',
+    '.wf/.data',
 ]);
 add('dist_files', [
     'app/config/parameters.yml',
-    '.project.env',
-    '.docker/docker-compose.local.yml',
-    '.docker/engine/Dockerfile',
-    '.docker/engine/config/custom.php.ini',
-    '.docker/engine/config/xdebug.ini',
+    '.wf.yml',
 ]);
 
 // Writable dirs by web server

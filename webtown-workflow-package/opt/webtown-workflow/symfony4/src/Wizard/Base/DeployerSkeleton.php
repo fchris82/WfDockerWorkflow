@@ -36,6 +36,10 @@ class DeployerSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
         $variables['is_ez'] = $kaliopVersion ? true : false;
         $variables['project_directory'] = basename($this->getEnv('ORIGINAL_PWD'));
 
+        $variables['remote_url'] = trim(implode("\n", $this->execCmd(sprintf('cd %s && git config --get remote.origin.url', $targetProjectDirectory))));
+        $config = $this->getWorkflowConfiguration($targetProjectDirectory);
+        $variables['project_name'] = isset($config['name']) ? $config['name'] : '';
+
         return $variables;
     }
 
