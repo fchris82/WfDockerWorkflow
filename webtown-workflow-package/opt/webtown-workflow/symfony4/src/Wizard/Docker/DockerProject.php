@@ -6,11 +6,23 @@
  * Time: 16:47.
  */
 
-namespace App\Wizard\Docker\Wide;
+namespace App\Wizard\Docker;
 
-use App\Wizard\Docker\BaseDocker;
+use App\Wizard\PublicWizardInterface;
 
-class CreateEnvironmentsSkeleton extends BaseDocker
+/**
+ * Class Slim.
+ *
+ * Lapos könyvtárstruktúrát húz rá a projektre.
+ *
+ * <code>
+ *  DockerProject
+ *  ├── [...]
+ *  │
+ *  └── .wf.yml.dist
+ * </code>
+ */
+class DockerProject extends BaseDocker implements PublicWizardInterface
 {
     /**
      * Az itt visszaadott fájllal ellenőrizzük, hogy az adott dekorátor lefutott-e már.
@@ -24,7 +36,7 @@ class CreateEnvironmentsSkeleton extends BaseDocker
      */
     protected function getBuiltCheckFile()
     {
-        return '.project.env.dist';
+        return '.wf.yml.dist';
     }
 
     /**
@@ -34,7 +46,7 @@ class CreateEnvironmentsSkeleton extends BaseDocker
      */
     protected function getSkeletonTemplateDirectory()
     {
-        return ['DockerProjectBase', 'DockerProjectWide'];
+        return ['DockerProject'];
     }
 
     /**
@@ -43,10 +55,11 @@ class CreateEnvironmentsSkeleton extends BaseDocker
     protected function addVariables($targetProjectDirectory, $variables)
     {
         $defaults = [
-            'project_directory'     => 'project',
-            'docker_data_dir'       => 'equipment/.data',
-            'docker_provisioning'   => 'equipment/dev',
-            'deploy_directory'      => 'deploy',
+            'project_directory'     => '.',
+            'docker_data_dir'       => '.docker/.data',
+            'docker_provisioning'   => '.docker',
+            'deploy_directory'      => '.',
+            'project_name'          => basename($this->getEnv('ORIGINAL_PWD', '_')),
         ];
 
         return array_merge($variables, $defaults);
@@ -72,10 +85,9 @@ class CreateEnvironmentsSkeleton extends BaseDocker
      */
     protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
     {
-        switch ($relativePathName) {
-            case MoveProjectFiles::TARGET_DIRECTORY . DIRECTORY_SEPARATOR . '.gitkeep':
-                break;
+        switch (strtolower($relativePathName)) {
             case '.gitignore':
+            case 'readme.md':
                 $this->filesystem->appendToFile($targetPath, $fileContent);
                 break;
             default:
@@ -101,5 +113,15 @@ class CreateEnvironmentsSkeleton extends BaseDocker
     public function getRequireComposerPackages()
     {
         return [];
+    }
+
+    public function getName()
+    {
+        return 'Docker Project';
+    }
+
+    public function getInfo()
+    {
+        return 'Create a dockered project';
     }
 }

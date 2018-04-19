@@ -24,11 +24,7 @@ use Symfony\Component\Console\Question\Question;
  *  │   │   └── .gitkeep
  *  │   │
  *  │   ├── engine
- *  │   │   ├── config
- *  │   │   │   └── php_requires.txt
- *  │   │   ├── Dockerfile
- *  │   │   ├── entrypoint.sh
- *  │   │   └── wait-for-it.sh
+ *  │   │   └── Dockerfile
  *  │   │
  *  │   └── docker-compose.yml
  *  │
@@ -49,7 +45,7 @@ class DevEnvironment extends BaseDocker implements PublicWizardInterface
      */
     protected function getBuiltCheckFile()
     {
-        return '.docker.env.makefile';
+        return '.wf.yml';
     }
 
     /**
@@ -65,29 +61,13 @@ class DevEnvironment extends BaseDocker implements PublicWizardInterface
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function setVariables($targetProjectDirectory)
+    protected function addVariables($targetProjectDirectory, $variables)
     {
         $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.1</info>]', '7.1');
         $variables['php_version'] = $this->ask($phpVersionQuestion);
-
-        // Az eltérő változók bekérése vagy betöltése
-        $variables = $this->addVariables($targetProjectDirectory, $variables);
+        $variables['project_name'] = basename($targetProjectDirectory);
 
         return $variables;
-    }
-
-    /**
-     * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
-     */
-    protected function addVariables($targetProjectDirectory, $variables)
-    {
-        $defaults = [
-            'project_directory'     => '.',
-            'docker_data_dir'       => '.docker.env/.data',
-            'docker_provisioning'   => '.docker.env',
-        ];
-
-        return array_merge($variables, $defaults);
     }
 
     /**

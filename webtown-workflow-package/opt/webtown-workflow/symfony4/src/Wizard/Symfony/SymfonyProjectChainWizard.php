@@ -13,7 +13,7 @@ use App\Wizard\Base\GitlabCISkeleton;
 use App\Wizard\Base\PhpCsFixSkeleton;
 use App\Wizard\Base\PhpMdSkeleton;
 use App\Wizard\BaseChainWizard;
-use App\Wizard\Docker\Slim;
+use App\Wizard\Docker\DockerProject;
 use App\Wizard\Docker\Wide;
 use App\Wizard\Helper\ExecuteComposerInstallForChain;
 use App\Wizard\Helper\GitCommitWizardForChain;
@@ -39,7 +39,7 @@ class SymfonyProjectChainWizard extends BaseChainWizard implements PublicWizardI
         $directoryQuestion = new Question('Select target directory: ', '.');
         $directory = $this->ask($directoryQuestion);
         $targetProjectDirectory = $targetProjectDirectory . DIRECTORY_SEPARATOR . $directory;
-        $dockerWizardQuestion = new ChoiceQuestion('Select docker mode', [Wide::class, Slim::class], 0);
+        $dockerWizardQuestion = new ChoiceQuestion('Select docker mode', [Wide::class, DockerProject::class], 0);
         $this->dockerWizard = $this->ask($dockerWizardQuestion);
 
         // A Symfony Builder tud más könyvtárba telepíteni, azonban már itt rákérdezünk a könyvtárakra, tehát ezt itt kikapcsoljuk.

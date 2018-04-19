@@ -68,4 +68,19 @@ else
     echo -e "You don't have installed the zsh! Nothing changed."
 fi
 
+# Install gitignore
+GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
+if [ ! -z $GITIGNORE_FILE ] && [ -f $GITIGNORE_FILE ]; then
+    GITIGNORE=(/.wf /.wf.yml /.docker.env)
+    for ignore in "${GITIGNORE[@]}"
+    do
+        if ! grep -q ^${ignore}$ $GITIGNORE_FILE; then
+            echo $ignore >> $GITIGNORE_FILE
+            echo ${GREEN}Add the ${YELLOW}${ignore}${GREEN} path to ${YELLOW}${GITIGNORE_FILE}${GREEN} file${RESTORE}
+        fi
+    done
+else
+    echo -e "${YELLOW}You don't have installed the git or you don't have global ${GREEN}.gitignore${YELLOW} file! Nothing changed.${RESTORE}"
+fi
+
 echo -e "${GREEN}Install success${RESTORE}"

@@ -21,7 +21,7 @@ Use the `install-wf.sh` installer:
     export PATH=$(p=$(echo $PATH | tr ":" "\n" | grep -v "/.webtown-workflow/bin/commands$" | tr "\n" ":"); echo ${p%:})
     rm -rf ~/.webtown-workflow
 
-### Build
+### Developers: build
 
     make rebuild_wf
     make build_docker
@@ -84,8 +84,6 @@ then you will be able to analyse the program.
 - ~`DEBUG=2`
 - Add makefile calls `-d` (debug) argument
 
-
-
 OLD Uninstall
 =============
 
@@ -139,6 +137,65 @@ deploy:demo:
         - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
 ```
 
+Cookbook
+========
+
+## Symfony recipes
+
+### Custom xdebug config
+
+Create your own `xdebug.ini` in your home and get to project (yes, you must use `dist` in container!):
+
+```yaml
+[...]
+
+docker_compose:
+    extension:
+        services:
+            engine:
+                volumes:
+                    - "~/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini.dist:ro"
+```
+
+> You don't have to look after the value of `xdebug.remote_host`. It will be configured automatically.
+
+### Use custom Dockerfile
+
+Create your custom Dockerfile (eg `.docker/engine/Dockerfile`):
+
+```dockerfile
+FROM fchris82/symfony:php7.1
+
+RUN apt-get update \
+    && apt-get install -y libcurl4-openssl-dev make \
+        gcc pkg-config libreadline-dev libgdbm-dev zlib1g-dev \
+        libyaml-dev libffi-dev libgmp-dev openssl libssl-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# PHP ext
+RUN docker-php-ext-install pcntl shmop \
+    && pecl install mongo && echo "extension=mongo.so" > /usr/local/etc/php/conf.d/mongo.ini
+```
+
+Register it in `.wf.yml.dist` file:
+
+```yaml
+docker_compose:
+    extension:
+        services:
+            engine:
+                # override the original image name!
+                image: project_name
+                # set the Dockerfile
+                build:
+                    context: '%wf.project_path%/.docker/engine'
+                    dockerfile: Dockerfile
+
+            mongodb:
+                image: mongo:3.2
+                volumes:
+                    - "%wf.project_path%/.docker/.data/mongodb:/data/db"
+```
 
 --------------------------------------------------------------------
 

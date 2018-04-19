@@ -1,0 +1,107 @@
+version: "2.0.0"
+name:    "ujhaz"
+
+# Config the docker compose data.
+docker_compose:
+    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
+    extension:
+        # Example:
+        services:
+            engine:
+                # @todo Az alábbit beleírni a README.md-be, hogy legyen erről is példa
+                image: ujhaz
+                build:
+                    context: '%wf.project_path%/.docker/engine'
+                    dockerfile: Dockerfile
+                environment:
+                    PHP_MAX_EXECUTION_TIME: 60
+                    PHP_MEMORY_LIMIT:       256M
+                    PHP_MAX_UPLOAD:         100M
+                    PHP_MAX_FILE_UPLOADS:   10
+                    PHP_MAX_POST:           100M
+
+            elasticsearch:
+                image: elasticsearch:1.7.6
+#                volumes:
+#                    - "%wf.project_path%/.docker/.data/elasticsearch:/usr/share/elasticsearch/data"
+
+            mongodb:
+                image: mongo:3.2
+                volumes:
+                    - "%wf.project_path%/.docker/.data/mongodb:/data/db"
+
+# You can add extra commands.
+commands:
+    init:
+        - mkdir -p .wf/.data/mysql
+        - mkdir -p .wf/.data/elasticsearch
+        - mkdir -p .wf/.data/mongodb
+        - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
+        - 'echo "imports: [.wf.yml.dist]" >> .wf.yml'
+        - echo "   - <comment>.wf.yml</comment>"
+        - cp .docker/engine/Dockerfile.dist .docker/engine/Dockerfile
+        - echo "   - <comment>.docker/engine/Dockerfile</comment>"
+
+    install:
+        - wf composer install
+        - wf dbreload
+        - wf exec engine npm install
+        - wf exec engine gulp build
+        - wf sf assets:install --symlink
+        - wf sf assetic:dump
+        - echo "<info>✔ Now you can use the project!</info>"
+
+    dbreload:
+        - wf up
+        - if [ "${1}" == "--full" ]; then wf sf doctrine:database:drop --if-exists --force; fi
+        - wf sf doctrine:database:create --if-not-exists
+        - wf sf doctrine:migrations:migrate -n --allow-no-migration
+        - if [ "${1}" == "--full" ]; then wf sf doctrine:fixtures:load -n; fi
+
+    reinstall:
+        - wf sf doctrine:database:drop --if-exists --force
+        - wf install
+
+    fast_test:
+        - wf php bin/php-cs-fixer fix --config=.php_cs.dist
+        - wf php bin/phpunit -c app
+        - wf sf doctrine:mapping:info
+        - wf sf doctrine:schema:validate
+        - wf php bin/phpmd src xml phpmd.xml | sed --unbuffered
+             -e 's:<file name=\("[^>]*"\)>:<file name=\o033[1;36m\1\o033[0;39m>:g'
+             -e 's:\(beginline\|endline\|rule\)=\("[^"]*"\):\o033[1;31m\1\o033[0;39m=\o033[33m\2\o033[39m:g'
+
+    dep:
+        - wf php-exec bin/dep ${@}
+
+# The configs of recipes
+recipes:
+    # Symfony 3 recipe
+    symfony2:
+        # Symfony environment.
+        env:     dev
+        server:
+            # You can switch on and off the xdebug.
+            xdebug:         false
+            timezone:       Europe/Budapest
+            timeout:        60
+            max_post_size:  10M
+
+    # Include a MySQL service
+    mysql:
+        # Docker image tag
+        version:   "5.6"
+        # Database name
+        database:  "symfony"
+        # The root password.
+        password:  "root"
+        # If you want to enable this container from outside set the port number.
+        port:      3309
+
+    git_flow:             []
+
+    # You can enable the nginx-reverse-proxy.
+    nginx_reverse_proxy:
+        # You have to set the service and its host and port settings.
+        settings:
+            web: ~
