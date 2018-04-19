@@ -14,6 +14,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class BaseSkeleton.
@@ -38,6 +39,11 @@ abstract class BaseSkeletonWizard extends BaseWizard
      * @var Filesystem
      */
     protected $filesystem;
+
+    /**
+     * @var array
+     */
+    protected $workflowConfigurationCache;
 
     /**
      * BaseSkeleton constructor.
@@ -250,6 +256,20 @@ abstract class BaseSkeletonWizard extends BaseWizard
             ]);
         }
         $table->render();
+    }
+
+    protected function getWorkflowConfiguration($targetDirectory)
+    {
+        if (!is_null($this->workflowConfigurationCache)) {
+            $configFilePath = $targetDirectory . '/.wf.yml.dist';
+            if (!$this->filesystem->exists($configFilePath)) {
+                throw new FileNotFoundException(sprintf('The composer.lock doesn\'t exist in the %s directory!', $targetDirectory));
+            }
+
+            $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
+        }
+
+        return $this->workflowConfigurationCache;
     }
 
     /**

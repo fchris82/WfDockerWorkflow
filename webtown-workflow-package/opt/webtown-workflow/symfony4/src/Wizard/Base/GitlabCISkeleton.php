@@ -25,6 +25,14 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
 
     protected function setVariables($targetProjectDirectory)
     {
+        $wfConfiguration = $this->getWorkflowConfiguration($targetProjectDirectory);
+        $symfonyRecipeName = null;
+        foreach ($wfConfiguration['recipes'] as $recipeName => $recipeConfig) {
+            if (strpos($recipeName, 'symfony') === 0) {
+                $symfonyRecipeName = $recipeName;
+                break;
+            }
+        }
         $installedSfVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/symfony');
         $sfConsoleCmd = version_compare($installedSfVersion, '3.0', '>=')
             ? 'bin/console'
@@ -35,6 +43,7 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
 
         return [
             'project_name' => sprintf('project_%s', date('YmdHis')),
+            'sf_recipe_name' => $symfonyRecipeName,
             'sf_console_cmd' => $sfConsoleCmd,
             'sf_bin_dir' => $sfBinDir,
         ];
