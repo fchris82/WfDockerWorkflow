@@ -4,6 +4,8 @@ stages:
 
 build:
     stage: build
+    script:
+        - echo "Only build 'install-wf.sh' to downlaod."
     artifacts:
         - install-wf.sh
 
