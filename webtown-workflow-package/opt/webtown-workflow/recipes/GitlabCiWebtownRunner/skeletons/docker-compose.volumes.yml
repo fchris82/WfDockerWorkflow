@@ -10,9 +10,9 @@ services:
 {% endfor %}
 
 {% for service, settings in volumes %}
-    volumes:
+volumes:
 {% for name, target in settings %}
-        {{ service}}_{{ name }}:
-            driver: local
+    {{ service}}_{{ name }}:
+        driver: local
 {% endfor %}
 {% endfor %}
