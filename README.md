@@ -31,6 +31,10 @@ OR:
 
     make rebuild_wf build_docker push_docker
 
+FULL:
+
+    make rebuild_wf build_docker push_docker && cd ../gitlab-runner-docker && make stop rebuild start && cd ../webtown-workflow && wf -u
+
 ### Upgrade
 
 Default:
