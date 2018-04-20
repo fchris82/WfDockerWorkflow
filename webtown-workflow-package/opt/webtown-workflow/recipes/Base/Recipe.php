@@ -62,6 +62,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         return array_merge(parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig), [
             'wf_target_directory' => $this->environment->getConfigValue(Environment::CONFIG_WORKING_DIRECTORY),
             'wf_config_file' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
+            // @todo (Chris) Ezzel itt vmi nem stimmel, csak most vettem észre. Ugyanazt az értéket kapta, mint a wf_config_file!
             'wf_list' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
         ]);
     }
