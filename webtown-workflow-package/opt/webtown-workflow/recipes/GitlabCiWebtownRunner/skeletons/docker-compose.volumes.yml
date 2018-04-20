@@ -1,0 +1,18 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+{% for service, settings in volumes %}
+    {{ service }}:
+        volumes:
+{% for name, target in settings %}
+            - "{{ service }}_{{ name }}:{{ target }}"
+{% endfor %}
+{% endfor %}
+
+{% for service, settings in volumes %}
+    volumes:
+{% for name, target in settings %}
+        {{ service}}_{{ name }}:
+            driver: local
+{% endfor %}
+{% endfor %}
