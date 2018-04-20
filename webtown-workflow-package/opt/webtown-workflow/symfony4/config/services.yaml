@@ -114,7 +114,7 @@ services:
             - { name: wizard, group: 'Decorators', priority: 20 }
         public: true
 
-    App\Wizard\Docker\Slim:
+    App\Wizard\Docker\DockerProject:
         arguments:
             - '%skeleton_base_dir%'
             - '@twig'

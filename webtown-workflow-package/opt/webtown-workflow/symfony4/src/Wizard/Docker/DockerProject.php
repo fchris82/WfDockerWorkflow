@@ -11,7 +11,7 @@ namespace App\Wizard\Docker;
 use App\Wizard\PublicWizardInterface;
 
 /**
- * Class Slim.
+ * Class DockerProject.
  *
  * Lapos könyvtárstruktúrát húz rá a projektre.
  *
