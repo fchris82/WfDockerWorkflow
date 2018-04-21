@@ -9,6 +9,7 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # CREATE DIRECTORIES
+echo "Install binaries..."
 mkdir -p ${HOME}/.webtown-workflow/bin
 mkdir -p ${HOME}/.webtown-workflow/config
 

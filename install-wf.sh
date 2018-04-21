@@ -40,7 +40,7 @@ if [ -f ${DIR}/webtown-workflow-package/opt/webtown-workflow/host/copy_binaries_
 # If the docker is available
 elif [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
-    docker run -it \
+    docker run -i \
      -v ~/:${HOME} \
      -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} -e USER_GROUP=$(getent group docker | cut -d: -f3) \
      fchris82/wf \
