@@ -3,6 +3,10 @@ GITFLOW_BINARY_DIRECTORY := {{ binary_directory }}
 #                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 
+GITFLOW_DEVELOP := {{ develop }}
+GITFLOW_FEATURE := {{ feature }}
+GITFLOW_HOTFIX  := {{ hotfix }}
+
 .PHONY: feature
 feature: __feature
 
