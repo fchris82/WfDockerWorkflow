@@ -63,7 +63,12 @@ docker-compose:
 
 .PHONY: __docker_up
 __docker_up:
-	$(CMD_DOCKER_BASE) up -d
+	if [ "$$(docker ps -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)" | wc -l)" -eq "0" ]; then \
+		$(CMD_DOCKER_BASE) up -d; \
+	else \
+		echo "\033[1;32mContainers has started...\033[0m"; \
+		docker ps --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)"; \
+	fi
 
 # If something changes in yml files, then the `docker-compose down` maybe won't down all containers and networks.
 # This is why we use labels to down!
