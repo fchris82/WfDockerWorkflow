@@ -15,7 +15,10 @@ case $1 in
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh /bin/bash
     ;;
     -u|--update)
-        git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO | bash
+        git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
+        chmod +x /tmp/install-wf.sh
+        /tmp/install-wf.sh
+        rm /tmp/install-wf.sh
     ;;
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}

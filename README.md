@@ -14,7 +14,10 @@ Webtown Workflow
 
 Use the `install-wf.sh` installer:
 
-    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD installer-wf.sh | tar -x | sh
+    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
+    chmod +x /tmp/install-wf.sh
+    /tmp/install-wf.sh
+    rm /tmp/install-wf.sh
 
 ### Uninstall
 
@@ -87,6 +90,20 @@ then you will be able to analyse the program.
 
 - ~`DEBUG=2`
 - Add makefile calls `-d` (debug) argument
+
+### Available configuration parameters
+
+List all:
+
+    wizard --config-dump
+
+List only a recipe:
+
+    wizard --config-dump --recipe=symfony3
+
+Save to a file to edit:
+
+    wizard --config-dump --no-ansi > .wf.yml
 
 OLD Uninstall
 =============
