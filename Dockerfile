@@ -13,7 +13,7 @@ ENV XDEBUG_CONFIG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disab
 COPY webtown-workflow.deb /root/webtown-workflow.deb
 
 RUN apk update && \
-    apk add bash dpkg jq make ca-certificates curl git su-exec docker py-pip php7-xdebug && \
+    apk add bash dpkg jq make ca-certificates curl git su-exec docker py-pip php7-xdebug shadow && \
     echo "zend_extension=/usr/lib/php7/modules/xdebug.so" > $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_enable=on" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_autostart=off" >> $XDEBUG_CONFIG_FILE && \

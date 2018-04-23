@@ -17,7 +17,26 @@ fi
 
 # USER
 USER_ID=${LOCAL_USER_ID:-9001}
-adduser -u $USER_ID -D -S -H ${LOCAL_USER_NAME} -G docker
+# default docker group name
+DOCKER_GROUP_NAME='docker'
+if [ $USER_ID != 0 ]; then
+    # If the sock exist, we try to find the correct user group to can use docker
+    if [ -S /var/run/docker.sock ]; then
+        # docker group ID from docker.sock file
+        dockergid=$(stat -c '%g' /var/run/docker.sock)
+        # try to find an existing group name by GID
+        gname=$(getent group $dockergid | cut -d: -f1)
+        # if there isn't existing group by GID then we set it for the docker group
+        if [ -z gname ]; then
+            groupmod -g $dockergid $DOCKER_GROUP_NAME
+        # if there is an existing group then we set that
+        else
+            DOCKER_GROUP_NAME=$gname
+        fi
+    fi
+
+    adduser -u $USER_ID -D -S -H ${LOCAL_USER_NAME} -G $DOCKER_GROUP_NAME
+fi
 export HOME=${LOCAL_USER_HOME}
 
 [[ -f /opt/webtown-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/.env
