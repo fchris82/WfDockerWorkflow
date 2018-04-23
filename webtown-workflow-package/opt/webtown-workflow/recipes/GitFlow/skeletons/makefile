@@ -66,7 +66,8 @@ __branch: __validate_git_uncommitted_changes __validate_gitflow_args
 			git diff --name-only --diff-filter=D HEAD..origin/$(ORIGIN_BRANCH) \
 				$(BASE_DIRECTORY)/$(PROJECT_DIRECOTRY)/app/DoctrineMigrations \
 			| sort -r \
-			| grep -oP '(?<!\d)\d{14}(?!\d)' \
+			| egrep -o 'Version[0-9]{14}.php' \
+			| egrep -o '[0-9]{14}' \
 		))
 		@$(foreach V,$(MIGRATION_VERSIONS),$(CMD_MAKE) sf ARGS="doctrine:migrations:execute $(V) -n --down";)
     endif
