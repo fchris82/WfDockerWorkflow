@@ -30,15 +30,15 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 
 .PHONY: info
 info::
-	@echo "$$PROJECT_INFO"
-	@echo "\n    Docker compose command base:"
+	@echo -e "$$PROJECT_INFO"
+	@echo -e "\n    Docker compose command base:"
 	@RESTORE="\\\033[0m"; \
 		ENV_NAME="\\\033[33m"; \
 		ENV_VALUE="\\\033[37m"; \
 		CMD="\\\033[1;91m"; \
 		PARAMETER_NAME="\\\033[94m"; \
 		PARAMETER_VALUE="\\\033[92m"; \
-		echo "    "$$(echo "$(CMD_DOCKER_BASE)" \
+		echo -e "    "$$(echo -e "$(CMD_DOCKER_BASE)" \
 			| sed -e "s/\([^= ]*\)=\([^ ]*\)/$${ENV_NAME}\\1$${RESTORE}=$${ENV_VALUE}\\2$${RESTORE}/g" \
 			| sed -e "s/docker-compose/$${CMD}docker-compose$${RESTORE}/" \
 			| sed -e "s/\(\B--*[a-zA-Z0-9\-]*\) \([^ ]*\)/$${PARAMETER_NAME}\\1$${RESTORE} $${PARAMETER_VALUE}\\2$${RESTORE}/g")
@@ -54,7 +54,7 @@ restart: down up
 .PHONY: __validate_args_no_empty
 __validate_args_no_empty:
     ifeq (,$(ARGS))
-		@echo "\n\033[31m❌ You can't call this method without argument!\033[0m"
+		@echo -e "\n\033[31m❌ You can't call this method without argument!\033[0m"
 		exit 1
     endif
 
@@ -67,7 +67,7 @@ dbdump : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
 dbdump : up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(FILE)
-	@echo "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
+	@echo -e "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
 dbimport : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
@@ -139,17 +139,17 @@ __validate_git_uncommitted_changes:
 # Check the arguments and the last word!
 __validate_gitflow_args: __validate_args_no_empty
     # Are there any invalid parameters? Eg: wf feature --disable-db --invalid new-feature
-	UNKNOWN_PARAMETERS="$$(echo "$(ARGS)" | egrep -oh "\-\-[^ ]+" | egrep -v "^\-\-($(ENABLED_GITFLOW_PARAMETERS))$$")"; \
+	UNKNOWN_PARAMETERS="$$(echo -e "$(ARGS)" | egrep -oh "\-\-[^ ]+" | egrep -v "^\-\-($(ENABLED_GITFLOW_PARAMETERS))$$")"; \
 	if [ ! -z "$${UNKNOWN_PARAMETERS}" ]; then \
-		echo "\n\033[31m❌ There are some unknown parameter:\033[0m"; \
-		echo "\033[33m$${UNKNOWN_PARAMETERS}\033[0m"; \
+		echo -e "\n\033[31m❌ There are some unknown parameter:\033[0m"; \
+		echo -e "\033[33m$${UNKNOWN_PARAMETERS}\033[0m"; \
 		exit 1; \
 	fi
     # Is there an invalid name? Eg: wf hotfix --disable-db [missing name!]
-	INVALID_NAME="$$(echo "$(lastword $(ARGS))" | egrep "^[^a-zA-Z0-9]")"; \
+	INVALID_NAME="$$(echo -e "$(lastword $(ARGS))" | egrep "^[^a-zA-Z0-9]")"; \
 	if [ ! -z "$${INVALID_NAME}" ]; then \
-		echo "\n\033[31m❌ Invalid branch name: \033[33m$${INVALID_NAME}\033[0m"; \
-		echo "\033[94mYou have to finish the command with valid branch name!\033[0m"; \
+		echo -e "\n\033[31m❌ Invalid branch name: \033[33m$${INVALID_NAME}\033[0m"; \
+		echo -e "\033[94mYou have to finish the command with valid branch name!\033[0m"; \
 		exit 1; \
 	fi
 

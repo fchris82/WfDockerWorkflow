@@ -28,15 +28,15 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 
 .PHONY: info
 info::
-	@echo "$$PROJECT_INFO"
-	@echo "\n    Docker compose command base:"
+	@echo -e "$$PROJECT_INFO"
+	@echo -e "\n    Docker compose command base:"
 	@RESTORE="\\\033[0m"; \
 		ENV_NAME="\\\033[33m"; \
 		ENV_VALUE="\\\033[37m"; \
 		CMD="\\\033[1;91m"; \
 		PARAMETER_NAME="\\\033[94m"; \
 		PARAMETER_VALUE="\\\033[92m"; \
-		echo "    "$$(echo "$(CMD_DOCKER_BASE)" \
+		echo -e "    "$$(echo -e "$(CMD_DOCKER_BASE)" \
 			| sed -e "s/\([^= ]*\)=\([^ ]*\)/$${ENV_NAME}\\1$${RESTORE}=$${ENV_VALUE}\\2$${RESTORE}/g" \
 			| sed -e "s/docker-compose/$${CMD}docker-compose$${RESTORE}/" \
 			| sed -e "s/\(\B--*[a-zA-Z0-9\-]*\) \([^ ]*\)/$${PARAMETER_NAME}\\1$${RESTORE} $${PARAMETER_VALUE}\\2$${RESTORE}/g")
@@ -52,7 +52,7 @@ restart: down up
 .PHONY: __validate_args_no_empty
 __validate_args_no_empty:
     ifeq (,$(ARGS))
-		@echo "\n\033[31m❌ You can't call this method without argument!\033[0m"
+		@echo -e "\n\033[31m❌ You can't call this method without argument!\033[0m"
 		exit 1
     endif
 
@@ -66,8 +66,8 @@ __docker_up:
 	if [ "$$(docker ps -q --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)" | wc -l)" -eq "0" ]; then \
 		$(CMD_DOCKER_BASE) up -d; \
 	else \
-		echo "\033[1;32mContainers has started...\033[0m"; \
-		docker ps --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)"; \
+		echo -e "\033[1;32mContainers has started...\033[0m"; \
+		docker ps -a --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)" --format "table {{.Names}}\t{{.Status}}"; \
 	fi
 
 # If something changes in yml files, then the `docker-compose down` maybe won't down all containers and networks.
@@ -76,11 +76,11 @@ __docker_up:
 __docker_down: DOCKER_CONTAINERS := $$(docker ps -a --format "{{.Names}}" --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
 __docker_down: DOCKER_NETWORKS := $$(docker network ls --format "{{.Name}}" --filter "label=com.wf.basedirectory=$(PROJECT_WORKING_DIRECTORY)")
 __docker_down:
-	@echo "\033[1;32mStop and remove containers by label...\033[0m"
+	@echo -e "\033[1;32mStop and remove containers by label...\033[0m"
 	if [ ! -z "$(DOCKER_CONTAINERS)" ]; then docker stop $(DOCKER_CONTAINERS); docker rm $(DOCKER_CONTAINERS); fi
-	@echo "\033[1;32mRemove networks by label...\033[0m"
+	@echo -e "\033[1;32mRemove networks by label...\033[0m"
 	if [ ! -z "$(DOCKER_NETWORKS)" ]; then docker network rm $(DOCKER_NETWORKS); fi
-	@echo "\033[1;32mRemove remainders...\033[0m"
+	@echo -e "\033[1;32mRemove remainders...\033[0m"
 	$(CMD_DOCKER_BASE) down
 
 # $(ARGS) : a docker-compose container neve kell nekünk

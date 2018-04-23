@@ -1,11 +1,11 @@
 Source: webtown-workflow
 Package: webtown-workflow
-Version: 2.107
+Version: 2.115
 Section: devel
 Priority: optional
 Architecture: all
 Essential: no
-Depends: git, curl, jq, make, acl, libarchive-zip-perl
+Depends: git, curl, jq, make
 Maintainer: Webtown <info@webtown.hu>
 Description: Webtown GitFlow workflow supporter package
 Homepage: https://gitlab.webtown.hu/webtown/webtown-workflow
