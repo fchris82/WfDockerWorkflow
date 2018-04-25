@@ -52,6 +52,11 @@ variables:
     after_script:
         - printf "\n\n\n\n\tEND\n\n\n\n\n"
         - wf docker-compose down --remove-orphans || true
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 .deploy:
     script: &deploy
@@ -177,7 +182,9 @@ cleanup:auto:
     script:
         - wf docker-compose rm -v -f -s || true
         - docker rm -v $(docker ps -a -q -f status=exited) || true
-        - docker volume rm $(docker volume ls -qf dangling=true) || true
+        - docker rm -v $(docker ps -a -q -f status=exited) || true
+        - docker volume rm $(docker volume ls -qf dangling=true | grep -v '^gitlab-runner') || true
+        - docker volume ls
         - docker network rm $(docker network ls -q -f name="${COMPOSE_PROJECT_NAME}*") || true
     when: always
 
@@ -187,4 +194,6 @@ cleanup:images:
     script:
         # Ezt adtuk hozzá pluszban, ebben más, mint a cleanup
         - docker rmi -f $(docker images -q "${COMPOSE_PROJECT_NAME}*" | sort -u) || true
+        - docker volume rm $(docker volume ls -qf dangling=true) || true
+        - docker network rm $(docker network ls -q -f name="${COMPOSE_PROJECT_NAME}*") || true
     when: manual
