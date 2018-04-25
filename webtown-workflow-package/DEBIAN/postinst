@@ -24,7 +24,7 @@ USER=$(ls -ld ${REFERENCE} | cut -d\  -f3)
 GROUP="docker"
 
 # Install
-APP_ENV=prod /opt/webtown-workflow/wizard.sh -i --no-dev
+APP_ENV=prod WF_SYMFONY_ENV=prod /opt/webtown-workflow/wizard.sh -i --no-dev
 
 # Set the permission if needed
 if [ -d /opt/webtown-workflow/symfony4/var ]; then

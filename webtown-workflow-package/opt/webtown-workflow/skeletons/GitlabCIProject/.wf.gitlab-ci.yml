@@ -1,14 +1,28 @@
 imports:
     - .wf.yml.dist
 
+name: gitlab_{{ project_name }}
+
+docker_compose:
+    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
+    extension:
+        services:
+            engine:
+                environment:
+                    SYMFONY_DEPRECATIONS_HELPER: disabled
+
 # The configs of recipes
 recipes:
-    gitlab_ci: ~
+    gitlab_ci_webtown_runner:
+        volumes:
+            mysql:
+                data: /var/lib/mysql
 
     # Symfony 3 recipe
     {{ sf_recipe_name|default('????symfony????') }}:
         # Symfony environment.
         env:     dev
+        share_base_user_configs: false
         server:
             # You can switch on and off the xdebug.
             xdebug:         false
@@ -17,8 +31,10 @@ recipes:
 
     # Include a MySQL service
     mysql:
+        local_volume: false
         # disable ports
         port: 0
 
     git_flow: false
+    # You can enable the nginx-reverse-proxy.
     nginx_reverse_proxy: false

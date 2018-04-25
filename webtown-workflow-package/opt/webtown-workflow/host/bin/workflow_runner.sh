@@ -118,7 +118,7 @@ docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
             -w ${WORKDIR} \
             ${WORKDIR_SHARE} \
-            -v ${HOME}:${HOME} \
+            -v ${RUNNER_HOME:-$HOME}:${HOME} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \

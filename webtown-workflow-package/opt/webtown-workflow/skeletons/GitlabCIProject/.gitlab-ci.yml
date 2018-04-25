@@ -37,11 +37,17 @@ variables:
         - docker-compose version
         - wf --version
         - echo ${COMPOSE_PROJECT_NAME}
+        - docker ps
+        - docker volume ls
+        - wf reconfigure
+        - wf debug-docker-config
 
 .docker_init_and_stop: &docker_init_and_stop
     before_script:
         - wf up
         - wf docker-compose exec -T engine /usr/local/bin/entrypoint.sh --wait-for-init
+        # waiting for mysql
+        - wf exec engine wait-for-it.sh mysql:3306
         - printf "\n\n\n\n\tSTART\n\n\n\n\n"
     after_script:
         - printf "\n\n\n\n\tEND\n\n\n\n\n"
@@ -52,9 +58,9 @@ variables:
         # check required parameters
         ###>> Az SSH_KNOWN_HOSTS-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak: `ssh-keyscan -H matogrosso.webtown.hu`
         ###   Az SSH_KEY-ot be kell állítani a projekt gitlab ci beállításainál Secret variables-nak!
-        - [[ -z "$SSH_KEY" ]] && echo "You have to set the SSH_KEY parameter!" && exit 1
-        - [[ -z "$SSH_KNOWN_HOSTS" ]] && echo "You have to set the SSH_KNOWN_HOSTS parameter!" && exit 1
-        - [[ -z "$STAGE" ]] && echo "You have to set the STAGE parameter!" && exit 1
+        - '[[ -z "$SSH_KEY" ]] && echo "You have to set the SSH_KEY parameter!" && exit 1'
+        - '[[ -z "$SSH_KNOWN_HOSTS" ]] && echo "You have to set the SSH_KNOWN_HOSTS parameter!" && exit 1'
+        - '[[ -z "$STAGE" ]] && echo "You have to set the STAGE parameter!" && exit 1'
         ###<<
         # init
         - wf composer install
@@ -87,12 +93,12 @@ build:
     script:
         # Init
         ###>> Így kell inicializálni?
-        - wf reconfigure
         - cp -f app/config/parameters.gitlab-ci.yml app/config/parameters.yml
         - wf init
         - cp -f .wf.gitlab-ci.yml .wf.yml
+        - wf reconfigure
+        - wf debug-docker-config
         - wf up
-        - wf ps
         - wf composer install -n
         - wf sf doctrine:database:create --if-not-exists
         - wf sf doctrine:migrations:migrate -n

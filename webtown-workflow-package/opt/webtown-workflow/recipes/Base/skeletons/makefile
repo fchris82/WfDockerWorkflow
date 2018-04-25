@@ -7,7 +7,7 @@ DOCKER_CLI_NAME		:=	engine
 # Az aktuális projekt gazdája
 WWW_DATA_UID		:=	$$(stat -c '%u' .)
 # Az Docker group
-WWW_DATA_GID		:=	$$(getent group docker | cut -d: -f3)
+WWW_DATA_GID		:=	$$(stat -c '%g' /var/run/docker.sock)
 # Docker user
 SSH_PATH			:= ~/.ssh
 DOCKER_USER			:=	$(WWW_DATA_UID):$(WWW_DATA_GID)

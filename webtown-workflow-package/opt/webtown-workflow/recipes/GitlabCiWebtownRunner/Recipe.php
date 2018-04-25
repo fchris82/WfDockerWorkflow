@@ -30,7 +30,7 @@ class Recipe extends BaseRecipe
          *      share_home_with: engine
          *      volumes:
          *          mysql:
-         *              data: /usr/mysql/data
+         *              data: /var/lib/mysql
          */
 
         $rootNode
@@ -73,6 +73,17 @@ class Recipe extends BaseRecipe
         ;
 
         return $rootNode;
+    }
+
+    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+    {
+        $baseVars = parent::getTemplateVars($projectPath, $recipeConfig, $globalConfig);
+
+        $output = [];
+        exec(sprintf('cd %s && git rev-parse --short HEAD', $projectPath), $output);
+        return array_merge($baseVars, [
+            'git_hash' => trim(implode('', $output)),
+        ]);
     }
 
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
