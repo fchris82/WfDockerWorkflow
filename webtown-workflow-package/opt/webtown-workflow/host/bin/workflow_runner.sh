@@ -31,8 +31,8 @@ shift
 # DIRECTORIES
 WORKDIR=$(pwd)
 GLOBAL_COMMANDS=("-h" "--help" "--version")
-if [[ ! ${WORKDIR} =~ ^/(home|etc|var|tmp)/ ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
-    echo -e "\033[1;37mYou can only work in \033[33m/home\033[37m, \033[33m/etc\033[37m, \033[33m/var\033[37m and \033[33m/tmp\033[37m directories! The \033[31m${WORKDIR}\033[37m is out of this space!\033[0m"
+if [[ ${WORKDIR} =~ ^/($|bin|boot|lib|mnt|proc|sbin|sys) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
+    echo -e "\033[1;37mYou can try to work in a protected directory! The \033[31m${WORKDIR}\033[37m is in a protected space!\033[0m"
     exit 1
 fi
 
@@ -94,7 +94,7 @@ DOCKER_COMPOSE_ENV=" \
     -e DEBUG=${DEBUG} \
     -e CI=${CI}"
 # If the $WORKDIR is outside the user's home directory, we have to put in the docker
-if [[ ! ${WORKDIR} =~ ^${HOME:-${LOCAL_USER_HOME}}(/|$) ]]; then
+if [[ ! ${WORKDIR} =~ ^${HOME:-${LOCAL_USER_HOME}}(/|$) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
     WORKDIR_SHARE="-v ${WORKDIR}:${WORKDIR}"
 fi
 

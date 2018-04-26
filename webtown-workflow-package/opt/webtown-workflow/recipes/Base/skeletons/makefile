@@ -1,6 +1,6 @@
 VERSION						:=	{{ config.version }}
 PROJECT_DIRECOTRY			:=	.
-DOCKER_BASENAME				:=	$${LOCAL_USER_NAME:-base}p$${PWD\#\#*/}
+DOCKER_BASENAME				:=	$${LOCAL_USER_NAME:-base}p{{ config.name | default('$${PWD\#\#*/}') }}
 DOCKER_DATA_DIR				:=	{{ config.docker_data_dir }}
 DOCKER_ENVIRONMENTS	:=
 DOCKER_CLI_NAME		:=	engine
