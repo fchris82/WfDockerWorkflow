@@ -1,5 +1,11 @@
 #!/bin/bash
 
-docker stop nginx-reverse-proxy
-docker rm nginx-reverse-proxy
-docker network rm reverse-proxy
+CONTAINER_EXISTS=$(docker container ls | grep 'nginx-reverse-proxy')
+NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
+if [[ ! -z "$CONTAINER_EXISTS" ]]; then
+    docker stop nginx-reverse-proxy
+    docker rm nginx-reverse-proxy
+fi
+if [[ ! -z "$NETWORK_EXISTS" ]]; then
+    docker network rm reverse-proxy || true
+fi

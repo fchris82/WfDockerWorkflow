@@ -5,7 +5,7 @@ case $1 in
         CONTAINER_EXISTS=$(docker container ls | grep 'nginx-reverse-proxy')
         NETWORK_EXISTS=$(docker network ls | grep 'reverse-proxy')
         REVERSE_PROXY_PORT=$(awk '/^reverse_proxy_port/{print $3}' /etc/nginx-reverse-proxy/config)
-        if [[ -z "$CONTAINER_EXISTS" ]]; then
+        if [[ ! -z "$CONTAINER_EXISTS" ]]; then
             docker stop nginx-reverse-proxy
             docker rm nginx-reverse-proxy
         fi
@@ -16,11 +16,11 @@ case $1 in
             --name nginx-reverse-proxy \
             --net reverse-proxy \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
-            -v /etc/webtown-workflow/nginx.tmpl:/app/nginx.tmpl:ro \
-            -v /etc/webtown-workflow/nginx-proxy.conf:/etc/nginx/proxy.conf:ro \
-            -v /etc/webtown-workflow/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
-            -v /etc/webtown-workflow/docker-gen.cfg:/app/docker-gen.cfg:ro \
-            -v /etc/webtown-workflow/Procfile:/app/Procfile:ro \
+            -v /etc/nginx-reverse-proxy/nginx.tmpl:/app/nginx.tmpl:ro \
+            -v /etc/nginx-reverse-proxy/nginx-proxy.conf:/etc/nginx/proxy.conf:ro \
+            -v /etc/nginx-reverse-proxy/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
+            -v /etc/nginx-reverse-proxy/docker-gen.cfg:/app/docker-gen.cfg:ro \
+            -v /etc/nginx-reverse-proxy/Procfile:/app/Procfile:ro \
             -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
             --restart always \
             jwilder/nginx-proxy
