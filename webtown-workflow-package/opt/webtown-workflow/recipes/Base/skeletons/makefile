@@ -16,7 +16,7 @@ SHARED_DIRS			:=
 
 # A Gitlab CI miatt kell definiálni.
 SUDO              := sudo
-DOCKER_PSEUDO_TTY :=
+DOCKER_PSEUDO_TTY := $$(if [ ! -t 1 ]; then  echo '-T'; fi)
 
 # Ennek muszáj elől lennie, mert szeretnénk, ha ez lenne az első és alapértelmezett "target"
 define PROJECT_HELP
@@ -98,7 +98,7 @@ help:
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)
 
-BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo '.')
+BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo $$(pwd))
 THIS_FILE       := $(firstword $(MAKEFILE_LIST))
 CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)
 
