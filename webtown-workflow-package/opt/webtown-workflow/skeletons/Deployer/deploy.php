@@ -59,10 +59,10 @@ task('deploy:init-config', function () {
     }
 
     if (get('workflow_project_config', false)) {
-        $configPath = sys_get_temp_dir() . '/workflow_project_config.project.env';
+        $configPath = sys_get_temp_dir() . '/workflow_project_config.project.yml';
         $content = get('workflow_project_config');
         file_put_contents($configPath, $content);
-        upload($configPath, '{{release_path}}/.project.env');
+        upload($configPath, '{{release_path}}/.wf.yml');
     }
 });
 before('deploy:shared', 'deploy:init-config');
@@ -70,12 +70,12 @@ before('deploy:shared', 'deploy:init-config');
 task('deploy:wf', function () {
     cd('{{release_path}}');
     writeln('Start init...');
-    run('wf init');
-    run('wf restart');
+    run('{{wf}} init');
+    run('{{wf}} restart');
     writeln('...Init is ready');
     writeln('Start install... (it would be long)');
     // A lassú futás miatt a timeout-ot megnöveljük
-    run('wf install', [
+    run('{{wf}} install', [
         'timeout' => 1200,
     ]);
 })->onRoles(ROLE_WORKFLOW);
@@ -106,7 +106,8 @@ task('database:build', function () {
 before('deploy:symlink', 'database:build');
 
 task('database:reload', function() {
-    run('wf reload --full');
+    cd('{{release_path}}');
+    run('{{wf}} dbreload --full');
 })
     ->desc('Load the fixtures')
     ->onRoles(ROLE_FIXTURE_RELOAD)

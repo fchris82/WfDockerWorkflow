@@ -3,14 +3,15 @@ prod:
     stage:            prod
     deploy_path:      /srv/{{ project_directory }}
     user:             support
-    identity_file:    ~
+    identityFile:     ~/.ssh/id_rsa
     branch:           master
     symfony_env:      prod
     'bin/php':        '/usr/local/php/php5.6/bin/php'
     'bin/composer':   '/usr/local/php/php5.6/bin/php /usr/local/bin/composer'
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
-        ControlPath:    /tmp/multiplexing.data
+        ControlPath:            /tmp/multiplexing.data
+        UserKnownHostsFile:     ~/.ssh/known_hosts
 
 demo:
     hostname:         amapa.webtown.hu
@@ -18,7 +19,7 @@ demo:
     deploy_path:      /srv/docker/{{ project_directory }}
     user:             fchris82
     # Ide húzzuk be az .ssh kulcsokat a gitlab-runner-ből, lásd `.docker/docker-compose.gitlab-ci.yml` fájl!
-    identity_file:    /home/user/.ssh/id_rsa
+    identityFile:     ~/.ssh/id_rsa
     branch:           develop
     symfony_env:      dev
     # A --no-dev-et kivettük belőle, mivel ez dev.
@@ -42,4 +43,27 @@ demo:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:            /tmp/multiplexing.data
         # Szintén az előbbi indok miatt szükséges egy írható és olvasható, előre kitöltött known_hosts. Tartalom hozzáadása: `ssh-keyscan -t rsa amapa.webtown.hu`
-        UserKnownHostsFile:     /var/www/.deployer/known_hosts
+        UserKnownHostsFile:     ~/.ssh/known_hosts
+    workflow_project_config: |
+        imports: [.wf.yml.dist]
+
+        # The configs of recipes
+        recipes:
+            # Switch on deployer env
+            php_deployer_environment: ~
+            # Switch on mail
+            mail: ~
+
+            # Include a MySQL service
+            mysql:
+                local_volume: false
+                # disable ports
+                port: 0
+
+            # You can enable the nginx-reverse-proxy.
+            nginx_reverse_proxy:
+                # You have to set the service and its host and port settings.
+                settings:
+                    web:
+                        host: hte.amapa.webtown.hu
+                        port: 88
