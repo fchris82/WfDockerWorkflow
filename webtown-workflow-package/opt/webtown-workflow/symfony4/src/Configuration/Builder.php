@@ -196,7 +196,43 @@ class Builder
         if (!in_array($dataPath[0], ['/', '~'])) {
             $dataPath = $initEvent->getProjectPath() . '/' . $dataPath;
         }
-        if (!$this->fileSystem->exists($dataPath) || !is_dir($dataPath)) {
+        // The $dataPath would be a symbolic link if you are using deployer. If it is a symbolic link, it can link to
+        // "outside from docker" and it causes error! That's why you have to check, if it is an existing symbolic link,
+        // then you have to skip the `mkdir` command!
+        //
+        // Host filestructure:
+        // -------------------
+        //
+        //  [project_path]
+        //      ├── current -> releases/28
+        //      ├── release -> releases/29
+        //      ├── releases
+        //      │   ├── 28
+        //      │   │   └── [...]
+        //      │   │
+        //      │   └── 29
+        //      │       ├── .wf
+        //      │       │   └── .data -> ../../../shared/.wf/.data
+        //      │       │
+        //      │       └── [...]
+        //      │
+        //      └── shared
+        //          ├── .wf
+        //          │   └── .data       <- Link to here, it is missing in docker!
+        //          │       └── [...]
+        //          │
+        //          └── [...]
+        //
+        // Container filestructure:
+        // -------------------
+        //
+        //  [project_path]
+        //      ├── .wf
+        //      │   └── .data -> ../../../shared/.wf/.data  <== Missing link target!
+        //      │
+        //      └── [...]
+        //
+        if ((!$this->fileSystem->exists($dataPath) || !is_dir($dataPath)) && !is_link($dataPath)) {
             $this->fileSystem->mkdir($dataPath);
         }
         $config['docker_data_dir'] = $dataPath;
