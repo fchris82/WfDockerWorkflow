@@ -114,10 +114,17 @@ if [ "${CI}" == "0" ] && [ -t 1 ]; then
     TTY="-it"
 fi
 
+# If the .wf.yml is a symlink, we put it into directly. It happens forexample if you are using deployer on a server, and
+# share this file among different versions.
+if [ -L ${WORKDIR}/${WF_WORKING_DIRECTORY_NAME} ]; then
+    CONFIG_FILE_SHARE="$(readlink -f ${WORKDIR}/${WF_WORKING_DIRECTORY_NAME}):${WORKDIR}/${WF_WORKING_DIRECTORY_NAME}"
+fi;
+
 docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
             -w ${WORKDIR} \
             ${WORKDIR_SHARE} \
+            ${CONFIG_FILE_SHARE:''} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
