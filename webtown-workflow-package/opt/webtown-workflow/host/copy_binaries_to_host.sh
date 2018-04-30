@@ -20,3 +20,7 @@ cp -f -R ${DIR}/recipes ${HOME}/.webtown-workflow/
 
 # COPY config file
 cp --backup ${DIR}/../../../etc/webtown-workflow/* ${HOME}/.webtown-workflow/config/
+
+# Symfony cache directory
+mkdir -p ${HOME}/.webtown-workflow/cache
+chmod 777 ${HOME}/.webtown-workflow/cache

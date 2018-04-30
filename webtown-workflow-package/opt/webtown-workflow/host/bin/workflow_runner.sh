@@ -139,8 +139,9 @@ docker run ${TTY} \
             -w ${WORKDIR} \
             ${WORKDIR_SHARE} \
             ${CONFIG_FILE_SHARE} \
-            ${RECIPES_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
+            ${RECIPES_SHARE} \
+            -v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
