@@ -12,7 +12,7 @@ services:
 volumes:
 {% for service, settings in volumes %}
 {% for name, target in settings %}
-    {{ service}}_{{ name }}_{{ env.CI_PIPELINE_ID | default(git_hash) | default('0') }}:
+    {{ service }}_{{ name }}_{{ env.CI_PIPELINE_ID | default(git_hash) | default('0') }}:
         driver: local
 {% endfor %}
 {% endfor %}
