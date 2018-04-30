@@ -25,7 +25,7 @@ _wf() {
 
     case $state in
         command)
-            _arguments '1: :(-ps --docker-ps reconfigure)'
+            _arguments '1: :(-ps --docker-ps reconfigure --reload --config-dump)'
             compadd $(echo ${list:-$(wf list)})
         ;;
         parameters)
@@ -38,6 +38,9 @@ _wf() {
                 ;;
                 exec | run | docker-compose)
                     _arguments '*: :($(echo ${services:-$(wf docker-compose config --services)}))'
+                ;;
+                --config-dump)
+                    _arguments '*: :(--only-recipes --no-ansi --recipe=)'
                 ;;
                 *)
                     _alternative 'files:filename:_files'

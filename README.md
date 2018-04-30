@@ -1,11 +1,15 @@
 Nginx Reverse Proxy
 ===================
 
-Install the deb package:
+### Install the deb package
 
     sudo dpkg -i nginx-reverse-proxy.deb
 
-Build package:
+The configuration files are in the `/etc/nginx-reverse-proxy` directory. Eg: you can change the default port in `config` file.
+
+### Build package
+
+For developers:
 
     make rebuild_proxy
 
@@ -83,7 +87,7 @@ then you will be able to analyse the program.
 
 `DEBUG=2`
 
-- ~`DEBUG=2`
+- ~`DEBUG=1`
 - In bash scripts: `set -x`
 
 `DEBUG=3`
@@ -95,15 +99,19 @@ then you will be able to analyse the program.
 
 List all:
 
-    wizard --config-dump
+    wf --config-dump
+    
+List only names:
+
+    wf --config-dump --only-recipes
 
 List only a recipe:
 
-    wizard --config-dump --recipe=symfony3
+    wf --config-dump --recipe=symfony3
 
 Save to a file to edit:
 
-    wizard --config-dump --no-ansi > .wf.yml
+    wf --config-dump --no-ansi > .wf.yml
 
 OLD Uninstall
 =============
@@ -160,6 +168,19 @@ deploy:demo:
 
 Cookbook
 ========
+
+## Use custom recipes
+
+Create or download your own recipes what you want to use. You can put them directly to the `~/.webtown-workfow/recipes` directory
+or you can put anywhere and create a symlink to the `~/.webtown-workfow/recipes` directory:
+
+    ln -s /my/own/recipes/MyOwnRecipe ~/.webtown-workflow/recipes/MyOwnRecipe
+
+You have to reload the cache:
+
+    wf --reload
+
+> If you use an existing recipe directory name, you will override the original recipe! 
 
 ## Symfony recipes
 

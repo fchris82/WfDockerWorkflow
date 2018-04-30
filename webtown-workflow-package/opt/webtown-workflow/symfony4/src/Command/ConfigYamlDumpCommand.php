@@ -6,8 +6,6 @@ use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\ArrayNode;
-use Symfony\Component\Config\Definition\Builder\NodeBuilder;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -30,6 +28,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             ->setDescription('Project config dump. Use the <comment>--no-ansi</comment> argument if you want to put it into a file!')
             ->setHelp('Use the <info>--no-ansi</info> argument if you want to put it into a file!')
             ->addOption('recipe', null, InputOption::VALUE_OPTIONAL, 'You have to chose a recipe', null)
+            ->addOption('only-recipes', null, InputOption::VALUE_NONE, 'List only recipes in a table. It isn\'t compatible with --recipe="[recipe name]" option!')
         ;
     }
 
@@ -43,7 +42,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
         $io = new SymfonyStyle($input, $output);
 
         // We show it if the user don't want to put it into a file!
-        if ($io->isDecorated()) {
+        if ($io->isDecorated() && !$input->getOption('only-recipes')) {
             $io->title('All available parameters');
             $io->writeln('  Use the <info>--no-ansi</info> argument if you want to put it into a file!');
         }
@@ -56,6 +55,31 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             /** @var ArrayNode $rootNode */
             $rootNode = $recipe->getConfig();
             $io->write($dumper->dumpNode($rootNode->getNode(true)));
+        } elseif ($input->getOption('only-recipes')) {
+            $recipeManager = $this->getContainer()->get(RecipeManager::class);
+            /** @var ArrayNode $rootNode */
+            $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();
+            $recipeNodes = $rootNode->getChildren()['recipes']->getChildren();
+            $headers = [
+                'Root',
+                'Info',
+            ];
+            $rows = [];
+            /** @var ArrayNode $node */
+            foreach ($recipeNodes as $node) {
+                $rows[] = [
+                    $node->getName(),
+                    $node->getInfo(),
+                ];
+            }
+            // Sort by root node name!
+            usort($rows, function ($a, $b) {
+                if ($a[0] == $b[0]) {
+                    return 0;
+                }
+                return $a[0] < $b[0] ? -1 : 1;
+            });
+            $io->table($headers, $rows);
         } else {
             /** @var ArrayNode $rootNode */
             $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();

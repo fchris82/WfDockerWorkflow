@@ -76,11 +76,6 @@ case $1 in
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
         php /opt/webtown-workflow/symfony4/bin/console app:config ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
-    --config-dump)
-        shift
-        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
-    ;;
     --debug)
         shift
         eval "$BASE_PROJECT_RUN cli ${@}"

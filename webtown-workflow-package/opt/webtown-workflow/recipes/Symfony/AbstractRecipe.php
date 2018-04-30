@@ -13,13 +13,13 @@ use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
- * Class Recipe
+ * Class AbstractRecipe
  *
  * Symfony friendly environment
  *
  * @package Recipes\Symfony
  */
-class Recipe extends BaseRecipe
+class AbstractRecipe extends BaseRecipe
 {
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';
@@ -84,8 +84,9 @@ class Recipe extends BaseRecipe
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('host')
-                            ->info('<comment>Only for nginx.</comment>')
-                            ->setDeprecated('I don\'t know, is it necessary?')
+                            ->info('<comment>Only for nginx. Here you can set the host. See: etc/vhost.conf file</comment>')
+                            ->setDeprecated('We are using the `_` special settings so it may be redundant!')
+                            ->example('project.docker.company.com')
                             ->cannotBeEmpty()
                             ->defaultValue('localhost')
                         ->end()

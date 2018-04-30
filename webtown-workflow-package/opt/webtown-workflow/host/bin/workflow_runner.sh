@@ -118,13 +118,28 @@ fi
 # share this file among different versions.
 if [ -L ${WORKDIR}/${WF_CONFIGURATION_FILE_NAME} ]; then
     CONFIG_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_CONFIGURATION_FILE_NAME}):${WORKDIR}/${WF_CONFIGURATION_FILE_NAME}"
-fi;
+fi
+
+# Insert custom recipes
+if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
+    RECIPES_PATH=/opt/webtown-workflow/recipes
+    RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes -mindepth 1 -maxdepth 1 -type d -print0 |
+        while IFS= read -r -d $'\0' line; do
+            RECIPES_SOURCE=$line
+            if [ -L $RECIPES_SOURCE ]; then
+                RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
+            fi
+            echo "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) "
+        done
+    )
+fi
 
 docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
             -w ${WORKDIR} \
             ${WORKDIR_SHARE} \
             ${CONFIG_FILE_SHARE} \
+            ${RECIPES_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \

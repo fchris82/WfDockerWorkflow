@@ -15,6 +15,8 @@ mkdir -p ${HOME}/.webtown-workflow/config
 
 # COPY binary file
 cp -f -R ${DIR}/bin/* ${HOME}/.webtown-workflow/bin/
+# COPY recipes directory
+cp -f -R ${DIR}/recipes ${HOME}/.webtown-workflow/
 
 # COPY config file
 cp --backup ${DIR}/../../../etc/webtown-workflow/* ${HOME}/.webtown-workflow/config/
