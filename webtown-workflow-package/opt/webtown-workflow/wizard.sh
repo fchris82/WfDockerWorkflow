@@ -39,7 +39,7 @@ BASE_PROJECT_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.project.yml \
             run --rm"
 
-if [ "${CI:-0}" != "0" ] || [ ! -t 1 ]; then
+if [ "${CI:-0}" != "0" ] || [ "${WF_TTY}" == "0" ]; then
     DISABLE_TTY="--no-ansi --no-interaction"
 fi
 

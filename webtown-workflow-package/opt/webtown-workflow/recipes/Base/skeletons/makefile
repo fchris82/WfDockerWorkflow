@@ -16,7 +16,7 @@ SHARED_DIRS			:=
 
 # A Gitlab CI miatt kell definiálni.
 SUDO              := sudo
-DOCKER_PSEUDO_TTY := $$(if [ ! -t 1 ]; then  echo '-T'; fi)
+DOCKER_PSEUDO_TTY := $$(if [ "$$WF_TTY" == "0" ]; then  echo '-T'; fi)
 
 # Ennek muszáj elől lennie, mert szeretnénk, ha ez lenne az első és alapértelmezett "target"
 define PROJECT_HELP

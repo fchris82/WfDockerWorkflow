@@ -57,6 +57,9 @@ HOME=${HOME:-${LOCAL_USER_HOME}}
 WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
 CI=${CI:-0}
 # WF
+# We look at the TTY existing. If we are in docker then the "-t 1" doesn't work well
+WF_TTY=0
+if [ -t 1 ]; then WF_TTY=1; fi
 WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:webtown/webtown-workflow.git}
 WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
 WF_WORKING_DIRECTORY_NAME=${WF_WORKING_DIRECTORY_NAME:-.wf}
@@ -80,6 +83,7 @@ CHAIN_VARIABLE_NAMES=(
     'WF_CONFIGURATION_FILE_NAME'
     'DEBUG'
     'WF_DOCKER_HOST_CHAIN'
+    'WF_TTY'
 )
 
 DOCKER_COMPOSE_ENV=" \
@@ -92,7 +96,8 @@ DOCKER_COMPOSE_ENV=" \
     -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
     -e WF_DOCKER_HOST_CHAIN=${WF_DOCKER_HOST_CHAIN} \
     -e DEBUG=${DEBUG} \
-    -e CI=${CI}"
+    -e CI=${CI} \
+    -e WF_TTY=${WF_TTY}"
 # If the $WORKDIR is outside the user's home directory, we have to put in the docker
 if [[ ! ${WORKDIR} =~ ^${HOME:-${LOCAL_USER_HOME}}(/|$) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
     WORKDIR_SHARE="-v ${WORKDIR}:${WORKDIR}"
@@ -110,7 +115,7 @@ WORKFLOW_CONFIG=" \
 if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ]; then
     WORKFLOW_CONFIG="--env-file ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env"
 fi
-if [ "${CI}" == "0" ] && [ -t 1 ]; then
+if [ "${CI}" == "0" ] || [ "${WF_TTY}" == "1" ]; then
     TTY="-it"
 fi
 
