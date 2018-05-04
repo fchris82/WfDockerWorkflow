@@ -58,8 +58,7 @@ WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
 CI=${CI:-0}
 # WF
 # We look at the TTY existing. If we are in docker then the "-t 1" doesn't work well
-WF_TTY=0
-if [ -t 1 ]; then WF_TTY=1; fi
+if [ -z "${WF_TTY}" ] && [ -t 1 ]; then WF_TTY=1; else WF_TTY=0; fi
 WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:webtown/webtown-workflow.git}
 WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
 WF_WORKING_DIRECTORY_NAME=${WF_WORKING_DIRECTORY_NAME:-.wf}
@@ -115,8 +114,12 @@ WORKFLOW_CONFIG=" \
 if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ]; then
     WORKFLOW_CONFIG="--env-file ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env"
 fi
-if [ "${CI}" == "0" ] || [ "${WF_TTY}" == "1" ]; then
+if [ "${CI}" == "0" ] && [ "${WF_TTY}" == "1" ]; then
     TTY="-it"
+fi
+if [ "${CI}" == "0" ]; then
+    # We use the shared cache only out of cache
+    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache"
 fi
 
 # If the .wf.yml is a symlink, we put it into directly. It happens forexample if you are using deployer on a server, and
@@ -146,7 +149,7 @@ docker run ${TTY} \
             ${CONFIG_FILE_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
             ${RECIPES_SHARE} \
-            -v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache \
+            ${SHARED_SF_CACHE} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
