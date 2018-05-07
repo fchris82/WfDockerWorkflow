@@ -23,4 +23,5 @@ cp --backup ${DIR}/../../../etc/webtown-workflow/* ${HOME}/.webtown-workflow/con
 
 # Symfony cache directory
 mkdir -p ${HOME}/.webtown-workflow/cache
+rm -rf ${HOME}/.webtown-workflow/cache/*
 chmod 777 ${HOME}/.webtown-workflow/cache
