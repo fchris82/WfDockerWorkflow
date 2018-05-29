@@ -272,12 +272,7 @@ class Builder
      * @param array $recipeConfig
      * @param array $globalConfig
      *
-     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \ReflectionException
-     * @throws \Exception
+     * @throws \App\Exception\MissingRecipeException
      */
     protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
