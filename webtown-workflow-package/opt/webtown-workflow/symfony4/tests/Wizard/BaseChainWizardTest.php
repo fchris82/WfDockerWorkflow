@@ -3,7 +3,7 @@
 namespace App\Tests\Wizard;
 
 use App\Wizard\BaseChainWizard;
-use PHPUnit\Framework\TestCase;
+use App\Tests\TestCase;
 
 class BaseChainWizardTest extends TestCase
 {

@@ -51,6 +51,28 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
         return static::NAME;
     }
 
+    /**
+     * Create default host (only [project_name].[default_tld] for the FIRST service)
+     *
+     * @param $projectPath
+     * @param $recipeConfig
+     * @param $globalConfig
+     *
+     * @return \App\Skeleton\SkeletonFile[]|array
+     *
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
+    public function build($projectPath, $recipeConfig, $globalConfig)
+    {
+        $recipeConfig = $this->setTheDefaultHostIfNotSet($projectPath, $recipeConfig, $globalConfig);
+
+        return parent::build($projectPath, $recipeConfig, $globalConfig);
+    }
+
     public function getConfig()
     {
         $rootNode = parent::getConfig();
@@ -90,23 +112,9 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
                             ->end()
                         ->end()
                         // Replace the service names in domains
-                        // @todo Vhol majd ellenőrizni kellene, hogy nem adtuk-e hozzá direktben az alapértelmezett domain-t.
                         ->validate()
                             ->always(function ($v) {
-                                // Create default host (only [project_name].[default_tld] for FIRST service
-                                $defaultTld = trim(
-                                    $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
-                                    '.'
-                                );
-                                $defaultHost = sprintf('%s.%s',static::PROJECT_NAME_PARAMETER_NAME, $defaultTld);
-                                $isFirst = true;
-                                // Add default to the first service
                                 foreach ($v as $serviceName => $settings) {
-                                    if ($isFirst && strpos($settings['host'], static::SERVICE_NAME_PARAMETER_NAME) === 0) {
-                                        $settings['host'] = $defaultHost . ' ' . $settings['host'];
-                                    }
-                                    $isFirst = false;
-
                                     $settings['host'] = strtr($settings['host'], [static::SERVICE_NAME_PARAMETER_NAME => $serviceName]);
                                     $v[$serviceName] = $settings;
                                 }
@@ -158,5 +166,57 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
     {
         $config = $buildInitEvent->getConfig();
         $buildInitEvent->setParameter(static::PROJECT_NAME_PARAMETER_NAME, $config['name']);
+    }
+
+    /**
+     * Set a default host (only the [project_name].[tld] format) for the first service if there isn't set it anywhere.
+     *
+     * @param string $projectPath
+     * @param array  $recipeConfig
+     * @param array  $globalConfig
+     *
+     * @return array
+     */
+    protected function setTheDefaultHostIfNotSet($projectPath, $recipeConfig, $globalConfig)
+    {
+        $defaultTld = trim(
+            $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
+            '.'
+        );
+        $defaultHost = sprintf('%s.%s', $globalConfig['name'], $defaultTld);
+
+        if (!$this->defaultHostIsSet($recipeConfig, $defaultHost)) {
+            foreach ($recipeConfig['settings'] as $serviceName => $settings) {
+                // Only the default host name exists: [service_name].[project_name].[tld]
+                if (strpos($settings['host'], $serviceName) === 0) {
+                    $settings['host'] = $defaultHost . ' ' . $settings['host'];
+                    $recipeConfig['settings'][$serviceName] = $settings;
+                }
+                break;
+            }
+        }
+
+        return $recipeConfig;
+    }
+
+    /**
+     * It tries to find to project default host name (format: [project_name].[tld] ), and if it is set somewhere it will
+     * return true.
+     *
+     * @param array  $recipeConfig
+     * @param string $defaultHost
+     *
+     * @return bool
+     */
+    protected function defaultHostIsSet($recipeConfig, $defaultHost)
+    {
+        foreach ($recipeConfig['settings'] as $serviceName => $settings) {
+            $hosts = explode(' ', $settings['host']);
+            if (in_array($defaultHost, $hosts)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

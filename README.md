@@ -169,6 +169,13 @@ deploy:demo:
 Cookbook
 ========
 
+## Run PHP Unit tests
+
+You can create unit test and run.
+
+    cd [where-the-wizard.sh-is]
+    ./wizard.sh --debug symfony4/bin/phpunit -c symfony4
+
 ## Use custom recipes
 
 Create or download your own recipes what you want to use. You can put them directly to the `~/.webtown-workfow/recipes` directory

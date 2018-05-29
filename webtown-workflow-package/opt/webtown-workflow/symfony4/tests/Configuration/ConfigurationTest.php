@@ -4,7 +4,7 @@ namespace App\Tests\Configuration;
 
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
-use PHPUnit\Framework\TestCase;
+use App\Tests\TestCase;
 
 class ConfigurationTest extends TestCase
 {
@@ -98,13 +98,5 @@ class ConfigurationTest extends TestCase
                 ['test' => ['subvalue' => ['test2']]],
             ],
         ];
-    }
-
-    protected static function getMethod($class, $name) {
-        $class = new \ReflectionClass($class);
-        $method = $class->getMethod($name);
-        $method->setAccessible(true);
-
-        return $method;
     }
 }

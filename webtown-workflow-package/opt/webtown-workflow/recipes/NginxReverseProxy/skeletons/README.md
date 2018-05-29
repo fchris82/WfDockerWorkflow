@@ -8,6 +8,7 @@ This recipe based on the `jwilder/nginx-proxy` docker proxy image.
 ```yaml
 # We can us it
 name: test-page
+#     ^^^^^^^^^ The recipe use this name as default!
 
 # ...
 recipes:

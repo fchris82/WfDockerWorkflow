@@ -11,7 +11,7 @@ namespace Tests\App\Skeleton;
 use App\Wizard\Manager;
 use App\Wizard\PublicWizardInterface;
 use App\Wizard\WizardInterface;
-use PHPUnit\Framework\TestCase;
+use App\Tests\TestCase;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;

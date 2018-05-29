@@ -8,7 +8,7 @@
 
 namespace App\Tests\Dummy;
 
-use PHPUnit\Framework\TestCase;
+use App\Tests\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class FilesystemTest extends TestCase

@@ -13,7 +13,7 @@ use App\Wizard\WizardInterface;
 use App\Tests\Dummy\Command;
 use App\Tests\Dummy\Filesystem;
 use App\Tests\Dummy\Input;
-use PHPUnit\Framework\TestCase;
+use App\Tests\TestCase;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 
 class BaseSkeletonTestCase extends TestCase
