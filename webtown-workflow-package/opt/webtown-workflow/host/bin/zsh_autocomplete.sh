@@ -50,6 +50,16 @@ _wf() {
             [[ ! -z $words[3] ]] && _alternative 'files:filename:_files'
         ;;
     esac
+
+    # Reload to test: unfunction _wf && autoload -U _wf
+    # Here we try to find recipes autocompletes.
+    if [ -f $config_file ]; then
+        local recipe_autocompletes_file=${wf_directory_name}/autocomplete.recipes
+        if [ ! -f $recipe_autocompletes_file ]; then
+            find -L ${wf_directory_name} -mindepth 2 -maxdepth 2 -type f -name 'autocomplete.zsh' -printf "source %p\n" > $recipe_autocompletes_file
+        fi
+        source $recipe_autocompletes_file
+    fi
 }
 
 _wf "$@"
