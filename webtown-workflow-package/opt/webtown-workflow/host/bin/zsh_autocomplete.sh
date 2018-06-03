@@ -1,5 +1,7 @@
 #compdef wf
 
+# Here we created an autocomplete zsh extension. There are defaults and you can use additional recipe autocompletes.
+
 _wf() {
     local state
 
@@ -12,11 +14,6 @@ _wf() {
         local cache_list_file=${wf_directory_name}/autocomplete.list
         [[ ! -f $cache_list_file ]] || [[ -z $(cat $cache_list_file) ]] && wf list > $cache_list_file
         list=$(<$cache_list_file)
-
-        # Create autocomplete services
-        local cache_services_file=${wf_directory_name}/autocomplete.services
-        [[ ! -f $cache_services_file ]] || [[ -z $(cat $cache_services_file) ]] && wf docker-compose config --services > $cache_services_file
-        services=$(<$cache_services_file)
     fi
 
     _arguments \
@@ -30,20 +27,8 @@ _wf() {
         ;;
         parameters)
             case $words[2] in
-                feature | hotfix)
-                    _arguments '*: :(--from-this --disable-db --reload-d)'
-                ;;
-                connect | enter | debug-enter | logs)
-                    _arguments '2: :($(echo ${services:-$(wf docker-compose config --services)}))'
-                ;;
-                exec | run | docker-compose)
-                    _arguments '*: :($(echo ${services:-$(wf docker-compose config --services)}))'
-                ;;
                 --config-dump)
                     _arguments '*: :(--only-recipes --no-ansi --recipe=)'
-                ;;
-                *)
-                    _alternative 'files:filename:_files'
                 ;;
             esac
             # Allow files from third parameter
