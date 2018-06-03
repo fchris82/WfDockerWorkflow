@@ -120,8 +120,11 @@ function get_project_configuration_file {
 }
 
 function create_makefile_from_config {
+    # Config version
     CONFIG_HASH=$(cksum ${PROJECT_CONFIG_FILE} | awk '{ print $1 }')
-    PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.mk"
+    # Program "version"
+    WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
+    PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
         ${DIR}/../webtown-workflow/wizard.sh --reconfigure \
             --file ${PROJECT_CONFIG_FILE} \
