@@ -129,7 +129,7 @@ function create_makefile_from_config {
         ${DIR}/../webtown-workflow/wizard.sh --reconfigure \
             --file ${PROJECT_CONFIG_FILE} \
             --target-directory ${WF_WORKING_DIRECTORY_NAME} \
-            --config-hash ${CONFIG_HASH} ${@} || quit
+            --config-hash ${CONFIG_HASH}.${WF_VERSION} ${@} || quit
     fi
 }
 
