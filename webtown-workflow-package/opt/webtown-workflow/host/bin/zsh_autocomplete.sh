@@ -41,6 +41,7 @@ _wf() {
     if [ -f $config_file ]; then
         local recipe_autocompletes_file=${wf_directory_name}/autocomplete.recipes
         if [ ! -f $recipe_autocompletes_file ]; then
+            # find all autocomplete.zsh file in recipes!
             find -L ${wf_directory_name} -mindepth 2 -maxdepth 2 -type f -name 'autocomplete.zsh' -printf "source %p\n" > $recipe_autocompletes_file
         fi
         source $recipe_autocompletes_file
