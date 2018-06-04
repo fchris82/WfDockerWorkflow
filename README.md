@@ -271,6 +271,10 @@ The program find and include all of the `autocomplete.zsh` called file.
 
 You can learn from the existing `autocomplete.zsh` files!
 
+> If you want to test it while you are developing, you must to edit the installed file directly in the `~/.webtown-workflow/bin/zsh_autocomplete.sh` file.
+>
+> Reload the edited file: `unfunction _wf && autoload -U _wf`
+
 --------------------------------------------------------------------
 
 Webtown Workflow Installer
