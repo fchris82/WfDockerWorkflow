@@ -13,15 +13,16 @@ use Recipes\Symfony\AbstractRecipe as BaseRecipe;
 /**
  * Class Recipe
  *
- * Symfony 3 friendly environment
+ * Symfony 4 friendly environment
  *
- * @package Recipes\Symfony3
+ * @package Recipes\Symfony4
  */
 class Recipe extends BaseRecipe
 {
     const NAME = 'symfony4';
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
+    const DEFAULT_VERSION = 'php7.2';
 
     public static function getSkeletonParents()
     {

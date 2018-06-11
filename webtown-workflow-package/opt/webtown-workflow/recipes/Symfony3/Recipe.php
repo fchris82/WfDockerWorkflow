@@ -22,6 +22,7 @@ class Recipe extends BaseRecipe
     const NAME = 'symfony3';
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
+    const DEFAULT_VERSION = 'php7.1';
 
     public static function getSkeletonParents()
     {

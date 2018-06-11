@@ -24,6 +24,7 @@ class AbstractRecipe extends BaseRecipe
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
+    const DEFAULT_VERSION = 'php7.2';
 
     public function getName()
     {
@@ -51,7 +52,7 @@ class AbstractRecipe extends BaseRecipe
                 ->scalarNode('version')
                     ->info('<comment>Docker image tag. If you want to change image too, use the <info>image</info> option.</comment>')
                     ->cannotBeEmpty()
-                    ->defaultValue('php7.1')
+                    ->defaultValue(static::DEFAULT_VERSION)
                 ->end()
                 ->scalarNode('env')
                     ->info('<comment>Symfony environment.</comment>')

@@ -8,9 +8,9 @@
 
 namespace Recipes\SymfonyEz1;
 
-use Recipes\Symfony2\Recipe as BaseRecipe;
+use Recipes\Symfony2\Recipe as Symfony2Recipe;
 
-class Recipe extends BaseRecipe
+class Recipe extends Symfony2Recipe
 {
     const NAME = 'symfony_ez1';
 }
