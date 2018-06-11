@@ -53,7 +53,7 @@ mkdir -p ~/bin
 ln -sf $COMMAND_PATH/* ~/bin
 
 # Install autocomplete
-if [ -d ~/.zsh ]; then
+if [ -f ~/.zshrc ]; then
     mkdir -p ~/.zsh/completion
     ln -sf ~/.webtown-workflow/bin/zsh_autocomplete.sh ~/.zsh/completion/_wf
     if [ $(cat ~/.zshrc| egrep "^[^#]*fpath[^#]*/.zsh/completion" | wc -l) == 0 ]; then
