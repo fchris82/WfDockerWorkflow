@@ -25,6 +25,10 @@ variables:
     # This is an integer between 0 and 3
 #    DEBUG: 2
 
+.all_jobs: &all_jobs
+    tags:
+        - wf
+
 .debug:
     script:
         # Environment
@@ -95,6 +99,7 @@ variables:
 
 build:
     stage: build
+    <<: *all_jobs
     script:
         # Init
         ###>> Így kell inicializálni?
@@ -111,6 +116,7 @@ build:
 
 test:codeSniffer:
     stage: test
+    <<: *all_jobs
     <<: *docker_init_and_stop
     script:
         ###>> A PHP-CS fixet így kell hívni?
@@ -119,6 +125,7 @@ test:codeSniffer:
 
 test:database:
     stage: test
+    <<: *all_jobs
     <<: *docker_init_and_stop
     script:
         - wf sf doctrine:mapping:info
@@ -127,12 +134,14 @@ test:database:
 
 test:unittest:
     stage: test
+    <<: *all_jobs
     <<: *docker_init_and_stop
     script:
         - wf php ${BIN_DIRECTORY}/phpunit --debug
 
 test:phpmd:
     stage: test
+    <<: *all_jobs
     <<: *docker_init_and_stop
     script:
         - wf php ${BIN_DIRECTORY}/phpmd src xml phpmd.xml --reportfile-xml phpmd-results.xml --reportfile-html phpmd-results.html | sed --unbuffered
@@ -148,6 +157,7 @@ test:phpmd:
 
 deploy:demo:
     stage: deploy
+    <<: *all_jobs
     <<: *docker_init_and_stop
     variables:
         SSH_KEY:    ${SSH_DEMO_DEPLOY_KEY}
@@ -165,6 +175,7 @@ deploy:demo:
 ###>> Ezt ki kell tölteni
 deploy:prod:
     stage: deploy
+    <<: *all_jobs
     <<: *docker_init_and_stop
     script:
         - echo "Deploy to production server"
@@ -179,6 +190,7 @@ deploy:prod:
 # This doesn't remove the image
 cleanup:auto:
     stage: cleanup
+    <<: *all_jobs
     script:
         - wf docker-compose rm -v -f -s || true
         - docker rm -v $(docker ps -a -q -f status=exited) || true
@@ -191,6 +203,7 @@ cleanup:auto:
 # This remove the images
 cleanup:images:
     stage: cleanup
+    <<: *all_jobs
     script:
         # Ezt adtuk hozzá pluszban, ebben más, mint a cleanup
         - docker rmi -f $(docker images -q "${COMPOSE_PROJECT_NAME}*" | sort -u) || true
