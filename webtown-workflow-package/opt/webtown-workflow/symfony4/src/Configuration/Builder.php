@@ -408,7 +408,7 @@ define CMD_DOCKER_BASE
         --project-directory $(CURDIR)
 endef
 define CMD_DOCKER_RUN
-    $(CMD_DOCKER_BASE) run --rm $(DOCKER_PSEUDO_TTY)
+    DOCKER_RUN=1 $(CMD_DOCKER_BASE) run --rm $(DOCKER_PSEUDO_TTY)
 endef
 # If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
 define CMD_DOCKER_RUN_CLI
