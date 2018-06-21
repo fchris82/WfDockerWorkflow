@@ -90,7 +90,7 @@ __docker_exec: __validate_args_no_empty
 
 .PHONY: __docker_run
 __docker_run: __validate_args_no_empty
-	$(CMD_DOCKER_BASE) run -e DOCKER_USER=$(DOCKER_USER) $(ARGS)
+	$(CMD_DOCKER_BASE) run -e DOCKER_USER=$(DOCKER_USER) -e DOCKER_RUN=1 $(ARGS)
 
 .PHONY: __docker_logs
 __docker_logs: __validate_args_no_empty

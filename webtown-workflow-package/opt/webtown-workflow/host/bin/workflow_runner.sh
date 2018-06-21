@@ -76,6 +76,7 @@ CHAIN_VARIABLE_NAMES=(
     'COMPOSER_HOME'
     'USER_GROUP'
     'CI'
+    'DOCKER_RUN'
     'WEBTOWN_WORKFLOW_BASE_PATH'
     'WF_SYMFONY_ENV'
     'WF_WORKING_DIRECTORY_NAME'
@@ -96,6 +97,7 @@ DOCKER_COMPOSE_ENV=" \
     -e WF_DOCKER_HOST_CHAIN=${WF_DOCKER_HOST_CHAIN} \
     -e DEBUG=${DEBUG} \
     -e CI=${CI} \
+    -e DOCKER_RUN=${DOCKER_RUN:-0} \
     -e WF_TTY=${WF_TTY}"
 # If the $WORKDIR is outside the user's home directory, we have to put in the docker
 if [[ ! ${WORKDIR} =~ ^${HOME:-${LOCAL_USER_HOME}}(/|$) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then

@@ -14,6 +14,7 @@ services:
         image:  fchris82/symfony:{{ version }}
         environment:
             CI: ${CI}
+            DOCKER_RUN: ${DOCKER_RUN}
             COMPOSER_MEMORY_LIMIT: -1
             DOCKER_USER: ${DOCKER_USER}
             DEBUG: ${DEBUG}
