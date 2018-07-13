@@ -19,7 +19,7 @@ case $1 in
         chmod +x /tmp/install-wf.sh
         /tmp/install-wf.sh
         rm /tmp/install-wf.sh
-        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf --clean-cache
+        # @todo (Chris) vhogy meg kellene oldani az automatikus cache törlést. wf --clean-cache
     ;;
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}
