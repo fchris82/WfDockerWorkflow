@@ -14,6 +14,11 @@ Anywhere:
 
   -h    --help                      ${GREEN}Show this help${RESTORE}
   -u    --update                    ${GREEN}Self update. ${BOLD}You need sudo permission!${RESTORE}
+        --reload | --clean-cache    ${GREEN}Clean WF cache.${RESTORE}
+        --config-dump               ${GREEN}List all configuration. Modifiers:${RESTORE}
+                ${YELLOW}--only-recipes${RESTORE}      List only the recipe names.
+                ${YELLOW}--recipe=symfony3${RESTORE}   List only the selected recipe.
+                ${YELLOW}--no-ansi${RESTORE}           Disable colors (if you want to put the response in a file)
 
 ${BOLD}${WHITE}Only any project directory:${RESTORE}
 

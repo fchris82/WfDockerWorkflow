@@ -27,7 +27,7 @@ _wf() {
 
     case $state in
         command)
-            _arguments '1: :(-ps --docker-ps reconfigure --reload --config-dump)'
+            _arguments '1: :(-ps --docker-ps reconfigure --reload --clean-cache --config-dump)'
             [[ -f $config_file ]] && [[ -d $wf_directory_name ]] && compadd $(echo ${list:-$(wf list)})
         ;;
         parameters)
