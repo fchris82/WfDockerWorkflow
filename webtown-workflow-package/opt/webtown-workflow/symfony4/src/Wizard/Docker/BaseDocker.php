@@ -132,7 +132,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
 
         // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik
         try {
-            $symfonyVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/symfony');
+            $symfonyVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/config');
         } catch (\Exception $e) {
             $symfonyVersion = false;
         }
@@ -173,16 +173,6 @@ abstract class BaseDocker extends BaseSkeletonWizard
             default:
                 throw new \InvalidArgumentException('Invalid selection! Missiong settings!');
         }
-
-        $dockerRepoQuestion = new Question('Set the engine docker repository [<info>amapa.webtown.hu:5000</info>]', 'amapa.webtown.hu:5000');
-        $variables['docker_engine_repo_base'] = $this->ask($dockerRepoQuestion);
-        $defaultRepoName = basename($this->getEnv('ORIGINAL_PWD', '???')) . '-engine';
-        $dockerRepoNameQuestion = new Question(sprintf(
-            'Set the engine docker repository name [%s/<info>%s</info>]',
-            $variables['docker_engine_repo_base'],
-            $defaultRepoName
-        ), $defaultRepoName);
-        $variables['docker_engine_repo_name'] = $this->ask($dockerRepoNameQuestion);
 
         // Az eltérő változók bekérése vagy betöltése
         $variables = $this->addVariables($targetProjectDirectory, $variables);

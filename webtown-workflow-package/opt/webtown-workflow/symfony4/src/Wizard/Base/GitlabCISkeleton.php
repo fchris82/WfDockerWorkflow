@@ -33,7 +33,7 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
                 break;
             }
         }
-        $installedSfVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/symfony');
+        $installedSfVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/config');
         $sfConsoleCmd = version_compare($installedSfVersion, '3.0', '>=')
             ? 'bin/console'
             : 'app/console';

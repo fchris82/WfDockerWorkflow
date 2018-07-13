@@ -18,12 +18,12 @@ class DeployerSkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
 {
     public function getName()
     {
-        return 'Deployer (not compatible with SF4 yet!)';
+        return 'Deployer';
     }
 
     public function getInfo()
     {
-        return 'Add Deployer (not compatible with SF4 yet!)';
+        return 'Add Deployer';
     }
 
     protected function setVariables($targetProjectDirectory)
