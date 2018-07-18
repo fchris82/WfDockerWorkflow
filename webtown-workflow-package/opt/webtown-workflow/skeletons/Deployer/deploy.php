@@ -51,7 +51,7 @@ inventory(__DIR__ . '/.deployer/hosts.yml');
 
 // ============================== W O R K F L O W ================================
 task('deploy:init-config', function () {
-    cd('{{release_path}}');
+    cd('{{ "{{release_path}}" }}');
     foreach (get('dist_files') as $distFile) {
         if (!test(sprintf('[[ -f %s ]]', $distFile))) {
             run(sprintf('cp %1$s.dist %1$s', $distFile));
@@ -62,20 +62,20 @@ task('deploy:init-config', function () {
         $configPath = sys_get_temp_dir() . '/workflow_project_config.project.yml';
         $content = get('workflow_project_config');
         file_put_contents($configPath, $content);
-        upload($configPath, '{{release_path}}/.wf.yml');
+        upload($configPath, '{{ "{{release_path}}" }}/.wf.yml');
     }
 });
 before('deploy:shared', 'deploy:init-config');
 
 task('deploy:wf', function () {
-    cd('{{release_path}}');
+    cd('{{ "{{release_path}}" }}');
     writeln('Start init...');
-    run('{{wf}} init');
-    run('{{wf}} restart');
+    run('{{ "{{wf}}" }} init');
+    run('{{ "{{wf}}" }} restart');
     writeln('...Init is ready');
     writeln('Start install... (it would be long)');
     // A lassú futás miatt a timeout-ot megnöveljük
-    run('{{wf}} install', [
+    run('{{ "{{wf}}" }} install', [
         'timeout' => 1200,
     ]);
 })->onRoles(ROLE_WORKFLOW);
@@ -106,8 +106,8 @@ task('database:build', function () {
 before('deploy:symlink', 'database:build');
 
 task('database:reload', function() {
-    cd('{{release_path}}');
-    run('{{wf}} dbreload --full');
+    cd('{{ "{{release_path}}" }}');
+    run('{{ "{{wf}}" }} dbreload --full');
 })
     ->desc('Load the fixtures')
     ->onRoles(ROLE_FIXTURE_RELOAD)
@@ -130,7 +130,7 @@ foreach ($onlyDefaultTasks as $task) {
 
 // ============================== B U I L D ================================
 task('deploy:build:files-clean', function() {
-    cd('{{current_path}}');
+    cd('{{ "{{current_path}}" }}');
     // Írható könyvtárak törlése
     foreach (get('writable_dirs') as $dir) {
         run(sprintf('rm -rf %s/*', $dir));
@@ -160,29 +160,29 @@ task('deploy:build:add-composer', function() {
     $content = file_get_contents('https://getcomposer.org/composer.phar');
     $tmpFilePath = sys_get_temp_dir() . '/release_' . get('release_name') . '.composer.phar';
     file_put_contents($tmpFilePath, $content);
-    upload($tmpFilePath, '{{current_path}}/composer.phar');
+    upload($tmpFilePath, '{{ "{{current_path}}" }}/composer.phar');
     unlink($tmpFilePath);
 });
 
 task('deploy:build:update-version-number', function() {
-    cd('{{current_path}}');
+    cd('{{ "{{current_path}}" }}');
     set('git_version_tag', function() {
         return runLocally('git describe --tags --always');
     });
     $yml = <<<EOS
 parameters:
-    app.version: {{git_version_tag}}
+    app.version: {{ "{{git_version_tag}}" }}
 EOS;
     set('version_yml_content', $yml);
-    run('echo "{{version_yml_content}}" > app/config/version_info.yml');
+    run('echo "{{ "{{version_yml_content}}" }}" > app/config/version_info.yml');
 })
     ->desc('Frissíti a verzió számot.')
     ->setPrivate()
     ->onRoles(ROLE_BUILD);
 
 task('deploy:build:create-zip', function() {
-    cd('{{current_path}}');
-    run('tar -zchvf {{deploy_path}}/{{release_name}}.tar.gz .');
+    cd('{{ "{{current_path}}" }}');
+    run('tar -zchvf {{ "{{deploy_path}}" }}/{{ "{{release_name}}" }}.tar.gz .');
 })
     ->desc('Zippeli a release-t.')
     ->onRoles(ROLE_BUILD);
@@ -195,7 +195,7 @@ task('deploy:build:create-makefile', function() {
     }
     $tmpFilePath = sys_get_temp_dir() . '/release_' . get('release_name') . '.makefile';
     file_put_contents($tmpFilePath, $content);
-    upload($tmpFilePath, '{{deploy_path}}/makefile');
+    upload($tmpFilePath, '{{ "{{deploy_path}}" }}/makefile');
     unlink($tmpFilePath);
 })
     ->desc('Elkészíti a makefile-t a zip-hez.')

@@ -36,9 +36,13 @@ class ComposerInstaller
         $packages = trim(implode(' ', $packages));
         if ($packages) {
             $output->writeln('<info>Start composer require command ...</info> (' . $packages . ')');
+            $wfCommandPrefix = file_exists($targetProjectDirectory . '/.wf.yml')
+                ? 'wf'
+                : '';
             exec(sprintf(
-                'cd %s && composer require %s %s',
+                'cd %s && %s composer require %s %s',
                 $targetProjectDirectory,
+                $wfCommandPrefix,
                 implode(' ', $options),
                 $packages
             ));

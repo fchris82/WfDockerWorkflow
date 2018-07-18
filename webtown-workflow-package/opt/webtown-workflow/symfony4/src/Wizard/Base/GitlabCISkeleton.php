@@ -33,13 +33,21 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
                 break;
             }
         }
-        $installedSfVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/config');
+        $installedSfVersion = $this->getSymfonyVersion($targetProjectDirectory);
+        if (!$installedSfVersion) {
+            throw new \Exception('We don\'t find any symfony package!');
+        }
         $sfConsoleCmd = version_compare($installedSfVersion, '3.0', '>=')
             ? 'bin/console'
             : 'app/console';
-        $sfBinDir = version_compare($installedSfVersion, '3.0', '>=')
-            ? 'vendor/bin'
-            : 'bin';
+        // If the bin path is overridden in composer.json file, we use it.
+        $sfBinDir = $this->readSymfonyBinDir($targetProjectDirectory);
+        // If it doesn't exist in composer.json, we set it from SF version.
+        if (!$sfBinDir) {
+            $sfBinDir = version_compare($installedSfVersion, '3.0', '>=')
+                ? 'vendor/bin'
+                : 'bin';
+        }
 
         return [
             'project_name' => sprintf('project_%s', date('YmdHis')),

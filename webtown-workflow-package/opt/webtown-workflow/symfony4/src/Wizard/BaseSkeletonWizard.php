@@ -300,6 +300,61 @@ abstract class BaseSkeletonWizard extends BaseWizard
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('The `%s` package isn\'t installed.', $packageName));
+        return false;
+    }
+
+    /**
+     * Different projects and versions contains different packages, so we need to check more then one option.
+     *
+     * @param $targetDirectory
+     *
+     * @return bool|string
+     */
+    protected function getSymfonyVersion($targetDirectory)
+    {
+        $symfonyPackages = [
+            'symfony/config',
+            'symfony/symfony',
+        ];
+        foreach ($symfonyPackages as $symfonyPackage) {
+            $packageVersion = $this->getComposerPackageVersion($targetDirectory, $symfonyPackage);
+            if ($packageVersion) {
+                return $packageVersion;
+            }
+        }
+
+        return false;
+    }
+
+    protected function getComposerJsonInformation($targetDirectory, $infoPath, $default = null)
+    {
+        $composerJsonPath = $targetDirectory . '/composer.json';
+        if (!$this->filesystem->exists($composerJsonPath)) {
+            throw new FileNotFoundException(sprintf('The composer.json doesn\'t exist in the %s directory!', $targetDirectory));
+        }
+
+        $data = json_decode(file_get_contents($composerJsonPath), true);
+        $keys = explode('.', $infoPath);
+        $current = $data;
+        foreach ($keys as $key) {
+            if (!is_array($current) || !array_key_exists($key, $current)) {
+                return $default;
+            }
+            $current = $current[$key];
+        }
+
+        return $current;
+    }
+
+    protected function readSymfonyBinDir($targetDirectory, $default = null)
+    {
+        $byExtra = $this->getComposerJsonInformation($targetDirectory, 'extra.symfony-bin-dir');
+        if ($byExtra) {
+            return $byExtra;
+        }
+
+        $byConfig = $this->getComposerJsonInformation($targetDirectory, 'config.bin-path');
+
+        return $byConfig ?: $default;
     }
 }

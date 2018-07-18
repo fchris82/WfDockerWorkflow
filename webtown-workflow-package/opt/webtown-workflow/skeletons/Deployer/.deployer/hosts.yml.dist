@@ -23,7 +23,7 @@ demo:
     branch:           develop
     symfony_env:      dev
     # A --no-dev-et kivettük belőle, mivel ez dev.
-    composer_options: '{{composer_action}} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
+    composer_options: '{{ "{{composer_action}}" }} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'
     # WorkFlow-t használunk
     roles:            [workflow, fixtures]
     # Ez fontos!

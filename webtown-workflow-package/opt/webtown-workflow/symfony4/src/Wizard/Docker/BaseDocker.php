@@ -131,11 +131,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
         $variables['php_version'] = $this->ask($phpVersionQuestion);
 
         // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik
-        try {
-            $symfonyVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'symfony/config');
-        } catch (\Exception $e) {
-            $symfonyVersion = false;
-        }
+        $symfonyVersion = $this->getSymfonyVersion($targetProjectDirectory);
 
         if (!$symfonyVersion) {
             $symfonyVersionQuestion = new ChoiceQuestion(
@@ -149,7 +145,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
             case '4.':
                 $variables['sf_version']     = 4;
                 $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir']     = 'vendor/bin';
+                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
                 $variables['shared_dirs']    = 'var';
                 $variables['web_directory']  = 'public';
                 $variables['index_file']     = 'index.php';
@@ -157,7 +153,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
             case '3.':
                 $variables['sf_version']     = 3;
                 $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir']     = 'vendor/bin';
+                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
                 $variables['shared_dirs']    = 'var';
                 $variables['web_directory']  = 'web';
                 $variables['index_file']     = 'app.php';
@@ -165,7 +161,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
             case '2.':
                 $variables['sf_version']     = 2;
                 $variables['sf_console_cmd'] = 'app/console';
-                $variables['sf_bin_dir']     = 'bin';
+                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'bin');
                 $variables['shared_dirs']    = 'app/cache app/logs';
                 $variables['web_directory']  = 'web';
                 $variables['index_file']     = 'app.php';
