@@ -3,7 +3,8 @@ Nginx Reverse Proxy
 
 ### Install the deb package
 
-    sudo dpkg -i nginx-reverse-proxy.deb
+    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} nginx-reverse-proxy.deb | tar xO > /tmp/nginx-reverse-proxy.deb
+    sudo dpkg -i /tmp/nginx-reverse-proxy.deb
 
 The configuration files are in the `/etc/nginx-reverse-proxy` directory. Eg: you can change the default port in `config` file.
 
