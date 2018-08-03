@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Wizard\BaseWizard;
 use App\Wizard\Helper\ComposerInstaller;
 use App\Wizard\Manager;
 use App\Wizard\PublicWizardInterface;
@@ -34,7 +35,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln('');
-        $output->writeln(' <comment>!> The <question>CTRL-C</question> doesn\'t work, you are in a docker container. You can use the <question>^P + ^Q + ^C</question> (^ == CTRL).</comment>');
+        $output->writeln(' <comment>!> If the <question>CTRL-C</question> doesn\'t work, you can use the <question>^P + ^Q + ^C</question> (^ == CTRL).</comment>');
         $output->writeln('');
 
         $wizardManager = $this->getContainer()->get(Manager::class);
@@ -80,6 +81,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
 
         // BUILDS
         foreach ($selected as $key) {
+            /** @var BaseWizard|PublicWizardInterface $wizard */
             $wizard = $wizardChoices[$key];
             $wizard
                 ->setCommand($this)
@@ -93,7 +95,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
             $targetProjectDirectory = $wizard->build($_SERVER['PWD']);
 
             // A composer require paranccsal bekötjök azokat a programokat, amik szükségesek
-            ComposerInstaller::installComposerPackages($targetProjectDirectory, $wizard->getRequireComposerPackages(), $output);
+            $wizard->installComposerPackages($targetProjectDirectory);
         }
     }
 

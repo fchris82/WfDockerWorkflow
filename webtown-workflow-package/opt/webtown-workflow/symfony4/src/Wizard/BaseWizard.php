@@ -8,7 +8,8 @@
 
 namespace App\Wizard;
 
-use Sensio\Bundle\GeneratorBundle\Command\Helper\QuestionHelper;
+use App\Wizard\Helper\ComposerInstaller;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -93,7 +94,7 @@ abstract class BaseWizard implements WizardInterface
         return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
-    protected function execCmd($cmd, $output = [], $handleReturn = null)
+    protected function execCmd($cmd, $handleReturn = null)
     {
         $replace = [
             '&&' => '<question>&&</question>',
@@ -106,7 +107,7 @@ abstract class BaseWizard implements WizardInterface
         );
 
         $this->output->writeln(sprintf('[exec] <comment>%s</comment>', $printedCmd));
-        exec($cmd, $output, $return);
+        passthru($cmd, $return);
         if ($return == 0) {
             $this->output->writeln(sprintf('[<info>OK</info>] %s', $printedCmd));
         } else {
@@ -114,10 +115,72 @@ abstract class BaseWizard implements WizardInterface
         }
 
         if (is_callable($handleReturn)) {
-            $handleReturn($return, $output);
+            $handleReturn($return);
+        }
+    }
+
+
+    protected function execCmdInDocker($cmd, $targetProjectDirectory, $handleReturn = null)
+    {
+        $environments = [
+            'LOCAL_USER_ID'     => '${LOCAL_USER_ID}',
+            'LOCAL_USER_NAME'   => '${LOCAL_USER_NAME}',
+            'LOCAL_USER_HOME'   => '${LOCAL_USER_HOME}',
+            'COMPOSER_HOME'     => '${COMPOSER_HOME}',
+            'USER_GROUP'        => '${USER_GROUP}',
+            'APP_ENV'           => 'dev',
+            'XDEBUG_ENABLED'    => '0',
+            'DEBUG'             => '0',
+            'CI'                => '0',
+            'DOCKER_RUN'        => '1',
+            'WF_TTY'            => '1',
+        ];
+        $envParameters = [];
+        foreach ($environments as $name => $value) {
+            $envParameters[] = sprintf('-e %s=%s', $name, $value);
         }
 
-        return $output;
+        // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e DEBUG=0 /bin/bash -c "ls -al && php -i"
+        $dockerCmd = sprintf(
+            'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
+            $targetProjectDirectory,
+            implode(' ', $envParameters),
+            $this->getDockerCmdExtraParameters($targetProjectDirectory),
+            $this->getDockerImage(),
+            $cmd
+        );
+
+        return $this->execCmd(
+            $dockerCmd,
+            $handleReturn
+        );
+    }
+
+    protected function runComposerRequire($targetProjectDirectory, array $packages, array $options = [])
+    {
+        $packages = trim(implode(' ', $packages));
+        if ($packages) {
+            $this->output->writeln('<info>Start composer require command ...</info> (' . $packages . ')');
+            $this->execCmdInDocker(sprintf(
+                'composer require %s %s',
+                implode(' ', $options),
+                $packages
+            ), $targetProjectDirectory);
+        }
+    }
+
+    public function installComposerPackages($targetProjectDirectory)
+    {
+        $composerPackages = $this->getRequireComposerPackages();
+        if (array_key_exists(ComposerInstaller::COMPOSER_NODEV, $composerPackages)) {
+            $this->runComposerRequire($targetProjectDirectory, $composerPackages[ComposerInstaller::COMPOSER_NODEV]);
+        }
+        if (array_key_exists(ComposerInstaller::COMPOSER_DEV, $composerPackages)) {
+            $this->runComposerRequire($targetProjectDirectory, $composerPackages[ComposerInstaller::COMPOSER_DEV], ['--dev']);
+        }
+
+        // Reset!
+        $this->composerPackages = [];
     }
 
     /**
@@ -132,5 +195,20 @@ abstract class BaseWizard implements WizardInterface
     protected function getEnv($name, $default = null)
     {
         return array_key_exists($name, $_ENV) ? $_ENV[$name] : $default;
+    }
+
+    protected function getDockerCmdExtraParameters($targetProjectDirectory)
+    {
+        return '';
+    }
+
+    protected function getDockerImage()
+    {
+        return 'fchris82/wf';
+    }
+
+    protected function getDockerShell()
+    {
+        return '/bin/bash';
     }
 }

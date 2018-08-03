@@ -64,6 +64,10 @@ commands:
         - wf up
         - if [ "${1}" == "--full" ]; then wf sf doctrine:database:drop --if-exists --force; fi
         - wf sf doctrine:database:create --if-not-exists
+        # 'ezsystems/ezplatform-ee' => 'studio-clean',
+        # 'ezsystems/ezplatform-ee-demo' => 'demo',
+        # 'ezsystems/ezplatform' => 'clean',
+#        - wf sf ezplatform:install [studio-clean|demo|clean]
         - wf sf doctrine:migrations:migrate -n --allow-no-migration
         # Did you install the doctrine fixture bundle?
 #        - if [ "${1}" == "--full" ]; then wf sf doctrine:fixtures:load -n; fi

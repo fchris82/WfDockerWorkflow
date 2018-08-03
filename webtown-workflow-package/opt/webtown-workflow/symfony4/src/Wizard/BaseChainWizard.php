@@ -9,6 +9,7 @@
 namespace App\Wizard;
 
 use App\Wizard\Helper\ComposerInstaller;
+use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -97,15 +98,6 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
         }
 
         return $targetProjectDirectory;
-    }
-
-    public function installComposerPackages($targetProjectDirectory)
-    {
-        $composerPackages = $this->getRequireComposerPackages();
-        ComposerInstaller::installComposerPackages($targetProjectDirectory, $composerPackages, $this->output);
-
-        // Reset!
-        $this->composerPackages = [];
     }
 
     /**

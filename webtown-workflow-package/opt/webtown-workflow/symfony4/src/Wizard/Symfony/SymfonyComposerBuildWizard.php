@@ -60,32 +60,23 @@ class SymfonyComposerBuildWizard extends BaseWizard implements PublicWizardInter
             ];
         }
 
-        $output = [];
         $this->execCmd(sprintf('mkdir -p %s', $targetProjectDirectory));
-        $this->execCmd(
-            sprintf(
-                'cd %s && composer create-project %s . %s',
-                $targetProjectDirectory,
-                $package,
-                $version ? '"' . $version . '"' : ''
-            ),
-            $output
-        );
-        $this->output->writeln(implode("\n", $output));
+        $this->execCmd(sprintf(
+            'cd %s && composer create-project %s . %s',
+            $targetProjectDirectory,
+            $package,
+            $version ? '"' . $version . '"' : ''
+        ));
 
         // Composer config upgrade, eg: platform.php --> 7.1
         if (count($composerConfigChanges) > 0) {
-            $output = [];
             foreach ($composerConfigChanges as $key => $value) {
-                $this->execCmd(sprintf('cd %s && composer config %s %s', $targetProjectDirectory, $key, $value), $output);
+                $this->execCmd(sprintf('cd %s && composer config %s %s', $targetProjectDirectory, $key, $value));
             }
-            $this->execCmd(sprintf('cd %s && composer update', $targetProjectDirectory), $output);
-            $this->output->writeln(implode("\n", $output));
+            $this->execCmd(sprintf('cd %s && composer update', $targetProjectDirectory));
         }
 
-        $output = [];
-        $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory), $output);
-        $this->output->writeln(implode("\n", $output));
+        $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory));
 
         return $targetProjectDirectory;
     }

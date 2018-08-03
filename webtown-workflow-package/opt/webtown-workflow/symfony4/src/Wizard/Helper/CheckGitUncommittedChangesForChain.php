@@ -37,7 +37,7 @@ class CheckGitUncommittedChangesForChain extends BaseWizard
 
     public function build($targetProjectDirectory)
     {
-        $this->execCmd(sprintf('cd %s && if  git diff-index --quiet HEAD --', $targetProjectDirectory), [], function ($return, $output) {
+        $this->execCmd(sprintf('cd %s && if  git diff-index --quiet HEAD --', $targetProjectDirectory), function ($return) {
             if ($return == 1) {
                 throw new GitUncommittedChangesException('There are some uncommmitted changes!');
             } elseif ($return != 0) {

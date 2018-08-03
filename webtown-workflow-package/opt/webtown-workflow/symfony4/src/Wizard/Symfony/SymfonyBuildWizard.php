@@ -48,7 +48,6 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
 
         $version = $this->ask($versionQuestion);
         $command = '/usr/local/bin/symfony';
-        $output = [];
         $this->execCmd(sprintf('mkdir -p %s', $targetProjectDirectory));
         if ($version == 'demo') {
             $this->execCmd(sprintf(
@@ -56,7 +55,7 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
                 $targetProjectDirectory,
                 $command,
                 'demo'
-            ), $output);
+            ));
         } else {
             $this->execCmd(sprintf(
                 'cd %s && %s %s . %s',
@@ -64,12 +63,10 @@ class SymfonyBuildWizard extends BaseWizard implements PublicWizardInterface
                 $command,
                 'new',
                 $version
-            ), $output);
+            ));
         }
-        $this->output->writeln(implode("\n", $output));
 
-        $output = [];
-        $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory), $output);
+        $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory));
 
         return $targetProjectDirectory;
     }

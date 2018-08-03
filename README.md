@@ -53,7 +53,7 @@ From custom branch:
 
     wf -u [branch-name]
 
-### Debug
+### Debug and develop
 
 You have to use the `--develop` argument
 
@@ -476,7 +476,7 @@ wizard.sh -e
 If you want to test in a project, you have to use absolute path to wizard, eg:
 
 ```bash
-/home/chris/www/webtown-workflow/package/opt/webtown-workflow/wizard.sh
+/home/chris/www/webtown-workflow/webtown-workflow-package/opt/webtown-workflow/wizard.sh
 ```
 
 ### Hogyan hozz létre új Wizard-ot?
