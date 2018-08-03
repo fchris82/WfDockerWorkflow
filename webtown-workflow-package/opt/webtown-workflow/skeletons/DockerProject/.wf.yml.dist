@@ -45,7 +45,7 @@ commands:
         - mkdir -p .wf/.data/mysql
 #        - mkdir -p .wf/.data/elasticsearch
         - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
-        - 'echo "imports: [.wf.yml.dist]" >> .wf.yml'
+        - '[[ ! -f ".wf.yml" ]] && echo "imports: [.wf.yml.dist]" >> .wf.yml'
         - echo "   - <comment>.wf.yml</comment>"
         # Uncomment if you are using custom Dockerfile
 #        - cp .docker/engine/Dockerfile.dist .docker/engine/Dockerfile

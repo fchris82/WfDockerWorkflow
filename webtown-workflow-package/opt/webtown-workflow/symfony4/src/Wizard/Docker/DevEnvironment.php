@@ -63,7 +63,7 @@ class DevEnvironment extends BaseDocker implements PublicWizardInterface
      */
     protected function addVariables($targetProjectDirectory, $variables)
     {
-        $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.1</info>]', '7.1');
+        $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.1</info>]', '7.2');
         $variables['php_version'] = $this->ask($phpVersionQuestion);
         $variables['project_name'] = basename($targetProjectDirectory);
 

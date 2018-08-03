@@ -56,10 +56,8 @@ class DockerProject extends BaseDocker implements PublicWizardInterface
     {
         $defaults = [
             'project_directory'     => '.',
-            'docker_data_dir'       => '.docker/.data',
-            'docker_provisioning'   => '.docker',
             'deploy_directory'      => '.',
-            'project_name'          => basename($this->getEnv('ORIGINAL_PWD', '_')),
+            'project_name'          => basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory)),
         ];
 
         return array_merge($variables, $defaults);
