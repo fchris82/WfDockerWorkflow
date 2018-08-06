@@ -30,11 +30,12 @@ docker_compose:
 #                    context: '%wf.project_path%/.docker/engine'
 #                    dockerfile: Dockerfile
                 environment:
-                    PHP_MAX_EXECUTION_TIME: 60
-                    PHP_MEMORY_LIMIT:       256M
-                    PHP_MAX_UPLOAD:         100M
-                    PHP_MAX_FILE_UPLOADS:   10
-                    PHP_MAX_POST:           100M
+                    PHP_MAX_EXECUTION_TIME:  60
+                    PHP_MEMORY_LIMIT:        256M
+                    PHP_MAX_UPLOAD:          100M
+                    PHP_MAX_FILE_UPLOADS:    10
+                    PHP_MAX_POST:            100M
+                    SYMFONY_TRUSTED_PROXIES: 127.0.0.1,172.16.0.0/12,192.168.0.0/16
 
 #            elasticsearch:
 #                image: elasticsearch:1.7.6
