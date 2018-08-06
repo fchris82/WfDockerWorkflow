@@ -8,8 +8,10 @@
 
 namespace App\Wizard;
 
+use App\Exception\InvalidComposerVersionNumber;
 use App\Exception\ProjectHasDecoratedException;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -273,34 +275,84 @@ abstract class BaseSkeletonWizard extends BaseWizard
     }
 
     /**
-     * Read the installed version number of a package.
+     * Read the installed version number of a package:
+     *
+     *  1. Try to find in `composer.lock`
+     *  2. Try to find in `composer.json` (require)
+     *  3. Try to find in `composer.json` (require-dev)
+     *  4. [$allowNoExists == true]: Ask the user
      *
      * @param string $targetDirectory
-     *
      * @param string $packageName
+     * @param bool $allowAsk
      *
      * @return string
      */
-    protected function getComposerPackageVersion($targetDirectory, $packageName)
+    protected function getComposerPackageVersion($targetDirectory, $packageName, $allowAsk = true)
     {
-        $composerLockPath = $targetDirectory . '/composer.lock';
-        if (!$this->filesystem->exists($composerLockPath)) {
-            throw new FileNotFoundException(sprintf('The composer.lock doesn\'t exist in the %s directory!', $targetDirectory));
-        }
+        try {
+            $composerLockPath = $targetDirectory . '/composer.lock';
+            if (!$this->filesystem->exists($composerLockPath)) {
+                $composerJsonPath = $targetDirectory . '/composer.json';
+                if ($this->filesystem->exists($composerJsonPath)) {
+                    $requires = $this->getComposerJsonInformation($targetDirectory, 'require', []);
+                    if (array_key_exists($packageName, $requires)) {
+                        $version = $requires[$packageName];
 
-        $composer = json_decode(file_get_contents($composerLockPath), true);
-        foreach ($composer['packages'] as $package) {
-            if ($package['name'] == $packageName) {
-                $version = $package['version'];
-                if (preg_match('{[\d\.]+}', $version, $matches)) {
-                    return $matches[0];
+                        return $this->readComposerVersion($version);
+                    }
+                    $devRequires = $this->getComposerJsonInformation($targetDirectory, 'require-dev', []);
+                    if (array_key_exists($packageName, $devRequires)) {
+                        $version = $devRequires[$packageName];
+
+                        return $this->readComposerVersion($version);
+                    }
+
+                    if ($allowAsk) {
+                        $versionQuestion = new Question(sprintf(
+                            'We don\'t find the <info>%s</info> package in composer.json file and the composer.lock hasn\'t created yet. Please set the version manually: ',
+                            $packageName
+                        ));
+                        $version = $this->ask($versionQuestion);
+
+                        return $this->readComposerVersion($version);
+                    }
                 } else {
-                    throw new \InvalidArgumentException(sprintf('The `%s` package is installed but the version number is invalid: `%s`', $packageName, $version));
+                    throw new FileNotFoundException(sprintf('The composer.lock and composer.json don\'t exist in the %s directory!', $targetDirectory));
                 }
+            } else {
+                $composer = json_decode(file_get_contents($composerLockPath), true);
+                foreach ($composer['packages'] as $package) {
+                    if ($package['name'] == $packageName) {
+                        $version = $package['version'];
+
+                        return $this->readComposerVersion($version);
+                    }
+                }
+            }
+        } catch (InvalidComposerVersionNumber $e) {
+            if ($allowAsk) {
+                $versionQuestion = new Question(sprintf(
+                    'We need the version of the <info>%s</info> package but we got invalid version number string (<info>%s</info>). Please set the version manually:  ',
+                    $packageName,
+                    $e->getVersion()
+                ));
+                $version = $this->ask($versionQuestion);
+
+                return $this->readComposerVersion($version);
             }
         }
 
         return false;
+    }
+
+    protected function readComposerVersion($versionText)
+    {
+        if (preg_match('{[\d\.]+}', $versionText, $matches)) {
+            return $matches[0];
+        }
+
+        throw new InvalidComposerVersionNumber($versionText);
     }
 
     /**
@@ -313,11 +365,11 @@ abstract class BaseSkeletonWizard extends BaseWizard
     protected function getSymfonyVersion($targetDirectory)
     {
         $symfonyPackages = [
-            'symfony/config',
             'symfony/symfony',
+            'symfony/config',
         ];
         foreach ($symfonyPackages as $symfonyPackage) {
-            $packageVersion = $this->getComposerPackageVersion($targetDirectory, $symfonyPackage);
+            $packageVersion = $this->getComposerPackageVersion($targetDirectory, $symfonyPackage, true);
             if ($packageVersion) {
                 return $packageVersion;
             }
