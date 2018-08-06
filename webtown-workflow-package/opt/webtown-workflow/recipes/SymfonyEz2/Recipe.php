@@ -13,4 +13,5 @@ use Recipes\Symfony3\Recipe as Symfony3Recipe;
 class Recipe extends Symfony3Recipe
 {
     const NAME = 'symfony_ez2';
+    const DEFAULT_VERSION = 'ez2';
 }
