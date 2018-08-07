@@ -19,7 +19,8 @@ case $1 in
         chmod +x /tmp/install-wf.sh
         /tmp/install-wf.sh
         rm /tmp/install-wf.sh
-        # @todo (Chris) vhogy meg kellene oldani az automatikus cache törlést. wf --clean-cache
+        echo "Cleaning the cache..."
+        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf --clean-cache
     ;;
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}
