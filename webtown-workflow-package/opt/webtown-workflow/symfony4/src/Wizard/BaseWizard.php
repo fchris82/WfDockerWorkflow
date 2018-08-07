@@ -119,36 +119,49 @@ abstract class BaseWizard implements WizardInterface
         }
     }
 
+    protected function wfIsInitialized($targetProjectDirectory)
+    {
+        return file_exists($targetProjectDirectory . '/.wf.yml.dist')
+            || file_exists($targetProjectDirectory . '/.wf.yml');
+    }
 
     protected function execCmdInDocker($cmd, $targetProjectDirectory, $handleReturn = null)
     {
-        $environments = [
-            'LOCAL_USER_ID'     => '${LOCAL_USER_ID}',
-            'LOCAL_USER_NAME'   => '${LOCAL_USER_NAME}',
-            'LOCAL_USER_HOME'   => '${LOCAL_USER_HOME}',
-            'COMPOSER_HOME'     => '${COMPOSER_HOME}',
-            'USER_GROUP'        => '${USER_GROUP}',
-            'APP_ENV'           => 'dev',
-            'XDEBUG_ENABLED'    => '0',
-            'DEBUG'             => '0',
-            'CI'                => '0',
-            'DOCKER_RUN'        => '1',
-            'WF_TTY'            => '1',
-        ];
-        $envParameters = [];
-        foreach ($environments as $name => $value) {
-            $envParameters[] = sprintf('-e %s=%s', $name, $value);
-        }
+        if ($this->wfIsInitialized($targetProjectDirectory)) {
+            $dockerCmd = sprintf(
+                'cd %s && wf %s',
+                $targetProjectDirectory,
+                $cmd
+            );
+        } else {
+            $environments = [
+                'LOCAL_USER_ID'     => '${LOCAL_USER_ID}',
+                'LOCAL_USER_NAME'   => '${LOCAL_USER_NAME}',
+                'LOCAL_USER_HOME'   => '${LOCAL_USER_HOME}',
+                'COMPOSER_HOME'     => '${COMPOSER_HOME}',
+                'USER_GROUP'        => '${USER_GROUP}',
+                'APP_ENV'           => 'dev',
+                'XDEBUG_ENABLED'    => '0',
+                'DEBUG'             => '0',
+                'CI'                => '0',
+                'DOCKER_RUN'        => '1',
+                'WF_TTY'            => '1',
+            ];
+            $envParameters = [];
+            foreach ($environments as $name => $value) {
+                $envParameters[] = sprintf('-e %s=%s', $name, $value);
+            }
 
-        // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e DEBUG=0 /bin/bash -c "ls -al && php -i"
-        $dockerCmd = sprintf(
-            'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
-            $targetProjectDirectory,
-            implode(' ', $envParameters),
-            $this->getDockerCmdExtraParameters($targetProjectDirectory),
-            $this->getDockerImage(),
-            $cmd
-        );
+            // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e DEBUG=0 /bin/bash -c "ls -al && php -i"
+            $dockerCmd = sprintf(
+                'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
+                $targetProjectDirectory,
+                implode(' ', $envParameters),
+                $this->getDockerCmdExtraParameters($targetProjectDirectory),
+                $this->getDockerImage(),
+                $cmd
+            );
+        }
 
         return $this->execCmd(
             $dockerCmd,
