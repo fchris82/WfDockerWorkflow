@@ -40,6 +40,7 @@ class EzBuildWizard extends BaseWizard implements PublicWizardInterface
             'ezsystems/ezplatform-ee' => 'studio-clean',
             'ezsystems/ezplatform-ee-demo' => 'demo',
             'ezsystems/ezplatform' => 'clean',
+            'ezsystems/ezplatform-demo' => 'platform-demo',
         ];
 
         $packageQuestion = new ChoiceQuestion(
@@ -57,9 +58,9 @@ class EzBuildWizard extends BaseWizard implements PublicWizardInterface
             $composerRequired[] = 'kaliop/ezmigrationbundle';
         }
         $requireDoctrineOrmQuestion = new ConfirmationQuestion('Do you need <info>doctrine migration</info>?', true, '/^[yi]/i');
-        $requireDoctrineOrm = $this->ask($requireDoctrineOrmQuestion);
-        if ($requireDoctrineOrm) {
-            $composerRequired[] = 'doctrine/orm';
+        $requireDoctrineMigrations = $this->ask($requireDoctrineOrmQuestion);
+        if ($requireDoctrineMigrations) {
+            $composerRequired[] = 'doctrine/doctrine-migrations-bundle';
         }
 
         $this->execCmd(sprintf('mkdir -p %s', $targetProjectDirectory));
@@ -74,6 +75,13 @@ class EzBuildWizard extends BaseWizard implements PublicWizardInterface
         if (count($composerRequired) > 0) {
             $this->runComposerRequire($targetProjectDirectory, $composerRequired);
             $this->execCmd(sprintf('cd %s && git init && git add . && git commit -m "Add some composer package"', $targetProjectDirectory));
+        }
+
+        if ($requireKaliopMigration) {
+            $this->output->writeln('<info>Please register the <comment>kaliop migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
+        }
+        if ($requireDoctrineMigrations) {
+            $this->output->writeln('<info>Please register the <comment>doctrine migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
         }
 
         return $targetProjectDirectory;
