@@ -210,6 +210,7 @@ deploy:demo:
     variables:
         SSH_KEY:    ${SSH_DEMO_DEPLOY_KEY}
         STAGE:      demo
+        SLACK_COLOR: '#ccc'
     script: *deploy
     environment:
         name: demo
@@ -225,6 +226,10 @@ deploy:prod:
     stage: deploy
     <<: *all_jobs
     <<: *docker_init_and_stop
+    variables:
+        SSH_KEY:     ${SSH_PROD_DEPLOY_KEY}
+        STAGE:       prod
+        SLACK_COLOR: '#7acc7f'
     script:
         - echo "Deploy to production server"
     environment:
