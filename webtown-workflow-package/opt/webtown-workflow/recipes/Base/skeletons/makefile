@@ -93,7 +93,7 @@ endef
 export PROJECT_HELP
 .PHONY: help
 help:
-	@echo "$$PROJECT_HELP"
+	@echo -e "$$PROJECT_HELP"
 
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)

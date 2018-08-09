@@ -96,6 +96,54 @@ variables:
         - echo "wf dep deploy ${STAGE} --revision='${CI_BUILD_REF}'"
 #        - wf dep deploy -vvv ${STAGE} --revision="${CI_BUILD_REF}"
         - wf dep deploy ${STAGE} --revision="${CI_BUILD_REF}"
+        # You should set these on admin --> variables:
+        #   - SLACK_API_URL
+        #   - SLACK_ICON_EMOJI
+        #   - SLACK_ICON_16x16
+        - '[[ ! -z "$SLACK_API_URL" ]] && curl -X POST --data-urlencode "payload={
+            \"channel\": \"#gitlab\",
+            \"username\": \"GitLab\",
+            \"text\": \"*${CI_PROJECT_NAME}* has deployed to *${STAGE}*\",
+            \"icon_emoji\": \"${SLACK_ICON_EMOJI}\",
+            \"attachments\": [
+                {
+                    \"fields\": [
+                        {
+                            \"title\": \"Stage\",
+                            \"value\": \"${STAGE}\",
+                            \"short\": true
+                        },
+                        {
+                            \"title\": \"Commit reference\",
+                            \"value\": \"${CI_COMMIT_REF_NAME}\",
+                            \"short\": true
+                        },
+                        {
+                            \"title\": \"SHA1\",
+                            \"value\": \"${CI_COMMIT_SHA}\",
+                            \"short\": false
+                        },
+                        {
+                            \"title\": \"Link\",
+                            \"value\": \"${CI_ENVIRONMENT_URL}\",
+                            \"short\": false
+                        },
+                        {
+                            \"title\": \"Gitlab\",
+                            \"value\": \"${CI_PROJECT_URL}\",
+                            \"short\": false
+                        },
+                        {
+                            \"title\": \"Environments\",
+                            \"value\": \"${CI_PROJECT_URL}/environments\",
+                            \"short\": false
+                        }
+                    ],
+                    \"author_name\": \"${CI_PROJECT_NAME}\",
+                    \"author_icon\": \"${SLACK_ICON_16x16}\",
+                    \"color\": \"${SLACK_COLOR}\"
+                }
+            ]}" $SLACK_API_URL'
 
 build:
     stage: build

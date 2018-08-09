@@ -65,13 +65,17 @@ commands:
         - wf up
         - if [ "${1}" == "--full" ]; then wf sf doctrine:database:drop --if-exists --force; fi
         - wf sf doctrine:database:create --if-not-exists
+        {# @todo (Chris) Beszúrni (if is_ez)-ket #}
         # 'ezsystems/ezplatform-ee' => 'studio-clean',
         # 'ezsystems/ezplatform-ee-demo' => 'demo',
         # 'ezsystems/ezplatform' => 'clean',
-#        - wf sf ezplatform:install [studio-clean|demo|clean]
+        # 'ezsystems/ezplatform-demo' => 'platform-demo',
+#        - wf sf ezplatform:install [studio-clean|demo|clean|platform-demo]
         - wf sf doctrine:migrations:migrate -n --allow-no-migration
         # Did you install the doctrine fixture bundle?
 #        - if [ "${1}" == "--full" ]; then wf sf doctrine:fixtures:load -n; fi
+        # A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
+#        - wf sf kaliop:migration:migrate -n -u --default-language=hun-HU
 
     reinstall:
         - wf sf doctrine:database:drop --if-exists --force
