@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
     protected $ymlParser;
 
     /**
-     * @var array|string
+     * @var array|string[]
      */
     protected $importCache = [];
 
@@ -170,6 +170,8 @@ class Configuration implements ConfigurationInterface
     {
         $sourceDirectory = dirname($baseConfigYmlFullPath);
         if (array_key_exists('imports', $baseConfig)) {
+            // Ebbe gyűjtjük össze az import configokat.
+            $fullImportConfig = [];
             foreach ($baseConfig['imports'] as $importYml) {
                 if (!file_exists($importYml) || !is_file($importYml)) {
                     $importYmlAlt = $sourceDirectory . '/' . $importYml;
@@ -188,10 +190,14 @@ class Configuration implements ConfigurationInterface
                 $this->importCache[] = $importYml;
 
                 $importConfig = $this->readConfig($importYml);
-                $baseConfig = $this->configDeepMerge($importConfig, $baseConfig);
+                // A később importált felülírja a korábbit.
+                $fullImportConfig = $this->configDeepMerge($fullImportConfig, $importConfig);
 
                 array_pop($this->importCache);
             }
+
+            // A baseconfig-os felülírja az összes importosat
+            $baseConfig = $this->configDeepMerge($fullImportConfig, $baseConfig);
         }
 
         return $baseConfig;
