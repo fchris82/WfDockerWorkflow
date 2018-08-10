@@ -88,8 +88,14 @@ __docker_down:
 __docker_exec: __validate_args_no_empty
 	$(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(ARGS)
 
+# Like __docker_sudo_run + -u
 .PHONY: __docker_run
 __docker_run: __validate_args_no_empty
+	$(CMD_DOCKER_BASE) run -u $(DOCKER_USER) -e DOCKER_USER=$(DOCKER_USER) -e DOCKER_RUN=1 $(ARGS)
+
+# Like __docker_run without -u
+.PHONY: __docker_sudo_run
+__docker_sudo_run: __validate_args_no_empty
 	$(CMD_DOCKER_BASE) run -e DOCKER_USER=$(DOCKER_USER) -e DOCKER_RUN=1 $(ARGS)
 
 .PHONY: __docker_logs

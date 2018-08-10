@@ -157,6 +157,9 @@ exec: __docker_exec
 .PHONY: run
 run: __docker_run
 
+.PHONY: run
+sudo-run: __docker_sudo_run
+
 .PHONY: rebuild
 rebuild: __docker_rebuild
 

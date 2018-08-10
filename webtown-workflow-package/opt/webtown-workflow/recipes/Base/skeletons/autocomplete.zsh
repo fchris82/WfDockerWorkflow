@@ -9,7 +9,7 @@ case $state in
             connect | enter | debug-enter | logs)
                 _arguments '2: :($(echo ${services:-$(wf docker-compose config --services)}))'
             ;;
-            exec | run | docker-compose)
+            exec | run | sudo-run | docker-compose)
                 _arguments '*: :($(echo ${services:-$(wf docker-compose config --services)}))'
             ;;
         esac

@@ -48,7 +48,8 @@ Docker (compose) commands:
 | `wf enter [<service>]` | Open a `bash` with **your own** user. The default service is the `$(DOCKER_CLI_NAME)` makefile variable. It should be set by a recipe! |
 | `wf debug-enter [<service>]` | Open a `bash` with **root** user. The default service is the `$(DOCKER_CLI_NAME)` makefile variable. It should be set by a recipe! |
 | `wf exec <args>` | ~`docker-compose exec` |
-| `wf run <args>` | ~`docker-compose run` |
+| `wf run <args>` | ~`docker-compose run` (as **current user**!) |
+| `wf sudo-run <args>` | ~`docker-compose run` (as **root**)|
 | `wf rebuild` | Rebuild/refresh the containers |
 | `wf ps` | ~`docker-compose ps` |
 
