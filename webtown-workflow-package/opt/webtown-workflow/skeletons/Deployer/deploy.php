@@ -70,7 +70,7 @@ before('deploy:shared', 'deploy:init-config');
 task('deploy:wf', function () {
     cd('{{ "{{release_path}}" }}');
     writeln('Start init...');
-    run('{{ "{{wf}}" }} init');
+    run('{{ "{{wf}}" }} init --only-prod');
     run('{{ "{{wf}}" }} restart');
     writeln('...Init is ready');
     writeln('Start install... (it would be long)');

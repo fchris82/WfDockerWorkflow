@@ -46,7 +46,10 @@ commands:
         - mkdir -p .wf/.data/mysql
 #        - mkdir -p .wf/.data/elasticsearch
         - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
-        - '[[ ! -f ".wf.yml" ]] && echo "imports: [.wf.yml.dist]" >> .wf.yml'
+        - '[[ ! -f ".wf.yml" ]] && printf "imports:\n    - .wf.yml.dist\n" >> .wf.yml'
+        # If you use for example yarn for developing, you should put it only to .wf.dev.yml file, and uncomment the next 2 lines.
+#        - '[[ "${1}" != "--only-prod" ]] && [[ ! -f ".wf.yml" ]] && printf "imports:\n    - .wf.yml.dist\n    - .wf.dev.yml\n" >> .wf.yml'
+#        - '[[ "${1}" == "--only-prod" ]] && [[ ! -f ".wf.yml" ]] && printf "imports:\n    - .wf.yml.dist\n#    - .wf.dev.yml\n" >> .wf.yml'
         - echo "   - <comment>.wf.yml</comment>"
         # Uncomment if you are using custom Dockerfile
 #        - cp .docker/engine/Dockerfile.dist .docker/engine/Dockerfile
