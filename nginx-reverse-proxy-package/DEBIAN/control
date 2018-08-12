@@ -1,6 +1,6 @@
 Source: docker-nginx-reverse-proxy
 Package: docker-nginx-reverse-proxy
-Version: 1.3
+Version: 1.4
 Section: devel
 Priority: optional
 Architecture: all

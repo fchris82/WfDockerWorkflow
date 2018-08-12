@@ -14,7 +14,7 @@ case $1 in
         fi
         # Extra conf.d files
         EXTRA='';
-        for F in /etc/nginx-reverse-proxy/conf.d/*; do
+        for F in /etc/nginx-reverse-proxy/conf.d/* /etc/nginx-reverse-proxy/conf.d/.[^.]*; do
             EXTRA="${EXTRA} -v ${F}:/etc/nginx/conf.d/$(basename ${F}):ro"
         done
         docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
