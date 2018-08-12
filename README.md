@@ -14,6 +14,19 @@ For developers:
 
     make rebuild_proxy
 
+### Connfiguration
+
+#### Proxy
+
+Edit the `/etc/nginx-reverse-proxy/nginx-proxy.conf` file.
+
+#### HTTP Auth
+
+Every file from `/etc/nginx-reverse-proxy/conf.d/*` (include hidden files too) will be shared with docker. The `*.conf`
+files will be loaded by nginx. You can create here a `.htpasswd` file for example with http://www.htaccesstools.com/htpasswd-generator/
+page.
+After that you have to create a `http-auth.conf` file by `http-auth.conf.example`.
+
 Webtown Workflow
 ================
 
