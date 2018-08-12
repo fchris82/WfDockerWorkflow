@@ -1,2 +1,14 @@
 # For proxy port. After change you have to run: 'wf --init-reverse-proxy' command!
 reverse_proxy_port = 80
+
+# More
+# ----
+#
+#   You can create extra configuration files in the /etc/nginx-reverse-proxy/conf.d directory. These files will be shared
+#   with docker image /etc/nginx/conf.d directory and the nginx will load all of the `*.conf` file.
+#
+# Http auth
+# ---------
+#
+#   You can create a custom .htpasswd file in: http://www.htaccesstools.com/htpasswd-generator/
+#

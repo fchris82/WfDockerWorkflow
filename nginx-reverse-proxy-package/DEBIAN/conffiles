@@ -1,3 +1,5 @@
+/etc/nginx-reverse-proxy/conf.d/.htpasswd
+/etc/nginx-reverse-proxy/conf.d/http-auth.conf.example
 /etc/nginx-reverse-proxy/config
 /etc/nginx-reverse-proxy/docker-gen.cfg
 /etc/nginx-reverse-proxy/nginx.tmpl

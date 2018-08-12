@@ -12,6 +12,11 @@ case $1 in
         if [[ -z "$NETWORK_EXISTS" ]]; then
             docker network create --driver bridge reverse-proxy
         fi
+        # Extra conf.d files
+        EXTRA='';
+        for F in /etc/nginx-reverse-proxy/conf.d/*; do
+            EXTRA="${EXTRA} -v ${F}:/etc/nginx/conf.d/$(basename ${F}):ro"
+        done
         docker run -d -p ${REVERSE_PROXY_PORT}:${REVERSE_PROXY_PORT} \
             --name nginx-reverse-proxy \
             --net reverse-proxy \
@@ -21,6 +26,7 @@ case $1 in
             -v /etc/nginx-reverse-proxy/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
             -v /etc/nginx-reverse-proxy/docker-gen.cfg:/app/docker-gen.cfg:ro \
             -v /etc/nginx-reverse-proxy/Procfile:/app/Procfile:ro \
+            ${EXTRA}
             -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
             --restart always \
             jwilder/nginx-proxy

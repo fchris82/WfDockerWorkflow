@@ -1,0 +1,4 @@
+# If you want to use HTTP AUTH, make a copy from this file without .example extension and edit the new file.
+auth_basic           "Administrator’s Area";
+# You have to set the finally docker path!
+auth_basic_user_file /etc/nginx/conf.d/.htpasswd;
