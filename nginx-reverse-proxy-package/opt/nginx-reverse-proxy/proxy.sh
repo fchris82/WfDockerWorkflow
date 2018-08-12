@@ -26,7 +26,7 @@ case $1 in
             -v /etc/nginx-reverse-proxy/nginx-proxy-503.tmpl:/app/nginx-proxy-503.tmpl:ro \
             -v /etc/nginx-reverse-proxy/docker-gen.cfg:/app/docker-gen.cfg:ro \
             -v /etc/nginx-reverse-proxy/Procfile:/app/Procfile:ro \
-            ${EXTRA}
+            ${EXTRA} \
             -e LISTENED_PORT=${REVERSE_PROXY_PORT} \
             --restart always \
             jwilder/nginx-proxy
