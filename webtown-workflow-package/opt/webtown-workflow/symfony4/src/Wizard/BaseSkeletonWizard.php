@@ -50,13 +50,13 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * BaseSkeleton constructor.
      *
-     * @param string            $baseDir
+     * @param string            $skeletonBaseDir
      * @param \Twig_Environment $twig
      * @param Filesystem        $filesystem
      */
-    public function __construct($baseDir, \Twig_Environment $twig, Filesystem $filesystem)
+    public function __construct($skeletonBaseDir, \Twig_Environment $twig, Filesystem $filesystem)
     {
-        $this->baseDir = $baseDir;
+        $this->baseDir = $skeletonBaseDir;
         $this->twig = $twig;
         $this->filesystem = $filesystem;
     }

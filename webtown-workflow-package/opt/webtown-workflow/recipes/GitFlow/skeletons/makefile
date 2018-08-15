@@ -30,15 +30,15 @@ __validate_gitflow_args: __validate_args_no_empty
     # Are there any invalid parameters? Eg: wf feature --disable-db --invalid new-feature
 	UNKNOWN_PARAMETERS="$$(echo "$(ARGS)" | egrep -oh "\-\-[^ ]+" | egrep -v "^\-\-($(ENABLED_GITFLOW_PARAMETERS))$$")"; \
 	if [ ! -z "$${UNKNOWN_PARAMETERS}" ]; then \
-		echo "\n\033[31m❌ There are some unknown parameter:\033[0m"; \
-		echo "\033[33m$${UNKNOWN_PARAMETERS}\033[0m"; \
+		echo -e "\n\033[31m❌ There are some unknown parameter:\033[0m"; \
+		echo -e "\033[33m$${UNKNOWN_PARAMETERS}\033[0m"; \
 		exit 1; \
 	fi
     # Is there an invalid name? Eg: wf hotfix --disable-db [missing name!]
 	INVALID_NAME="$$(echo "$(lastword $(ARGS))" | egrep "^[^a-zA-Z0-9]")"; \
 	if [ ! -z "$${INVALID_NAME}" ]; then \
-		echo "\n\033[31m❌ Invalid branch name: \033[33m$${INVALID_NAME}\033[0m"; \
-		echo "\033[94mYou have to finish the command with valid branch name!\033[0m"; \
+		echo -e "\n\033[31m❌ Invalid branch name: \033[33m$${INVALID_NAME}\033[0m"; \
+		echo -e "\033[94mYou have to finish the command with valid branch name!\033[0m"; \
 		exit 1; \
 	fi
 

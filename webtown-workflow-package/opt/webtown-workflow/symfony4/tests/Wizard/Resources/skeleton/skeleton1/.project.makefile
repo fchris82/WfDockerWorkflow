@@ -101,7 +101,7 @@ endef
 export PROJECT_HELP
 .PHONY: help
 help:
-	@echo "$$PROJECT_HELP"
+	@echo -e "$$PROJECT_HELP"
 
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)
@@ -145,8 +145,8 @@ init:
     # @todo Ez nem biztos, hogy így jó még tesztelni kell!
 #	$(CMD_DOCKER_RUN_CLI) setfacl -dR -m u:"$$USER":rwX -m u:$$(whoami):rwX $(SHARED_DIRS)
 #	$(CMD_DOCKER_RUN_CLI) setfacl -R -m u:"$$USER":rwX -m u:$$(whoami):rwX $(SHARED_DIRS)
-	@echo "\033[32m✔ Edit the new files before run the \033[94minstall\033[32m command:\033[0m"
-	@$(foreach file,$(DIST_FILES),echo "   - \033[33m$(file)\033[0m";)
+	@echo -e "\033[32m✔ Edit the new files before run the \033[94minstall\033[32m command:\033[0m"
+	@$(foreach file,$(DIST_FILES),echo -e "   - \033[33m$(file)\033[0m";)
 
 .PHONY: install
 install: rebuild up
@@ -154,7 +154,7 @@ install: rebuild up
 	$(CMD_MAKE) sf ARGS="doctrine:database:create --if-not-exists"
 	$(CMD_MAKE) sf ARGS="doctrine:migrations:migrate -n"
 	$(CMD_MAKE) sf ARGS="doctrine:fixtures:load -n"
-	@echo "\033[32m✔ Now you can use the project!\033[0m"
+	@echo -e "\033[32m✔ Now you can use the project!\033[0m"
 
 # Újra tölti az adatbázist
 # Eg:

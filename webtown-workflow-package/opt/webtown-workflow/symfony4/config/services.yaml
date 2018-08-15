@@ -14,12 +14,18 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
+        bind:
+            $skeletonBaseDir: '%skeleton_base_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
+
+    App\Wizard\:
+        abstract: true
+        public: true
 
     Recipes\:
         resource: '%recipe_base_dir%/*'
@@ -67,63 +73,31 @@ services:
     App\Wizard\Symfony\SymfonyComposerBuildWizard:
         tags:
             - { name: wizard, group: 'Builders', priority: 50 }
-        public: true
 
     App\Wizard\Base\GitlabCISkeleton:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
-        public: true
 
     App\Wizard\Base\PhpCsFixSkeleton:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
-        public: true
 
     App\Wizard\Base\PhpMdSkeleton:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators' }
-        public: true
 
     App\Wizard\Base\DeployerSkeleton:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: -10 }
-        public: true
 
     App\Wizard\Docker\DevEnvironment:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: 20 }
-        public: true
 
     App\Wizard\Docker\DockerProject:
-        arguments:
-            - '%skeleton_base_dir%'
-            - '@twig'
-            - '@filesystem'
         tags:
             - { name: wizard, group: 'Decorators', priority: 10 }
-        public: true
 
     App\Wizard\Ez\EzBuildWizard:
         tags:
             - { name: wizard, group: 'Builders', priority: 20 }
-        public: true
