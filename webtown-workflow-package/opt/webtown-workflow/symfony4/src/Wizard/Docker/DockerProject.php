@@ -58,6 +58,7 @@ class DockerProject extends BaseDocker implements PublicWizardInterface
             'project_directory'     => '.',
             'deploy_directory'      => '.',
             'project_name'          => basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory)),
+            'current_wf_version'    => $this->input->getOption('wf-version'),
         ];
 
         return array_merge($variables, $defaults);

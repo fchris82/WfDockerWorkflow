@@ -9,6 +9,7 @@ use App\Wizard\PublicWizardInterface;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 
@@ -24,6 +25,7 @@ class ProjectWizardCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:wizard')
+            ->addOption('wf-version', null, InputOption::VALUE_REQUIRED, 'Set the current WF version')
             ->setDescription('Wizard collection handler command.');
     }
 

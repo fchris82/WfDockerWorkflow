@@ -84,6 +84,6 @@ case $1 in
     # RUN wizard
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
 esac

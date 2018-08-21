@@ -8,6 +8,7 @@ use App\Configuration\RecipeManager;
 use App\Event\ConfigurationEvents;
 use App\Event\DumpEvent;
 use App\Event\VerboseInfoEvent;
+use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -45,6 +46,7 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Set config file name.', self::DEFAULT_CONFIG_FILE)
             ->addOption('target-directory', null, InputOption::VALUE_REQUIRED, 'Set the build target.', self::DEFAULT_TARGET_DIRECTORY)
             ->addOption('config-hash', null, InputOption::VALUE_REQUIRED, 'Set the config hash')
+            ->addOption('wf-version', null, InputOption::VALUE_REQUIRED, 'Set the current WF version')
             ->addArgument('base', InputArgument::OPTIONAL, 'The working directory', $_SERVER['PWD'])
         ;
     }
@@ -56,31 +58,39 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
-        $this->output = $output;
-
-        $baseDirectory = $input->getArgument('base');
-        $configuration = $this->getContainer()->get(Configuration::class);
-        $config = $configuration->loadConfig($input->getOption('file'), $baseDirectory);
-
-        $this->registerEventListeners($input, $output);
-
-        $builder = $this->getContainer()->get(Builder::class);
         try {
-            $builder
-                ->setTargetDirectory($input->getOption('target-directory'))
-                ->build($config, $baseDirectory, $input->getOption('config-hash'))
-            ;
+            $this->input = $input;
+            $this->output = $output;
 
-            $output->writeln('<info>The (new) docker environment was build!</info>');
+            $baseDirectory = $input->getArgument('base');
+            /** @var Configuration $configuration */
+            $configuration = $this->getContainer()->get(Configuration::class);
+            $config = $configuration->loadConfig($input->getOption('file'), $baseDirectory, $input->getOption('wf-version'));
 
-        // It is maybe an impossible exception, but it will throw we catch it.
-        } catch (MissingRecipeException $e) {
-            $output->writeln('<comment>' . $e->getMessage() . '</comment>');
-            $output->writeln('The available recipes:');
-            foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
-                $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), get_class($recipe)));
+            $this->registerEventListeners($input, $output);
+
+            /** @var Builder $builder */
+            $builder = $this->getContainer()->get(Builder::class);
+            try {
+                $builder
+                    ->setTargetDirectory($input->getOption('target-directory'))
+                    ->build($config, $baseDirectory, $input->getOption('config-hash'))
+                ;
+
+                $output->writeln('<info>The (new) docker environment was build!</info>');
+
+            // It is maybe an impossible exception, but it will throw we catch it.
+            } catch (MissingRecipeException $e) {
+                $output->writeln('<comment>' . $e->getMessage() . '</comment>');
+                $output->writeln('The available recipes:');
+                foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
+                    $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), get_class($recipe)));
+                }
             }
+        } catch (InvalidWfVersionException $e) {
+            // We write it formatted
+            $output->writeln($e->getMessage());
+            throw $e;
         }
     }
 

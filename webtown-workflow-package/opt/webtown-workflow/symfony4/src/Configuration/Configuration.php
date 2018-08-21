@@ -8,6 +8,7 @@
 
 namespace App\Configuration;
 
+use App\Exception\InvalidWfVersionException;
 use Recipes\BaseRecipe;
 use Recipes\HiddenRecipe;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -45,7 +46,7 @@ class Configuration implements ConfigurationInterface
         $this->recipeManager = $recipeManager;
     }
 
-    public function loadConfig($configFile, $pwd = null)
+    public function loadConfig($configFile, $pwd = null, $wfVersion = null)
     {
         if (is_null($pwd)) {
             $pwd = dirname($configFile);
@@ -54,6 +55,7 @@ class Configuration implements ConfigurationInterface
             ? $configFile
             : $pwd . '/' . $configFile;
         $baseConfig = $this->readConfig($ymlFilePath);
+        $baseConfig = $this->validateWfVersion($baseConfig, $wfVersion);
 
         $processor = new Processor();
         $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $baseConfig]);
@@ -80,7 +82,8 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue([])
                 ->end()
                 ->scalarNode('version')
-                    ->info('<comment>Which WF Makefile version do you want to use?</comment>')
+                    ->info('<comment>Which WF Makefile version do you want to use? You can combine it with the minimum WF version with the <info>@</info> symbol!</comment>')
+                    ->example('2.0.0@2.198')
                     ->isRequired()
                     ->cannotBeEmpty()
                 ->end()
@@ -162,8 +165,30 @@ class Configuration implements ConfigurationInterface
     protected function readConfig($ymlFilePath)
     {
         $baseConfig = $this->getYmlParser()->parseFile($ymlFilePath);
+        $baseConfig = $this->handleImports($baseConfig, $ymlFilePath);
 
-        return $this->handleImports($baseConfig, $ymlFilePath);
+        return $baseConfig;
+    }
+
+    protected function validateWfVersion($baseConfig, $wfVersion)
+    {
+        if (strpos($baseConfig['version'], '@') !== false) {
+            list($makeBaseVersion, $minimumWfVersion) = explode('@', $baseConfig['version'], 2);
+
+            if (version_compare($wfVersion, $minimumWfVersion, '<')) {
+                throw new InvalidWfVersionException(sprintf(
+                    'You are using the <info>%s</info> version, but the program needs least of <info>%s</info> version. You have to upgrade the wf with the <comment>wf -u</comment> command!',
+                    $wfVersion,
+                    $minimumWfVersion
+                ));
+            }
+
+            $baseConfig['version'] = $makeBaseVersion;
+        }
+
+        $baseConfig['current_wf_version'] = $wfVersion;
+
+        return $baseConfig;
     }
 
     protected function handleImports($baseConfig, $baseConfigYmlFullPath)
