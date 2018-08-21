@@ -203,6 +203,14 @@ test:phpmd:
             - phpmd-results.xml
             - phpmd-results.html
 
+test:security:
+    stage: test
+    <<: *all_jobs
+    <<: *docker_init_and_stop
+    script:
+        - wf sf security:check
+    allow_failure: true
+
 deploy:demo:
     stage: deploy
     <<: *all_jobs
