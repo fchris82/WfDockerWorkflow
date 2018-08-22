@@ -14,6 +14,17 @@ Docker
 
     Configured docker environments:
     \033[33m$(DOCKER_ENVIRONMENTS)\033[0m
+
+About log
+---------
+
+    If you want to truncate the log directory, you need \033[37msudo\033[0m on host!
+
+    # find the container ID by name (yes, you have to use 2 different commands)
+    \033[33mwf ps --services\033[0m
+    \033[33mwf ps -q\033[0m
+    # truncate the log file
+    \033[37msudo\033[33m sh -c "truncate -s 0 /var/lib/docker/containers/\033[32m[ID]\033[33m/\033[32m[ID]\033[33m-json.log"\033[0m
 endef
 export PROJECT_INFO
 
@@ -29,14 +40,16 @@ ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
 .PHONY: info
 info::
 	@echo -e "$$PROJECT_INFO"
-	@echo -e "\n    Docker compose command base:"
+	@echo -e "\nDocker compose command base:"
+	@echo -e "============================"
+	@echo -e ""
 	@RESTORE="\\\033[0m"; \
 		ENV_NAME="\\\033[33m"; \
 		ENV_VALUE="\\\033[37m"; \
 		CMD="\\\033[1;91m"; \
 		PARAMETER_NAME="\\\033[94m"; \
 		PARAMETER_VALUE="\\\033[92m"; \
-		echo -e "    "$$(echo -e "$(CMD_DOCKER_BASE)" \
+		echo -e $$(echo -e "$(CMD_DOCKER_BASE)" \
 			| sed -e "s/\([^= ]*\)=\([^ ]*\)/$${ENV_NAME}\\1$${RESTORE}=$${ENV_VALUE}\\2$${RESTORE}/g" \
 			| sed -e "s/docker-compose/$${CMD}docker-compose$${RESTORE}/" \
 			| sed -e "s/\(\B--*[a-zA-Z0-9\-]*\) \([^ ]*\)/$${PARAMETER_NAME}\\1$${RESTORE} $${PARAMETER_VALUE}\\2$${RESTORE}/g")
