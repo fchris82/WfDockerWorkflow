@@ -89,8 +89,9 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
             }
         } catch (InvalidWfVersionException $e) {
             // We write it formatted
+            $output->writeln('');
             $output->writeln($e->getMessage());
-            throw $e;
+            $output->writeln('');
         }
     }
 

@@ -46,6 +46,16 @@ class Configuration implements ConfigurationInterface
         $this->recipeManager = $recipeManager;
     }
 
+    /**
+     * @param string      $configFile
+     * @param string|null $pwd
+     * @param string|null $wfVersion
+     *
+     * @return array
+     *
+     * @throws FileLoaderImportCircularReferenceException
+     * @throws InvalidWfVersionException
+     */
     public function loadConfig($configFile, $pwd = null, $wfVersion = null)
     {
         if (is_null($pwd)) {
@@ -55,10 +65,12 @@ class Configuration implements ConfigurationInterface
             ? $configFile
             : $pwd . '/' . $configFile;
         $baseConfig = $this->readConfig($ymlFilePath);
-        $baseConfig = $this->validateWfVersion($baseConfig, $wfVersion);
 
         $processor = new Processor();
         $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $baseConfig]);
+
+        // Check the WF version is correct!
+        $this->validateWfVersion($fullConfig, $wfVersion);
 
         return $fullConfig;
     }
@@ -81,11 +93,34 @@ class Configuration implements ConfigurationInterface
                     ->scalarPrototype()->end()
                     ->defaultValue([])
                 ->end()
-                ->scalarNode('version')
-                    ->info('<comment>Which WF Makefile version do you want to use? You can combine it with the minimum WF version with the <info>@</info> symbol!</comment>')
+                ->arrayNode('version')
+                    ->info('<comment>Which WF Makefile version do you want to use? You can combine it with the minimum WF version with the <info>@</info> symbol: <info>[base]@[wf_minimum_version]</info></comment>')
                     ->example('2.0.0@2.198')
-                    ->isRequired()
-                    ->cannotBeEmpty()
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('base')
+                            ->info('<comment>Which WF Makefile version do you want to use?</comment>')
+                            ->example('2.0.0')
+                            ->isRequired()
+                            ->cannotBeEmpty()
+                        ->end()
+                        ->scalarNode('wf_minimum_version')
+                            ->info('<comment>You can set what is the minimum WF version.</comment>')
+                            ->example('2.198')
+                            ->defaultNull()
+                        ->end()
+                    ->end()
+                    ->beforeNormalization()
+                        ->ifString()
+                        ->then(function ($v) {
+                            list($base, $wfMinimumVersion) = explode('@', $v, 2);
+
+                            return [
+                                'base' => $base,
+                                'wf_minimum_version' => $wfMinimumVersion,
+                            ];
+                        })
+                    ->end()
                 ->end()
                 ->scalarNode('name')
                     ->info('<comment>You have to set a name for the project.</comment>')
@@ -162,6 +197,13 @@ class Configuration implements ConfigurationInterface
         return $this->ymlParser;
     }
 
+    /**
+     * @param string $ymlFilePath
+     *
+     * @return array
+     *
+     * @throws FileLoaderImportCircularReferenceException
+     */
     protected function readConfig($ymlFilePath)
     {
         $baseConfig = $this->getYmlParser()->parseFile($ymlFilePath);
@@ -170,27 +212,35 @@ class Configuration implements ConfigurationInterface
         return $baseConfig;
     }
 
-    protected function validateWfVersion($baseConfig, $wfVersion)
+    /**
+     * Check that the current installed WF version is compatibel with this project or you have to upgrade!
+     *
+     * @param array  $config
+     * @param string $wfVersion
+     *
+     * @throws InvalidWfVersionException
+     */
+    protected function validateWfVersion($config, $wfVersion)
     {
-        if (strpos($baseConfig['version'], '@') !== false) {
-            list($makeBaseVersion, $minimumWfVersion) = explode('@', $baseConfig['version'], 2);
-
-            if (version_compare($wfVersion, $minimumWfVersion, '<')) {
-                throw new InvalidWfVersionException(sprintf(
-                    'You are using the <info>%s</info> version, but the program needs least of <info>%s</info> version. You have to upgrade the wf with the <comment>wf -u</comment> command!',
-                    $wfVersion,
-                    $minimumWfVersion
-                ));
-            }
-
-            $baseConfig['version'] = $makeBaseVersion;
+        $wfMinimumVersion = $config['version']['wf_minimum_version'];
+        if ($wfMinimumVersion && version_compare($wfVersion, $wfMinimumVersion, '<')) {
+            throw new InvalidWfVersionException(sprintf(
+                '<error>You are using the <comment>%s</comment> version of WF, but the program needs at least' .
+                ' <comment>%s</comment> version. You have to upgrade the wf with the <comment>wf -u</comment> command!</error>',
+                $wfVersion,
+                $wfMinimumVersion
+            ));
         }
-
-        $baseConfig['current_wf_version'] = $wfVersion;
-
-        return $baseConfig;
     }
 
+    /**
+     * @param array  $baseConfig
+     * @param string $baseConfigYmlFullPath
+     *
+     * @return array
+     *
+     * @throws FileLoaderImportCircularReferenceException
+     */
     protected function handleImports($baseConfig, $baseConfigYmlFullPath)
     {
         $sourceDirectory = dirname($baseConfigYmlFullPath);
