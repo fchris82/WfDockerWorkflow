@@ -20,7 +20,7 @@ class ExecutableSkeletonFile extends SkeletonFile
      */
     public function getPermission()
     {
-        return $this->permission;
+        return $this->fileInfo->isExecutable() ? $this->fileInfo->getPerms() : $this->permission;
     }
 
     /**

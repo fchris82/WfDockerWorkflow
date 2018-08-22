@@ -1,0 +1,16 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+{% for service, data in services %}
+    {{ service }}:
+        volumes:
+            - "{{ recipe_path }}/bin/user_fix_entrypoint.sh:/user_fix_entrypoint.sh"
+        entrypoint: "/user_fix_entrypoint.sh"
+        environment:
+            UID:                  {{ data.uid }}
+            GID:                  {{ data.gid }}
+            CONTAINER_USER:       {{ data.user }}
+            CONTAINER_GROUP:      {{ data.group }}
+            CONTAINER_ENTRYPOINT: {{ data.entrypoint }}
+
+{% endfor %}

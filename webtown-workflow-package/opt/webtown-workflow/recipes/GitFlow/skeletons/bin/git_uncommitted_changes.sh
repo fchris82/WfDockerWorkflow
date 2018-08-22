@@ -11,7 +11,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-source ${DIR}/../../../lib/_css.sh
+source _css.sh
 
 if [ "$(git status -s | wc -l)" != "0" ];
 then

@@ -9,6 +9,7 @@
 namespace Recipes;
 
 use App\Skeleton\DockerComposeSkeletonFile;
+use App\Skeleton\ExecutableSkeletonFile;
 use App\Skeleton\MakefileSkeletonFile;
 use App\Skeleton\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -129,11 +130,14 @@ abstract class BaseRecipe
 
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        switch ($fileInfo->getFilename()) {
-            case 'makefile':
-                return new MakefileSkeletonFile($fileInfo);
-            case 'docker-compose.yml':
-                return new DockerComposeSkeletonFile($fileInfo);
+        if ($this->isDockerComposeFile($fileInfo)) {
+            return new DockerComposeSkeletonFile($fileInfo);
+        }
+        if ($this->isMakefile($fileInfo)) {
+            return new MakefileSkeletonFile($fileInfo);
+        }
+        if ($this->isExecutableFile($fileInfo)) {
+            return new ExecutableSkeletonFile($fileInfo);
         }
 
         return new SkeletonFile($fileInfo);
@@ -146,7 +150,13 @@ abstract class BaseRecipe
 
     protected function isDockerComposeFile(SplFileInfo $fileInfo)
     {
-        return $fileInfo->getFilename() == 'docker-compose.yml';
+        return strpos($fileInfo->getFilename(), 'docker-compose') === 0
+            && $fileInfo->getExtension() == 'yml';
+    }
+
+    protected function isExecutableFile(SplFileInfo $fileInfo)
+    {
+        return $fileInfo->isExecutable();
     }
 
     /**

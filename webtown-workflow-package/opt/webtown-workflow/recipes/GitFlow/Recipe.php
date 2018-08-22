@@ -58,12 +58,4 @@ class Recipe extends BaseRecipe
 
         return $rootNode;
     }
-
-    public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
-    {
-        $vars = parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig);
-        $vars['binary_directory'] = __DIR__ . '/bin';
-
-        return $vars;
-    }
 }

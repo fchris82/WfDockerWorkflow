@@ -1,4 +1,4 @@
-GITFLOW_BINARY_DIRECTORY := {{ binary_directory }}
+GITFLOW_BINARY_DIRECTORY := {{ recipe_path }}/bin
 # Ezt használjuk az INVERZ grep-ben: egrep -v "\-\-($(ENABLED_GITFLOW_PARAMETERS))"
 #                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
