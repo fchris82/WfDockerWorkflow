@@ -38,3 +38,6 @@ recipes:
     git_flow: false
     # You can enable the nginx-reverse-proxy.
     nginx_reverse_proxy: false
+    # Here you can fix the container user ID and group ID, for example if you want to share some files, and you'd love
+    # the correct file permissions.
+    user_fix: false

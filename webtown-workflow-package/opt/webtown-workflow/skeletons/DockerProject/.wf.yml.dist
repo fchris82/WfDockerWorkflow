@@ -132,3 +132,17 @@ recipes:
         # You have to set the service and its host and port settings.
         settings:
             web: ~
+
+    # Here you can fix the container user ID and group ID, for example if you want to share some files, and you'd love
+    # the correct file permissions.
+    # List all available options: `wf --config-dump --recipe=user_fix`
+    user_fix:
+        services:
+            # docker compose service name
+            mysql:
+                # container username
+                user: mysql
+                # container group name
+                group: mysql
+                # original entrypoint
+                entrypoint: docker-entrypoint.sh mysqld
