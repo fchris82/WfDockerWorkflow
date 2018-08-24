@@ -26,7 +26,7 @@ RESTORE=$'\x1B[0m'
 # echo echo_fail "No"
 function echo_fail {
   # echo first argument in red
-  printf "${LRED}✘ ${@}${RESTORE}\n"
+  echo -e "${LRED}✘ ${@}${RESTORE}"
 }
 
 # display a message in green with a tick by it
@@ -34,11 +34,11 @@ function echo_fail {
 # echo echo_fail "Yes"
 function echo_pass {
   # echo first argument in green
-  printf "${GREEN}✔ ${@}${RESTORE}\n"
+  echo -e "${GREEN}✔ ${@}${RESTORE}"
 }
 
 function echo_info {
-  printf "${YELLOW}» ${@}${RESTORE}\n"
+  echo -e "${YELLOW}» ${@}${RESTORE}"
 }
 # echo pass or fail
 # example

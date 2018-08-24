@@ -11,14 +11,9 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-source _css.sh
+source ${DIR}'/_gitlab_init.sh'
+source ${DIR}'/_css.sh'
 
-API_PATH="/api/v4"
-HOST=$(git config --get remote.origin.url | egrep -o '(//|@)[^:/]+' | grep -o '[^@\]*') || exit 1
-PROJECT_PATH=$(git config --get remote.origin.url | egrep -o '[:/][^/]+/[^/]+\.' | egrep -o '[^:/]+/[^/\.]+') || exit 1
-URL="https://${HOST}${API_PATH}"
-TOKEN_CACHE="${HOME}/.gitlab-token"
-CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) || exit 1
 # Does it create MR to master branch too?
 MR_TO_MASTER_TOO=0
 
@@ -60,39 +55,6 @@ if [ -z "$DEVELOP_DIFF" ] && [ "$MR_TO_MASTER_TOO" == "0" ]; then
     exit 0
 fi
 
-echo "Detect and check token..."
-if [ ! -f $TOKEN_CACHE ]; then
-    touch $TOKEN_CACHE || exit 1
-    chmod 600 $TOKEN_CACHE || exit 1
-fi
-
-PRIVATE_TOKEN=$(cat $TOKEN_CACHE)
-if [ -z "$PRIVATE_TOKEN" ]; then
-    TOKEN_CHECK=302
-else
-    TOKEN_CHECK=$(curl -s -o /dev/null -I -w "%{http_code}" --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" "${URL}/user") || exit 1
-fi
-
-if [ "200" != $TOKEN_CHECK ]; then
-    echo "You don't have valid token, you have to login."
-    echo -n "${LBLUE}Username${RESTORE}: "
-    read username
-    echo -n "${LBLUE}Password${RESTORE}: "
-    read -s password
-    echo ""
-    echo "Connecting..."
-    PRIVATE_TOKEN=$(curl -s --request POST "${URL}/session?login=${username}&password=${password}" | jq -r .private_token)
-    if [ "$PRIVATE_TOKEN" == "null" ]; then
-        echo_fail "Invalid username or password!";
-        exit 1
-    fi
-    echo $PRIVATE_TOKEN > $TOKEN_CACHE
-fi
-
-echo_pass "You have been logged in"
-
-PROJECT_DATA=$(curl -s --header "PRIVATE-TOKEN: ${PRIVATE_TOKEN}" "${URL}/projects" | jq '.[] | select(.path_with_namespace=="'"${PROJECT_PATH}"'")')
-PROJECT_ID=$(echo $PROJECT_DATA | jq .id)
 CREATOR_ID=$(echo $PROJECT_DATA | jq .creator_id)
 
 # Develop MR
@@ -108,9 +70,9 @@ if [ -z "$MR_DATA" ]; then
         -F "remove_source_branch=true" \
         "${URL}/projects/${PROJECT_ID}/merge_requests" \
     )
-    echo_pass "The '"$(echo $DEVELOP_MR_DATA | jq -r .title)"' MR has been created! URL: "$(echo $DEVELOP_MR_DATA | jq -r .web_url)
+    echo_pass "The '$(echo $DEVELOP_MR_DATA | jq -r .title)' MR has been created! URL: ${LBLUE}$(echo $DEVELOP_MR_DATA | jq -r .web_url)"
 else
-    echo "The '"$(echo $MR_DATA | jq -r .title)"' MR exists! URL: "$(echo $MR_DATA | jq -r .web_url)
+    echo "The '$(echo $MR_DATA | jq -r .title)' MR exists! URL: ${LBLUE}$(echo $MR_DATA | jq -r .web_url)${RESTORE}"
 fi
 
 # Master MR
@@ -127,8 +89,8 @@ if [ "$MR_TO_MASTER_TOO" == "1" ]; then
             -F "remove_source_branch=true" \
             "${URL}/projects/${PROJECT_ID}/merge_requests" \
         )
-        echo_pass "The '"$(echo $DEVELOP_MR_DATA | jq -r .title)"' MR has been created! URL: "$(echo $DEVELOP_MR_DATA | jq -r .web_url)
+        echo_pass "The '$(echo $DEVELOP_MR_DATA | jq -r .title)' MR has been created! URL: ${LBLUE}$(echo $DEVELOP_MR_DATA | jq -r .web_url)"
     else
-        echo "The '"$(echo $MR_DATA | jq -r .title)"' MR exists! URL: "$(echo $MR_DATA | jq -r .web_url)
+        echo "The '$(echo $MR_DATA | jq -r .title)' MR exists! URL: ${LBLUE}$(echo $MR_DATA | jq -r .web_url)${RESTORE}"
     fi
 fi

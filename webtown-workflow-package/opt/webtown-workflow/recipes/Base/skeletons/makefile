@@ -38,21 +38,22 @@ Install the project
 \033[1;97m
 Working
 \033[0m
-    \033[33mfeature         \033[32mStart a new feature branch from $(GITFLOW_DEVELOP). Set the "suffix" only which is required.
+    \033[33mfeature           \033[32mStart a new feature branch from $(GITFLOW_DEVELOP). Set the "suffix" only which is required.
                     Eg: \033[94m> wf feature [--from-this] [--disable-db] [--reload-db] PR-12\033[0m --> \033[97mfeature/PR-12\033[0m
                     Enabled parameters:
                         \033[33m--from-this\033[0m   Ha meg van adva, akkor nem a `develop` branch-ből indít, hanem az aktuálisból
                         \033[33m--disable-db\033[0m  Ha meg van adva, akkor az adatbázishoz nem nyúl hozzá.
                         \033[33m--reload-db\033[0m   Ha meg van adva, akkor újratölti a teljes adatbázist (drop -> create -> migrations -> fixtures)
-    \033[33mhotfix          \033[32mStart a new hotfix branch from master branch. Set the "suffix" only which is required.
+    \033[33mhotfix            \033[32mStart a new hotfix branch from master branch. Set the "suffix" only which is required.
                     Eg: \033[94m> wf hotfix [--from-this] [--disable-db] [--reload-db] PR-12\033[0m --> \033[97mhotfix/PR-12\033[0m
                     Enabled parameters:
                         \033[33m--from-this\033[0m   Ha meg van adva, akkor nem a `develop` branch-ből indít, hanem az aktuálisból
                         \033[33m--disable-db\033[0m  Ha meg van adva, akkor az adatbázishoz nem nyúl hozzá.
                         \033[33m--reload-db\033[0m   Ha meg van adva, akkor újratölti a teljes adatbázist (drop -> create -> migrations -> fixtures)
-    \033[33mpush            \033[32mPush the current branch.\033[0m
-    \033[33mpublish         \033[32mPUSH and create merge requiest in Gitlab. You don't have to
-                    call push before it.\033[0m
+    \033[33mpush              \033[32mPush the current branch.\033[0m
+    \033[33mpublish           \033[32mPUSH and create merge requiest in Gitlab. You don't have to call push before it.\033[0m
+    \033[33mgitlab-list-env   \033[32mList the available gitlab environments.\033[0m
+    \033[33mgitlab-clear-env  \033[32mDelete the empty environments.\033[0m
 \033[1;97m
 Docker commands
 \033[0m

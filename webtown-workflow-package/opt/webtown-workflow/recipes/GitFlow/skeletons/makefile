@@ -19,6 +19,14 @@ push: __push
 .PHONY: publish
 publish: __publish
 
+.PHONY: gitlab-list-env
+gitlab-list-env:
+	$(GITFLOW_BINARY_DIRECTORY)/gitlab_list_environments.sh
+
+.PHONY: gitlab-clear-env
+gitlab-clear-env:
+	$(GITFLOW_BINARY_DIRECTORY)/gitlab_remove_stopped_environments.sh
+
 # GITFLOW COMMANDS
 
 # Check is there any uncommitted changes?
@@ -62,7 +70,7 @@ __branch: __validate_git_uncommitted_changes __validate_gitflow_args
         #  --diff-filter=D              Csak azok a fájlok kellenek nekünk, amik törlődni fognak (a módosultakat direkt
         #                               hagyjuk ki)
         #  [...]app/DoctrineMigrations  Csak a migrációs fájlokra vagyunk kiváncsiak
-		$(eval MIGRATION_VERSIONS := $(shell \
+		$(eval MIGRATION_VERSIONS := $(shell [[ -d $(BASE_DIRECTORY)/$(PROJECT_DIRECOTRY)/app/DoctrineMigrations ]] && \
 			git diff --name-only --diff-filter=D HEAD..origin/$(ORIGIN_BRANCH) \
 				$(BASE_DIRECTORY)/$(PROJECT_DIRECOTRY)/app/DoctrineMigrations \
 			| sort -r \
@@ -127,7 +135,7 @@ __hotfix:
 
 .PHONY: __push
 __push: __validate_git_uncommitted_changes
-	git push origin HEAD
+	git push -u origin HEAD
 
 .PHONY: __publish
 __publish: push
