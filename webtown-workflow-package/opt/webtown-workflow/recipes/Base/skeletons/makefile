@@ -134,7 +134,8 @@ define CMD_DOCKER_ENV
     PHP_VERSION=$(PHP_VERSION) \
     SUDO=$(SUDO) \
     CI=$${CI} \
-    DOCKER_RUN=$${DOCKER_RUN}
+    DOCKER_RUN=$${DOCKER_RUN} \
+    $(COMMAND_ENVS)
 endef
 
 .PHONY: logs

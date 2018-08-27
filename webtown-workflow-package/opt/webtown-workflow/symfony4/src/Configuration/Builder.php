@@ -401,6 +401,7 @@ define CMD_DOCKER_BASE
     $(CMD_DOCKER_ENV) docker-compose \
         -p $(DOCKER_BASENAME) \
         $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
+        $(foreach env,$(COMMAND_ENVS),-e $(env)) \
         --project-directory $(CURDIR)
 endef
 define CMD_DOCKER_RUN

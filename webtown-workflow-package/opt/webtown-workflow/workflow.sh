@@ -22,19 +22,48 @@ source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
 
-# Switch on debug modes:
+# WF options
+# ----------
+# First parameters are used by WF!
+#
+#   wf [OPTIONS] [COMMAND] [COMMAND_OPTIONS]
+#
+# Example, switch on debug modes:
 #   wf -v sf docker:create:database -vvv
 #      ^^                           ^^^^
 #      Makefile debug mode          Symfony debug mode
-if [ "$1" == "-v" ]; then
-    MAKE_DISABLE_SILENC=1
-    shift
-elif [ "$1" == "-vvv" ]; then
-    MAKE_DISABLE_SILENC=1
-    MAKE_DEBUG_MODE=1
-    shift
-fi
+#
+# Example, add environment:
+#   wf -e EXTENSION_DIRS=/var/extensions info
+while [[ $# -gt 0 ]]
+do
+key="$1"
 
+case $key in
+    # Add or replace parameter from command line
+    -e|--env)
+        COMMAND_ENVS="${COMMAND_ENVS:-""} $2"
+        shift
+        shift
+    ;;
+    # Debug modes
+    -v)
+        MAKE_DISABLE_SILENC=1
+        shift
+    ;;
+    -vvv)
+        MAKE_DISABLE_SILENC=1
+        MAKE_DEBUG_MODE=1
+        shift
+    ;;
+    *)
+        break
+    ;;
+esac
+done
+
+# WF command
+# ----------
 case $1 in
     ""|-h|--help)
         showHelp
@@ -97,6 +126,7 @@ case $1 in
             WORKFLOW_BINARY_DIRECTORY="${DIR}/bin" \
             WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" \
             MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" \
+            COMMAND_ENVS="${COMMAND_ENVS:-""}" \
             DEBUG="${DEBUG}" || quit
     ;;
 esac
