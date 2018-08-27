@@ -88,6 +88,10 @@ commands:
 
 > The program will generate `.sh` files and call them.
 
+## Environments (`{{ wf_env_file }}`)
+
+You can create an `env` file to all wf container. The autloaded env file name: {{ wf_env_file }}. There are some limitations: you can't use special characters (like UTF-8).
+
 ## Recpies
 
 You can list the all configuration option:

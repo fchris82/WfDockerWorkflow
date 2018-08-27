@@ -4,6 +4,7 @@ WF_PROGRAM_REPOSITORY=git@gitlab.webtown.hu:webtown/webtown-workflow.git
 # Directory structure
 WF_WORKING_DIRECTORY_NAME=.wf
 WF_CONFIGURATION_FILE_NAME=.wf.yml
+WF_ENV_FILE_NAME=.wf.env
 
 # Symfony . You can use the --dev argument to change it once through run!
 WF_SYMFONY_ENV=prod

@@ -14,7 +14,7 @@ COPY webtown-workflow.deb /root/webtown-workflow.deb
 
 RUN apk update && \
     apk add bash dpkg jq make ca-certificates curl git su-exec docker py-pip php7-xdebug shadow openssh && \
-    apk add --upgrade coreutils && \
+    apk add --upgrade coreutils grep && \
     echo "zend_extension=/usr/lib/php7/modules/xdebug.so" > $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_enable=on" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_autostart=off" >> $XDEBUG_CONFIG_FILE && \

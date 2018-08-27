@@ -62,6 +62,7 @@ class Recipe extends HiddenRecipe implements EventSubscriberInterface
         return array_merge(parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig), [
             'wf_target_directory' => $this->environment->getConfigValue(Environment::CONFIG_WORKING_DIRECTORY),
             'wf_config_file' => $this->environment->getConfigValue(Environment::CONFIG_CONFIGURATION_FILE),
+            'wf_env_file' => $this->environment->getConfigValue(Environment::CONFIG_ENV_FILE),
         ]);
     }
 

@@ -121,7 +121,7 @@ function get_project_configuration_file {
 
 function create_makefile_from_config {
     # Config version
-    CONFIG_HASH=$(cksum ${PROJECT_CONFIG_FILE} | awk '{ print $1 }')
+    CONFIG_HASH=$(get_project_config_hash)
     # Program "version"
     WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
@@ -132,6 +132,20 @@ function create_makefile_from_config {
             --config-hash ${CONFIG_HASH}.${WF_VERSION} \
             --wf-version ${WF_VERSION} ${@} || quit
     fi
+}
+
+# Try to find the all config file.
+function get_project_config_hash {
+    # We try to find the all imported file. Now it isn't recursive here and can't handle the absolute path!
+    # Without the `| tr '\0' ' '` it causes `warning: command substitution: ignored null byte in input` error message
+    # @todo (Chris) Jelenleg nem rekurzív + ha van szóköz az útvonalban, akkor rossz eredményt ad + gondban van, ha absolut útvonalat próbálunk importálni.
+    IMPORT_FILES=$(grep -Poz 'imports: *\n?\K(.|\n)*(?=\n+\w)' ${PROJECT_CONFIG_FILE} | tr '\0\n' ' ' | sed 's:- : :g' | sed -r 's:[^[:alnum:]\.\-\/_]+: :g')
+    # Env file
+    if [ -f "${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}" ]; then
+        ENV_FILE="${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}"
+    fi
+
+    echo $(cksum ${PROJECT_CONFIG_FILE} ${IMPORT_FILES} ${ENV_FILE} | cksum | awk '{ print $1 }')
 }
 
 # Handle CTRL + C

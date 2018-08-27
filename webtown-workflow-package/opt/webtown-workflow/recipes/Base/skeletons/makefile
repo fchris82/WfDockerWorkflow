@@ -17,6 +17,11 @@ SHARED_DIRS			:=
 # A Gitlab CI miatt kell definiálni.
 SUDO              := sudo
 DOCKER_PSEUDO_TTY := $$(if [ "$$WF_TTY" == "0" ]; then  echo '-T'; fi)
+# Load `.wf.env` config file. You have to use \ before # sign!
+#   - grep -v '^ *#'      Get everything except the comment lines
+#   - tr '\n' ' '         Replace all \n to space
+#   - sed -r 's: +: :g'   Replace all multispace to one
+FILE_ENVS         := $(shell if [ -f $(WF_ENV_FILE_NAME) ]; then cat $(WF_ENV_FILE_NAME) | grep -v '^ *\#' | tr '\n' ' ' | sed -r 's: +: :g'; fi)
 
 # Ennek muszáj elől lennie, mert szeretnénk, ha ez lenne az első és alapértelmezett "target"
 define PROJECT_HELP

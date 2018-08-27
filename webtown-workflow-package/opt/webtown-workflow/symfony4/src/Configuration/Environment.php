@@ -17,6 +17,7 @@ class Environment
     const CONFIG_DEFAULT_LOCAL_TLD  = 'WF_DEFAULT_LOCAL_TLD';
     const CONFIG_WORKING_DIRECTORY  = 'WF_WORKING_DIRECTORY_NAME';
     const CONFIG_CONFIGURATION_FILE = 'WF_CONFIGURATION_FILE_NAME';
+    const CONFIG_ENV_FILE           = 'WF_ENV_FILE_NAME';
 
     public function getConfigValue($name, $default = null)
     {
