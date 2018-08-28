@@ -23,7 +23,7 @@ variables:
 #    MAKE_DISABLE_SILENC: 1
 #    MAKE_DEBUG_MODE: 1
     # This is an integer between 0 and 3
-#    DEBUG: 2
+#    WF_DEBUG: 2
 
 .all_jobs: &all_jobs
     tags:
@@ -74,7 +74,7 @@ variables:
         # init
         - wf composer install
         # Set SSH parameters
-        - ENGINE=$(DEBUG=0 wf ps -q engine)
+        - ENGINE=$(WF_DEBUG=0 wf ps -q engine)
         - SSH_PATH=/usr/local/etc/ssh
         - echo "docker exec -i -u $(id -u) $ENGINE mkdir -p $SSH_PATH"
         - docker exec -i $ENGINE mkdir -p $SSH_PATH

@@ -2,13 +2,13 @@
 
 # Debug! Host target, so you can't use the `source` solution, you have to copy the _debug.sh file content directly.
 # << webtown-workflow-package/opt/webtown-workflow/lib/_debug.sh !!!
-if [ ${DEBUG:-0} -ge 1 ]; then
-    [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}\033[0m"
+if [ ${WF_DEBUG:-0} -ge 1 ]; then
+    [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN} $(hostname)\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
     SYMFONY_COMMAND_DEBUG="-vvv"
-    DOCKER_DEBUG="-e DEBUG=${DEBUG}"
+    DOCKER_DEBUG="-e WF_DEBUG=${WF_DEBUG}"
 fi
-[[ ${DEBUG:-0} -ge 2 ]] && set -x
+[[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
 # You can use the `--dev` to enable it without edit config
 if [ "$1" == "--develop" ]; then
@@ -30,7 +30,7 @@ shift
 
 # DIRECTORIES
 WORKDIR=$(pwd)
-GLOBAL_COMMANDS=("-h" "--help" "--version")
+GLOBAL_COMMANDS=("-h" "--help" "--version" "--clean-cache" "--reload")
 if [[ ${WORKDIR} =~ ^/($|bin|boot|lib|mnt|proc|sbin|sys) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
     echo -e "\033[1;37mYou can try to work in a protected directory! The \033[31m${WORKDIR}\033[37m is in a protected space!\033[0m"
     exit 1
@@ -83,7 +83,7 @@ CHAIN_VARIABLE_NAMES=(
     'WF_WORKING_DIRECTORY_NAME'
     'WF_CONFIGURATION_FILE_NAME'
     'WF_ENV_FILE_NAME'
-    'DEBUG'
+    'WF_DEBUG'
     'WF_DOCKER_HOST_CHAIN'
     'WF_TTY'
 )
@@ -97,7 +97,7 @@ DOCKER_COMPOSE_ENV=" \
     -e APP_ENV=${WF_SYMFONY_ENV} \
     -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
     -e WF_DOCKER_HOST_CHAIN=${WF_DOCKER_HOST_CHAIN} \
-    -e DEBUG=${DEBUG} \
+    -e WF_DEBUG=${WF_DEBUG} \
     -e CI=${CI} \
     -e DOCKER_RUN=${DOCKER_RUN:-0} \
     -e WF_TTY=${WF_TTY}"

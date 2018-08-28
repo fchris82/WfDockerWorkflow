@@ -127,6 +127,6 @@ case $1 in
             WORKFLOW_MAKEFILE_PATH="${DIR}/versions/Makefile" \
             MAKE_EXTRA_PARAMS="${MAKE_EXTRA_PARAMS}" \
             COMMAND_ENVS="${COMMAND_ENVS:-""}" \
-            DEBUG="${DEBUG}" || quit
+            WF_DEBUG="${WF_DEBUG}" || quit
     ;;
 esac

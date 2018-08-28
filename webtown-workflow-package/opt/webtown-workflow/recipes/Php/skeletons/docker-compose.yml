@@ -17,7 +17,7 @@ services:
             DOCKER_RUN: ${DOCKER_RUN}
             COMPOSER_MEMORY_LIMIT: -1
             DOCKER_USER: ${DOCKER_USER}
-            DEBUG: ${DEBUG}
+            WF_DEBUG: ${WF_DEBUG}
             LOCAL_USER_ID: ${LOCAL_USER_ID}
             LOCAL_USER_NAME: ${LOCAL_USER_NAME}
             LOCAL_USER_HOME: ${LOCAL_USER_HOME}

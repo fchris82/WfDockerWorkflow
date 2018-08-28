@@ -383,7 +383,7 @@ class Builder
 PROJECT_WORKING_DIRECTORY := \$\${PWD}
 WF_TARGET_DIRECTORY := $this->targetDirectory
 # Export the debug value
-export DEBUG
+export WF_DEBUG
 
 # Makefiles
 $includeMakefiles

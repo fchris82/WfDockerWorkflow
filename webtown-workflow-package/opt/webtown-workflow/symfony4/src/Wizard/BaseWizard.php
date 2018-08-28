@@ -142,7 +142,7 @@ abstract class BaseWizard implements WizardInterface
                 'USER_GROUP'        => '${USER_GROUP}',
                 'APP_ENV'           => 'dev',
                 'XDEBUG_ENABLED'    => '0',
-                'DEBUG'             => '0',
+                'WF_DEBUG'          => '0',
                 'CI'                => '0',
                 'DOCKER_RUN'        => '1',
                 'WF_TTY'            => '1',
@@ -152,7 +152,7 @@ abstract class BaseWizard implements WizardInterface
                 $envParameters[] = sprintf('-e %s=%s', $name, $value);
             }
 
-            // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e DEBUG=0 /bin/bash -c "ls -al && php -i"
+            // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e WF_DEBUG=0 /bin/bash -c "ls -al && php -i"
             $dockerCmd = sprintf(
                 'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
                 $targetProjectDirectory,

@@ -58,10 +58,10 @@ function quit {
 # Eg: MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 function make_params {
     PARAMS="";
-    if [ -z "$MAKE_DISABLE_SILENC" ] && [ ${DEBUG:-0} -lt 1 ]; then
+    if [ -z "$MAKE_DISABLE_SILENC" ] && [ ${WF_DEBUG:-0} -lt 1 ]; then
         PARAMS="${PARAMS} -s --no-print-directory"
     fi
-    if [ ! -z "$MAKE_DEBUG_MODE" ] || [ ${DEBUG:-0} -ge 3 ]; then
+    if [ ! -z "$MAKE_DEBUG_MODE" ] || [ ${WF_DEBUG:-0} -ge 3 ]; then
         PARAMS="${PARAMS} -d"
     fi
     if [ ! -z "$MAKE_ONLY_PRINT" ]; then
@@ -139,7 +139,7 @@ function get_project_config_hash {
     # We try to find the all imported file. Now it isn't recursive here and can't handle the absolute path!
     # Without the `| tr '\0' ' '` it causes `warning: command substitution: ignored null byte in input` error message
     # @todo (Chris) Jelenleg nem rekurzív + ha van szóköz az útvonalban, akkor rossz eredményt ad + gondban van, ha absolut útvonalat próbálunk importálni.
-    IMPORT_FILES=$(grep -Poz 'imports: *\n?\K(.|\n)*(?=\n+\w)' ${PROJECT_CONFIG_FILE} | tr '\0\n' ' ' | sed 's:- : :g' | sed -r 's:[^[:alnum:]\.\-\/_]+: :g')
+    IMPORT_FILES=$(grep -Poz '(\A|\n)imports:\s*\K(\n? +[^\n]+)+' ${PROJECT_CONFIG_FILE} | tr '\0\n' ' ' | sed 's:- : :g' | sed -r 's:[^[:alnum:]\.\-\/_]+: :g')
     # Env file
     if [ -f "${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}" ]; then
         ENV_FILE="${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}"
