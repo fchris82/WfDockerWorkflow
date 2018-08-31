@@ -48,6 +48,8 @@ variables:
 
 .docker_init_and_stop: &docker_init_and_stop
     before_script:
+        # You can register ENV values trough the `$WF_ENV` variable
+        - printf "%s" "${WF_ENV:-""}" > .wf.env
         - wf up
         - wf docker-compose exec -T engine /usr/local/bin/entrypoint.sh --wait-for-init
         # waiting for mysql
@@ -72,7 +74,9 @@ variables:
         - '[[ -z "$STAGE" ]] && echo "You have to set the STAGE parameter!" && exit 1'
         ###<<
         # init
-        - wf composer install
+        - env
+        - wf debug-docker-config
+#        - wf composer install
         # Set SSH parameters
         - ENGINE=$(WF_DEBUG=0 wf ps -q engine)
         - SSH_PATH=/usr/local/etc/ssh
@@ -92,15 +96,21 @@ variables:
         - cp .deployer/hosts.yml.dist .deployer/hosts.yml
         # change the ~/.ssh base directory to the /usr/local/etc/ssh directory
         - sed -e 's:~/.ssh/:/usr/local/etc/ssh/:' -i .deployer/hosts.yml
-        # Deploy
-        - echo "wf dep deploy ${STAGE} --revision='${CI_BUILD_REF}'"
-#        - wf dep deploy -vvv ${STAGE} --revision="${CI_BUILD_REF}"
-        - wf dep deploy ${STAGE} --revision="${CI_BUILD_REF}"
+        # ------
+        - cat .wf.yml
+        - cat .wf.env
+        - ls -al
+        # ------
+        # Deploy. You can change the action trough the $DEPLOY_ACTION variable. Eg for the stop action.
+        - echo "wf dep ${DEPLOY_ACTION:-deploy} ${STAGE} --revision='${CI_BUILD_REF}'"
+#        - wf dep ${DEPLOY_ACTION:-deploy} -vvv ${STAGE} --revision="${CI_BUILD_REF}"
+        - wf dep ${DEPLOY_ACTION:-deploy} ${STAGE} --revision="${CI_BUILD_REF}"
         # You should set these on admin --> variables:
         #   - SLACK_API_URL
         #   - SLACK_ICON_EMOJI
         #   - SLACK_ICON_16x16
-        - '[[ ! -z "$SLACK_API_URL" ]] && curl -X POST --data-urlencode "payload={
+        # We switch off $DEPLOY_ACTION when the deploy action is stoping
+        - '[[ ! -z "$SLACK_API_URL" ]] && [[ "${DEPLOY_ACTION:-deploy}" -eq "deploy" ]] && curl -X POST --data-urlencode "payload={
             \"channel\": \"#gitlab\",
             \"username\": \"GitLab\",
             \"text\": \"*${CI_PROJECT_NAME}* has deployed to *${STAGE}*\",
@@ -157,9 +167,10 @@ build:
         - wf reconfigure
         - wf debug-docker-config
         - wf up
-        - wf composer install -n
-        - wf sf doctrine:database:create --if-not-exists
-        - wf sf doctrine:migrations:migrate -n
+        - wf install
+#        - wf composer install -n
+#        - wf sf doctrine:database:create --if-not-exists
+#        - wf sf doctrine:migrations:migrate -n
         ###<<
 
 test:codeSniffer:
@@ -216,18 +227,58 @@ deploy:demo:
     <<: *all_jobs
     <<: *docker_init_and_stop
     variables:
-        SSH_KEY:    ${SSH_DEMO_DEPLOY_KEY}
-        STAGE:      demo
+        SSH_KEY:     ${SSH_DEMO_DEPLOY_KEY}
+        STAGE:       demo
         SLACK_COLOR: '#ccc'
     script: *deploy
     environment:
         name: demo
-        url:  https://demo.example.com
-    ###>> Amennyiben a demo-t automatikusan szeretnéd frissíteni, akkor ezt törölheted.
-    when: manual
-    ###<<
+        url:  http://{{ project_name }}.amapa.webtown.hu:88/
     only:
         - develop
+
+deploy:branch:
+    stage: deploy
+    <<: *all_jobs
+    <<: *docker_init_and_stop
+    variables:
+        SSH_KEY:     ${SSH_DEMO_DEPLOY_KEY}
+        STAGE:       branches
+        SLACK_COLOR: '#fff'
+        WF_ENV: |
+            DEPLOY_DIR=${CI_PROJECT_PATH_SLUG}/${CI_BUILD_REF_SLUG}
+            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.ezplatformhu.amapa.webtown.hu
+            DEPLOY_NAME=${BASENAME}${CI_JOB_ID}
+            CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
+#        WF_DEBUG:       2
+    script: *deploy
+    environment:
+        name: review/${CI_BUILD_REF_SLUG}
+        url:  http://${CI_BUILD_REF_SLUG}.{{ project_name }}.amapa.webtown.hu:88/
+        on_stop: review:stop
+    only:
+        - /^(feature|hotfix)/
+
+review:stop:
+    stage: deploy
+    <<: *all_jobs
+    <<: *docker_init_and_stop
+    variables:
+        SSH_KEY:     ${SSH_DEMO_DEPLOY_KEY}
+        STAGE:       branches
+        DEPLOY_ACTION: deploy:remove
+        WF_ENV: |
+            DEPLOY_DIR=${CI_PROJECT_PATH_SLUG}/${CI_BUILD_REF_SLUG}
+            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.ezplatformhu.amapa.webtown.hu
+            DEPLOY_NAME=${BASENAME}${CI_JOB_ID}
+            CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
+    script: *deploy
+    when: manual
+    environment:
+        name: review/${CI_BUILD_REF_SLUG}
+        action: stop
+    only:
+        - /^(feature|hotfix)/
 
 ###>> Ezt ki kell tölteni
 deploy:prod:

@@ -2,3 +2,4 @@
 # Docker
 /.wf
 /.wf.yml
+/.wf.env

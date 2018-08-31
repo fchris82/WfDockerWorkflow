@@ -57,7 +57,7 @@ commands:
 
     install:
         - wf composer install
-        - wf dbreload
+        - wf dbreload ${1}
 #        - wf exec engine npm install
 #        - wf exec engine gulp build
 #        - wf sf assets:install --symlink
@@ -74,6 +74,8 @@ commands:
         # 'ezsystems/ezplatform' => 'clean',
         # 'ezsystems/ezplatform-demo' => 'platform-demo',
 #        - wf sf ezplatform:install [studio-clean|demo|clean|platform-demo]
+        # Ha van telepítve doctrine:schema:validate és van is mit validálni (vannak ez táblán kívüli táblák)
+#        - wf sf doctrine:schema:validate --skip-mapping || wf sf ezplatform:install [studio-clean|demo|clean|platform-demo]
         - wf sf doctrine:migrations:migrate -n --allow-no-migration
         # Did you install the doctrine fixture bundle?
 #        - if [ "${1}" == "--full" ]; then wf sf doctrine:fixtures:load -n; fi
@@ -89,12 +91,17 @@ commands:
         - wf php {{ sf_bin_dir }}/phpunit -c app
         - wf sf doctrine:mapping:info
         - wf sf doctrine:schema:validate
+        # Az --unbuffered néhány container-ben hibát ad, szóval lehet, hogy nem kell
         - wf php {{ sf_bin_dir }}/phpmd src xml phpmd.xml | sed --unbuffered
              -e 's:<file name=\("[^>]*"\)>:<file name=\o033[1;36m\1\o033[0;39m>:g'
              -e 's:\(beginline\|endline\|rule\)=\("[^"]*"\):\o033[1;31m\1\o033[0;39m=\o033[33m\2\o033[39m:g'
 
     dep:
         - wf php-exec {{ sf_bin_dir }}/dep ${@}
+
+    # Csak EZ!
+#    kaliop_type_gen:
+#        - if [ "${1}" == "" ]; then echo "Meg kell adnod az identifier-t!"; else wf sf kaliop:migration:generate --type=content_type --match-type=identifier --match-value=${1} --mode=create -n AppBundle content_type_${1}; fi
 
 # The configs of recipes
 # List all available recipes: `wf --config-dump --only-recipes`

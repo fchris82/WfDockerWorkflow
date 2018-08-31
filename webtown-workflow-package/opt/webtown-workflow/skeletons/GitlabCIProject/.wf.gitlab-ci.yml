@@ -10,6 +10,11 @@ docker_compose:
             engine:
                 environment:
                     SYMFONY_DEPRECATIONS_HELPER: disabled
+                    # It is important to deploy
+                    DEPLOY_DIR: ${DEPLOY_DIR}
+                    DEPLOY_DOMAIN: ${DEPLOY_DOMAIN}
+                    DEPLOY_NAME: ${DEPLOY_NAME}
+                    CI_COMMIT_REF_NAME: ${CI_COMMIT_REF_NAME}
 
 # The configs of recipes
 recipes:

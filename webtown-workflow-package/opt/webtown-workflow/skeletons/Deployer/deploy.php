@@ -8,7 +8,9 @@ const ROLE_FIXTURE_RELOAD = 'fixtures';
 
 require 'vendor/deployer/deployer/recipe/symfony.php';
 require '.deployer/functions.php';
+require '.deployer/DistFile.php';
 require '.deployer/wf.php';
+require '.deployer/deploy.remove.php';
 
 // Project name
 set('application', '{{ project_name | default('???') }}');
@@ -36,10 +38,7 @@ add('shared_files', [
 add('shared_dirs', [
     'web/var',
     '.wf/.data',
-]);
-add('dist_files', [
-    'app/config/parameters.yml',
-    '.wf.yml',
+#    'node_modules',
 ]);
 
 // Writable dirs by web server
@@ -47,22 +46,35 @@ add('writable_dirs', [
     'web/var'
 ]);
 
+// You can set '--full' eg --> wf install --full
+set('wf_install_param', '');
+
+loadEnvironments();
 inventory(__DIR__ . '/.deployer/hosts.yml');
 
 // ============================== W O R K F L O W ================================
 task('deploy:init-config', function () {
     cd('{{ "{{release_path}}" }}');
-    foreach (get('dist_files') as $distFile) {
-        if (!test(sprintf('[[ -f %s ]]', $distFile))) {
-            run(sprintf('cp %1$s.dist %1$s', $distFile));
+    foreach (get('dist_files', []) as $distFile => $targetFiles) {
+        if (!is_array($targetFiles)) {
+            $targetFiles = [$targetFiles];
         }
-    }
-
-    if (get('workflow_project_config', false)) {
-        $configPath = sys_get_temp_dir() . '/workflow_project_config.project.yml';
-        $content = get('workflow_project_config');
-        file_put_contents($configPath, $content);
-        upload($configPath, '{{ "{{release_path}}" }}/.wf.yml');
+        foreach ($targetFiles as $targetFile) {
+            $dist = new DistFile($distFile, $targetFile);
+            if ($dist->isForce() || !test(sprintf('[[ -f %s ]]', $dist->getTargetFile()))) {
+                if ($dist->isParseContent()) {
+                    $tmpFile = sys_get_temp_dir() . '/' . md5($dist->getTargetFile());
+                    $distContent = file_get_contents(__DIR__ . '/' . $dist->getDistFile());
+                    file_put_contents($tmpFile, parse($distContent));
+                    upload($tmpFile, '{{ "{{release_path}}" }}/' . $dist->getTargetFile());
+                    writeln(file_get_contents($tmpFile));
+                    run('cat {{ "{{release_path}}" }}/' . $dist->getTargetFile());
+                    unlink($tmpFile);
+                } else {
+                    run(sprintf('cp -rf %s %s', $dist->getDistFile(), $dist->getTargetFile()));
+                }
+            }
+        }
     }
 });
 before('deploy:shared', 'deploy:init-config');
@@ -75,7 +87,7 @@ task('deploy:wf', function () {
     writeln('...Init is ready');
     writeln('Start install... (it would be long)');
     // A lassú futás miatt a timeout-ot megnöveljük
-    run('{{ "{{wf}}" }} install', [
+    run('{{ "{{wf}}" }} install {{ "{{wf_install_param}}" }}', [
         'timeout' => 1200,
     ]);
 })->onRoles(ROLE_WORKFLOW);
