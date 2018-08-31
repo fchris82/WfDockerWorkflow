@@ -135,17 +135,18 @@ abstract class BaseWizard implements WizardInterface
             );
         } else {
             $environments = [
-                'LOCAL_USER_ID'     => '${LOCAL_USER_ID}',
-                'LOCAL_USER_NAME'   => '${LOCAL_USER_NAME}',
-                'LOCAL_USER_HOME'   => '${LOCAL_USER_HOME}',
-                'COMPOSER_HOME'     => '${COMPOSER_HOME}',
-                'USER_GROUP'        => '${USER_GROUP}',
-                'APP_ENV'           => 'dev',
-                'XDEBUG_ENABLED'    => '0',
-                'WF_DEBUG'          => '0',
-                'CI'                => '0',
-                'DOCKER_RUN'        => '1',
-                'WF_TTY'            => '1',
+                'LOCAL_USER_ID'         => '${LOCAL_USER_ID}',
+                'LOCAL_USER_NAME'       => '${LOCAL_USER_NAME}',
+                'LOCAL_USER_HOME'       => '${LOCAL_USER_HOME}',
+                'COMPOSER_HOME'         => '${COMPOSER_HOME}',
+                'COMPOSER_MEMORY_LIMIT' => '-1',
+                'USER_GROUP'            => '${USER_GROUP}',
+                'APP_ENV'               => 'dev',
+                'XDEBUG_ENABLED'        => '0',
+                'WF_DEBUG'              => '0',
+                'CI'                    => '0',
+                'DOCKER_RUN'            => '1',
+                'WF_TTY'                => '1',
             ];
             $envParameters = [];
             foreach ($environments as $name => $value) {
