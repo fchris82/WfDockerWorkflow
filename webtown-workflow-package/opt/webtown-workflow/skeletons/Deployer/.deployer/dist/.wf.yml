@@ -3,15 +3,15 @@ imports:
     - .wf.dev.yml
 
 # Config the docker compose data.
-docker_compose:
-    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
-    extension:
-        # Example:
-        services:
-            yarn:
-                volumes:
-                    - '%wf.project_path%:/usr/src/app'
-                    - '%wf.project_path%/../../shared:/usr/src/app/../../shared'
+#docker_compose:
+#    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
+#    extension:
+#        # Example:
+#        services:
+#            yarn:
+#                volumes:
+#                    - '%wf.project_path%:/usr/src/app'
+#                    - '%wf.project_path%/../../shared:/usr/src/app/../../shared'
 
 # The configs of recipes
 recipes:
@@ -31,5 +31,5 @@ recipes:
         # You have to set the service and its host and port settings.
         settings:
             web:
-                host: {{ "{{ project_directory }}" }}.amapa.webtown.hu
+                host: {{ project_directory }}.amapa.webtown.hu
                 port: 88

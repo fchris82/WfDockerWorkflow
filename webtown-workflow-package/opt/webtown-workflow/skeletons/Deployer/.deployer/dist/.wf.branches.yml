@@ -5,15 +5,15 @@ imports:
 name: {{ "{{env.DEPLOY_NAME}}" }}
 
 # Config the docker compose data.
-docker_compose:
-    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
-    extension:
-        # Example:
-        services:
-            yarn:
-                volumes:
-                    - '%wf.project_path%:/usr/src/app'
-                    - '%wf.project_path%/../../shared:/usr/src/app/../../shared'
+#docker_compose:
+#    # Docker Compose yaml configuration. You mustn't use the version parameter, it will be automatically.
+#    extension:
+#        # Example:
+#        services:
+#            yarn:
+#                volumes:
+#                    - '%wf.project_path%:/usr/src/app'
+#                    - '%wf.project_path%/../../shared:/usr/src/app/../../shared'
 
 # The configs of recipes
 recipes:

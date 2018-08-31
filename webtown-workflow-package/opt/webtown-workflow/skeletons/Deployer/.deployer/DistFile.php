@@ -56,7 +56,7 @@ class DistFile
             $signs++;
             $this->force = true;
         }
-        if ($targetFile[0] == self::FORCE_SIGN || $targetFile[1] == self::FORCE_SIGN) {
+        if ($targetFile[0] == self::PARSE_CONTENT_SIGN || $targetFile[1] == self::PARSE_CONTENT_SIGN) {
             $signs++;
             $this->parseContent = true;
         }

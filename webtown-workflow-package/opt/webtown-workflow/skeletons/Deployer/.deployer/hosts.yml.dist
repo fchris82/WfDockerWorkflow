@@ -56,7 +56,7 @@ branches:
     user:             phpdeploy
     # Ide húzzuk be az .ssh kulcsokat a gitlab-runner-ből, lásd `.docker/docker-compose.gitlab-ci.yml` fájl!
     identityFile:     ~/.ssh/id_rsa
-    branch:           {{ "{{env.CI_COMMIT_REF_NAME}}" }}
+    branch:           '{{ "{{env.CI_COMMIT_REF_NAME}}" }}'
     symfony_env:      dev
     # A --no-dev-et kivettük belőle, mivel ez dev.
     composer_options: '{{ "{{composer_action}}" }} --verbose --prefer-dist --no-progress --no-interaction --optimize-autoloader'

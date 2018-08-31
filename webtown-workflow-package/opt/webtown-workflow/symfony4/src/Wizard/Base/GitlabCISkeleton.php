@@ -50,7 +50,7 @@ class GitlabCISkeleton extends BaseSkeletonWizard implements PublicWizardInterfa
         }
 
         return [
-            'project_name' => sprintf('project_%s', date('YmdHis')),
+            'project_name' => basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory)),
             'sf_recipe_name' => $symfonyRecipeName,
             'sf_console_cmd' => $sfConsoleCmd,
             'sf_bin_dir' => $sfBinDir,
