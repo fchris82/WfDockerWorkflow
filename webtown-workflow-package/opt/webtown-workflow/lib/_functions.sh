@@ -34,12 +34,6 @@ function lock {
 }
 
 function cleanup {
-    if [ -d "/tmp/gulp-ruby-sass" ]; then
-        rm -rf /tmp/gulp-ruby-sass/
-    fi
-    if [ -f /tmp/webtown-kunstmaan-installer.deb ]; then
-        rm -f /tmp/webtown-kunstmaan-installer.deb
-    fi
     if [ -f ${LOCKFILE} ]; then
         rm -f ${LOCKFILE}
     fi
