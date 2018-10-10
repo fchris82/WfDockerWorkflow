@@ -12,3 +12,7 @@ WF_XDEBUG_ENABLED=0
 
 # Default DNS local proxy TLD:
 WF_DEFAULT_LOCAL_TLD=.loc
+
+# The program try to use the system value. If you want to override the system values, you can override it here.
+#WF_HOST_TIMEZONE=Europe/Budapest
+#WF_HOST_LOCALE=hu_HU.UTF-8

@@ -102,12 +102,21 @@ class BuildInitEvent extends Event
      */
     public function getParameters()
     {
+        // @todo (Chris) itt kellene vmi, amivel ki tudom listázni az elérhető változókat illetve helyőrzőket, mert így kicsit a sötétben tapogatózom én is, hogy mik érhetőek el
+        $baseParameters = [
+            '%wf.project_path%'     => $this->projectPath,
+            '%wf.target_directory%' => $this->targetDirectory,
+            '%wf.config_hash%'      => $this->configHash,
+        ];
+        // Add ENV-s
+        $envParameters = [];
+        foreach ($_ENV as $name => $value) {
+            $key = '%env.' . $name . '%';
+            $envParameters[$key] = $value;
+        }
         return array_merge(
-            [
-                '%wf.project_path%'     => $this->projectPath,
-                '%wf.target_directory%' => $this->targetDirectory,
-                '%wf.config_hash%'      => $this->configHash,
-            ],
+            $baseParameters,
+            $envParameters,
             $this->parameters
         );
     }

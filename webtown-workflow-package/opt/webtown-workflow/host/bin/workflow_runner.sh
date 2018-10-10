@@ -1,9 +1,11 @@
 #!/bin/bash
+# Debug mode
+#set -x
 
 # Debug! Host target, so you can't use the `source` solution, you have to copy the _debug.sh file content directly.
 # << webtown-workflow-package/opt/webtown-workflow/lib/_debug.sh !!!
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
-    [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN} $(hostname)\033[0m"
+    [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}$(hostname)\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
     SYMFONY_COMMAND_DEBUG="-vvv"
     DOCKER_DEBUG="-e WF_DEBUG=${WF_DEBUG}"
@@ -74,6 +76,8 @@ CHAIN_VARIABLE_NAMES=(
     'LOCAL_USER_ID'
     'LOCAL_USER_NAME'
     'LOCAL_USER_HOME'
+    'WF_HOST_TIMEZONE'
+    'WF_HOST_LOCALE'
     'COMPOSER_HOME'
     'USER_GROUP'
     'CI'
@@ -92,11 +96,12 @@ DOCKER_COMPOSE_ENV=" \
     -e LOCAL_USER_ID=$(id -u) \
     -e LOCAL_USER_NAME=${USER} \
     -e LOCAL_USER_HOME=${HOME} \
+    -e WF_HOST_TIMEZONE=${WF_HOST_TIMEZONE:-$([ -f /etc/timezone ] && cat /etc/timezone)} \
+    -e WF_HOST_LOCALE=${WF_HOST_LOCALE:-${LOCALE:-${LANG:-''}}} \
     -e COMPOSER_HOME=${COMPOSER_HOME:-${HOME}/.composer} \
     -e USER_GROUP=$(getent group docker | cut -d: -f3) \
     -e APP_ENV=${WF_SYMFONY_ENV} \
     -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
-    -e WF_DOCKER_HOST_CHAIN=${WF_DOCKER_HOST_CHAIN} \
     -e WF_DEBUG=${WF_DEBUG} \
     -e CI=${CI} \
     -e DOCKER_RUN=${DOCKER_RUN:-0} \
@@ -150,8 +155,10 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
     )
 fi
 
+# You should handle the `WF_DOCKER_HOST_CHAIN` as unique, because the quotes cause some problem if you want to use in an other variable!
 docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
+            -e WF_DOCKER_HOST_CHAIN="${WF_DOCKER_HOST_CHAIN}" \
             -w ${WORKDIR} \
             ${WORKDIR_SHARE} \
             ${CONFIG_FILE_SHARE} \

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+WF_DOCKER_HOST_CHAIN+="$(hostname) "
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
     [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
