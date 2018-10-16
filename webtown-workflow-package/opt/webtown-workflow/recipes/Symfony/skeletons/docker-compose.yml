@@ -8,6 +8,7 @@ services:
         volumes:
             - "${BASE_DIRECTORY}/${PROJECT_DIR_NAME}:${DOCKER_DOC_ROOT}/${PROJECT_DIR_NAME}"
             - "{{ recipe_path }}/etc/vhost.conf:/etc/nginx/conf.d/default.conf:ro"
+            - "{{ recipe_path }}/etc/.htpasswd:/etc/nginx/.htpasswd:ro"
         command: {{ nginx_debug ? 'nginx-debug' : 'nginx' }} -g 'daemon off;'
 
     engine:

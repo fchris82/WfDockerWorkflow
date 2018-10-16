@@ -5,10 +5,6 @@ XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server
 PHP_IDE_CONFIG := "serverName=${XDEBUG_IDE_SERVER_NAME}"
 WF_XDEBUG_ENABLED := {{ server.xdebug ? '1' : '0' }}
 
-# HTTP AUTH : http://www.htaccesstools.com/htpasswd-generator/
-# Don't forget to escape the $ sign: $ --> \$$
-HTTP_AUTH_PASS :=
-
 ORIGINAL_CMD_DOCKER_ENV := $(CMD_DOCKER_ENV)
 define CMD_DOCKER_ENV
     $(ORIGINAL_CMD_DOCKER_ENV) \
