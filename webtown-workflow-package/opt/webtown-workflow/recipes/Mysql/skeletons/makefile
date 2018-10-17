@@ -7,9 +7,14 @@ DB_URL_{{ name }}      := mysql://root:$(DB_PASSWORD_{{ name }})@{{ name }}/$(DB
 ORIGINAL_CMD_DOCKER_ENV := $(CMD_DOCKER_ENV)
 define CMD_DOCKER_ENV
     $(ORIGINAL_CMD_DOCKER_ENV) \
-    MYSQL_ROOT_PASSWORD=$(DB_PASSWORD) \
-    DB_NAME=$(DB_NAME) \
-    DATABASE_URL=$(DB_URL)
+{% for name, db_config in databases %}
+    MYSQL_ROOT_PASSWORD_{{ name }}=$(DB_PASSWORD_{{ name }}) \
+    DB_NAME_{{ name }}=$(DB_NAME_{{ name }}) \
+    DATABASE_URL_{{ name }}=$(DB_URL_{{ name }}) \
+{% endfor %}
+    MYSQL_ROOT_PASSWORD=$(DB_PASSWORD_{{ databases|keys|first }}) \
+    DB_NAME=$(DB_NAME_{{ databases|keys|first }}) \
+    DATABASE_URL=$(DB_URL_{{ databases|keys|first }})
 endef
 
 .PHONY: mysql
