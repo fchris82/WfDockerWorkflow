@@ -1,8 +1,6 @@
 version: "{{ config.docker_compose.version }}"
 
 services:
-{% for name, db_config in databases %}
-    {{ name }}:
+    mysql:
         volumes:
-            - "${DOCKER_DATA_DIR}/{{ name }}:/var/lib/mysql"
-{% endfor %}
+            - "${DOCKER_DATA_DIR}/mysql:/var/lib/mysql"

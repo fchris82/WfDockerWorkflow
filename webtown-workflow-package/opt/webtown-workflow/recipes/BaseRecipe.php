@@ -8,6 +8,7 @@
 
 namespace Recipes;
 
+use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\DockerComposeSkeletonFile;
 use App\Skeleton\ExecutableSkeletonFile;
 use App\Skeleton\MakefileSkeletonFile;
@@ -74,12 +75,15 @@ abstract class BaseRecipe
 
         /** @var SplFileInfo $skeletonFileInfo */
         foreach ($skeletonFinder as $skeletonFileInfo) {
-            $skeletonFile = $this->buildSkeletonFile($skeletonFileInfo, $recipeConfig);
-            $skeletonFile->setContents($this->parseTemplateFile(
-                $skeletonFileInfo,
-                $templateVars
-            ));
-            $skeletonFiles[] = $skeletonFile;
+            try {
+                $skeletonFile = $this->buildSkeletonFile($skeletonFileInfo, $recipeConfig);
+                $skeletonFile->setContents($this->parseTemplateFile(
+                    $skeletonFileInfo,
+                    $templateVars
+                ));
+                $skeletonFiles[] = $skeletonFile;
+            } catch (SkipSkeletonFileException $exception) {
+            }
         }
 
         return $skeletonFiles;
@@ -128,6 +132,14 @@ abstract class BaseRecipe
         ], $recipeConfig);
     }
 
+    /**
+     * @param SplFileInfo $fileInfo
+     * @param $config
+     *
+     * @return DockerComposeSkeletonFile|ExecutableSkeletonFile|MakefileSkeletonFile|SkeletonFile
+     *
+     * @throws \App\Exception\SkipSkeletonFileException
+     */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
         if ($this->isDockerComposeFile($fileInfo)) {

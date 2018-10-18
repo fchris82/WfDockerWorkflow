@@ -1,8 +1,6 @@
 version: "{{ config.docker_compose.version }}"
 
 services:
-{% for name, db_config in databases %}
-    {{ name }}:
+    mysql:
         ports:
-            - "{{ db_config.port }}:3306"
-{% endfor %}
+            - "{{ port }}:3306"

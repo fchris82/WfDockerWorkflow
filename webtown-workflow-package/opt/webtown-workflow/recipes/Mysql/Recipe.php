@@ -9,7 +9,10 @@
 namespace Recipes\Mysql;
 
 use Recipes\BaseRecipe;
+use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\DockerComposeSkeletonFile;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
 class Recipe extends BaseRecipe
@@ -27,104 +30,104 @@ class Recipe extends BaseRecipe
 
         $rootNode
             ->info('<comment>Include a MySQL service</comment>')
-            ->children()
-                ->arrayNode('defaults')
-                    ->info('<comment>You can set some defaults for all containers!</comment>')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('version')
-                            ->info('<comment>Docker image tag</comment>')
-                        ->end()
-                        ->scalarNode('password')
-                            ->info('<comment>The <info>root</info> password.</comment>')
-                        ->end()
-                        ->booleanNode('local_volume')
-                            ->info('<comment>You can switch the using local volume.</comment>')
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode('databases')
-                    ->info('<comment>Configuration of the MySql containers.</comment>')
-                    ->useAttributeAsKey('docker_container_name')
-                    ->prototype('array')
-                        ->info('<comment>The docker container name. You have to link through this! Eg: <info>mysql -u root -p -h [docker_container_name]</info>.</comment>')
-                        ->addDefaultsIfNotSet()
-                        ->children()
-                            ->scalarNode('version')
-                                ->info('<comment>Docker image tag (you can define default for all, see <info>mysql.defaults.version</info>)</comment>')
-                                ->isRequired()
-                                ->cannotBeEmpty()
-                            ->end()
-                            ->scalarNode('database')
-                                ->info('<comment>Database name</comment>')
-                                ->isRequired()
-                                ->cannotBeEmpty()
-                            ->end()
-                            ->scalarNode('password')
-                                ->info('<comment>The <info>root</info> password. (you can define default for all, see <info>mysql.defaults.password</info>)</comment>')
-                                ->isRequired()
-                                ->cannotBeEmpty()
-                            ->end()
-                            ->booleanNode('local_volume')
-                                ->info('<comment>You can switch the using local volume.</comment>')
-                                ->defaultTrue()
-                            ->end()
-                            ->integerNode('port')
-                                ->info('<comment>If you want to enable this container from outside set the port number.</comment>')
-                                ->defaultValue(0)
-                            ->end()
-                        ->end()
-                    ->end()
-                ->end()
-            ->end()
-            ->beforeNormalization()
-                ->always(function($v) {
-                    if (is_array($v)) {
-                        // Backward compatibility
-                        if (!array_key_exists('databases', $v)) {
-                            $w['databases']['mysql'] = $v;
-                            $v = $w;
-                        // Handle defaults
-                        } elseif (array_key_exists('defaults', $v) && is_array($v['defaults'])) {
-                            foreach ($v['defaults'] as $key => $defaultValue) {
-                                foreach ($v['databases'] as $dockerContainerName => $config) {
-                                    // If the config empty, then we use only defaults
-                                    if (!$config) {
-                                        $config = [
-                                            'database' => $dockerContainerName . '_db',
-                                        ];
-                                    } elseif (!is_array($config)) {
-                                        throw new \InvalidArgumentException(sprintf(
-                                            'Invalid configuration value in the <info>mysql.databases.%s</info> place. You have to use array or null instead of %s',
-                                            $dockerContainerName,
-                                            gettype($config)
-                                        ));
-                                    }
-                                    if (!array_key_exists($key, $config) || (!$config[$key] && $config[$key] !== false)) {
-                                        $v['databases'][$dockerContainerName][$key] = $defaultValue;
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    return $v;
-                })
-                ->end()
-            ->end()
         ;
+        $this->configureDbConnection($rootNode);
 
         return $rootNode;
     }
 
+    protected function configureDbConnection(ArrayNodeDefinition $node)
+    {
+        $node
+            ->children()
+                ->scalarNode('version')
+                    ->info('<comment>Docker image tag</comment>')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('database')
+                    ->info('<comment>Database name</comment>')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->scalarNode('password')
+                    ->info('<comment>The <info>root</info> password.</comment>')
+                    ->isRequired()
+                    ->cannotBeEmpty()
+                ->end()
+                ->booleanNode('local_volume')
+                    ->info('<comment>You can switch the using local volume.</comment>')
+                    ->defaultTrue()
+                ->end()
+                ->variableNode('port')
+                    ->info("<comment>If you want to enable this container from outside set the port number. You can use these values:</comment>\n" .
+                        " <info>false</info>        <comment>no create opened port number</comment>\n" .
+                        " <info>0</info>            <comment>create a custom, random port number</comment>\n" .
+                        " <info>[1-65535]</info>    <comment>use this port number</comment>")
+                    ->defaultFalse()
+                    // Available parameters: false, [0-65536]
+                    ->beforeNormalization()
+                        ->always(function($v) {
+                            if ($v === false || is_int($v)) {
+                                return $v;
+                            }
+                            if (!is_string($v)) {
+                                throw new InvalidConfigurationException(sprintf(
+                                    'The `%s` needs to be false or integer instead of %s!',
+                                    'port',
+                                    gettype($v)
+                                ));
+                            }
+                            if (in_array(strtolower(trim($v)), ['false', 'off', 'no'])) {
+                                return false;
+                            }
+                            if (preg_match('^\d+$', trim($v))) {
+                                $v = (int) $v;
+                                if ($v > 65535) {
+                                    throw new InvalidConfigurationException(sprintf(
+                                        'The `%s` needs to be less than 65536! The `%d` is an invalid port number',
+                                        'port',
+                                        $v
+                                    ));
+                                }
+
+                                return (int) $v;
+                            }
+
+                            throw new InvalidConfigurationException(sprintf(
+                                'The `%s` needs to be false or integer. The `%s` value is invalid!',
+                                'port',
+                                $v
+                            ));
+                        })
+                    ->end()
+                ->end()
+            ->end()
+        ;
+    }
+
+    /**
+     * @param SplFileInfo $fileInfo
+     * @param $config
+     *
+     * @return DockerComposeSkeletonFile|\App\Skeleton\ExecutableSkeletonFile|\App\Skeleton\MakefileSkeletonFile|\App\Skeleton\SkeletonFile
+     *
+     * @throws SkipSkeletonFileException
+     */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
         // Port settings
-        if ($fileInfo->getFilename() == 'docker-compose.port.yml' && isset($config['port']) && $config['port'] > 0) {
+        if ($fileInfo->getFilename() == 'docker-compose.port.yml') {
+            if (!isset($config['port']) || $config['port'] === false) {
+                throw new SkipSkeletonFileException();
+            }
             return new DockerComposeSkeletonFile($fileInfo);
         }
         // Volume settings
-        if ($fileInfo->getFilename() == 'docker-compose.volume.yml' && isset($config['local_volume']) && $config['local_volume']) {
+        if ($fileInfo->getFilename() == 'docker-compose.volume.yml') {
+            if (!isset($config['local_volume']) || !$config['local_volume']) {
+                throw new SkipSkeletonFileException();
+            }
             return new DockerComposeSkeletonFile($fileInfo);
         }
 
