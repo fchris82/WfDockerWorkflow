@@ -8,8 +8,13 @@
 
 namespace Recipes\MysqlMultiple;
 
+use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\DockerComposeSkeletonFile;
 use Recipes\Mysql\Recipe as BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\Finder\SplFileInfo;
 
 class Recipe extends BaseRecipe
 {
@@ -20,12 +25,20 @@ class Recipe extends BaseRecipe
         return static::NAME;
     }
 
+    /**
+     * @return ArrayNodeDefinition|NodeDefinition
+     *
+     * @throws \ReflectionException
+     */
     public function getConfig()
     {
-        $rootNode = parent::getConfig();
+        $parentReflection = new \ReflectionClass(parent::class);
+        $grandparentClass = $parentReflection->getParentClass()->getName();
+        /** @var ArrayNodeDefinition $rootNode */
+        $rootNode = $grandparentClass::getConfig();
 
         $rootNode
-            ->info('<comment>Include a MySQL service</comment>')
+            ->info('<comment>Include multiple MySQL services</comment>')
             ->children()
                 ->arrayNode('defaults')
                     ->info('<comment>You can set some defaults for all containers!</comment>')
@@ -91,5 +104,27 @@ class Recipe extends BaseRecipe
         ;
 
         return $rootNode;
+    }
+
+    protected function needPortSkeletonFile($config)
+    {
+        foreach ($config['databases'] as $name => $dbConfig) {
+            if (isset($dbConfig['port']) && $dbConfig['port'] !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected function needVolumeSkeletonFile($config)
+    {
+        foreach ($config['databases'] as $name => $dbConfig) {
+            if (isset($dbConfig['local_volume']) && $dbConfig['local_volume']) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

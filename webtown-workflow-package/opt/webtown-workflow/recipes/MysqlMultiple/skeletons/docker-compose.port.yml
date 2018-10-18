@@ -2,7 +2,9 @@ version: "{{ config.docker_compose.version }}"
 
 services:
 {% for name, db_config in databases %}
+{% if db_config.port is not same as(false) %}
     {{ name }}:
         ports:
             - "{{ db_config.port }}:3306"
+{% endif %}
 {% endfor %}

@@ -106,6 +106,16 @@ class Recipe extends BaseRecipe
         ;
     }
 
+    protected function needPortSkeletonFile($config)
+    {
+        return isset($config['port']) && $config['port'] !== false;
+    }
+
+    protected function needVolumeSkeletonFile($config)
+    {
+        return isset($config['local_volume']) && $config['local_volume'];
+    }
+
     /**
      * @param SplFileInfo $fileInfo
      * @param $config
@@ -118,14 +128,14 @@ class Recipe extends BaseRecipe
     {
         // Port settings
         if ($fileInfo->getFilename() == 'docker-compose.port.yml') {
-            if (!isset($config['port']) || $config['port'] === false) {
+            if (!$this->needPortSkeletonFile($config)) {
                 throw new SkipSkeletonFileException();
             }
             return new DockerComposeSkeletonFile($fileInfo);
         }
         // Volume settings
         if ($fileInfo->getFilename() == 'docker-compose.volume.yml') {
-            if (!isset($config['local_volume']) || !$config['local_volume']) {
+            if (!$this->needVolumeSkeletonFile($config)) {
                 throw new SkipSkeletonFileException();
             }
             return new DockerComposeSkeletonFile($fileInfo);
