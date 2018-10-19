@@ -127,4 +127,6 @@ class Recipe extends BaseRecipe
 
         return false;
     }
+
+    // @todo (Chris) Regisztrálni kellene az elérhető parancsokat és azok paramétereit, hogy a `help` szépen kiírja azokat!
 }

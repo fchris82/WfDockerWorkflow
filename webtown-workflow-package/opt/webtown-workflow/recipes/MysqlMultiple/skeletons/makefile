@@ -34,18 +34,24 @@ __mysql_connect: up
 	$(CMD_DOCKER_EXEC) $(DOCKER_DB_NAME) mysql -u root --password="$(DB_PASSWORD)" -h localhost --default-character-set=$(DEFAULT_CHARSET) $(DB_NAME)
 
 .PHONY: dbdump
-dbdump: DOCKER_DB_NAME := $(if $(ARGS),$(ARGS),{{ databases|keys|first }})
+dbdump: ARG_DB_NAME := $(word 1, $(ARGS))
+dbdump: ARG_FILENAME := $(word 2, $(ARGS))
+dbdump: DOCKER_DB_NAME := $(if $(ARG_DB_NAME),$(ARG_DB_NAME),{{ databases|keys|first }})
+dbdump: FILE := $(if $(ARG_FILENAME),$(ARG_FILENAME),dbdump_$(DOCKER_DB_NAME).sql)
 dbdump: DB_PASSWORD := $(DB_PASSWORD_$(DOCKER_DB_NAME))
 dbdump: DB_NAME := $(DB_NAME_$(DOCKER_DB_NAME))
 dbdump : up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
-		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > dbdump.sql
-	@echo -e "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
+		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(FILE)
+	@echo -e "\n\033[32m✔ The \033[33m$(FILE)\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
-dbimport: DOCKER_DB_NAME := $(if $(ARGS),$(ARGS),{{ databases|keys|first }})
+dbimport: ARG_DB_NAME := $(word 1, $(ARGS))
+dbimport: ARG_FILENAME := $(word 2, $(ARGS))
+dbimport: DOCKER_DB_NAME := $(if $(ARG_DB_NAME),$(ARG_DB_NAME),{{ databases|keys|first }})
+dbimport: FILE := $(if $(ARG_FILENAME),$(ARG_FILENAME),dbdump_$(DOCKER_DB_NAME).sql)
 dbimport: DB_PASSWORD := $(DB_PASSWORD_$(DOCKER_DB_NAME))
 dbimport: DB_NAME := $(DB_NAME_$(DOCKER_DB_NAME))
 dbimport : up
-	cat dbdump.sql | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
+	cat $(FILE) | $(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysql -u root --password=$(DB_PASSWORD) $(DB_NAME))

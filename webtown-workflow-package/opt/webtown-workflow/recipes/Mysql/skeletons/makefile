@@ -27,7 +27,7 @@ dbdump : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
 dbdump : up
 	$(call DOCKER_EXEC,$(DOCKER_DB_NAME),\
 		/usr/bin/mysqldump -u root --password=$(DB_PASSWORD) --add-drop-database -B $(DB_NAME)) > $(FILE)
-	@echo -e "\n\033[32m✔ The \033[33mdbdump.sql\033[32m has been created.\033[0m"
+	@echo -e "\n\033[32m✔ The \033[33m$(FILE)\033[32m has been created.\033[0m"
 
 .PHONY: dbimport
 dbimport : FILE := $(if $(ARGS),$(ARGS),dbdump.sql)
