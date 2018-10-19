@@ -2,21 +2,10 @@ Documentations
 ==============
 
 - [Nginx reverse proxy](/docs/nginx-reverse-proxy.md)
-
-Webtown Workflow
-================
-
-Use the `install-wf.sh` installer:
-
-    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
-    chmod +x /tmp/install-wf.sh
-    /tmp/install-wf.sh
-    rm /tmp/install-wf.sh
-
-### Uninstall
-
-    export PATH=$(p=$(echo $PATH | tr ":" "\n" | grep -v "/.webtown-workflow/bin/commands$" | tr "\n" ":"); echo ${p%:})
-    rm -rf ~/.webtown-workflow
+- Using WF
+    - [Install, upgrade and uninstall](/docs/wf-install.md)
+    - [Configuration](/docs/wf-configuration.md)
+    - [Basic commands](/docs/wf-basic-commands.md)
 
 ### Developers: build
 
@@ -31,16 +20,6 @@ OR:
 FULL:
 
     make rebuild_wf build_docker push_docker && cp webtown-workflow.deb ../gitlab-runner-docker/etc && cd ../gitlab-runner-docker && make stop rebuild start && cd ../webtown-workflow && wf -u
-
-### Upgrade
-
-Default:
-
-    wf -u
-
-From custom branch:
-
-    wf -u [branch-name]
 
 ### Debug and develop
 
@@ -84,24 +63,6 @@ then you will be able to analyse the program.
 
 - ~`WF_DEBUG=2`
 - Add makefile calls `-d` (debug) argument
-
-### Available configuration parameters
-
-List all:
-
-    wf --config-dump
-    
-List only names:
-
-    wf --config-dump --only-recipes
-
-List only a recipe:
-
-    wf --config-dump --recipe=symfony3
-
-Save to a file to edit:
-
-    wf --config-dump --no-ansi > .wf.yml
 
 OLD Uninstall
 =============
