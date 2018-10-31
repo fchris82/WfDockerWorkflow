@@ -5,89 +5,19 @@ Documentations
 - Using WF
     - [Install, upgrade and uninstall](/docs/wf-install.md)
     - [Configuration](/docs/wf-configuration.md)
-    - [Basic commands](/docs/wf-basic-commands.md)
+    - [Basic commands and project configuration](/docs/wf-basic-commands.md)
+    - [Included recipes](/docs/wf-included-recipes.md)
+- Cookbook
+- Develop WF
+    - [How it works?](/docs/wf-develop-base.md)
+    - [Start developing, debug environments](/docs/wf-develop-starting.md)
+    - [How to build?](/docs/wf-develop-build.md)
+    - [Make commands](/docs/wf-develop-make.md)
 
-### Developers: build
+Cookbook
+========
 
-    make rebuild_wf
-    make build_docker
-    make push_docker
-
-OR:
-
-    make rebuild_wf build_docker push_docker
-
-FULL:
-
-    make rebuild_wf build_docker push_docker && cp webtown-workflow.deb ../gitlab-runner-docker/etc && cd ../gitlab-runner-docker && make stop rebuild start && cd ../webtown-workflow && wf -u
-
-### Debug and develop
-
-You have to use the `--develop` argument
-
-    cd [project_dir]
-    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop [wf|wizard|...] [...etc...]
-
-Or you can create a symlink:
-
-    mkdir -p ~/bin
-    ln -s [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
-    [workflow_root_path]/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wizard --install
-    cd [project_dir]
-    workflow_runner_test --develop [wf|wizard|...] [...etc...]
-    
-Or you can create a symlink with makefile:
-
-    cd [workflow_root_path]
-    make init-test
-    cd [project_dir]
-    workflow_runner_test --develop [wf|wizard|...] [...etc...]
-
-### Debug modes
-
-You can call commands with `WF_DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and
-then you will be able to analyse the program.
-
-`WF_DEBUG=1`
-
-- echo bash **path** of files and docker container host (simple bash trace)
-- add symfony commands `-vvv` argument
-- remove (!) makefile calls `-s --no-print-directory` arguments
-
-`WF_DEBUG=2`
-
-- ~`WF_DEBUG=1`
-- In bash scripts: `set -x`
-
-`WF_DEBUG=3`
-
-- ~`WF_DEBUG=2`
-- Add makefile calls `-d` (debug) argument
-
-OLD Uninstall
-=============
-
-- remove:
-```
-sudo dpkg -r webtown-workflow
-```
-- nginx-proxy reset
-```
-docker stop nginx-reverse-proxy
-docker rm nginx-reverse-proxy
-docker network rm reverse-proxy
-```
-- (/etc/bash.bashrc /etc/zsh/zshrc) fájlokból az update check törlése:
-```
-sudo vi /etc/zsh/zshrc
-sudo vi /etc/bash.bashrc
-sudo rm -rf /usr/local/bin/wf
-sudo rm -rf /usr/local/bin/wizard
-rm -rf ~/.zsh/completion/_wf
-```
-
-Gitlab CI Deploy(er)
-====================
+## Gitlab CI Deploy(er)
 
 Create an SSH key, and add private key to Secrets (eg: `SSH_PRIVATE_KEY` and `SSH_KNOWN_HOSTS`):
 
@@ -116,9 +46,6 @@ deploy:demo:
         - docker exec -i $ENGINE cat /etc/ssh/ssh_config
         - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
 ```
-
-Cookbook
-========
 
 ## Run PHP Unit tests
 
@@ -283,43 +210,6 @@ wf help
 
 # Project commands
 wf list
-```
-
-# ★ For developers
-
-## (Re)generate deb package
-
-    make -s [build] (KEEPVERSION=1|VERSION=1.2)
-
-### Actions
-
-| Action           | Description                                                                             |
-| ---------------- | --------------------------------------------------------------------------------------- |
-| `build`          | **Default.** Build the package                                                          |
-| `versionupgrade` | Upgrade the version number in `package/DEBIAN/control` file.                            |
-
-### Parameters
-
-| Parameter       | Description                           |
-| -------------   | ------------------------------------- |
-| `KEEPVERSION=1` | Doesn't change the version number     |
-| `VERSION=(...)` | Set the new version number directly   |
-
-> If `KEEPVERSION` is setted then the `VERSION` doesn't matter.
-
-## Debug mode
-
-You can debug the software with some env variables:
-
-| Parameter           | Description                                                                |
-| ------------------- | -------------------------------------------------------------------------- |
-| MAKE_DISABLE_SILENC | If you set, make will run **without** `-s --no-print-directory` parameters |
-| MAKE_DEBUG_MODE     | If you set, make will run **with** `-d` parameter                          |
-| MAKE_ONLY_PRINT     | If you set, make will run **with** `-n` parameter                          |
-
-Eg:
-```bash
-MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 ```
 
 ## Tests
@@ -487,7 +377,7 @@ Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizar
 
 > #### Tipps
 >
-> The PHPStorm can't detect the symfony project. You have to switch on manualy.
+> The PHPStorm can't detect the symfony project. You have to switch on manually.
 >   - Settings » Languages & Frameworks » PHP » Symfony ⟶ **Enable plugins for this project**
 >   - Set the directories with `package/opt/webtown-workflow/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
 >   - Settings » Other settings » Framework Integration ⟶ Select the **Symfony**
