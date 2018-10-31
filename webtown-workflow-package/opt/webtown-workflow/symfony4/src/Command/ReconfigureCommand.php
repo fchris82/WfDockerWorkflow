@@ -42,7 +42,7 @@ class ConfigYamlReaderCommand extends ContainerAwareCommand
     {
         $this
             ->setName('app:config')
-            ->setDescription('Project config init.')
+            ->setDescription('Project config init. Generate the "cache" files.')
             ->addOption('file', null, InputOption::VALUE_REQUIRED, 'Set config file name.', self::DEFAULT_CONFIG_FILE)
             ->addOption('target-directory', null, InputOption::VALUE_REQUIRED, 'Set the build target.', self::DEFAULT_TARGET_DIRECTORY)
             ->addOption('config-hash', null, InputOption::VALUE_REQUIRED, 'Set the config hash')
