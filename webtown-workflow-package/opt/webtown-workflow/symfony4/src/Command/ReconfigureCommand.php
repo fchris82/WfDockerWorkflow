@@ -20,7 +20,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Class ConfigYamlReaderCommand.
  */
-class ConfigYamlReaderCommand extends ContainerAwareCommand
+class ReconfigureCommand extends ContainerAwareCommand
 {
     const DEFAULT_CONFIG_FILE = '.wf.yml';
     const DEFAULT_TARGET_DIRECTORY = '.wf';
