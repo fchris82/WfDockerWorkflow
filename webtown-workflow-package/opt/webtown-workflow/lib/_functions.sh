@@ -49,14 +49,18 @@ function quit {
 }
 
 # You can manage some make parameters with these env variables
-# Eg: MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
+# Eg: MAKE_DISABLE_SILENCE=1 MAKE_DEBUG_MODE=1 MAKE_ONLY_PRINT=1 wf list
 function make_params {
     PARAMS="";
     if [ -z "$MAKE_DISABLE_SILENC" ] && [ ${WF_DEBUG:-0} -lt 1 ]; then
         PARAMS="${PARAMS} -s --no-print-directory"
     fi
-    if [ ! -z "$MAKE_DEBUG_MODE" ] || [ ${WF_DEBUG:-0} -ge 3 ]; then
+    if [ "$MAKE_DEBUG_MODE" -eq "1" ] || [ ${WF_DEBUG:-0} -ge 3 ]; then
         PARAMS="${PARAMS} -d"
+    elif [ -z "$MAKE_DEBUG_MODE" ]; then
+        PARAMS="${PARAMS} --debug=${MAKE_DEBUG_MODE}";
+    elif [ ${WF_DEBUG:-0} -eq 2 ]; then
+        PARAMS="${PARAMS} --debug=v";
     fi
     if [ ! -z "$MAKE_ONLY_PRINT" ]; then
         PARAMS="${PARAMS} -n"

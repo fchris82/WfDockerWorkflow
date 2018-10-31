@@ -20,7 +20,7 @@ variables:
     COMPOSE_PROJECT_NAME: ${BASE_NAME}pipeline${CI_PIPELINE_ID}
     COMPOSE_HTTP_TIMEOUT: 300
     # For debugging
-#    MAKE_DISABLE_SILENC: 1
+#    MAKE_DISABLE_SILENCE: 1
 #    MAKE_DEBUG_MODE: 1
     # This is an integer between 0 and 3
 #    WF_DEBUG: 2

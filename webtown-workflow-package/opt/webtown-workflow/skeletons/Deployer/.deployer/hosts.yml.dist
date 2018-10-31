@@ -39,7 +39,7 @@ demo:
     clear_paths:    ['web/config.php']
     # Ez a debug miatt kellhet
     env:
-        MAKE_DISABLE_SILENC: 1
+        MAKE_DISABLE_SILENCE: 1
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:            /tmp/multiplexing.data
@@ -75,7 +75,7 @@ branches:
     clear_paths:    ['web/config.php']
     # Ez a debug miatt kellhet
     env:
-        MAKE_DISABLE_SILENC: 1
+        MAKE_DISABLE_SILENCE: 1
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:            /tmp/multiplexing.data

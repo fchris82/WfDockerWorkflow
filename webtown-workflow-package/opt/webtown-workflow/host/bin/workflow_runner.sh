@@ -12,7 +12,7 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
-# You can use the `--dev` to enable it without edit config
+# You can use the `--develop` to enable it without edit config
 if [ "$1" == "--develop" ]; then
     shift
     SOURCE="${BASH_SOURCE[0]}"

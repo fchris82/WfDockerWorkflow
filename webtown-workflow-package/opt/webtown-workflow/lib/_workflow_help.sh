@@ -5,8 +5,8 @@ ${BOLD}${WHITE}
 ${RESTORE}
 Debug modes:
 
-  -v                                ${GREEN}Set ${RESTORE}MAKE_DISABLE_SILENC=1${GREEN} ${BOLD}You must set it first!${RESTORE}
-  -vvv                              ${GREEN}Set ${RESTORE}MAKE_DISABLE_SILENC=1 MAKE_DEBUG_MODE=1${GREEN} ${BOLD}You must set it first!${RESTORE}
+  -v                                ${GREEN}Set ${RESTORE}MAKE_DISABLE_SILENCE=1${GREEN} ${BOLD}You must set it first!${RESTORE}
+  -vvv                              ${GREEN}Set ${RESTORE}MAKE_DISABLE_SILENCE=1 MAKE_DEBUG_MODE=1${GREEN} ${BOLD}You must set it first!${RESTORE}
 
 Eg: ${YELLOW}wf ${BOLD}-v${YELLOW} help${RESTORE}
 

@@ -122,6 +122,7 @@ class Configuration implements ConfigurationInterface
                         })
                     ->end()
                 ->end()
+                // @todo (Chris) Ez elméletileg nem tartalmazhat speciális karaktereket, mert sem a docker, sem a "domain" esetén nem szerencsés, ha tartalmaz olyasmit.
                 ->scalarNode('name')
                     ->info('<comment>You have to set a name for the project.</comment>')
                     ->isRequired()
@@ -133,7 +134,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('%wf.target_directory%/.data')
                 ->end()
                 ->arrayNode('makefile')
-                    ->info('<comment>You can add extra <info>makefile files</info>.</comment>')
+                    ->info('<comment>You can add extra <info>makefile files</info>. You have to set absolute path, and you can use the <info>%wf.project_path%</info> placeholder or <info>~</info> (your home directory). You can use only these two path!</comment>')
                     ->example('~/dev.mk')
                     ->scalarPrototype()->end()
                 ->end()

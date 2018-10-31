@@ -45,6 +45,11 @@ class AbstractRecipe extends BaseRecipe
     public function getConfig()
     {
         $rootNode = parent::getConfig();
+        // The default locale
+        $defaultLocale = $_ENV['WF_HOST_LOCALE'] ?: $_ENV['LOCALE'] ?: 'en_US';
+        if ($dotPos = strpos($defaultLocale, '.')) {
+            $defaultLocale = substr($defaultLocale, 0, $dotPos);
+        }
 
         $rootNode
             ->info('<comment>Symfony recipe</comment>')
@@ -115,14 +120,13 @@ class AbstractRecipe extends BaseRecipe
                             ->defaultValue('30')
                             ->info('<comment>You can set the nginx <info>fastcgi_read_timeout</info> and php <info>max_execution_time</info>.</comment>')
                         ->end()
-                        // @todo Ez ne innen jöjjön, hanem a wf config-ból
                         ->scalarNode('timezone')
-                            ->defaultValue('Europe/Budapest')
-                            ->info('<comment>You can set the server timezone.</comment>')
+                            ->defaultValue($_ENV['WF_HOST_TIMEZONE'] ?: 'UTC')
+                            ->info('<comment>You can set the server timezone. The default is your/host machine system setting from the <info>/etc/timezone</info> file.</comment>')
                         ->end()
                         ->scalarNode('locale')
-                            ->defaultValue('hu_HU')
-                            ->info('<comment>You can set the server locale.</comment>')
+                            ->defaultValue($defaultLocale)
+                            ->info('<comment>You can set the server locale. The default is your/host machine system setting from the <info>$_ENV[LOCALE]</info></comment>')
                         ->end()
                     ->end()
                 ->end()

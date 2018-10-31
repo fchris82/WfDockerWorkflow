@@ -48,11 +48,11 @@ case $key in
     ;;
     # Debug modes
     -v)
-        MAKE_DISABLE_SILENC=1
+        MAKE_DISABLE_SILENCE=1
         shift
     ;;
     -vvv)
-        MAKE_DISABLE_SILENC=1
+        MAKE_DISABLE_SILENCE=1
         MAKE_DEBUG_MODE=1
         shift
     ;;

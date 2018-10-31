@@ -115,11 +115,11 @@ test_sf: build_project
 .PHONY: test_db_export_import
 test_db_export_import: build_project
 	cd $(TEST_PROJECT_PATH)/$(TEST_DIR); \
-	MAKE_DISABLE_SILENC=1 wf dbdump; \
+	MAKE_DISABLE_SILENCE=1 wf dbdump; \
 	cat dbdump.sql; \
 	cp dbdump.sql dbdump.sql~; \
 	sed -i "s/symfony_demo_user/symfony_demo_test_user/" dbdump.sql; \
-	MAKE_DISABLE_SILENC=1 wf dbimport; \
+	MAKE_DISABLE_SILENCE=1 wf dbimport; \
 	rm dbdump.sql; \
 	wf dbdump dbdump2.sql; \
 	cat dbdump2.sql | grep symfony_demo_test_user; \
