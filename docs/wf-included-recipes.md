@@ -1,6 +1,8 @@
 Included recipes
 ================
 
+> You can create and use custom resipes: [Cookbook: custom recipes](wf-cookbook-custom-recipes.md)
+
 Keep in mind that there would be other recipes. You can list all available recipes with the `wf --config-dump --only-recipes` [command](wf-basic-commands.md#recipe-list). You can reach more information about each recipes with the `wf --config-dump --recipe=[recipe_name]`.
 
 ## `symfonyX`
@@ -65,6 +67,23 @@ recipes:
 
 - `env`: The Symfony environment.
 - `share_base_user_configs`: In dev mode you may need you **ssh**, **composer cache** or other user things. So default the engine container gets the user's home directory. But sometimes it causes some problems, like CI. You can switch this sharing off.
+
+**Custom `xdebug.ini` config file**
+
+Create your own `xdebug.ini` in your home and get to project (yes, you must use `dist` in container!):
+
+```yaml
+[...]
+
+docker_compose:
+    extension:
+        services:
+            engine:
+                volumes:
+                    - "~/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini.dist:ro"
+```
+
+> You don't have to look after the value of `xdebug.remote_host`. It will be configured automatically.
 
 ## `gitlab_ci` and `gitlab_ci_webtown_workflow`
 

@@ -8,44 +8,18 @@ Documentations
     - [Basic commands and project configuration](/docs/wf-basic-commands.md)
     - [Included recipes](/docs/wf-included-recipes.md)
 - Cookbook
+    - [Using custom recipes](/docs/wf-cookbook-custom-recipes.md)
+    - [Using custom Dockerfile in project](/docs/wf-cookbook-custom-dockerfile.md)
+    - [Gitlab CI Deploy(er)](/docs/wf-cookbook-gitlab-ci-deploy.md)
+    - [Create custom docker repository](/docs/wf-cookbook-custom-repo.md)
 - Develop WF
     - [How it works?](/docs/wf-develop-base.md)
     - [Start developing, debug environments](/docs/wf-develop-starting.md)
     - [How to build?](/docs/wf-develop-build.md)
     - [Make commands](/docs/wf-develop-make.md)
 
-Cookbook
-========
 
-## Gitlab CI Deploy(er)
 
-Create an SSH key, and add private key to Secrets (eg: `SSH_PRIVATE_KEY` and `SSH_KNOWN_HOSTS`):
-
-    ssh-keyscan -H [host]
-
-In `.gitlab-ci.yml` file:
-
-```yaml
-deploy:demo:
-    stage: deploy
-    script:
-        - ENGINE=$(WF_DEBUG=0 wf ps -q engine)
-        - SSH_PATH=/usr/local/etc/ssh
-        # Create SSH path (with root user!)
-        - docker exec -i $ENGINE mkdir -p $SSH_PATH
-        - docker exec -i $ENGINE chown $(id -u) $SSH_PATH
-        # Create SSH files (with "gitlab user")
-        - docker exec -i -u $(id -u) $ENGINE chmod 700 $SSH_PATH
-        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_PRIVATE_KEY' | tr -d '\r' > $SSH_PATH/id_rsa"
-        - docker exec -i -u $(id -u) $ENGINE chmod 600 $SSH_PATH/id_rsa
-        - docker exec -i -u $(id -u) $ENGINE bash -c "echo '$SSH_KNOWN_HOSTS' > $SSH_PATH/known_hosts"
-        # Reconfigure the SSH
-        - docker exec -i $ENGINE bash -c "echo '    IdentityFile $SSH_PATH/id_rsa' >> /etc/ssh/ssh_config"
-        - docker exec -i $ENGINE bash -c "echo '    UserKnownHostsFile $SSH_PATH/known_hosts' >> /etc/ssh/ssh_config"
-        # Check changes
-        - docker exec -i $ENGINE cat /etc/ssh/ssh_config
-        - docker exec -i -u $(id -u) $ENGINE ls -al $SSH_PATH
-```
 
 ## Run PHP Unit tests
 
@@ -53,77 +27,6 @@ You can create unit test and run.
 
     cd [where-the-wizard.sh-is]
     ./wizard.sh --debug symfony4/bin/phpunit -c symfony4
-
-## Use custom recipes
-
-Create or download your own recipes what you want to use. You can put them directly to the `~/.webtown-workfow/recipes` directory
-or you can put anywhere and create a symlink to the `~/.webtown-workfow/recipes` directory:
-
-    ln -s /my/own/recipes/MyOwnRecipe ~/.webtown-workflow/recipes/MyOwnRecipe
-
-You have to reload the cache:
-
-    wf --reload
-
-> If you use an existing recipe directory name, you will override the original recipe! 
-
-## Symfony recipes
-
-### Custom xdebug config
-
-Create your own `xdebug.ini` in your home and get to project (yes, you must use `dist` in container!):
-
-```yaml
-[...]
-
-docker_compose:
-    extension:
-        services:
-            engine:
-                volumes:
-                    - "~/xdebug.ini:/usr/local/etc/php/conf.d/xdebug.ini.dist:ro"
-```
-
-> You don't have to look after the value of `xdebug.remote_host`. It will be configured automatically.
-
-### Use custom Dockerfile
-
-Create your custom Dockerfile (eg `.docker/engine/Dockerfile`):
-
-```dockerfile
-FROM fchris82/symfony:php7.1
-
-RUN apt-get update \
-    && apt-get install -y libcurl4-openssl-dev make \
-        gcc pkg-config libreadline-dev libgdbm-dev zlib1g-dev \
-        libyaml-dev libffi-dev libgmp-dev openssl libssl-dev \
-    && rm -rf /var/lib/apt/lists/*
-
-# PHP ext
-RUN docker-php-ext-install pcntl shmop \
-    && pecl install mongo && echo "extension=mongo.so" > /usr/local/etc/php/conf.d/mongo.ini
-```
-
-Register it in `.wf.yml.dist` file:
-
-```yaml
-docker_compose:
-    extension:
-        services:
-            engine:
-                # override the original image name!
-                image: project_name
-                # set the Dockerfile
-                build:
-                    context: '%wf.project_path%/.docker/engine'
-                    dockerfile: Dockerfile
-
-            mongodb:
-                image: mongo:3.2
-                volumes:
-                    - "%wf.project_path%/.docker/.data/mongodb:/data/db"
-```
-
 
 ### Create ZSH autocomplete file
 
@@ -388,28 +291,3 @@ Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizar
 Environment extra information
 =============================
 
-## Create a docker repository
-
-```
-docker run -d \
-  -p 5000:5000 \
-  --restart=always \
-  --name registry \
-  -v /mnt/registry:/var/lib/registry \
-  registry:2
-```
-
-> It is handled in `postinst` file:
->
-> You should register the unsecure repository in your local computer in `/etc/docker/daemon.json` :
->
-> ```
-> {
-> "insecure-registries":["amapa.webtown.hu:5000"]
-> }
-> ```
->
-> You have to restart the docker:
-> ```
-> sudo service docker restart
-> ```
