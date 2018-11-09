@@ -25,7 +25,14 @@ Alapból települ az **XDebug**. A probléma, hogy az eZ admin felülettel nem t
     - Válaszd ki az előbb megadott szervert
     - Adj meg egy tetszőleges nevet
     - Adj meg egy URL-t, amit szeretnél tesztelni
-3. Kapcsold be: a `.wf.yml` fájlban a `recipes.symfony{X}.server.xdebug` értékét állítsd át `true`-ra és indítsd újra a container-eket a `wf reload` paranccsal.
+3. Kapcsold be: a `.wf.yml` fájlban a `recipes.symfony{{ sf_version }}.server.xdebug` értékét állítsd át `true`-ra és indítsd újra a container-eket a `wf reload` paranccsal:
+
+```yaml
+recipes:
+    symfony{{ sf_version }}:
+        server:
+            xdebug: true
+```
 
 **Tesztelés**
 
@@ -58,7 +65,7 @@ Lehetőség van arra, hogy HTTP AUTH-tal levédd a felületet. Ehhez szükségü
 [...]
 
 recipes:
-    symfony3:
+    symfony{{ sf_version }}:
         http_auth:
             enabled: true
             title: Védett tartalom

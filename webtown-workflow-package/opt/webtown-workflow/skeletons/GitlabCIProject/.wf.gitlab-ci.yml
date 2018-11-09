@@ -1,5 +1,5 @@
 imports:
-    - .wf.yml.dist
+    - .wf.base.yml
 
 name: gitlab_{{ project_name }}
 
@@ -23,7 +23,7 @@ recipes:
             mysql:
                 data: /var/lib/mysql
 
-    # Symfony 3 recipe
+    # {{ sf_recipe_name|default('????symfony????') }} recipe
     {{ sf_recipe_name|default('????symfony????') }}:
         # Symfony environment.
         env:     dev

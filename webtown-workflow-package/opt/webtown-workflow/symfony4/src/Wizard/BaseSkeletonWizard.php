@@ -262,13 +262,26 @@ abstract class BaseSkeletonWizard extends BaseWizard
 
     protected function getWorkflowConfiguration($targetDirectory)
     {
-        if (!is_null($this->workflowConfigurationCache)) {
-            $configFilePath = $targetDirectory . '/.wf.yml.dist';
-            if (!$this->filesystem->exists($configFilePath)) {
-                throw new FileNotFoundException(sprintf('The composer.lock doesn\'t exist in the %s directory!', $targetDirectory));
+        if (is_null($this->workflowConfigurationCache)) {
+            $wfFiles = [
+                '.wf.base.yml',
+                '.wf.yml.dist',
+                '.wf.yml',
+            ];
+            foreach ($wfFiles as $wfFile) {
+                $configFilePath = $targetDirectory . '/' . $wfFile;
+                if ($this->filesystem->exists($configFilePath)) {
+                    $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
+                    break;
+                }
             }
-
-            $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
+            if (is_null($this->workflowConfigurationCache)) {
+                throw new FileNotFoundException(sprintf(
+                    'We couldn\'t find any WF configuration yaml file (or they are empty): `%s`! (Directory: %s)',
+                    implode('`, `', $wfFiles),
+                    $targetDirectory
+                ));
+            }
         }
 
         return $this->workflowConfigurationCache;
