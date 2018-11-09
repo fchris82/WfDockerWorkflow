@@ -11,6 +11,7 @@ Documentations
     - [Using custom recipes](/docs/wf-cookbook-custom-recipes.md)
     - [Using custom Dockerfile in project](/docs/wf-cookbook-custom-dockerfile.md)
     - [Gitlab CI Deploy(er)](/docs/wf-cookbook-gitlab-ci-deploy.md)
+    - [Truncate too long log](/docs/wf-cookbook-truncate-log.md)
     - [Create custom docker repository](/docs/wf-cookbook-custom-repo.md)
 - Develop WF
     - [How it works?](/docs/wf-develop-base.md)

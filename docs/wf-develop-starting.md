@@ -68,7 +68,7 @@ You can debug the software with some env variables:
 | Parameter            | Description                                                                |
 | -------------------- | -------------------------------------------------------------------------- |
 | MAKE_DISABLE_SILENCE | If you set, make will run **without** `-s --no-print-directory` parameters |
-| MAKE_DEBUG_MODE      | If you set, make will run **with** `--debug` parameter. You can set `1` or direct option: https://www.gnu.org/software/make/manual/html_node/Options-Summary.html                     |
+| MAKE_DEBUG_MODE      | If you set, make will run **with** `--debug` parameter. You can set `1` or direct option: https://www.gnu.org/software/make/manual/html_node/Options-Summary.html |
 | MAKE_ONLY_PRINT      | If you set, make will run **with** `-n` parameter                          |
 
 Eg:
