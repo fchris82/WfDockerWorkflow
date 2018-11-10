@@ -8,16 +8,9 @@ The **wf** is exactly a docker image: `fchris82/wf` , https://hub.docker.com/r/f
 1. pull docker image
 2. register some command line "alias" to use it
 
-**User permissions**
-
-It was a target that you can use it without root permission. It is a "local" installation, each user needs to install itself and each user must have permission to use docker (== user is member of `docker` group)
-
-> Add user to docker group: `sudo usermod -aG docker $USER` - https://docs.docker.com/install/linux/linux-postinstall/
-
-And you need to have a right access to `gitlab.webtown.hu` and to the `webtown/webtown-workflow.git` project.
-
 **Programs**
 
+- `Docker` and `Docker Compose`
 <!-- TODO A mercurial még nincs! -->
 - `GIT` or `Mercurial` version controller
 - `dnsmasq` or other dns tool. The program will generate local domains with custom TLD (default: `.loc`).
@@ -32,6 +25,14 @@ $ echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
 # Restart
 $ sudo service network-manager restart
 ```
+
+**User permissions**
+
+It was a target that you can use it without root permission. It is a "local" installation, each user needs to install itself and each user must have permission to use docker (== user is member of `docker` group)
+
+> Add user to docker group: `sudo usermod -aG docker $USER` - https://docs.docker.com/install/linux/linux-postinstall/
+
+And you need to have a right access to `gitlab.webtown.hu` and to the `webtown/webtown-workflow.git` project.
 
 ## Install
 
@@ -77,6 +78,22 @@ Now you can check the wf command:
     /home/chris/bin
     $ wf
     [... help is shown ...]
+
+**ZSH autocomplete**
+
+> The installer try to do some steps automatically.
+
+You can register the autocomplete function:
+
+```shell
+$ mkdir -p ~/.zsh/completion
+$ ln -sf ~/.webtown-workflow/bin/zsh_autocomplete.sh ~/.zsh/completion/_wf
+```
+
+Edit the `~/.zshrc` file:
+
+1. Add if it doesn't exist: `fpath=(~/.zsh/completion $fpath)`
+2. After `fpath` add if it doesn't exist: `autoload -Uz compinit && compinit -i`
 
 ### <a name="vcignore"></a>Version control ignore files
 

@@ -137,8 +137,6 @@ abstract class BaseRecipe
      * @param $config
      *
      * @return DockerComposeSkeletonFile|ExecutableSkeletonFile|MakefileSkeletonFile|SkeletonFile
-     *
-     * @throws \App\Exception\SkipSkeletonFileException
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
