@@ -83,18 +83,6 @@ Webtown Workflow Installer
     rm -f webtown-workflow.deb && cd ~
     ```
 
-### Upgrade the software
-
-> You need `sudo` permission!
-
-    wf -u
-
-### Autocomplete
-
-You can install autocomplete script to ZSH.
-
-    wf --install-autocomplete
-
 ## Configuration
 
 If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/config` file

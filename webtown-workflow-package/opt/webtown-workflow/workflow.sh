@@ -74,6 +74,10 @@ case $1 in
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)
     ;;
+    --composer-install)
+        shift
+        cd /opt/webtown-workflow/symfony4 && composer install ${@}
+    ;;
     # Clean cache directory. You have to use after put a custom recipe!
     --reload|--clean-cache)
         rm -rf ${DIR}/symfony4/var/cache/*

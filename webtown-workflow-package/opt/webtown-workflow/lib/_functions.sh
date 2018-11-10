@@ -151,8 +151,8 @@ function create_makefile_from_config {
             --file ${PROJECT_CONFIG_FILE} \
             --target-directory ${WF_WORKING_DIRECTORY_NAME} \
             --config-hash ${CONFIG_HASH}.${WF_VERSION} \
-            --wf-version ${WF_VERSION}
-            ${PROJECT_ROOT_DIR} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+            --wf-version ${WF_VERSION} \
+            ${PROJECT_ROOT_DIR} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG} \
             ${@} || quit
     fi
 }

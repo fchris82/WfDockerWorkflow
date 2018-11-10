@@ -32,7 +32,7 @@ shift
 
 # DIRECTORIES
 WORKDIR=$(pwd)
-GLOBAL_COMMANDS=("-h" "--help" "--version" "--clean-cache" "--reload")
+GLOBAL_COMMANDS=("-h" "--help" "--version" "--clean-cache" "--reload" "--composer-install")
 if [[ ${WORKDIR} =~ ^/($|bin|boot|lib|mnt|proc|sbin|sys) ]] && [[ ! " ${GLOBAL_COMMANDS[@]} " =~ " ${1} " ]]; then
     echo -e "\033[1;37mYou can try to work in a protected directory! The \033[31m${WORKDIR}\033[37m is in a protected space!\033[0m"
     exit 1

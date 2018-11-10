@@ -11,3 +11,12 @@ fi
 if [ "${CI:-0}" != "0" ] || [ "${WF_TTY}" == "0" ]; then
     SYMFONY_DISABLE_TTY="--no-ansi --no-interaction"
 fi
+
+# You can use the `--dev` to enable it without edit config
+WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
+WF_XDEBUG_ENABLED=${WF_XDEBUG_ENABLED:-0}
+if [ "$1" == "--dev" ]; then
+    shift
+    WF_SYMFONY_ENV="dev"
+    WF_XDEBUG_ENABLED="1"
+fi

@@ -28,6 +28,9 @@ ${BOLD}${WHITE}Only any project directory:${RESTORE}
   ${YELLOW}reconfigure${RESTORE}               ${GREEN}Rebuild the project config. ${BOLD}You can use symfony args: wf reconfigure -v${RESTORE}
 
 Eg: ${YELLOW}wf help${RESTORE}
+
+${BOLD}${WHITE}Developere options:${RESTORE}
+        --composer-install          ${GREEN}"Composer install" in symfony directory!${RESTORE}
 EOM
 
 function showHelp {
