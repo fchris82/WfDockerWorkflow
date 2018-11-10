@@ -7,3 +7,7 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
     DOCKER_DEBUG="-e WF_DEBUG=${WF_DEBUG}"
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
+
+if [ "${CI:-0}" != "0" ] || [ "${WF_TTY}" == "0" ]; then
+    SYMFONY_DISABLE_TTY="--no-ansi --no-interaction"
+fi

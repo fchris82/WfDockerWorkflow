@@ -17,7 +17,7 @@ CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
 CONFIG="$CONFIG_PATH/config"
 SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
 
-source ${DIR}/../webtown-workflow/lib/_debug.sh
+source ${DIR}/lib/_debug.sh
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
 source ${DIR}/lib/_functions.sh
@@ -81,7 +81,7 @@ case $1 in
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     # You can call with symfony command verbose, like: wf reconfigure -v
     reconfigure)

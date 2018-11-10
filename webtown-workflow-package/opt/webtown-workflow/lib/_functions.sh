@@ -69,9 +69,32 @@ function make_params {
     echo $PARAMS
 }
 
+# You can find a directory up (first, closer)
+function find-up-first {
+    local _path_=$(pwd)
+    while [[ "$_path_" != "" && ! -d "$_path_/$1" ]]; do
+        _path_=${_path_%/*}
+    done
+    echo "$_path_"
+}
+
+# You can find a directory up (last)
+# We use it to find the top .svn or .git directory.
+function find-up-last {
+    local _path_=$(pwd)
+    local _last_=""
+    while [[ "$_path_" != "" ]]; do
+        if [[ -d "$_path_/$1" ]]; then
+            _last_=$_path_;
+        fi
+        _path_=${_path_%/*}
+    done
+    echo "$_last_"
+}
+
 # Try to find the project root directory
 function get_project_root_dir {
-    echo $(git rev-parse --show-toplevel || echo ".")
+    echo $(find-up-last .git || find-up-last .hg || find-up-last .svn || echo ".")
 }
 
 # Find the project makefile:
@@ -124,11 +147,13 @@ function create_makefile_from_config {
     WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
-        ${DIR}/../webtown-workflow/wizard.sh --reconfigure \
+        php /opt/webtown-workflow/symfony4/bin/console app:config \
             --file ${PROJECT_CONFIG_FILE} \
             --target-directory ${WF_WORKING_DIRECTORY_NAME} \
             --config-hash ${CONFIG_HASH}.${WF_VERSION} \
-            --wf-version ${WF_VERSION} ${@} || quit
+            --wf-version ${WF_VERSION}
+            ${PROJECT_ROOT_DIR} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+            ${@} || quit
     fi
 }
 
@@ -137,7 +162,16 @@ function get_project_config_hash {
     # We try to find the all imported file. Now it isn't recursive here and can't handle the absolute path!
     # Without the `| tr '\0' ' '` it causes `warning: command substitution: ignored null byte in input` error message
     # @todo (Chris) Jelenleg nem rekurzív + ha van szóköz az útvonalban, akkor rossz eredményt ad + gondban van, ha absolut útvonalat próbálunk importálni.
-    IMPORT_FILES=$(grep -Poz '(\A|\n)imports:\s*\K(\n? +[^\n]+)+' ${PROJECT_CONFIG_FILE} | tr '\0\n' ' ' | sed 's:- : :g' | sed -r 's:[^[:alnum:]\.\-\/_]+: :g')
+    #   1. "grep": we find the "imports:" block
+    #   2. "tr": we replace the new lines to space
+    #   3. "sed1": remove starting "-" sign
+    #   4. "sed2": replace all non-filename-char to single space (the space characters also)
+    #   5. "sed3": add project root path to relative path (it doesn't change the absolute path!)
+    IMPORT_FILES=$(grep -Poz '(\A|\n)imports:\s*\K(\n? +[^\n]+)+' ${PROJECT_CONFIG_FILE} \
+        | tr '\0\n' ' ' \
+        | sed 's:- : :g' \
+        | sed -r 's:[^[:alnum:]\.\-\/_]+: :g' \
+        | sed -r "s:(^| )([^/]):\1${PROJECT_ROOT_DIR}/\2:g")
     # Env file
     if [ -f "${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}" ]; then
         ENV_FILE="${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}"

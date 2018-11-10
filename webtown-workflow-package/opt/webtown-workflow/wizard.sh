@@ -1,4 +1,7 @@
 #!/bin/bash
+# Debug mode:
+#set -x
+
 # DIRECTORIES
 WORKDIR=$(pwd)
 SOURCE="${BASH_SOURCE[0]}"
@@ -9,10 +12,10 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-source ${DIR}/../webtown-workflow/lib/_debug.sh
-source ${DIR}/../webtown-workflow/lib/_css.sh
-source ${DIR}/../webtown-workflow/lib/_wizard_help.sh
-source ${DIR}/../webtown-workflow/lib/_functions.sh
+source ${DIR}/lib/_debug.sh
+source ${DIR}/lib/_css.sh
+source ${DIR}/lib/_wizard_help.sh
+source ${DIR}/lib/_functions.sh
 
 # You can use the `--dev` to enable it without edit config
 WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
@@ -40,10 +43,6 @@ BASE_PROJECT_RUN="${DOCKER_COMPOSE_ENV} docker-compose \
             -f ${DIR}/symfony4/docker-compose.project.yml \
             run --rm"
 
-if [ "${CI:-0}" != "0" ] || [ "${WF_TTY}" == "0" ]; then
-    DISABLE_TTY="--no-ansi --no-interaction"
-fi
-
 case $1 in
     -h|--help)
         showHelp
@@ -57,7 +56,7 @@ case $1 in
         if [ -x "$(which composer)" ]; then
             cd /opt/webtown-workflow/symfony4 && composer install ${@}
         else
-            eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}"
+            eval "$BASE_RUN -w /opt/webtown-workflow/symfony4 cli composer install ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}"
         fi
     ;;
     # REBUILD the docker container
@@ -69,14 +68,6 @@ case $1 in
 #        eval "$BASE_RUN cli php /opt/webtown-workflow/symfony4/bin/phpunit -c /opt/webtown-workflow/symfony4"
 #        $BASE_RUN cli php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --config=/opt/webtown-workflow/symfony4/.php_cs.dist
     ;;
-    # Rebuild config from the yml. See: workflow.sh .
-    # @todo (Chris) Ennek az egésznek tulajdonképpen inkább a workflow-ban van a helye, nem itt, csak itt volt már SF ezért ide építettem be.
-    # @todo (Chris) Ez így nem jó, mert hívható közvetlenül, de nem dob hibát, ha nincs elég információja!
-    --reconfigure)
-        shift
-        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
-    ;;
     --debug)
         shift
         eval "$BASE_PROJECT_RUN cli ${@}"
@@ -84,6 +75,8 @@ case $1 in
     # RUN wizard
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) ${@} ${DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard \
+            --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
+            ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
 esac
