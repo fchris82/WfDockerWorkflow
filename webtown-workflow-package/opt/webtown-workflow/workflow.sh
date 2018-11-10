@@ -68,20 +68,6 @@ case $1 in
     ""|-h|--help)
         showHelp
     ;;
-    # UPDATE the software
-    --check-update)
-        LAST_UPDATED_FOR=$((`date +%s` - `cat /etc/webtown-workflow/lastupdate`))
-        # 10 óránként kérdezzük le
-        if [ "$LAST_UPDATED_FOR" -gt "36000" ]; then
-            date +%s > /etc/webtown-workflow/lastupdate
-            echo "Check new Workflow version..."
-            LAST_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
-            CURRENT_VERSION=$(git archive --remote=${WF_PROGRAM_REPOSITORY} HEAD package/DEBIAN/control | tar -xO | grep ^Version: | cut -d\  -f2)
-            if [ "${CURRENT_VERSION}" != "${LAST_VERSION}" ]; then
-                echo -e "There is a newer version from \033[1;34mwebtown-workflow\033[0m! \033[33m${CURRENT_VERSION}\033[0m vs \033[32m${LAST_VERSION}\033[0m Run the \033[1mwf -u\033[0m command for upgrade."
-            fi
-        fi
-    ;;
     --version)
         dpkg -l | grep webtown-workflow | awk '{ print "Webtown Workflow " $3 }'
     ;;
