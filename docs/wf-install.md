@@ -95,6 +95,12 @@ Edit the `~/.zshrc` file:
 1. Add if it doesn't exist: `fpath=(~/.zsh/completion $fpath)`
 2. After `fpath` add if it doesn't exist: `autoload -Uz compinit && compinit -i`
 
+After save relaod ZSH:
+
+```shell
+$ source ~/.zshrc
+```
+
 ### <a name="vcignore"></a>Version control ignore files
 
 You have to register 1 directory and you should register 1 file in your global ignore file
