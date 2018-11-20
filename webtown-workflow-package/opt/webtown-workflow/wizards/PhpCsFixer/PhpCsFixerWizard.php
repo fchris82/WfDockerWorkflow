@@ -8,6 +8,7 @@
 
 namespace Wizards\PhpCsFixer;
 
+use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use Wizards\BaseSkeletonWizard;
 
@@ -28,6 +29,14 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
         return 'Composer';
     }
 
+    /**
+     * @param $targetProjectDirectory
+     *
+     * @return bool
+     *
+     * @throws WizardSomethingIsRequiredException
+     * @throws WizardWfIsRequiredException
+     */
     public function checkRequires($targetProjectDirectory)
     {
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
