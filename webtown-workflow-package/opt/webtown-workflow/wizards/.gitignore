@@ -1,0 +1,15 @@
+*
+!.gitignore
+!BaseChainWizard.php
+!BaseGitCloneWizard.php
+!BaseSkeletonWizard.php
+!BaseWizard.php
+!Deployer/*
+!Docker/*
+!DockerDevEnvironment/*
+!DockerProject/*
+!Ez/*
+!GitlabCIProject/*
+!PhpCsFixer/*
+!PhpMd/*
+!Symfony/*
