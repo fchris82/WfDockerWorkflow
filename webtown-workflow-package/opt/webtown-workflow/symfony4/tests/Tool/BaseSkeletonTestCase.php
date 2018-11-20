@@ -55,7 +55,7 @@ class BaseSkeletonTestCase extends TestCase
         }
 
         $loader = new \Twig_Loader_Filesystem($path);
-        $loader->addPath($this->getBaseDir(), TwigExtendingPass::SKELETON_TWIG_NAMESPACE);
+        $loader->addPath($this->getBaseDir(), TwigExtendingPass::WIZARD_TWIG_NAMESPACE);
         $twig = new \Twig_Environment($loader);
 
         return $twig;

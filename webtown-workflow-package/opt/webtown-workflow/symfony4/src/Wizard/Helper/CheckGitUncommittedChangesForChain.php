@@ -9,7 +9,7 @@
 namespace App\Wizard\Helper;
 
 use App\Exception\GitUncommittedChangesException;
-use App\Wizard\BaseWizard;
+use Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -37,7 +37,7 @@ class CheckGitUncommittedChangesForChain extends BaseWizard
 
     public function build($targetProjectDirectory)
     {
-        $this->execCmd(sprintf('cd %s && if  git diff-index --quiet HEAD --', $targetProjectDirectory), function ($return) {
+        $this->run(sprintf('cd %s && if  git diff-index --quiet HEAD --', $targetProjectDirectory), function ($return) {
             if ($return == 1) {
                 throw new GitUncommittedChangesException('There are some uncommmitted changes!');
             } elseif ($return != 0) {
@@ -62,5 +62,10 @@ class CheckGitUncommittedChangesForChain extends BaseWizard
     public function getRequireComposerPackages()
     {
         return [];
+    }
+
+    public function getDefaultName()
+    {
+        // TODO: Implement getName() method.
     }
 }

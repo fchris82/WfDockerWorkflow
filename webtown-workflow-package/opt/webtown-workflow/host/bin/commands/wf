@@ -1,4 +1,5 @@
 #!/bin/bash
+# This is a "symlink to a docker" call.
 
 # Debug! Host target, so you can't use the `source` solution, you have to copy the _debug.sh file content directly.
 # << webtown-workflow-package/opt/webtown-workflow/lib/_debug.sh !!!
@@ -10,10 +11,25 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+# YOU SHOULDN'T EDIT THIS FILE! If you want to extend the `wf` command, edit the `webtown-workflow-package/opt/webtown-workflow/workflow.sh`
+# file!
+# You have to use this file, when you want to extend `wf` command that needs to use "host" instead of "docker container".
+# Eg: the `--update` needs to use host.
+#
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 case $1 in
-    --enter)
-        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh /bin/bash
+    # !!! Don't extend here! Read above!
+    -u|--update)
+        git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
+        chmod +x /tmp/install-wf.sh
+        /tmp/install-wf.sh
+        rm /tmp/install-wf.sh
+        echo "Cleaning the cache..."
+        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf --clean-cache
     ;;
+    # !!! Don't extend here! Read above!
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}
     ;;

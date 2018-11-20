@@ -9,7 +9,7 @@
 namespace App\Wizard\Helper;
 
 use App\Exception\GitUncommittedChangesException;
-use App\Wizard\BaseWizard;
+use Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -54,7 +54,7 @@ class GitCommitWizardForChain extends BaseWizard
     public function build($targetProjectDirectory)
     {
         // @todo (Chris) A commit üzenetet maszkolni kellene
-        $this->execCmd(sprintf('cd %s && git add . && git commit -m "%s"', $targetProjectDirectory, $this->commit));
+        $this->run(sprintf('cd %s && git add . && git commit -m "%s"', $targetProjectDirectory, $this->commit));
 
         return $targetProjectDirectory;
     }
@@ -73,5 +73,10 @@ class GitCommitWizardForChain extends BaseWizard
     public function getRequireComposerPackages()
     {
         return [];
+    }
+
+    public function getDefaultName()
+    {
+        // TODO: Implement getName() method.
     }
 }

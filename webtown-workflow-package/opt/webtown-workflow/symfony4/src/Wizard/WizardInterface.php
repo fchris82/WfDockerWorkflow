@@ -14,27 +14,20 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 interface WizardInterface
 {
+    public function getDefaultName();
+
+    public function getDefaultGroup();
+
+    public function getInfo();
+
+    public function isHidden();
+
     public function isBuilt($targetProjectDirectory);
 
     /**
-     * @param $targetProjectDirectory
-     *
      * @return string
      */
-    public function build($targetProjectDirectory);
-
-    /**
-     * ComposerInstaller::COMPOSER_DEV => [... dev packages ...]
-     * ComposerInstaller::COMPOSER_NODEV => [... nodev packages ...].
-     *
-     * Eg:
-     * <code>
-     *  return [ComposerInstaller::COMPOSER_DEV => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages();
+    public function runBuild($targetProjectDirectory);
 
     /**
      * @param InputInterface $input

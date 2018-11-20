@@ -10,8 +10,8 @@ fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
 if [ "${XDEBUG_ENABLED}" == "1" ]; then
-    echo "xdebug.remote_host = $(/sbin/ip route|awk '/default/ { print $3 }')" > ${XDEBUG_CONFIG_FILE}
-    mv ${XDEBUG_CONFIG_FILE} ${XDEBUG_CONFIG_FILE%.*}
+    echo "xdebug.remote_host = $(/sbin/ip route|awk '/default/ { print $3 }')" >> ${XDEBUG_CONFIG_FILE}
+    cp ${XDEBUG_CONFIG_FILE} ${XDEBUG_CONFIG_FILE%.*}
     export XDEBUG_CONFIG="idekey=Docker"
     export PHP_IDE_CONFIG="serverName=Docker"
 fi

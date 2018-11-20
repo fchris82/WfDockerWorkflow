@@ -56,7 +56,6 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             $rootNode = $recipe->getConfig();
             $io->write($dumper->dumpNode($rootNode->getNode(true)));
         } elseif ($input->getOption('only-recipes')) {
-            $recipeManager = $this->getContainer()->get(RecipeManager::class);
             /** @var ArrayNode $rootNode */
             $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();
             $recipeNodes = $rootNode->getChildren()['recipes']->getChildren();

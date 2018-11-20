@@ -18,6 +18,9 @@ Documentations
     - [Start developing, debug environments](/docs/wf-develop-starting.md)
     - [How to build?](/docs/wf-develop-build.md)
     - [Make commands](/docs/wf-develop-make.md)
+- Wizard
+    - [How to use?](/docs/wizard-using.md)
+    - [How to develop?](/docs/wizard-developing.md)
 
 
 

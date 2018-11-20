@@ -12,11 +12,6 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-# CONFIG
-CONFIG_PATH="${DIR}/../../etc/webtown-workflow"
-CONFIG="$CONFIG_PATH/config"
-SYMFONY_SKELETON_PATH="$CONFIG_PATH/skeletons"
-
 source ${DIR}/lib/_debug.sh
 source ${DIR}/lib/_css.sh
 source ${DIR}/lib/_workflow_help.sh
@@ -81,6 +76,9 @@ case $1 in
     # Clean cache directory. You have to use after put a custom recipe!
     --reload|--clean-cache)
         rm -rf ${DIR}/symfony4/var/cache/*
+    ;;
+    --enter)
+        /bin/bash
     ;;
     --config-dump)
         shift

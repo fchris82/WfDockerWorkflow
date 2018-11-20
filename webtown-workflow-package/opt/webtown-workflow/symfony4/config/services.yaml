@@ -1,9 +1,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    # Docker path! We load to this path in the `docker-compose.yml` !!!
-    program_configuration_file: /etc/webtown-workflow/config
-    skeleton_base_dir: '%kernel.root_dir%/../../skeletons'
+    wizard_base_dir: '%kernel.root_dir%/../../wizards'
     recipe_base_dir: '%kernel.root_dir%/../../recipes'
 
 services:
@@ -15,7 +13,8 @@ services:
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
         bind:
-            $skeletonBaseDir: '%skeleton_base_dir%'
+            $wizardBaseDir: '%wizard_base_dir%'
+            $wizardUserConfigurationFile: '/opt/webtown-workflow/host/config/wizards.yml'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -23,12 +22,14 @@ services:
         resource: '../src/*'
         exclude: '../src/{Entity,Migrations,Tests,Kernel.php}'
 
-    App\Wizard\:
-        abstract: true
-        public: true
-
     Recipes\:
         resource: '%recipe_base_dir%/*'
+        exclude:  '%recipe_base_dir%/*/skeletons'
+        public: true
+
+    Wizards\:
+        resource: '%wizard_base_dir%/*'
+        exclude: '%wizard_base_dir%/*/skeletons'
         public: true
 
     # add more service definitions when explicit configuration is needed
@@ -51,6 +52,10 @@ services:
 
     App\Wizard\Manager:
         public: true
+        calls:
+            - method: setContainer
+              arguments:
+                - '@service_container'
 
 #    App\Wizard\Symfony\SymfonyProjectChainWizard:
 #        public: true
@@ -69,35 +74,35 @@ services:
 #        tags:
 #            - { name: wizard, group: 'Only builders', priority: 50 }
 #        public: true
-
-    App\Wizard\Symfony\SymfonyComposerBuildWizard:
-        tags:
-            - { name: wizard, group: 'Builders', priority: 50 }
-
-    App\Wizard\Base\GitlabCISkeleton:
-        tags:
-            - { name: wizard, group: 'Decorators' }
-
-    App\Wizard\Base\PhpCsFixSkeleton:
-        tags:
-            - { name: wizard, group: 'Decorators' }
-
-    App\Wizard\Base\PhpMdSkeleton:
-        tags:
-            - { name: wizard, group: 'Decorators' }
-
-    App\Wizard\Base\DeployerSkeleton:
-        tags:
-            - { name: wizard, group: 'Decorators', priority: -10 }
-
-    App\Wizard\Docker\DevEnvironment:
-        tags:
-            - { name: wizard, group: 'Decorators', priority: 20 }
-
-    App\Wizard\Docker\DockerProject:
-        tags:
-            - { name: wizard, group: 'Decorators', priority: 10 }
-
-    App\Wizard\Ez\EzBuildWizard:
-        tags:
-            - { name: wizard, group: 'Builders', priority: 20 }
+#
+#    App\Wizard\Symfony\SymfonyComposerBuildWizard:
+#        tags:
+#            - { name: wizard, group: 'Builders', priority: 50 }
+#
+#    App\Wizard\Base\GitlabCISkeleton:
+#        tags:
+#            - { name: wizard, group: 'Decorators' }
+#
+#    App\Wizard\Base\PhpCsFixSkeleton:
+#        tags:
+#            - { name: wizard, group: 'Decorators' }
+#
+#    App\Wizard\Base\PhpMdSkeleton:
+#        tags:
+#            - { name: wizard, group: 'Decorators' }
+#
+#    App\Wizard\Base\DeployerSkeleton:
+#        tags:
+#            - { name: wizard, group: 'Decorators', priority: -10 }
+#
+#    App\Wizard\Docker\DevEnvironment:
+#        tags:
+#            - { name: wizard, group: 'Decorators', priority: 20 }
+#
+#    App\Wizard\Docker\DockerProject:
+#        tags:
+#            - { name: wizard, group: 'Decorators', priority: 10 }
+#
+#    App\Wizard\Ez\EzBuildWizard:
+#        tags:
+#            - { name: wizard, group: 'Builders', priority: 20 }

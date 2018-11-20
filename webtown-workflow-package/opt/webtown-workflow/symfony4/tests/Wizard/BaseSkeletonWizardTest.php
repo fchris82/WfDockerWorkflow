@@ -10,7 +10,7 @@ namespace App\Tests\Wizard;
 
 use App\Tests\Dummy\Filesystem;
 use App\Tests\Tool\BaseSkeletonTestCase;
-use App\Wizard\BaseSkeletonWizard;
+use Wizards\BaseSkeletonWizard;
 use PHPUnit\Framework\SkippedTestError;
 
 class BaseSkeletonWizardTest extends BaseSkeletonTestCase

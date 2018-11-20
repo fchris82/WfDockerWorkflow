@@ -8,7 +8,7 @@ You can create or decorate custom project to use docker, Gitlab CI or other tool
 Special argument:
 
   ${CYAN}--dev${RESTORE}            ${GREEN}For debugging. You can use this before every command! It can switch on ${BOLD}xdebug${GREEN} and ${BOLD}SF dev${GREEN} mode.${RESTORE}
-
+\n
 EOM
 
 function showHelp {

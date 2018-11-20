@@ -70,7 +70,7 @@ class Wizard implements WizardInterface, PublicWizardInterface
         $this->name = $name;
     }
 
-    public function getName()
+    public function getDefaultName()
     {
         return $this->name;
     }

@@ -8,8 +8,8 @@
 
 namespace App\Wizard\Helper;
 
-use App\Wizard\BaseChainWizard;
-use App\Wizard\BaseWizard;
+use Wizards\BaseChainWizard;
+use Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -63,5 +63,10 @@ class ExecuteComposerInstallForChain extends BaseWizard
     public function getRequireComposerPackages()
     {
         return [];
+    }
+
+    public function getDefaultName()
+    {
+        // TODO: Implement getName() method.
     }
 }

@@ -8,20 +8,23 @@
 
 namespace Recipes;
 
+use App\Exception\CircularReferenceException;
 use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\DockerComposeSkeletonFile;
 use App\Skeleton\ExecutableSkeletonFile;
 use App\Skeleton\MakefileSkeletonFile;
 use App\Skeleton\SkeletonFile;
+use App\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Serializer\Exception\CircularReferenceException;
 
 abstract class BaseRecipe
 {
+    use SkeletonManagerTrait;
+
     /**
      * @var \Twig_Environment
      */
@@ -167,38 +170,5 @@ abstract class BaseRecipe
     protected function isExecutableFile(SplFileInfo $fileInfo)
     {
         return $fileInfo->isExecutable();
-    }
-
-    /**
-     * @return Finder
-     *
-     * @throws \ReflectionException
-     */
-    public static function getSkeletonPaths()
-    {
-        $skeletonPaths = [];
-        foreach (static::getSkeletonParents() as $class) {
-            $skeletonPaths = array_merge($skeletonPaths, $class::getSkeletonPaths());
-        }
-        $uniquePaths = array_unique($skeletonPaths);
-        if ($uniquePaths != $skeletonPaths) {
-            throw new CircularReferenceException('There are circular references in skeleton path.');
-        }
-
-        $refClass = new \ReflectionClass(static::class);
-        $skeletonPath = dirname($refClass->getFileName()) . '/skeletons';
-        if (is_dir($skeletonPath)) {
-            $skeletonPaths[] = $skeletonPath;
-        }
-
-        return $skeletonPaths;
-    }
-
-    /**
-     * @return array|BaseRecipe[]
-     */
-    public static function getSkeletonParents()
-    {
-        return [];
     }
 }

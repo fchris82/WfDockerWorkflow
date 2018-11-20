@@ -8,7 +8,7 @@
 
 namespace App\Wizard\Helper;
 
-use App\Wizard\BaseWizard;
+use Wizards\BaseWizard;
 
 class SimpleCommandForChain extends BaseWizard
 {
@@ -39,7 +39,7 @@ class SimpleCommandForChain extends BaseWizard
      */
     public function build($targetProjectDirectory)
     {
-        $this->execCmd(sprintf('cd %s && %s', $targetProjectDirectory, $this->cmd));
+        $this->run(sprintf('cd %s && %s', $targetProjectDirectory, $this->cmd));
 
         return $targetProjectDirectory;
     }
@@ -58,5 +58,10 @@ class SimpleCommandForChain extends BaseWizard
     public function getRequireComposerPackages()
     {
         return [];
+    }
+
+    public function getDefaultName()
+    {
+        // TODO: Implement getName() method.
     }
 }

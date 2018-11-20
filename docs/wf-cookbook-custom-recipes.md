@@ -241,3 +241,7 @@ class Recipe extends BaseRecipe
 ### Event handler
 
 There are some configuration/build events. You can find them into the `App\Event\ConfigurationEvents` class. If you want to use it somewhere, you have to implement the `Symfony\Component\EventDispatcher\EventSubscriberInterface` into your `Recipe`.
+
+### How to extend an existing recipe (inheritance)
+
+<!-- TODO -->

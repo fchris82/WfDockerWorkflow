@@ -48,9 +48,9 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # You can use the `--dev` to enable it without edit config
 if [ "$1" == "--dev" ]; then
-    shift
-    WF_SYMFONY_ENV="dev"
-    WF_XDEBUG_ENABLED="1"
+    # Don't use `shift` here!
+    SYMFONY_ENV="dev"
+    XDEBUG_ENABLED="1"
 fi
 
 # set defaults
@@ -100,8 +100,8 @@ DOCKER_COMPOSE_ENV=" \
     -e WF_HOST_LOCALE=${WF_HOST_LOCALE:-${LOCALE:-${LANG:-''}}} \
     -e COMPOSER_HOME=${COMPOSER_HOME:-${HOME}/.composer} \
     -e USER_GROUP=$(getent group docker | cut -d: -f3) \
-    -e APP_ENV=${WF_SYMFONY_ENV} \
-    -e XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
+    -e APP_ENV=${SYMFONY_ENV:-'prod'} \
+    -e XDEBUG_ENABLED=${XDEBUG_ENABLED:-0} \
     -e WF_DEBUG=${WF_DEBUG} \
     -e CI=${CI} \
     -e DOCKER_RUN=${DOCKER_RUN:-0} \
@@ -130,6 +130,7 @@ fi
 if [ "${CI}" == "0" ]; then
     # We use the shared cache only out of cache
     SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache"
+    SHARED_WIZARD_CONFIGURATION="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/config/wizards.yml:/opt/webtown-workflow/host/config/wizards.yml"
 fi
 
 # If the .wf.yml is a symlink, we put it into directly. It happens forexample if you are using deployer on a server, and
@@ -154,6 +155,19 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
         done
     )
 fi
+# Insert custom wizards
+if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
+    WIZARDS_PATH=/opt/webtown-workflow/wizards
+    WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards -mindepth 1 -maxdepth 1 -type d -print0 |
+        while IFS= read -r -d $'\0' line; do
+            WIZARDS_SOURCE=$line
+            if [ -L $WIZARDS_SOURCE ]; then
+                WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
+            fi
+            echo "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) "
+        done
+    )
+fi
 
 # You should handle the `WF_DOCKER_HOST_CHAIN` as unique, because the quotes cause some problem if you want to use in an other variable!
 docker run ${TTY} \
@@ -166,6 +180,7 @@ docker run ${TTY} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
             ${RECIPES_SHARE} \
             ${SHARED_SF_CACHE} \
+            ${SHARED_WIZARD_CONFIGURATION} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \

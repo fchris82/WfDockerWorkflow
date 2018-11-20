@@ -20,6 +20,16 @@ source ${DIR}/lib/_functions.sh
 case $1 in
     -h|--help)
         showHelp
+        echo "${WHITE}SYMFONY COMMAND HELP${RESTORE}"
+        echo ""
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard \
+            --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
+            ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+    ;;
+    --config)
+        shift
+        php /opt/webtown-workflow/symfony4/bin/console app:wizard:config \
+            ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     # RUN wizard
     *)
