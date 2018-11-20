@@ -11,6 +11,13 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
+WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
+# Load env config
+set -a
+[ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ] && . ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env
+set +a
+WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:webtown/webtown-workflow.git}
+
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
 # YOU SHOULDN'T EDIT THIS FILE! If you want to extend the `wf` command, edit the `webtown-workflow-package/opt/webtown-workflow/workflow.sh`
@@ -22,15 +29,15 @@ fi
 case $1 in
     # !!! Don't extend here! Read above!
     -u|--update)
-        git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
+        git archive --remote=${WF_PROGRAM_REPOSITORY} ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
         chmod +x /tmp/install-wf.sh
         /tmp/install-wf.sh
         rm /tmp/install-wf.sh
         echo "Cleaning the cache..."
-        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf --clean-cache
+        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache
     ;;
     # !!! Don't extend here! Read above!
     *)
-        ${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}/bin/workflow_runner.sh wf ${@}
+        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf ${@}
     ;;
 esac
