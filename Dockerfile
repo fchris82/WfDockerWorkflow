@@ -29,42 +29,6 @@ RUN apk update && \
     dpkg -i --ignore-depends=git --ignore-depends=jq --ignore-depends=curl --ignore-depends=make /root/webtown-workflow.deb || echo "Done" && \
     rm -f /root/webtown-workflow.deb
 
-## Az acl csak azért kell, hogy a parancsot megtalálja, a setfacl NEM MŰKÖDIK docker image-ben!
-#RUN apt-get update && apt-get install -y jq make ca-certificates curl git acl libarchive-zip-perl locales vim \
-#    libmcrypt-dev openssh-client libxml2-dev libpng-dev g++ autoconf gettext wget \
-#    apt-transport-https software-properties-common && \
-#    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
-#    add-apt-repository \
-#          "deb [arch=amd64] https://download.docker.com/linux/debian \
-#          $(lsb_release -cs) \
-#          stable" && \
-#    apt-get update && apt-get install -y docker-ce && \
-#    COMPOSE_VER=$(curl -s -o /dev/null -I -w "%{redirect_url}\n" https://github.com/docker/compose/releases/latest | grep -oP "[0-9]+(\.[0-9]+)+$") && \
-#    curl -o /usr/local/bin/docker-compose -L https://github.com/docker/compose/releases/download/$COMPOSE_VER/docker-compose-$(uname -s)-$(uname -m) && \
-#    chmod +x /usr/local/bin/docker-compose && \
-#    apt-get clean && \
-#    rm -rf /var/lib/apt/lists/* && \
-#    echo "${LOCALE}.UTF-8 UTF-8" >> /etc/locale.gen && \
-#    locale-gen ${LOCALE}.UTF-8 && \
-#    /usr/sbin/update-locale LANG=${LOCALE}.UTF-8
-#
-#ENV GOSU_VERSION 1.10
-#RUN set -ex; \
-#    \
-#    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')"; \
-#    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch"; \
-#    wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc"; \
-#    \
-## verify the signature
-#    export GNUPGHOME="$(mktemp -d)"; \
-#    gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4; \
-#    gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu; \
-#    rm -r "$GNUPGHOME" /usr/local/bin/gosu.asc; \
-#    \
-#    chmod +x /usr/local/bin/gosu; \
-## verify that the binary works
-#    gosu nobody true
-
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
