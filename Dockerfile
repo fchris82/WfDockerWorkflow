@@ -1,4 +1,4 @@
-FROM php:7.2-cli-alpine3.7
+FROM php:alpine
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
