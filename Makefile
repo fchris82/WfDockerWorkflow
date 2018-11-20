@@ -31,10 +31,16 @@ __versionupgrade:
     endif
 
 # We skip the ".gitignore" files. We copy everything to a tmp directory, and we will delete it in the `__build_cleanup` command
+# @see https://stackoverflow.com/a/50059607/99834
 .PHONY: __build_rsync
 __build_rsync:
 	mkdir -p tmp
-	rsync -r --delete --force --filter=":- webtown-workflow-package/opt/webtown-workflow/symfony/.gitignore" webtown-workflow-package/* tmp
+	rsync -r --delete --delete-excluded --delete-before --force \
+        --exclude=.git \
+        --exclude-from="$$(git -C webtown-workflow-package ls-files \
+            --exclude-standard -oi --directory >.git/ignores.tmp && \
+            echo .git/ignores.tmp)" \
+        webtown-workflow-package/* tmp
 
 .PHONY: __build_cleanup
 __build_cleanup:
