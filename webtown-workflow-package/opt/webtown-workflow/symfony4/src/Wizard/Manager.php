@@ -118,7 +118,7 @@ class Manager implements ContainerAwareInterface
                     }
                 }
                 if (!$exists) {
-                    $this->configuration->remove($wizard);
+                    $this->configuration->remove($configurationItem);
                 }
             }
 

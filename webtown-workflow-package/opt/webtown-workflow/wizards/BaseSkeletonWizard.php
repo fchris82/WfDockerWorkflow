@@ -8,6 +8,7 @@
 
 namespace Wizards;
 
+use App\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Exception\InvalidComposerVersionNumber;
 use App\Exception\ProjectHasDecoratedException;
 use App\Skeleton\ExecutableSkeletonFile;
@@ -50,6 +51,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     {
         $this->twig = $twig;
         $this->filesystem = $filesystem;
+        $this->twigSkeletonNamespace = TwigExtendingPass::WIZARD_TWIG_NAMESPACE;
     }
 
     /**
@@ -105,11 +107,17 @@ abstract class BaseSkeletonWizard extends BaseWizard
         return $targetProjectDirectory;
     }
 
+    /**
+     * @param $targetProjectDirectory
+     * @param $templateVariables
+     *
+     * @throws \Exception
+     */
     protected function doBuildFiles($targetProjectDirectory, $templateVariables)
     {
         /** @var SkeletonFile $skeletonFile */
         foreach ($this->buildSkeletonFiles($templateVariables) as $skeletonFile) {
-            $targetPath = $this->doBuildFile($targetProjectDirectory, $skeletonFile, $templateVariables);
+            $targetPath = $this->doBuildFile($targetProjectDirectory, $skeletonFile);
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
                 $targetPath->getRelativePath(),
@@ -140,7 +148,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
                 $skeletskeletonFile->getFileInfo()->getPerms()
         );
 
-        return new SplFileInfo($targetPath, $skeletskeletonFile->getRelativePath(), $skeletskeletonFile->getRelativePathname());
+        return $skeletskeletonFile->getFileInfo();
     }
 
     protected function printHeader($templateVariables)

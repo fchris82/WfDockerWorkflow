@@ -8,8 +8,8 @@
 
 namespace Wizards;
 
-use App\Wizard\Helper\ComposerInstaller;
-use Symfony\Component\Console\Output\OutputInterface;
+use App\Exception\WizardSomethingIsRequiredException;
+use App\Wizard\WizardInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -43,11 +43,6 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
      */
     protected $container;
 
-    /**
-     * @var array
-     */
-    protected $composerPackages = [];
-
     abstract protected function getWizardNames();
 
     public function setContainer(ContainerInterface $container = null)
@@ -79,58 +74,17 @@ abstract class BaseChainWizard extends BaseWizard implements ContainerAwareInter
     public function build($targetProjectDirectory)
     {
         foreach ($this->getWizards() as $wizard) {
-            if (!$wizard->isBuilt($targetProjectDirectory)) {
-                $targetProjectDirectory = $wizard->build($targetProjectDirectory);
-                if (!$targetProjectDirectory) {
-                    var_dump(get_class($wizard));
-
-                    $trace = debug_backtrace();
-                    $simple = [];
-                    foreach ($trace as $step) {
-                        unset($step['object']);
-                        $simple[] = $step;
-                    }
-                    file_put_contents(__DIR__ . '/../../../log1.txt', print_r(array_slice($simple, 0, 5), true));
+            try {
+                $wizard->checkRequires($targetProjectDirectory);
+                if (!$wizard->isBuilt($targetProjectDirectory)) {
+                    $stepTargetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
                 }
-                // Kigyűjtjük, hogy milyen composer csomagokat kell telepíteni. A `ComposerInstallForChain` osztállyal lehet futtatni
-                $this->composerPackages = $this->deepArrayMerge($this->composerPackages, $wizard->getRequireComposerPackages());
+            } catch (WizardSomethingIsRequiredException $e) {
+                $missingRequires = $e->getMessage();
             }
         }
 
         return $targetProjectDirectory;
-    }
-
-    /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...].
-     *
-     * Eg:
-     * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages()
-    {
-        return $this->composerPackages;
-    }
-
-    protected function deepArrayMerge($array1, $array2)
-    {
-        foreach ($array2 as $key => $value) {
-            if (is_int($key)) {
-                return array_merge($array1, $array2);
-            } elseif (!array_key_exists($key, $array1)) {
-                $array1[$key] = $value;
-            } elseif (is_array($value)) {
-                $array1[$key] = $this->deepArrayMerge($array1[$key], $value);
-            } else {
-                $array1[$key] = $value;
-            }
-        }
-
-        return $array1;
     }
 
     public function isBuilt($targetProjectDirectory)

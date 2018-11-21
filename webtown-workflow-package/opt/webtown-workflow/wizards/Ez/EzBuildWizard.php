@@ -54,7 +54,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         }
 
         $this->run(sprintf('mkdir -p %s', $targetProjectDirectory));
-        $this->execCmdInDocker(sprintf('composer create-project %s .', $package), $targetProjectDirectory);
+        $this->runCmdInContainer(sprintf('composer create-project %s .', $package), $targetProjectDirectory);
 
         $this->run(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory));
 
@@ -101,22 +101,6 @@ EOL;
     }
 
     /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...].
-     *
-     * Eg:
-     * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages()
-    {
-        return [];
-    }
-
-    /**
      * Az itt visszaadott fájllal ellenőrizzük, hogy az adott dekorátor lefutott-e már.
      * <code>
      *  protected function getBuiltCheckFile() {
@@ -148,7 +132,7 @@ EOL;
 
     public function isBuilt($targetProjectDirectory)
     {
-        return $this->wfIsInitialized($targetProjectDirectory);
+        return $this->wfIsInitialized($targetProjectDirectory) || file_exists($targetProjectDirectory . '/.git');
     }
 
     protected function getDockerImage()

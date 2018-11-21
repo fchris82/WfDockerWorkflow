@@ -113,7 +113,8 @@ class Configuration implements ConfigurationInterface
                     ->beforeNormalization()
                         ->ifString()
                         ->then(function ($v) {
-                            list($base, $wfMinimumVersion) = explode('@', $v, 2);
+                            // @ - the first character - needs to avoid "Notice: Undefined offset: 1" error if the $v contains only base version: "2.0.0"
+                            @list($base, $wfMinimumVersion) = explode('@', $v, 2);
 
                             return [
                                 'base' => $base,

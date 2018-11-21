@@ -108,28 +108,31 @@ class Wizard implements WizardInterface, PublicWizardInterface
         // TODO: Implement setOutput() method.
     }
 
+    public function getDefaultGroup()
+    {
+        // TODO: Implement getDefaultGroup() method.
+    }
+
+    public function isHidden()
+    {
+        // TODO: Implement isHidden() method.
+    }
+
+    /**
+     * @return string
+     */
+    public function runBuild($targetProjectDirectory)
+    {
+        // TODO: Implement runBuild() method.
+    }
+
     /**
      * @param Command $command
+     *
      * @return WizardInterface
      */
     public function setCommand(Command $command)
     {
         // TODO: Implement setCommand() method.
-    }
-
-    /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...]
-     *
-     * Eg:
-     * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages()
-    {
-        // TODO: Implement getComposerPackages() method.
     }
 }

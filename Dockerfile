@@ -22,7 +22,7 @@ RUN apk update && \
     echo "xdebug.remote_handler=dbgp" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_connect_back=0" >> $XDEBUG_CONFIG_FILE && \
     pip install --upgrade pip && \
-    pip install docker-compose && \
+    pip install docker-compose shyaml && \
     curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer && \
     touch /var/lib/dpkg/status && \

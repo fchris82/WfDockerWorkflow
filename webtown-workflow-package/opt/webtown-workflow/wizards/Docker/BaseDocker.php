@@ -15,6 +15,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
+ * @todo (Chris) A megjegyzést upgrade-elni, mert már jócskán elavult.
+ *
  * Class BaseDocker
  *
  * A docker beállításokkal kapcsolatos fájlok megegyeznek, csak a célterület különböző. Az, hogy hova kell őket másolni,
@@ -62,72 +64,12 @@ abstract class BaseDocker extends BaseSkeletonWizard
      */
     abstract protected function addVariables($targetProjectDirectory, $variables);
 
-    protected function doBuildFiles($targetProjectDirectory, $templateVariables)
-    {
-        $finder = $this->getTemplatesFinder($targetProjectDirectory);
-        $finder->exclude('docker-content');
-        foreach ($finder as $templateFile) {
-            if ($templateFile->getFilename() == 'docker-content') {
-                $this->dockerContentCopy($targetProjectDirectory, $templateFile->getRelativePath(), $templateVariables);
-            } else {
-                $targetPath = $this->doBuildFile($targetProjectDirectory, $templateFile, $templateVariables);
-                $this->output->writeln(sprintf(
-                    '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
-                    $targetPath->getRelativePath(),
-                    $targetPath->getFilename()
-                ));
-            }
-        }
-    }
-
-    protected function dockerContentCopy($targetProjectDirectory, $subPath, $templateVariables)
-    {
-        $finder = new Finder();
-        $finder
-            ->files()
-            ->in($this->getSkeletonTemplateDirectoryFull('DockerProjectBase/docker-content'))
-            ->ignoreDotFiles(false)
-        ;
-
-        foreach ($finder as $file) {
-            $templateFile = new SplFileInfo(
-                $file->getPathname(),
-                'docker-content' . DIRECTORY_SEPARATOR . $file->getRelativePath(),
-                'docker-content' . DIRECTORY_SEPARATOR . $file->getRelativePathname()
-            );
-            $fileContent = $this->parseTemplateFile($templateFile, $templateVariables);
-
-            $targetPath = implode(DIRECTORY_SEPARATOR, [
-                rtrim($targetProjectDirectory, DIRECTORY_SEPARATOR),
-                $subPath,
-                $file->getRelativePathname(),
-            ]);
-            $this->doWriteFile(
-                $targetPath,
-                $fileContent,
-                $file->getRelativePathname(),
-                // Az .sh-ra végződő fájloknál adunk futási jogot
-                substr($targetPath, -3) == '.sh' || (fileperms($templateFile->getPathname()) & 0700 === 0700)
-                    ? 0755
-                    : null
-            );
-
-            $targetPathInfo = new SplFileInfo($targetPath, $file->getRelativePath(), $file->getRelativePathname());
-
-            $this->output->writeln(sprintf(
-                '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
-                rtrim($subPath . DIRECTORY_SEPARATOR . $targetPathInfo->getRelativePath(), DIRECTORY_SEPARATOR),
-                $targetPathInfo->getFilename()
-            ));
-        }
-    }
-
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
     protected function setVariables($targetProjectDirectory)
     {
-        $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.1</info>]', '7.1');
+        $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.2</info>]', '7.2');
         $variables['php_version'] = $this->ask($phpVersionQuestion);
 
         // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik

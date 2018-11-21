@@ -98,6 +98,16 @@ case $1 in
             echo "The ${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME} doesn't exist."
         fi
     ;;
+    # For developing and testing
+#    --test)
+#        set -x
+#        START_TIME=`date +%s%N`
+#        PROJECT_ROOT_DIR=$(get_project_root_dir)
+#        PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME}")
+#        echo $(get_project_config_hash)
+#        ELAPSED_TIME=$((`date +%s%N` - $START_TIME))
+#        echo "$ELAPSED_TIME ns"
+#    ;;
     # Project makefile
     *)
         COMMAND="$1"

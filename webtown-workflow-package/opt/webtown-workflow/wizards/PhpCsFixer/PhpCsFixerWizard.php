@@ -61,7 +61,9 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
      */
     public function build($targetProjectDirectory)
     {
-        $this->run(sprintf('cd %s && wf composer require --dev friendsofphp/php-cs-fixer', $targetProjectDirectory));
+        $this->runCmdInContainer('composer require --dev friendsofphp/php-cs-fixer', $targetProjectDirectory);
+
+        return $targetProjectDirectory;
     }
 
     /**

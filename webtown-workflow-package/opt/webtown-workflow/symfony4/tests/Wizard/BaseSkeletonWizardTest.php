@@ -29,11 +29,11 @@ class BaseSkeletonWizardTest extends BaseSkeletonTestCase
         throw new SkippedTestError('Deprecated');
         $filesystem = new Filesystem($initDir);
         $twig = $this->getTwig($initDir);
-        $skeleton = new TestSkeletonWizard($this->getBaseDir(), $twig, $filesystem);
+        $skeleton = new TestSkeletonWizard($twig, $filesystem);
         $skeleton->setSkeletonTemplateDirectory($skeletonDir);
         $this->initSkeleton($skeleton, []);
 
-        $skeleton->build($initDir);
+        $skeleton->runBuild($initDir);
 
         $this->compareResults($responseDir, $initDir, $filesystem);
     }
@@ -59,10 +59,10 @@ class BaseSkeletonWizardTest extends BaseSkeletonTestCase
     {
         $filesystem = new Filesystem($initDir);
         $twig = $this->getTwig($initDir);
-        $skeleton = new TestSkeletonWizard($this->getBaseDir(), $twig, $filesystem);
+        $skeleton = new TestSkeletonWizard($twig, $filesystem);
         $this->initSkeleton($skeleton, []);
 
-        $skeleton->build($initDir);
+        $skeleton->runBuild($initDir);
     }
 
     public function getBuiltDirs()
@@ -104,22 +104,6 @@ class TestSkeletonWizard extends BaseSkeletonWizard
     }
 
     /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...]
-     *
-     * Eg:
-     * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages()
-    {
-        return [];
-    }
-
-    /**
      * Az itt visszaadott fájllal ellenőrizzük, hogy az adott dekorátor lefutott-e már.
      * <code>
      *  protected function getBuiltCheckFile() {
@@ -132,5 +116,15 @@ class TestSkeletonWizard extends BaseSkeletonWizard
     protected function getBuiltCheckFile()
     {
         return '.project.env.dist';
+    }
+
+    public function getDefaultName()
+    {
+        return 'Test name';
+    }
+
+    protected function build($targetProjectDirectory)
+    {
+        // TODO: Implement build() method.
     }
 }

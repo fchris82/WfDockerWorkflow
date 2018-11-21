@@ -8,6 +8,8 @@
 
 namespace Wizards\GitlabCIProject;
 
+use App\Exception\WizardSomethingIsRequiredException;
+use App\Exception\WizardWfIsRequiredException;
 use Wizards\BaseSkeletonWizard;
 
 class GitlabCIProjectWizard extends BaseSkeletonWizard
@@ -68,13 +70,31 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
 
     /**
      * @param $targetProjectDirectory
-     * @return string|void
-     * @throws \App\Exception\ProjectHasDecoratedException
+     *
+     * @return bool
+     *
+     * @throws WizardSomethingIsRequiredException
+     * @throws WizardWfIsRequiredException
+     */
+    public function checkRequires($targetProjectDirectory)
+    {
+        if (!file_exists($targetProjectDirectory . '/composer.json')) {
+            throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
+        }
+        if (!$this->wfIsInitialized($targetProjectDirectory)) {
+            throw new WizardWfIsRequiredException($this, $targetProjectDirectory);
+        }
+
+        return parent::checkRequires($targetProjectDirectory);
+    }
+
+    /**
+     * @param $targetProjectDirectory
+     *
+     * @return string
      */
     public function build($targetProjectDirectory)
     {
-        $targetProjectDirectory = parent::build($targetProjectDirectory);
-
         // Ha létezik parameters.yml, akkor annak is létrehozunk egy gitlab verziót
         if ($this->filesystem->exists($targetProjectDirectory . '/app/config/parameters.yml.dist')) {
             $this->filesystem->copy(
@@ -87,5 +107,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
                 'parameters.gitlab-ci.yml'
             ));
         }
+
+        return $targetProjectDirectory;
     }
 }

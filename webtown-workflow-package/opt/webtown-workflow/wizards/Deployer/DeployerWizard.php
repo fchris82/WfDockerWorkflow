@@ -11,6 +11,8 @@ namespace Wizards\Deployer;
 
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
+use Symfony\Component\Console\Question\Question;
+use Symfony\Component\Console\Style\SymfonyStyle;
 use Wizards\BaseSkeletonWizard;
 
 class DeployerWizard extends BaseSkeletonWizard
@@ -62,7 +64,9 @@ class DeployerWizard extends BaseSkeletonWizard
      */
     public function build($targetProjectDirectory)
     {
-        $this->run(sprintf('cd %s && wf composer require --dev deployer/deployer', $targetProjectDirectory));
+        $this->runCmdInContainer('composer require --dev deployer/deployer', $targetProjectDirectory);
+
+        return $targetProjectDirectory;
     }
 
     protected function setVariables($targetProjectDirectory)
@@ -77,7 +81,14 @@ class DeployerWizard extends BaseSkeletonWizard
         $variables['is_ez'] = $ezVersion || $kaliopVersion || $ezYmlExists ? true : false;
         $variables['project_directory'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
 
-        $variables['remote_url'] = trim(implode("\n", $this->run(sprintf('cd %s && git config --get remote.origin.url', $targetProjectDirectory))));
+        $gitRemoteOrigin = $this->run('git config --get remote.origin.url', $targetProjectDirectory);
+        if (!$gitRemoteOrigin) {
+            $io = new SymfonyStyle($this->input, $this->output);
+            $io->title('Missing <info>remote.origin.url</info>');
+            $question = new Question('You have to set the git remote origin url: ', '--you-have-to-set-it--');
+            $gitRemoteOrigin = $this->ask($question);
+        }
+        $variables['remote_url'] = trim($gitRemoteOrigin);
         $variables['project_name'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
 
         return $variables;

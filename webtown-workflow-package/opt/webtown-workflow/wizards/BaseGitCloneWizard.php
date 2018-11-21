@@ -48,14 +48,14 @@ abstract class BaseGitCloneWizard extends BaseWizard
 
         $this->gitClone($repository, $targetProjectDirectory);
 
-        $this->run(sprintf('rm -rf %s/.git', $targetProjectDirectory));
+        $this->run('rm -rf .git', $targetProjectDirectory);
 
         return $targetProjectDirectory;
     }
 
     protected function gitClone($repository, $targetProjectDirectory)
     {
-        $output = $this->run(sprintf('git clone --depth=1 %s %s', $repository, $targetProjectDirectory));
+        $output = $this->run(sprintf('git clone --depth=1 %s %s', $repository, $targetProjectDirectory), $targetProjectDirectory);
 
         return $output;
     }

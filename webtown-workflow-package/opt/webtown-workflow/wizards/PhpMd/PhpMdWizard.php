@@ -61,6 +61,8 @@ class PhpMdWizard extends BaseSkeletonWizard
      */
     public function build($targetProjectDirectory)
     {
-        $this->run(sprintf('cd %s && wf composer require --dev phpmd/phpmd', $targetProjectDirectory));
+        $this->runCmdInContainer('composer require --dev phpmd/phpmd', $targetProjectDirectory);
+
+        return $targetProjectDirectory;
     }
 }

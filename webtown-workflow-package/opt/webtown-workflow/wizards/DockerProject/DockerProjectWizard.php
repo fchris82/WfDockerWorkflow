@@ -40,16 +40,6 @@ class DockerProjectWizard extends BaseDocker implements WizardInterface
     }
 
     /**
-     * A skeleton fájlok helye.
-     *
-     * @return string|array
-     */
-    protected function getSkeletonTemplateDirectory()
-    {
-        return ['DockerProject'];
-    }
-
-    /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
     protected function addVariables($targetProjectDirectory, $variables)
@@ -96,22 +86,6 @@ class DockerProjectWizard extends BaseDocker implements WizardInterface
                     $this->filesystem->chmod($targetPath, $permission);
                 }
         }
-    }
-
-    /**
-     * 'dev' => [... dev packages ...]
-     * 'nodev' => [... nodev packages ...].
-     *
-     * Eg:
-     * <code>
-     *  return ['dev' => ["friendsofphp/php-cs-fixer:~2.3.3"]];
-     * </code>
-     *
-     * @return array
-     */
-    public function getRequireComposerPackages()
-    {
-        return [];
     }
 
     public function getDefaultName()

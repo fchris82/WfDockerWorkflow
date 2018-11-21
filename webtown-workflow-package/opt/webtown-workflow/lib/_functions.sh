@@ -89,12 +89,17 @@ function find-up-last {
         fi
         _path_=${_path_%/*}
     done
-    echo "$_last_"
+
+    if [[ -z "$_last_" ]]; then
+        false
+    else
+        echo "$_last_"
+    fi
 }
 
 # Try to find the project root directory
 function get_project_root_dir {
-    echo $(find-up-last .git || find-up-last .hg || find-up-last .svn || echo ".")
+    echo $(find-up-last .git || find-up-last .hg || find-up-last .svn || pwd)
 }
 
 # Find the project makefile:
@@ -106,9 +111,9 @@ function find_project_makefile {
     PROJECT_CONFIG_FILE=$(get_project_configuration_file "${PROJECT_ROOT_DIR}/${WF_CONFIGURATION_FILE_NAME}")
     if [ "${PROJECT_CONFIG_FILE}" == "null" ]; then
         # If we are using "hidden" docker environment...
-        DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
+        local DOCKER_ENVIRONEMNT_MAKEFIILE="${PROJECT_ROOT_DIR}/.docker.env.makefile"
         # If we are using old version
-        OLD_PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
+        local OLD_PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/.project.makefile"
         if [ -f "${DOCKER_ENVIRONEMNT_MAKEFIILE}" ]; then
             PROJECT_MAKEFILE="${DOCKER_ENVIRONEMNT_MAKEFIILE}";
         elif [ -f "${OLD_PROJECT_MAKEFILE}" ]; then
@@ -142,9 +147,9 @@ function get_project_configuration_file {
 
 function create_makefile_from_config {
     # Config version
-    CONFIG_HASH=$(get_project_config_hash)
+    local CONFIG_HASH=$(get_project_config_hash)
     # Program "version"
-    WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
+    local WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
         php /opt/webtown-workflow/symfony4/bin/console app:config \
@@ -157,27 +162,80 @@ function create_makefile_from_config {
     fi
 }
 
-# Try to find the all config file.
+# Try to find the all config files and environment file + calc checksum
+# This function does call always. I created a cache to make faster. The test results:
+#  - cache build (without cache): ~0.13s
+#  - using cache (if exists): ~0.02s
+# As you can see, the cache could be much faster.
+# The cache file will be generated to `[project]/.wf/.chksum.cache`.
+#  - first line: the configuration files list (base + import files)
+#  - second line: calculated checksum
 function get_project_config_hash {
-    # We try to find the all imported file. Now it isn't recursive here and can't handle the absolute path!
-    # Without the `| tr '\0' ' '` it causes `warning: command substitution: ignored null byte in input` error message
-    # @todo (Chris) Jelenleg nem rekurzív + ha van szóköz az útvonalban, akkor rossz eredményt ad + gondban van, ha absolut útvonalat próbálunk importálni.
-    #   1. "grep": we find the "imports:" block
-    #   2. "tr": we replace the new lines to space
-    #   3. "sed1": remove starting "-" sign
-    #   4. "sed2": replace all non-filename-char to single space (the space characters also)
-    #   5. "sed3": add project root path to relative path (it doesn't change the absolute path!)
-    IMPORT_FILES=$(grep -Poz '(\A|\n)imports:\s*\K(\n? +[^\n]+)+' ${PROJECT_CONFIG_FILE} \
-        | tr '\0\n' ' ' \
-        | sed 's:- : :g' \
-        | sed -r 's:[^[:alnum:]\.\-\/_]+: :g' \
-        | sed -r "s:(^| )([^/]):\1${PROJECT_ROOT_DIR}/\2:g")
+    if ! _check_config_hash_cache; then
+        local CKSUM_CONFIG_FILES=$(_parseConfigFileList ${PROJECT_CONFIG_FILE})
+        local CKSUM=$(_calc_cksum ${CKSUM_CONFIG_FILES})
+
+        _create_config_hash_cache "${CKSUM_CONFIG_FILES}" "${CKSUM}"
+
+        echo ${CKSUM}
+    else
+        _get_hash_from_cache
+    fi
+}
+
+# Calc the checksum: ENV + config files
+# @param Config file list from `_parseConfigFileList()` function
+function _calc_cksum {
     # Env file
     if [ -f "${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}" ]; then
         ENV_FILE="${PROJECT_ROOT_DIR}/${WF_ENV_FILE_NAME}"
     fi
 
-    echo $(cksum ${PROJECT_CONFIG_FILE} ${IMPORT_FILES} ${ENV_FILE} | cksum | awk '{ print $1 }')
+    cksum ${@} ${ENV_FILE} | cksum | awk '{ print $1 }'
+}
+
+# Check: are the used config files changed?
+function _check_config_hash_cache {
+    local CACHE_FILE_PATH="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/.chksum.cache"
+
+    [[ -f ${CACHE_FILE_PATH} ]] && [[ "$(_calc_cksum $(head -n 1 ${CACHE_FILE_PATH}))" == $(tail -n +2 ${CACHE_FILE_PATH}) ]]
+}
+
+# Create the hash cache file to `[project]/.wf/.chksum.cache`
+#
+# @param $1 Used config file list
+# @param $2 HASH
+function _create_config_hash_cache {
+    mkdir -p ${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME};
+    local CACHE_FILE_PATH="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/.chksum.cache"
+    echo -e "${1}\n${2}" > ${CACHE_FILE_PATH}
+}
+
+# Read HASH from the second line of the cache file
+function _get_hash_from_cache {
+    local CACHE_FILE_PATH="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/.chksum.cache"
+    tail -n +2 ${CACHE_FILE_PATH}
+}
+
+# Find all imported config files. Parsing YAML a little bit "slow"!
+#
+# @param $1 Parsing config file
+function _parseConfigFileList {
+    if [ ! -z $(grep "imports:" ${1}) ]; then
+        local IMPORT_FILES_CKSUM=$(cat ${1} \
+            | shyaml get-values-0 imports \
+            | while IFS='' read -r -d '' value; do
+                # Absolute path
+                if [[ "${value:0:1}" == "/" ]]; then
+                    _parseConfigFileList ${value};
+                # Relative path
+                else
+                    _parseConfigFileList ${PROJECT_ROOT_DIR}/${value};
+                fi;
+              done)
+    fi
+
+    echo "${1} ${IMPORT_FILES_CKSUM}";
 }
 
 # Handle CTRL + C

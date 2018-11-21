@@ -12,7 +12,7 @@ function buildSfCommand($cmd, $options = '')
 }
 
 /**
- * Az env változókat elérhetővé teszi a helyőrzőkben, `env.` prefixszel: `USER` --> `{{env.USER}}`
+ * Az env változókat elérhetővé teszi a helyőrzőkben, `env.` prefixszel: `USER` --> `{{ "{{env.USER}}" }}`
  */
 function loadEnvironments()
 {

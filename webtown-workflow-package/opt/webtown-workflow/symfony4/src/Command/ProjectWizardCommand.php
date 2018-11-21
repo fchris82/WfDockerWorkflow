@@ -148,11 +148,10 @@ EOS
                     ->setInput($input)
                     ->setOutput($output);
 
-                $this->writeTitle($output, $key);
+                $io->title($key);
                 $output->writeln($wizard->getInfo());
 
-                // @todo (Chris) Ez ne egy fix könyvtárra mutasson!
-    //            $targetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
+                $targetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
             }
         } else {
             $this->writeNote($io, 'There isn\'t any callable wizard! The program exited. You can use the `--force` or `--full` arguments.');

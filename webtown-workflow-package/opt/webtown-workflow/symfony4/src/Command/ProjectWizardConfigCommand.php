@@ -133,15 +133,15 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
                 $configurationItem->getPriority(),
             ]);
         }
-        foreach ($wizardManager->getConfiguration()->getChanges(Configuration::CHANGES_REMOVED) as $configurationItems) {
-            /** @var ConfigurationItem $configurationItem */
-            foreach ($configurationItems as $configurationItem) {
-                $table->addRow([
-                    sprintf('<warning>❌ %s</warning>', $configurationItem->getClass()),
-                    $configurationItem->getGroup(),
-                    $configurationItem->getPriority(),
-                ]);
-            }
+
+        // Missing/deleted, but has been configured wizards
+        /** @var ConfigurationItem $configurationItem */
+        foreach ($wizardManager->getConfiguration()->getChanges(Configuration::CHANGES_REMOVED) as $configurationItem) {
+            $table->addRow([
+                sprintf('<error>❌ %s</error>', $configurationItem->getClass()),
+                $configurationItem->getGroup(),
+                $configurationItem->getPriority(),
+            ]);
         }
         $table->render();
     }

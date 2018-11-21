@@ -8,7 +8,7 @@
 
 namespace Wizards;
 
-use App\Wizard\Helper\ComposerInstaller;
+use App\Exception\WizardSomethingIsRequiredException;
 use App\Wizard\WizardInterface;
 use App\Exception\WizardHasAlreadyBuiltException;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -41,6 +41,11 @@ abstract class BaseWizard implements WizardInterface
      * @var QuestionHelper
      */
     protected $questionHelper;
+
+    /**
+     * @var string
+     */
+    protected $runCommandsWorkdir;
 
     abstract public function getDefaultName();
 
@@ -116,10 +121,11 @@ abstract class BaseWizard implements WizardInterface
     public function runBuild($targetProjectDirectory)
     {
         $this->initBuild($targetProjectDirectory);
-        $this->build($targetProjectDirectory);
+        $targetProjectDirectory = $this->build($targetProjectDirectory);
+        // @todo (Chris) Megoldani, hogy lehessen target directory-t váltani. Pl ha git clone-ozunk egy alkönyvtárba, akkor a továbbiakban ott fussanak le a dolgok!
         $this->cleanUp($targetProjectDirectory);
 
-        // @todo (Chris) Megoldani, hogy lehessen target directory-t váltani. Pl ha git clone-ozunk egy alkönyvtárba, akkor a továbbiakban ott fussanak le a dolgok!
+        return $targetProjectDirectory;
     }
 
     protected function initBuild($targetProjectDirectory)
@@ -143,8 +149,42 @@ abstract class BaseWizard implements WizardInterface
         // User function
     }
 
-    protected function run($cmd, $handleReturn = null)
+    protected function call($targetProjectDirectory, BaseWizard $wizard)
     {
+        $wizard
+            ->setInput($this->input)
+            ->setOutput($this->output)
+            ->setCommand($this->command);
+        try {
+            $wizard->checkRequires($targetProjectDirectory);
+            if (!$wizard->isBuilt($targetProjectDirectory)) {
+                $stepTargetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
+            }
+        } catch (WizardSomethingIsRequiredException $e) {
+            $this->output->writeln($e->getMessage());
+        }
+    }
+
+    protected function wfIsInitialized($targetProjectDirectory)
+    {
+        return file_exists($targetProjectDirectory . '/.wf.yml.dist')
+            || file_exists($targetProjectDirectory . '/.wf.yml');
+    }
+
+    protected function cd($workdir)
+    {
+        $this->runCommandsWorkdir = $workdir;
+    }
+
+    protected function getCmdWorkDir()
+    {
+        return $this->runCommandsWorkdir ?: $_SERVER['PWD'];
+    }
+
+    protected function run($cmd, $workdir = null, $handleReturn = null)
+    {
+        $workdir = $workdir ?: $this->getCmdWorkDir();
+        $cmd = sprintf('cd %s && %s', $workdir, $cmd);
         $replace = [
             '&&' => '<question>&&</question>',
             '|' => '<question>|</question>',
@@ -168,18 +208,12 @@ abstract class BaseWizard implements WizardInterface
         }
     }
 
-    protected function wfIsInitialized($targetProjectDirectory)
+    protected function runCmdInContainer($cmd, $workdir = null, $handleReturn = null)
     {
-        return file_exists($targetProjectDirectory . '/.wf.yml.dist')
-            || file_exists($targetProjectDirectory . '/.wf.yml');
-    }
-
-    protected function execCmdInDocker($cmd, $targetProjectDirectory, $handleReturn = null)
-    {
-        if ($this->wfIsInitialized($targetProjectDirectory)) {
-            $dockerCmd = sprintf(
-                'cd %s && wf %s',
-                $targetProjectDirectory,
+        $workdir = $workdir ?: $this->getCmdWorkDir();
+        if ($this->wfIsInitialized($workdir)) {
+            $containerCmd = sprintf(
+                'wf %s',
                 $cmd
             );
         } else {
@@ -206,47 +240,21 @@ abstract class BaseWizard implements WizardInterface
             }
 
             // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e WF_DEBUG=0 /bin/bash -c "ls -al && php -i"
-            $dockerCmd = sprintf(
+            $containerCmd = sprintf(
                 'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
-                $targetProjectDirectory,
+                $workdir,
                 implode(' ', $envParameters),
-                $this->getDockerCmdExtraParameters($targetProjectDirectory),
+                $this->getDockerCmdExtraParameters($workdir),
                 $this->getDockerImage(),
                 $cmd
             );
         }
 
         return $this->run(
-            $dockerCmd,
+            $containerCmd,
+            $workdir,
             $handleReturn
         );
-    }
-
-    protected function runComposerRequire($targetProjectDirectory, array $packages, array $options = [])
-    {
-        $packages = trim(implode(' ', $packages));
-        if ($packages) {
-            $this->output->writeln('<info>Start composer require command ...</info> (' . $packages . ')');
-            $this->execCmdInDocker(sprintf(
-                'composer require %s %s',
-                implode(' ', $options),
-                $packages
-            ), $targetProjectDirectory);
-        }
-    }
-
-    public function installComposerPackages($targetProjectDirectory)
-    {
-        $composerPackages = $this->getRequireComposerPackages();
-        if (array_key_exists(ComposerInstaller::COMPOSER_NODEV, $composerPackages)) {
-            $this->runComposerRequire($targetProjectDirectory, $composerPackages[ComposerInstaller::COMPOSER_NODEV]);
-        }
-        if (array_key_exists(ComposerInstaller::COMPOSER_DEV, $composerPackages)) {
-            $this->runComposerRequire($targetProjectDirectory, $composerPackages[ComposerInstaller::COMPOSER_DEV], ['--dev']);
-        }
-
-        // Reset!
-        $this->composerPackages = [];
     }
 
     /**
