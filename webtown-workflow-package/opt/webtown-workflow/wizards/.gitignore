@@ -13,3 +13,4 @@
 !PhpCsFixer/*
 !PhpMd/*
 !Symfony/*
+!WfWizard/*

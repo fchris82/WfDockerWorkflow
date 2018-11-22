@@ -12,23 +12,13 @@ use Symfony\Component\Console\Question\Question;
 use Wizards\Docker\BaseDocker;
 
 /**
- * @todo (Chris) Comment frissítése
- *
  * Class DevEnvironment.
  *
- * Egy git repo-n kívüli használható környezetet hoz létre. Ez használható, ha pl létre kell hozni egy környezetet egy
- * third party bundle-nek, és szükség van php-re, composer-re, vagy más dologra.
+ * Add "hidden" and simple WF einvironment to a project to work.
  *
  * <code>
  *  DockerProjectSlim
- *  ├── .docker.env    <-- Docker fájlok
- *  │   ├── .data
- *  │   │   └── .gitkeep
- *  │   │
- *  │   ├── engine
- *  │   │   └── Dockerfile
- *  │   │
- *  │   └── docker-compose.yml
+ *  ├── .wf.yml     <-- gitignore configuration file
  *  │
  *  └── [...]       <-- Projekt többi fájlja
  * </code>
@@ -54,9 +44,8 @@ class DockerDevEnvironmentWizard extends BaseDocker implements WizardInterface
 
     public function getInfo()
     {
-        return 'Create a docker environment for a project, hidden from git. You have to register the <info>/.docker.env</info>' .
-            ' and the <info>/.docker.env.makefile</info> in your <comment>global .gitignore</comment> file! You must use this' .
-            ' with third party bundles or other components.';
+        return 'Create a docker environment for a project, hidden from git. You have to register the <info>/.wf.yml</info>' .
+            ' in your <comment>global .gitignore</comment> file! You must use this with third party bundles or other components.';
     }
 
     public function getDefaultGroup()
@@ -71,6 +60,5 @@ class DockerDevEnvironmentWizard extends BaseDocker implements WizardInterface
 
     protected function build($targetProjectDirectory)
     {
-        // TODO: Implement build() method.
     }
 }

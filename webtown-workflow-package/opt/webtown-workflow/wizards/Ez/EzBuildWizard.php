@@ -54,17 +54,18 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         }
 
         $this->run(sprintf('mkdir -p %s', $targetProjectDirectory));
-        $this->runCmdInContainer(sprintf('composer create-project %s .', $package), $targetProjectDirectory);
+        $this->cd($targetProjectDirectory);
+        $this->runCmdInContainer(sprintf('composer create-project %s .', $package));
 
-        $this->run(sprintf('cd %s && git init && git add . && git commit -m "Init"', $targetProjectDirectory));
+        $this->run('git init && git add . && git commit -m "Init"');
 
         if ($package != 'ezsystems/ezplatform') {
             $this->createAuthJson($targetProjectDirectory);
         }
 
         if (count($composerRequired) > 0) {
-            $this->runComposerRequire($targetProjectDirectory, $composerRequired);
-            $this->run(sprintf('cd %s && git init && git add . && git commit -m "Add some composer package"', $targetProjectDirectory));
+            $this->runCmdInContainer(sprintf('composer require %s', implode(' ', $composerRequired)));
+            $this->run('git init && git add . && git commit -m "Add some composer package"');
         }
 
         if ($requireKaliopMigration) {
@@ -98,21 +99,6 @@ EOL;
 
         file_put_contents($targetProjectDirectory . '/auth.json', $tpl);
         $this->output->writeln('The <info>auth.json</info> is created');
-    }
-
-    /**
-     * Az itt visszaadott fájllal ellenőrizzük, hogy az adott dekorátor lefutott-e már.
-     * <code>
-     *  protected function getBuiltCheckFile() {
-     *      return '.docker';
-     *  }
-     * </code>.
-     *
-     * @return string
-     */
-    protected function getBuiltCheckFile()
-    {
-        return 'makefile';
     }
 
     public function getDefaultName()

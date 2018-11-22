@@ -10,7 +10,6 @@ namespace Wizards;
 
 use App\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Exception\InvalidComposerVersionNumber;
-use App\Exception\ProjectHasDecoratedException;
 use App\Skeleton\ExecutableSkeletonFile;
 use App\Skeleton\SkeletonFile;
 use App\Skeleton\SkeletonManagerTrait;
@@ -18,7 +17,6 @@ use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
@@ -95,6 +93,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
      * @return string
      *
      * @throws \App\Exception\WizardHasAlreadyBuiltException
+     * @throws \Exception
      */
     public function initBuild($targetProjectDirectory)
     {
