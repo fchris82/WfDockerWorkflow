@@ -63,7 +63,12 @@ class Manager implements ContainerAwareInterface
     {
         if (!$this->wizards) {
             $finder = new Finder();
-            $finder->in($this->wizardsPath)->name('*Wizard.php');
+            $finder
+                ->in($this->wizardsPath)
+                ->name('*Wizard.php')
+                ->exclude('skeletons')
+                ->depth(1)
+            ;
             $this->wizards = [];
             /** @var SplFileInfo $wizardFile */
             foreach ($finder as $wizardFile) {

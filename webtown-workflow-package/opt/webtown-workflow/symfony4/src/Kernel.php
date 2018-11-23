@@ -2,7 +2,6 @@
 
 namespace App;
 
-use App\DependencyInjection\Compiler\CollectWizardsPass;
 use App\DependencyInjection\Compiler\TwigExtendingPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -51,7 +50,6 @@ class Kernel extends BaseKernel
         $loader->load($confDir.'/{services}'.self::CONFIG_EXTS, 'glob');
         $loader->load($confDir.'/{services}_'.$this->environment.self::CONFIG_EXTS, 'glob');
 
-        $container->addCompilerPass(new CollectWizardsPass());
         $container->addCompilerPass(new TwigExtendingPass());
     }
 

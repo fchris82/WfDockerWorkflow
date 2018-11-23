@@ -3,6 +3,10 @@
 namespace App\Command;
 
 use App\Exception\WizardSomethingIsRequiredException;
+use App\Helper\WordWrapper;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Wizards\BaseWizard;
 use App\Wizard\Manager;
@@ -68,6 +72,8 @@ EOS
     {
         $io = new SymfonyStyle($input, $output);
 
+        // ---------------------------------------- DEFAULT INFORMATION ------------------------------------------------
+
         $output->writeln('');
         $output->writeln(' <comment>!> If the <question>CTRL-C</question> doesn\'t work, you can use the <question>^P + ^Q + ^C</question> (^ == CTRL).</comment>');
         $output->writeln(' <comment>!> You can edit the enabled wizards and sort order with the <info>wizard --config</info> command.</comment>');
@@ -86,27 +92,34 @@ EOS
             return;
         }
 
-        $io->block(
-            'You can see information about all available wizards. If the name is yellow the program will disable it. The reason would be there are missing requires OR it has already built/run. Use the <comment>--force</comment> option to disable this check. You can read more information with <comment>wizard --help</comment> command.',
+        $io->writeln($this->createBlock(
+            $output,
+            'You can see information about all available wizards with <info>h</info>. If the name is <comment>yellow</comment> the program is unavailable here. The reason would be there are missing requires OR it has already built/run. Use the <comment>--force</comment> option to disable this check. You can read more information with <comment>wizard --help</comment> command.',
             null,
             null,
             ' ',
-            false,
+            true,
             false
-        );
+        ));
+
+        // --------------------------------------------- BUILD LIST ----------------------------------------------------
 
         /** @var QuestionHelper $helper */
         $helper = $this->getHelper('question');
         $choices = [];
         $wizardChoices = [];
+        $information = [];
         foreach ($enabledWizards as $configurationItem) {
+            $wizardHelp = [];
             /** @var BaseWizard $wizard */
             $wizard = $this->getContainer()->get($configurationItem->getClass());
             $missingRequires = false;
             $built = false;
             if (!$isForce) {
                 try {
-                    $wizard->checkRequires($targetProjectDirectory);
+                    if (!$wizard->checkRequires($targetProjectDirectory)) {
+                        throw new WizardSomethingIsRequiredException('Some requires missing');
+                    }
                     if ($wizard->isBuilt($targetProjectDirectory)) {
                         $built = true;
                     }
@@ -117,41 +130,76 @@ EOS
             $groupPrefix = $configurationItem->getGroup() ?
                 sprintf('<comment>[%s]</comment> ', $configurationItem->getGroup()) :
                 '';
-            $io->writeln(sprintf(
+            $wizardHelp[] = sprintf(
                 '  <%1$s>%2$s%3$s</%1$s>',
-                $built || $missingRequires ? 'comment' : 'info',
+                $built || $missingRequires ? 'comment' : 'fg=green;options=bold',
                 $groupPrefix,
                 $configurationItem->getName()
-            ));
-            $io->writeln(sprintf('    %s', $wizard->getInfo()));
-            $io->newLine();
+            );
+            $wizardHelp[] = '  ' . str_repeat('-', mb_strlen(strip_tags($groupPrefix . $configurationItem->getName())));
+            if ($missingRequires) {
+                $wizardHelp[] = implode(PHP_EOL, $this->createBlock($output, $missingRequires, null, 'fg=blue', '    <fg=yellow;options=bold>[!]</> '));
+            }
+            if ($built) {
+                $wizardHelp[] = implode(PHP_EOL, $this->createBlock($output, 'This command was used here! You can\'t run again.', null, 'fg=blue', '    <comment>[!]</comment> '));
+            }
+            $wizardHelp[] = implode(PHP_EOL, $this->createBlock($output, $wizard->getInfo(), null, null, '    '));
+            $information[] = implode(PHP_EOL, $wizardHelp);
 
             if (!$missingRequires && !$built) {
                 $key = sprintf('%s%s', $groupPrefix, $configurationItem->getName());
                 $choices[] = $key;
-                $wizardChoices[$key] = $wizard;
+                $wizardChoices[] = $wizard;
             }
         }
 
+        // ----------------------------------------- PRINT CHOICES -----------------------------------------------------
+
         if (count($choices) > 0) {
-            $question = new ChoiceQuestion('Select wizard (multiselect!)', $choices);
+            $countUnavailable = count($enabledWizards) - count($choices);
+            if ($countUnavailable > 0) {
+                $pattern = $countUnavailable == 1
+                    ? ' - <options=bold>There is <comment>%d</comment> not available command</>'
+                    : ' - <options=bold>There are <comment>%d</comment> not available commands</>'
+                ;
+                $listSuffix = sprintf($pattern, $countUnavailable);
+            } else {
+                $listSuffix = '';
+            }
+            $question = new ChoiceQuestion('Select wizard (multiselect!)', array_merge(
+                ['q' => 'Quit', 'h' => 'List commands information' . $listSuffix],
+                $choices
+            ), 'q');
             // @todo (Chris) Ezt lehet, hogy törölni kellene, mivel néhány Wizard ütközhet, ha egymás után hívjuk.
             $question->setMultiselect(true);
-            $selected = $helper->ask($input, $output, $question);
+            // @todo (Chris) Szar a defaultValidator, az ugyanis összecsukja a szóközöket, azonban ellenőrzésnél nem tesz így, így a szóköz nélküli értéket nem találja a tömbben.
+            $question->setAutocompleterValues(null);
+            while (['h'] == $selected = $helper->ask($input, $output, $question)) {
+                $io->newLine();
+                $io->title('Command list & information');
+                $io->writeln(implode("\n\n", $information));
+                $io->newLine();
+                $io->newLine();
+            }
 
-            // BUILDS
-            foreach ($selected as $key) {
-                /** @var BaseWizard $wizard */
-                $wizard = $wizardChoices[$key];
-                $wizard
-                    ->setCommand($this)
-                    ->setInput($input)
-                    ->setOutput($output);
+            // -------------------------------------- RUN SELECTED -----------------------------------------------------
+            if (['q'] != $selected) {
+                // BUILDS
+                foreach ($selected as $key) {
+                    /** @var BaseWizard $wizard */
+                    $wizard = $wizardChoices[(int) $key];
+                    $wizard
+                        ->setCommand($this)
+                        ->setInput($input)
+                        ->setOutput($output);
 
-                $io->title($key);
-                $output->writeln($wizard->getInfo());
+                    $io->title($choices[(int) $key]);
+                    $output->writeln($wizard->getInfo());
 
-                $targetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
+                    $targetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
+                }
+            } else {
+                $io->writeln('Quit');
             }
         } else {
             $this->writeNote($io, 'There isn\'t any callable wizard! The program exited. You can use the `--force` or `--full` arguments.');
@@ -161,5 +209,58 @@ EOS
     protected function writeNote(SymfonyStyle $io, $note, $colorStyle = 'fg=white;bg=yellow;options=bold')
     {
         $io->block($note, 'NOTE', $colorStyle, ' ', true);
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string $message
+     * @param string|null $type
+     * @param string|null $style
+     * @param string $prefix
+     * @param bool $padding
+     * @param bool $escape
+     *
+     * @return array
+     *
+     * @todo (Chris) Az itt megvalósított, WordWrapper-rel kivitelezett megoldást implementálni a Symfony repo-ba. Itt: \Symfony\Component\Console\Style\SymfonyStyle::createBlock() kell a wordwrap()-ot lecserélni.
+     */
+    protected function createBlock(OutputInterface $output, string $message, string $type = null, string $style = null, string $prefix = ' ', bool $padding = false, bool $escape = false)
+    {
+        $indentLength = 0;
+        $prefixLength = Helper::strlenWithoutDecoration($output->getFormatter(), $prefix);
+
+        if (null !== $type) {
+            $type = sprintf('[%s] ', $type);
+            $indentLength = mb_strlen($type);
+            $lineIndentation = str_repeat(' ', $indentLength);
+        }
+        if ($escape) {
+            $message = OutputFormatter::escape($message);
+        }
+
+        $ww = new WordWrapper(120 - $prefixLength - $indentLength, PHP_EOL);
+        $lines = explode(PHP_EOL, $ww->formattedStringWordwrap($message, true));
+
+        $firstLineIndex = 0;
+        if ($padding) {
+            $firstLineIndex = 1;
+            array_unshift($lines, '');
+            $lines[] = '';
+        }
+
+        foreach ($lines as $i => &$line) {
+            if (null !== $type) {
+                $line = $firstLineIndex === $i ? $type.$line : $lineIndentation.$line;
+            }
+
+            $line = $prefix.$line;
+            $line .= str_repeat(' ', 120 - Helper::strlenWithoutDecoration($output->getFormatter(), $line));
+
+            if ($style) {
+                $line = sprintf('<%s>%s</>', $style, $line);
+            }
+        }
+
+        return $lines;
     }
 }

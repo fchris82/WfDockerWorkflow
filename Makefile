@@ -1,8 +1,44 @@
+define DEV_SH_FILE_CONTENT
+#!/bin/bash
+# Debug mode
+#set -x
+
+DEV="--dev"
+WF_DEBUG=0
+while [ "$${1:0:1}" == "-" ]; do
+    case "$$1" in
+        --no-dev)
+            DEV=""
+            ;;
+        -v)
+            WF_DEBUG=1
+            ;;
+        -vv)
+            WF_DEBUG=2
+            ;;
+        -vvv)
+            WF_DEBUG=3
+            ;;
+        *)
+            echo "Invalid argument: '$$1' Usage: $$0 {--no-dev|-v|-vv|-vvv} ..."
+            exit 1
+    esac
+    shift
+done
+
+# COMMAND
+CMD=$$1
+shift
+
+WF_DEBUG=$${WF_DEBUG} $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop $$CMD $$DEV $$@
+endef
+export DEV_SH_FILE_CONTENT
+
 # Create a symlink file to user ~/bin directory.
 .PHONY: init-developing
 init-developing:
 	mkdir -p ~/bin
-	ln -s $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh ~/bin/workflow_runner_test
+	@echo "$$DEV_SH_FILE_CONTENT" > ~/bin/wfdev && chmod +x ~/bin/wfdev
 	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --composer-install
 
 .PHONY: rebuild_wf

@@ -120,7 +120,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
                 $targetPath->getRelativePath(),
-                $targetPath->getFilename()
+                basename($targetPath->getRelativePathname())
             ));
         }
     }

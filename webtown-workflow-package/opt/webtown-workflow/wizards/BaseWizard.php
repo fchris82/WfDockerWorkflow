@@ -291,6 +291,13 @@ abstract class BaseWizard implements WizardInterface
         return false;
     }
 
+    /**
+     * @param string $targetProjectDirectory
+     *
+     * @return bool
+     *
+     * @throw WizardSomethingIsRequiredException
+     */
     public function checkRequires($targetProjectDirectory)
     {
         return true;
