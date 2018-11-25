@@ -1,7 +1,8 @@
-*
+/*
 !.gitignore
 !BaseRecipe.php
 !HiddenRecipe.php
+
 !Base
 !Commands
 !DockerComposeExtension
