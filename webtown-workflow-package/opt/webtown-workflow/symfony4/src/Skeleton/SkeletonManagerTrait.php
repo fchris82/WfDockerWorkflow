@@ -83,9 +83,14 @@ trait SkeletonManagerTrait
 
     protected function getSkeletonFinder()
     {
+        $paths = static::getSkeletonPaths();
+        if (count($paths) == 0) {
+            return [];
+        }
+
         $skeletonFinder = Finder::create()
             ->files()
-            ->in(static::getSkeletonPaths())
+            ->in($paths)
             ->ignoreDotFiles(false);
 
         return $skeletonFinder;
@@ -123,5 +128,21 @@ trait SkeletonManagerTrait
     public static function getSkeletonParents()
     {
         return [];
+    }
+
+    /**
+     * @param string $tempFile The template filename.
+     *
+     * @return SplFileInfo
+     *
+     * @throws \ReflectionException
+     */
+    protected function getTempSkeletonFileInfo($tempFile)
+    {
+        $refClass = new \ReflectionClass($this);
+        $skeletonsPath = dirname($refClass->getFileName()) . '/template';
+        $tmpFileInfo = new SplFileInfo($skeletonsPath . '/' . $tempFile, '', $tempFile);
+
+        return $tmpFileInfo;
     }
 }

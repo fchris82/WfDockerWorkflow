@@ -15,7 +15,17 @@ class SkeletonFile
     /**
      * @var SplFileInfo
      */
-    protected $fileInfo;
+    protected $baseFileInfo;
+
+    /**
+     * @var string|null
+     */
+    protected $relativePath;
+
+    /**
+     * @var string|null
+     */
+    protected $fileName;
 
     /**
      * @var string $contents
@@ -28,25 +38,87 @@ class SkeletonFile
      */
     public function __construct(SplFileInfo $fileInfo)
     {
-        $this->fileInfo = $fileInfo;
+        $this->baseFileInfo = $fileInfo;
     }
 
     /**
      * @return SplFileInfo
      */
-    public function getFileInfo()
+    public function getBaseFileInfo()
     {
-        return $this->fileInfo;
+        return $this->baseFileInfo;
     }
 
     /**
-     * @param SplFileInfo $fileInfo
+     * @param SplFileInfo $baseFileInfo
      *
      * @return $this
      */
-    public function setFileInfo($fileInfo)
+    public function setBaseFileInfo($baseFileInfo)
     {
-        $this->fileInfo = $fileInfo;
+        $this->baseFileInfo = $baseFileInfo;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRelativePath()
+    {
+        return $this->relativePath ?: $this->getBaseFileInfo()->getRelativePath();
+    }
+
+    /**
+     * @param string|null $relativePath
+     *
+     * @return $this
+     */
+    public function setRelativePath($relativePath)
+    {
+        $this->relativePath = $relativePath;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getFileName()
+    {
+        return $this->fileName ?: $this->getBaseFileInfo()->getFilename();
+    }
+
+    /**
+     * @param string|null $fileName
+     *
+     * @return $this
+     */
+    public function setFileName($fileName)
+    {
+        $this->fileName = $fileName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getRelativePathname()
+    {
+        return $this->relativePath
+            ? $this->getRelativePath() . DIRECTORY_SEPARATOR . $this->getFileName()
+            : $this->getBaseFileInfo()->getRelativePathname();
+    }
+
+    /**
+     * @param string|null $relativePathname
+     *
+     * @return $this
+     */
+    public function setRelativePathname($relativePathname)
+    {
+        $this->relativePathname = $relativePathname;
 
         return $this;
     }
@@ -56,7 +128,7 @@ class SkeletonFile
      */
     public function getContents()
     {
-        return $this->contents === null ? $this->fileInfo->getContents() : $this->contents ;
+        return $this->contents === null ? $this->baseFileInfo->getContents() : $this->contents ;
     }
 
     /**

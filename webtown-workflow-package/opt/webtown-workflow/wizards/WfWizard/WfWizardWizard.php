@@ -13,6 +13,7 @@ use App\Skeleton\SkeletonFile;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Wizards\BaseSkeletonWizard;
 
@@ -96,8 +97,30 @@ class WfWizardWizard extends BaseSkeletonWizard
         return $this->variables;
     }
 
+    /**
+     * @param $targetProjectDirectory
+     *
+     * @throws \ReflectionException
+     */
     protected function build($targetProjectDirectory)
     {
+        $phpClass = $this->getTempSkeletonFileInfo('Wizard.php');
+        $phpClassSkeleton = new SkeletonFile($phpClass);
+        $phpClassSkeleton
+            ->setRelativePath($this->getRelativeTargetDirectory())
+            ->setFileName($this->variables['wizard_class'] . '.php')
+            ->setContents($this->parseTemplateFile(
+                $phpClassSkeleton->getBaseFileInfo(),
+                $this->variables
+            ))
+        ;
+        $this->doBuildFile($targetProjectDirectory, $phpClassSkeleton);
+        $this->output->writeln(sprintf(
+            '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
+            $phpClassSkeleton->getRelativePath(),
+            basename($phpClassSkeleton->getRelativePathname())
+        ));
+
         // Create skeletons directory
         if ($this->variables['parent_wizard'] == 'BaseSkeletonWizard') {
             $target = $targetProjectDirectory . '/' . $this->getRelativeTargetDirectory() . '/skeletons';
@@ -115,24 +138,5 @@ class WfWizardWizard extends BaseSkeletonWizard
         return static::RELATIVE_TARGET_DIRECTORY
             . '/'
             . $this->variables['namespace'];
-    }
-
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildConfig = [])
-    {
-        if ($fileInfo->getRelativePathname() == 'Wizard.php') {
-            $newFileInfo = new SplFileInfo(
-                $fileInfo->getPathname(),
-                rtrim(sprintf('%s/%s', $this->getRelativeTargetDirectory(), $fileInfo->getRelativePath()), '/'),
-                sprintf('%s/%s%s.php', $this->getRelativeTargetDirectory(), $fileInfo->getRelativePath(), $this->variables['wizard_class'])
-            );
-        } else {
-            $newFileInfo = new SplFileInfo(
-                $fileInfo->getPathname(),
-                sprintf('%s/%s/%s', static::RELATIVE_TARGET_DIRECTORY, $this->variables['namespace'], $fileInfo->getRelativePath()),
-                sprintf('%s/%s/%s', static::RELATIVE_TARGET_DIRECTORY, $this->variables['namespace'], $fileInfo->getRelativePathname())
-            );
-        }
-
-        return parent::buildSkeletonFile($newFileInfo, $buildConfig);
     }
 }

@@ -24,12 +24,12 @@ services:
 
     Recipes\:
         resource: '%recipe_base_dir%/*'
-        exclude:  '%recipe_base_dir%/*/skeletons'
+        exclude:  '%recipe_base_dir%/*/{skeletons,template}'
         public: true
 
     Wizards\:
         resource: '%wizard_base_dir%/*'
-        exclude: '%wizard_base_dir%/*/skeletons'
+        exclude: '%wizard_base_dir%/*/{skeletons,template}'
         public: true
 
     # add more service definitions when explicit configuration is needed

@@ -39,7 +39,7 @@ class Recipe extends HiddenRecipe
             $templateVars['commands'] = $commands;
             $skeletonFile = $this->createSkeletonFile($tmpSkeletonFileInfo, $commandName, $templateVars);
             $skeletonFiles[] = $skeletonFile;
-            $makefileTargets[$commandName] = $skeletonFile->getFileInfo()->getRelativePathname();
+            $makefileTargets[$commandName] = $skeletonFile->getRelativePathname();
         }
 
         // Create makefile

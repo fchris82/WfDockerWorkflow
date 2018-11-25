@@ -135,19 +135,19 @@ abstract class BaseSkeletonWizard extends BaseWizard
     {
         $targetPath = implode(DIRECTORY_SEPARATOR, [
             rtrim($targetProjectDirectory, DIRECTORY_SEPARATOR),
-            $skeletskeletonFile->getFileInfo()->getRelativePathname(),
+            $skeletskeletonFile->getRelativePathname(),
         ]);
         $this->doWriteFile(
             $targetPath,
             $skeletskeletonFile->getContents(),
-            $skeletskeletonFile->getFileInfo()->getRelativePathname(),
+            $skeletskeletonFile->getRelativePathname(),
             // Az .sh-ra végződő vagy futási joggal rendelkező fájloknál adunk futási jogot
             $skeletskeletonFile instanceof ExecutableSkeletonFile ?
                 $skeletskeletonFile->getPermission() :
-                $skeletskeletonFile->getFileInfo()->getPerms()
+                $skeletskeletonFile->getBaseFileInfo()->getPerms()
         );
 
-        return $skeletskeletonFile->getFileInfo();
+        return $skeletskeletonFile->getBaseFileInfo();
     }
 
     protected function printHeader($templateVariables)

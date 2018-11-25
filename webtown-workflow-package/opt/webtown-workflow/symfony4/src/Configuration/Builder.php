@@ -286,7 +286,7 @@ class Builder
             $skeletonFiles = $recipe->build($projectPath, $recipeConfig, $globalConfig);
 
             foreach ($skeletonFiles as $skeletonFile) {
-                $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getFileInfo());
+                $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getBaseFileInfo());
                 $fileFullTarget = $projectPath . '/' . $fileTarget;
                 // Dump files
                 $dumpEvent = new DumpEvent($fileFullTarget, $skeletonFile->getContents());
