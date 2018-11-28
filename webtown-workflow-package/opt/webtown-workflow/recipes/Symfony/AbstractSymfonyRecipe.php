@@ -20,7 +20,7 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * @package Recipes\Symfony
  */
-class AbstractRecipe extends BaseRecipe
+class AbstractSymfonyRecipe extends BaseRecipe
 {
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';

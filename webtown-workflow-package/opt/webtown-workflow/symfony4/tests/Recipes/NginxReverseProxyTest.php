@@ -11,7 +11,7 @@ namespace App\Tests;
 use App\Configuration\Environment;
 use App\Tests\TestCase;
 use Mockery as m;
-use Recipes\NginxReverseProxy\Recipe;
+use Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
 
 class NginxReverseProxyTest extends TestCase
 {
@@ -26,7 +26,7 @@ class NginxReverseProxyTest extends TestCase
     {
         $twig = m::mock(\Twig_Environment::class);
         $environment = new Environment();
-        $recipe = new Recipe($twig, $environment);
+        $recipe = new NginxReverseProxyRecipe($twig, $environment);
 
         $response = $this->executeProtectedMethod($recipe, 'defaultHostIsSet', [$recipeConfig, $defaultHost]);
         $this->assertEquals($result, $response);
@@ -112,7 +112,7 @@ class NginxReverseProxyTest extends TestCase
         $environment = m::mock(Environment::class, [
             'getConfigValue' => '.loc',
         ]);
-        $recipe = new Recipe($twig, $environment);
+        $recipe = new NginxReverseProxyRecipe($twig, $environment);
 
         $response = $this->executeProtectedMethod($recipe, 'setTheDefaultHostIfNotSet', ['', $recipeConfig, $globalConfig]);
         $this->assertEquals($result, $response);

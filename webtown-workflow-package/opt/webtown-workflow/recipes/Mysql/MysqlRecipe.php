@@ -15,7 +15,7 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Recipe extends BaseRecipe
+class MysqlRecipe extends BaseRecipe
 {
     const NAME = 'mysql';
 

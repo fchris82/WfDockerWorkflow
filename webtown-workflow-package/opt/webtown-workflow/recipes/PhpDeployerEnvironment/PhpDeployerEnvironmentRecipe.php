@@ -4,7 +4,7 @@ namespace Recipes\PhpDeployerEnvironment;
 
 use Recipes\BaseRecipe as BaseRecipe;
 
-class Recipe extends BaseRecipe
+class PhpDeployerEnvironmentRecipe extends BaseRecipe
 {
     const NAME = 'php_deployer_environment';
 

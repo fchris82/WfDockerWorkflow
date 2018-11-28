@@ -17,7 +17,7 @@ use Recipes\HiddenRecipe;
  *
  * @package Recipes\Base
  */
-class Recipe extends HiddenRecipe
+class BaseRecipe extends HiddenRecipe
 {
     const NAME = 'base';
 

@@ -23,7 +23,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @package Recipes\PostBase
  */
-class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
+class PostBaseRecipe extends HiddenRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'post_base';
 

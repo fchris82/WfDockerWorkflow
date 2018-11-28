@@ -20,7 +20,7 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * @package Recipes\Symfony
  */
-class Recipe extends BaseRecipe
+class PhpRecipe extends BaseRecipe
 {
     const NAME = 'php';
     const DEFAULT_VERSION = 'php7.2';

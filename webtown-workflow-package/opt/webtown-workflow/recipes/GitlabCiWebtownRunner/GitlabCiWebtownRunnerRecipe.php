@@ -4,11 +4,11 @@ namespace Recipes\GitlabCiWebtownRunner;
 
 use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\FileType\SkeletonFile;
-use Recipes\GitlabCi\Recipe as BaseRecipe;
+use Recipes\GitlabCi\GitlabCiRecipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Recipe extends BaseRecipe
+class GitlabCiWebtownRunnerRecipe extends BaseRecipe
 {
     const NAME = 'gitlab_ci_webtown_runner';
 

@@ -17,7 +17,7 @@ use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
+class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'commands';
 

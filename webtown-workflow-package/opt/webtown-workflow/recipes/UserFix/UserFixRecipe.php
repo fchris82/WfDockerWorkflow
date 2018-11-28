@@ -33,7 +33,7 @@ use Recipes\BaseRecipe;
  *
  * If you have shared data volume, you will be the owner of the created files!
  */
-class Recipe extends BaseRecipe
+class UserFixRecipe extends BaseRecipe
 {
     const NAME = 'user_fix';
 

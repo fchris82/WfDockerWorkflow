@@ -28,7 +28,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * @package Recipes\DockerComposeExtension
  */
-class Recipe extends HiddenRecipe
+class DockerComposeExtensionRecipe extends HiddenRecipe
 {
     const NAME = 'docker_compose_extension';
 

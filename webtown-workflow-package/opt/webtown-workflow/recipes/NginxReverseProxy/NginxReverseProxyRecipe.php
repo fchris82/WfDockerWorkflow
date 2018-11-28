@@ -24,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * @package Recipes\NginxReverseProxy
  */
-class Recipe extends BaseRecipe implements RegisterEventListenersInterface
+class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'nginx_reverse_proxy';
 

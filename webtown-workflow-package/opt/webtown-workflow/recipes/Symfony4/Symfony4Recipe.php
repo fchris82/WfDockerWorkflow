@@ -8,7 +8,7 @@
 
 namespace Recipes\Symfony4;
 
-use Recipes\Symfony\AbstractRecipe as BaseRecipe;
+use Recipes\Symfony\AbstractSymfonyRecipe;
 
 /**
  * Class Recipe
@@ -17,7 +17,7 @@ use Recipes\Symfony\AbstractRecipe as BaseRecipe;
  *
  * @package Recipes\Symfony4
  */
-class Recipe extends BaseRecipe
+class Symfony4Recipe extends AbstractSymfonyRecipe
 {
     const NAME = 'symfony4';
     const SF_CONSOLE_COMMAND = 'bin/console';
@@ -26,6 +26,6 @@ class Recipe extends BaseRecipe
 
     public static function getSkeletonParents()
     {
-        return [BaseRecipe::class];
+        return [AbstractSymfonyRecipe::class];
     }
 }

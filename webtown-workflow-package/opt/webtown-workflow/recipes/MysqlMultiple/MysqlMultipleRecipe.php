@@ -10,13 +10,13 @@ namespace Recipes\MysqlMultiple;
 
 use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\FileType\DockerComposeSkeletonFile;
-use Recipes\Mysql\Recipe as BaseRecipe;
+use Recipes\Mysql\MysqlRecipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Recipe extends BaseRecipe
+class MysqlMultipleRecipe extends BaseRecipe
 {
     const NAME = 'mysql_multiple';
 

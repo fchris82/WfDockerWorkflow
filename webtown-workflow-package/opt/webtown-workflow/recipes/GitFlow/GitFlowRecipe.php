@@ -17,7 +17,7 @@ use Recipes\BaseRecipe;
  *
  * @package Recipes\GitFlow
  */
-class Recipe extends BaseRecipe
+class GitFlowRecipe extends BaseRecipe
 {
     const NAME = 'git_flow';
 

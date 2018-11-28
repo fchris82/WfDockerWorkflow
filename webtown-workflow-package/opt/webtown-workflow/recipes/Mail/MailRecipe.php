@@ -17,7 +17,7 @@ use Recipes\BaseRecipe;
  *
  * @package Recipes\Mail
  */
-class Recipe extends BaseRecipe
+class MailRecipe extends BaseRecipe
 {
     const NAME = 'mail';
 
