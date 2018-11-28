@@ -8,9 +8,9 @@
 
 namespace Recipes\Mysql;
 
-use Recipes\BaseRecipe;
+use App\Skeleton\FileType\SkeletonFile;
 use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\DockerComposeSkeletonFile;
+use Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
@@ -120,25 +120,25 @@ class Recipe extends BaseRecipe
      * @param SplFileInfo $fileInfo
      * @param $config
      *
-     * @return DockerComposeSkeletonFile|\App\Skeleton\ExecutableSkeletonFile|\App\Skeleton\MakefileSkeletonFile|\App\Skeleton\SkeletonFile
+     * @return SkeletonFile
      *
      * @throws SkipSkeletonFileException
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        // Port settings
-        if ($fileInfo->getFilename() == 'docker-compose.port.yml') {
-            if (!$this->needPortSkeletonFile($config)) {
-                throw new SkipSkeletonFileException();
-            }
-            return new DockerComposeSkeletonFile($fileInfo);
-        }
-        // Volume settings
-        if ($fileInfo->getFilename() == 'docker-compose.volume.yml') {
-            if (!$this->needVolumeSkeletonFile($config)) {
-                throw new SkipSkeletonFileException();
-            }
-            return new DockerComposeSkeletonFile($fileInfo);
+        switch ($fileInfo->getFilename()) {
+            // Port settings
+            case 'docker-compose.port.yml':
+                if (!$this->needPortSkeletonFile($config)) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
+            // Volume settings
+            case 'docker-compose.volume.yml':
+                if (!$this->needVolumeSkeletonFile($config)) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
         }
 
         return parent::buildSkeletonFile($fileInfo, $config);

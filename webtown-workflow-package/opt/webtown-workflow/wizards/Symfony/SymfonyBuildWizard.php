@@ -53,7 +53,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
     {
         BaseWizard::initBuild($targetProjectDirectory);
 
-        $templateVariables = $this->setVariables($targetProjectDirectory);
+        $templateVariables = $this->getSkeletonVars($targetProjectDirectory);
         $targetProjectDirectory = $this->config['target_project_directory'];
         $this->printHeader($templateVariables);
         $this->doBuildFiles($targetProjectDirectory, $templateVariables);
@@ -61,7 +61,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         return $targetProjectDirectory;
     }
 
-    protected function setVariables($targetProjectDirectory)
+    protected function getSkeletonVars($targetProjectDirectory)
     {
         $directoryQuestion = new Question('Add meg a könyvtárat, ahová szeretnéd telepíteni: [<info>.</info>] ', '.');
         $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>x.x</info>] ');
@@ -87,6 +87,8 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
      * @param $targetProjectDirectory
      *
      * @return string
+     *
+     * @todo (Chris) Refactorálni, eseménykezelőkkel
      */
     public function build($targetProjectDirectory)
     {

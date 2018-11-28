@@ -2,7 +2,8 @@
 
 namespace Recipes\GitlabCiWebtownRunner;
 
-use App\Skeleton\DockerComposeSkeletonFile;
+use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\FileType\SkeletonFile;
 use Recipes\GitlabCi\Recipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
@@ -75,9 +76,9 @@ class Recipe extends BaseRecipe
         return $rootNode;
     }
 
-    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
     {
-        $baseVars = parent::getTemplateVars($projectPath, $recipeConfig, $globalConfig);
+        $baseVars = parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
         $output = [];
         exec(sprintf('cd %s && git rev-parse --short HEAD', $projectPath), $output);
@@ -86,15 +87,27 @@ class Recipe extends BaseRecipe
         ]);
     }
 
+    /**
+     * @param SplFileInfo $fileInfo
+     * @param $config
+     *
+     * @return SkeletonFile
+     *
+     * @throws SkipSkeletonFileException
+     */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        // share_home_with settings
-        if ($fileInfo->getFilename() == 'docker-compose.home.yml' && isset($config['share_home_with']) && count($config['share_home_with']) > 0) {
-            return new DockerComposeSkeletonFile($fileInfo);
-        }
-        // volumes settings
-        if ($fileInfo->getFilename() == 'docker-compose.volumes.yml' && isset($config['volumes']) && count($config['volumes']) > 0) {
-            return new DockerComposeSkeletonFile($fileInfo);
+        switch ($fileInfo->getFilename()) {
+            case 'docker-compose.home.yml':
+                if (!isset($config['share_home_with']) || count($config['share_home_with']) == 0) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
+            case 'docker-compose.volumes.yml':
+                if (!isset($config['volumes']) || count($config['volumes']) == 0) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
         }
 
         return parent::buildSkeletonFile($fileInfo, $config);

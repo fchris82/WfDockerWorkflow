@@ -1,6 +1,7 @@
 #!/bin/bash
 # Debug mode:
 # set -x
+[[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
 # DIRECTORIES
 SOURCE="${BASH_SOURCE[0]}"

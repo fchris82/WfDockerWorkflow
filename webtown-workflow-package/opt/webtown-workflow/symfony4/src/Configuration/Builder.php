@@ -9,39 +9,31 @@
 namespace App\Configuration;
 
 
-use App\Event\BuildInitEvent;
+use App\Event\Configuration\BuildInitEvent;
 use App\Event\ConfigurationEvents;
-use App\Event\DumpEvent;
-use App\Event\FinishEvent;
-use App\Event\VerboseInfoEvent;
+use App\Event\Configuration\FinishEvent;
+use App\Event\Configuration\VerboseInfoEvent;
+use App\Event\RegisterEventListenersInterface;
+use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Event\SkeletonBuildBaseEvents;
 use App\Exception\SkipRecipeException;
-use App\Skeleton\DockerComposeSkeletonFile;
-use App\Skeleton\ExecutableSkeletonFile;
-use App\Skeleton\MakefileSkeletonFile;
-use App\Skeleton\SkeletonFile;
+use App\Skeleton\BuilderTrait;
+use App\Skeleton\FileType\SkeletonFile;
+use Recipes\BaseRecipe;
+use Recipes\HiddenRecipe;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Yaml\Yaml;
 
 class Builder
 {
-    /**
-     * @var Filesystem
-     */
-    protected $fileSystem;
+    use BuilderTrait;
 
     /**
      * @var RecipeManager
      */
     protected $recipeManager;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $eventDispatcher;
 
     /**
      * @var string
@@ -56,6 +48,7 @@ class Builder
      * Builder constructor.
      * @param Filesystem $fileSystem
      * @param RecipeManager $recipeManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(Filesystem $fileSystem, RecipeManager $recipeManager, EventDispatcherInterface $eventDispatcher)
     {
@@ -89,9 +82,12 @@ class Builder
      * @param string $projectPath
      * @param string $configHash
      *
-     * @return string
-     *
      * @throws \App\Exception\MissingRecipeException
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     public function build($config, $projectPath, $configHash)
     {
@@ -100,8 +96,9 @@ class Builder
         }
 
         // INIT
-        foreach ($config['recipes'] as $recipe => $recipeConfig) {
-            $this->addRecipeEventSubscribers($projectPath, $recipe, $recipeConfig, $config);
+        $this->initEventListeners($projectPath);
+        foreach ($config['recipes'] as $recipeName => $recipeConfig) {
+            $this->addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $config);
         }
         $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectory, $configHash);
         $this->eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $initEvent);
@@ -113,8 +110,8 @@ class Builder
         // BASE
         $this->buildRecipe($projectPath, 'base', $config, $config);
         // PUBLIC RECIPES
-        foreach ($config['recipes'] as $recipe => $recipeConfig) {
-            $this->buildRecipe($projectPath, $recipe, $recipeConfig, $config);
+        foreach ($config['recipes'] as $recipeName => $recipeConfig) {
+            $this->buildRecipe($projectPath, $recipeName, $recipeConfig, $config);
         }
 
         // COMMANDS
@@ -124,14 +121,13 @@ class Builder
         // DOCKER COMPOSE EXTENSION
         $this->buildRecipe($projectPath, 'docker_compose_extension', [], $config);
         // POST BASE
-        $this->buildRecipe($projectPath, 'post_base', [
-            'services' => $this->parseAllDockerServices($projectPath, $this->dockerComposeFiles),
-        ], $config);
+        $this->buildRecipe($projectPath, 'post_base', [], $config);
 
+        // Finish
         $finishEvent = new FinishEvent($this->fileSystem);
         $this->eventDispatcher->dispatch(ConfigurationEvents::FINISH, $finishEvent);
 
-        return $this->buildProjectMakefile($projectPath, $configHash);
+        $this->buildRecipe($projectPath, '_', [], $config);
     }
 
     /**
@@ -245,7 +241,7 @@ class Builder
      *
      * @throws \App\Exception\MissingRecipeException
      */
-    protected function addRecipeEventSubscribers($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
+    protected function addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
         $this->verboseInfo(sprintf(
             "\n<info>Register event listeners of <comment>%s</comment> recipe</info>",
@@ -255,8 +251,8 @@ class Builder
         /** @var BaseRecipe $recipe */
         $recipe = $this->recipeManager->getRecipe($recipeName);
 
-        if ($recipe instanceof EventSubscriberInterface) {
-            $this->eventDispatcher->addSubscriber($recipe);
+        if ($recipe instanceof RegisterEventListenersInterface) {
+            $recipe->registerEventListeners($this->eventDispatcher);
         }
     }
 
@@ -269,6 +265,11 @@ class Builder
      * @param array $globalConfig
      *
      * @throws \App\Exception\MissingRecipeException
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
     {
@@ -284,34 +285,31 @@ class Builder
 
             /** @var SkeletonFile[] $skeletonFiles */
             $skeletonFiles = $recipe->build($projectPath, $recipeConfig, $globalConfig);
+            $this->fixFilePath($projectPath, $recipe, $skeletonFiles);
 
-            foreach ($skeletonFiles as $skeletonFile) {
-                $fileTarget = $this->getRelativeTargetFilePath($recipeName, $skeletonFile->getBaseFileInfo());
-                $fileFullTarget = $projectPath . '/' . $fileTarget;
-                // Dump files
-                $dumpEvent = new DumpEvent($fileFullTarget, $skeletonFile->getContents());
-                $this->eventDispatcher->dispatch(ConfigurationEvents::BEFORE_DUMP, $dumpEvent);
-                $this->fileSystem->dumpFile(
-                    $dumpEvent->getTargetPath(),
-                    $dumpEvent->getContents()
-                );
-                $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $fileTarget, get_class($skeletonFile)));
+            $this->dumpSkeletonFiles($skeletonFiles);
 
-                switch (true) {
-                    case $skeletonFile instanceof MakefileSkeletonFile:
-                        $this->makefiles[] = $fileTarget;
-                        break;
-                    case $skeletonFile instanceof DockerComposeSkeletonFile:
-                        $this->dockerComposeFiles[] = $fileTarget;
-                        break;
-                    case $skeletonFile instanceof ExecutableSkeletonFile:
-                        $this->fileSystem->chmod($fileFullTarget, $skeletonFile->getPermission());
-                        break;
-                }
-            }
         } catch (SkipRecipeException $e) {
             // do nothing
             $this->verboseInfo(sprintf('<comment>Skip the <options=underscore>%s</> recipe</comment>', $recipeName));
+        }
+    }
+
+    /**
+     * @param $projectPath
+     * @param BaseRecipe $recipe
+     * @param SkeletonFile[] $skeletonFiles
+     */
+    protected function fixFilePath($projectPath, BaseRecipe $recipe, $skeletonFiles)
+    {
+        foreach ($skeletonFiles as $skeletonFile) {
+            $relativeTargetPath = sprintf(
+                implode(DIRECTORY_SEPARATOR, ['%s', '%s']),
+                $this->targetDirectory,
+                $recipe->getDirectoryName()
+            );
+            $skeletonFile->setRelativePath($relativeTargetPath);
+            $skeletonFile->move($projectPath);
         }
     }
 
@@ -330,137 +328,6 @@ class Builder
     }
 
     /**
-     * Build the relative target path, like: `.wf/mysql/docker-compose.yml`
-     *
-     * @param string      $recipeName
-     * @param SplFileInfo $fileInfo
-     *
-     * @return string
-     */
-    protected function getRelativeTargetFilePath($recipeName, SplFileInfo $fileInfo)
-    {
-        return sprintf('%s/%s/%s', $this->targetDirectory, $recipeName, $fileInfo->getRelativePathname());
-    }
-
-    /**
-     * Find all docker service name through parsing the all included docker-compose.yml file.
-     *
-     * @param array $dockerComposeFiles
-     *
-     * @return array
-     */
-    protected function parseAllDockerServices($projectPath, $dockerComposeFiles)
-    {
-        $services = [];
-        foreach ($dockerComposeFiles as $dockerComposeFile) {
-            $config = Yaml::parse(file_get_contents(
-                $projectPath . '/' . $dockerComposeFile
-            ));
-            if (isset($config['services'])) {
-                $services = array_unique(array_merge($services, array_keys($config['services'])));
-            }
-        }
-
-        return $services;
-    }
-
-    /**
-     * @param string $projectPath
-     * @param string $versionHash The cksum hash of config yml file
-     *
-     * @return string
-     */
-    protected function buildProjectMakefile($projectPath, $versionHash)
-    {
-        $path = sprintf('%s/%s/%s.mk', $projectPath, $this->targetDirectory, $versionHash);
-        $includeMakefiles = $this->makefileMultilineFormatter('include %s', $this->makefiles);
-        $dockerComposeFiles = array_map(function($v) {
-            // If the path start with `/` or `~` we won't change, else we put the project path before it
-            return in_array($v[0], ['/', '~']) ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
-        }, $this->dockerComposeFiles);
-        $dockerComposeFiles = $this->makefileMultilineFormatter('DOCKER_CONFIG_FILES := %s', $dockerComposeFiles);
-        $contents = <<<EOS
-PROJECT_WORKING_DIRECTORY := \$\${PWD}
-WF_TARGET_DIRECTORY := $this->targetDirectory
-# Export the debug value
-export WF_DEBUG
-
-# Makefiles
-$includeMakefiles
-
-# Docker files
-$dockerComposeFiles
-
-ORIGINAL_CMD_DOCKER_ENV := $(CMD_DOCKER_ENV)
-define CMD_DOCKER_ENV
-    $(ORIGINAL_CMD_DOCKER_ENV) \
-    WF_TARGET_DIRECTORY=$(WF_TARGET_DIRECTORY)
-endef
-
-define CMD_DOCKER_BASE
-    $(CMD_DOCKER_ENV) $(FILE_ENVS) $(COMMAND_ENVS) docker-compose \
-        -p $(DOCKER_BASENAME) \
-        $(foreach file,$(DOCKER_CONFIG_FILES),-f $(file)) \
-        --project-directory $(CURDIR)
-endef
-# Added environments variables too!
-#   - $(foreach env,$(FILE_ENVS),-e $(env))     From .wf.env file
-#   - $(foreach env,$(COMMAND_ENVS),-e $(env))  From wf command: wf -e KEY1=VALUE1 -e KEY2=VALUE2 [...]
-define CMD_DOCKER_RUN
-    DOCKER_RUN=1 $(CMD_DOCKER_BASE) run --rm $(DOCKER_PSEUDO_TTY) $(foreach env,$(FILE_ENVS),-e $(env)) $(foreach env,$(COMMAND_ENVS),-e $(env))
-endef
-# If you want to run without user (as root), use the: `$(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_RUN_CLI) <cmd>`
-define CMD_DOCKER_RUN_CLI
-    $(CMD_DOCKER_RUN) $(DOCKER_CLI_NAME)
-endef
-# Added environments variables too!
-#   - $(foreach env,$(FILE_ENVS),-e $(env))     From .wf.env file
-#   - $(foreach env,$(COMMAND_ENVS),-e $(env))  From wf command: wf -e KEY1=VALUE1 -e KEY2=VALUE2 [...]
-define CMD_DOCKER_EXEC
-    $(CMD_DOCKER_BASE) exec $(DOCKER_PSEUDO_TTY) $(foreach env,$(FILE_ENVS),-e $(env)) $(foreach env,$(COMMAND_ENVS),-e $(env))
-endef
-# If you want to run without user (as root), use the: `$(CMD_DOCKER_EXEC) $(DOCKER_CLI_NAME) <cmd>` instead of `$(CMD_DOCKER_EXEC_CLI) <cmd>`
-define CMD_DOCKER_EXEC_CLI
-    $(CMD_DOCKER_EXEC) --user $(DOCKER_USER) $(DOCKER_CLI_NAME)
-endef
-EOS;
-
-        // Dump files
-        $dumpEvent = new DumpEvent($path, $contents);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::BEFORE_DUMP, $dumpEvent);
-        $this->fileSystem->dumpFile(
-            $dumpEvent->getTargetPath(),
-            $dumpEvent->getContents()
-        );
-
-        $this->verboseInfo(sprintf('<info>✔ The <comment>%s</comment> makefile has been created!</info>', $path));
-
-        return $path;
-    }
-
-    /**
-     * Formatting helper for makefiles, eg:
-     * <code>
-     *  # makefileMultilineFormatter('FOO := %s', ['value1', 'value2', 'value3'])
-     *  FOO := value1 \
-     *         value2 \
-     *         value3
-     * </code>
-     *
-     * @param string $pattern `printf` format pattern
-     * @param array  $array
-     *
-     * @return string
-     */
-    protected function makefileMultilineFormatter($pattern, $array)
-    {
-        $emptyPattern = sprintf($pattern, '');
-        $glue = sprintf(" \\\n%s", str_repeat(' ', strlen($emptyPattern)));
-
-        return sprintf($pattern, implode($glue, $array));
-    }
-
-    /**
      * Print verbose informations. The $info may be array or string.
      *
      * @parameter string|array|null $info
@@ -469,4 +336,36 @@ EOS;
     {
         $this->eventDispatcher->dispatch(ConfigurationEvents::VERBOSE_INFO, new VerboseInfoEvent($info));
     }
+
+    /**
+     * @param $projectPath
+     *
+     * @throws \App\Exception\MissingRecipeException
+     */
+    protected function initEventListeners($projectPath)
+    {
+        $this->eventDispatcher->addListener(
+            SkeletonBuildBaseEvents::AFTER_DUMP_FILE,
+            [$this, 'fileVerboseInfo'],
+            -999
+        );
+        // Register hidden recipe listeners
+        $recipes = $this->recipeManager->getRecipes();
+        foreach ($recipes as $recipe) {
+            if ($recipe instanceof HiddenRecipe) {
+                $this->addRecipeEventListeners($projectPath, $recipe->getName(), []);
+            }
+        }
+    }
+
+    public function fileVerboseInfo(DumpFileEvent $event)
+    {
+        $skeletonFile = $event->getSkeletonFile();
+        $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $skeletonFile->getRelativePath(), get_class($skeletonFile)));
+    }
+
+    protected function eventBeforeDumpFile(DumpFileEvent $event) {}
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event) {}
+    protected function eventAfterDumpFile(DumpFileEvent $event) {}
+    protected function eventSkipDumpFile(DumpFileEvent $event) {}
 }

@@ -9,15 +9,20 @@
 namespace Wizards;
 
 use App\DependencyInjection\Compiler\TwigExtendingPass;
+use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Exception\InvalidComposerVersionNumber;
-use App\Skeleton\ExecutableSkeletonFile;
-use App\Skeleton\SkeletonFile;
+use App\Skeleton\BuilderTrait;
+use App\Skeleton\FileType\SkeletonFile;
 use App\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -28,11 +33,7 @@ use Symfony\Component\Yaml\Yaml;
 abstract class BaseSkeletonWizard extends BaseWizard
 {
     use SkeletonManagerTrait;
-
-    /**
-     * @var Filesystem
-     */
-    protected $filesystem;
+    use BuilderTrait;
 
     /**
      * @var array
@@ -42,49 +43,24 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * BaseSkeleton constructor.
      *
-     * @param \Twig_Environment $twig
-     * @param Filesystem        $filesystem
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param \Twig_Environment        $twig
+     * @param Filesystem               $filesystem
      */
-    public function __construct(\Twig_Environment $twig, Filesystem $filesystem)
+    public function __construct(EventDispatcherInterface $eventDispatcher, \Twig_Environment $twig, Filesystem $filesystem)
     {
         $this->twig = $twig;
-        $this->filesystem = $filesystem;
+        $this->fileSystem = $filesystem;
         $this->twigSkeletonNamespace = TwigExtendingPass::WIZARD_TWIG_NAMESPACE;
+        parent::__construct($eventDispatcher);
     }
 
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function setVariables($targetProjectDirectory)
+    protected function getSkeletonVars($targetProjectDirectory)
     {
         return [];
-    }
-
-    /**
-     * Eltérő fájloknál eltérő műveletet kell alkalmazni. Vhol simán létre kell hozni a fájlt, vhol viszont append-elni
-     * kell a már létezőt, párnál pedig YML-lel kell összefésülni az adatokat.
-     * <code>
-     *  switch ($targetPath) {
-     *      case '/this/is/an/existing/file':
-     *          $this->filesystem->appendToFile($targetPath, $fileContent);
-     *          break;
-     *      default:
-     *          $this->filesystem->dumpFile($targetPath, $fileContent);
-     *  }
-     * </code>.
-     *
-     * @param string $targetPath
-     * @param string $fileContent
-     * @param string $relativePathName
-     * @param int    $permission
-     */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
-    {
-        $this->filesystem->dumpFile($targetPath, $fileContent);
-
-        if ($permission) {
-            $this->filesystem->chmod($targetPath, $permission);
-        }
     }
 
     /**
@@ -99,7 +75,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     {
         parent::initBuild($targetProjectDirectory);
 
-        $templateVariables = $this->setVariables($targetProjectDirectory);
+        $templateVariables = $this->getSkeletonVars($targetProjectDirectory);
         $this->printHeader($templateVariables);
         $this->doBuildFiles($targetProjectDirectory, $templateVariables);
 
@@ -114,40 +90,8 @@ abstract class BaseSkeletonWizard extends BaseWizard
      */
     protected function doBuildFiles($targetProjectDirectory, $templateVariables)
     {
-        /** @var SkeletonFile $skeletonFile */
-        foreach ($this->buildSkeletonFiles($templateVariables) as $skeletonFile) {
-            $targetPath = $this->doBuildFile($targetProjectDirectory, $skeletonFile);
-            $this->output->writeln(sprintf(
-                '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
-                $targetPath->getRelativePath(),
-                basename($targetPath->getRelativePathname())
-            ));
-        }
-    }
-
-    /**
-     * @param $targetProjectDirectory
-     * @param SkeletonFile $skeletskeletonFile
-     *
-     * @return SplFileInfo
-     */
-    protected function doBuildFile($targetProjectDirectory, SkeletonFile $skeletskeletonFile)
-    {
-        $targetPath = implode(DIRECTORY_SEPARATOR, [
-            rtrim($targetProjectDirectory, DIRECTORY_SEPARATOR),
-            $skeletskeletonFile->getRelativePathname(),
-        ]);
-        $this->doWriteFile(
-            $targetPath,
-            $skeletskeletonFile->getContents(),
-            $skeletskeletonFile->getRelativePathname(),
-            // Az .sh-ra végződő vagy futási joggal rendelkező fájloknál adunk futási jogot
-            $skeletskeletonFile instanceof ExecutableSkeletonFile ?
-                $skeletskeletonFile->getPermission() :
-                $skeletskeletonFile->getBaseFileInfo()->getPerms()
-        );
-
-        return $skeletskeletonFile->getBaseFileInfo();
+        $skeletonFiles = $this->buildSkeletonFiles($templateVariables);
+        $this->dumpSkeletonFiles($skeletonFiles);
     }
 
     protected function printHeader($templateVariables)
@@ -178,7 +122,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
             ];
             foreach ($wfFiles as $wfFile) {
                 $configFilePath = $targetDirectory . '/' . $wfFile;
-                if ($this->filesystem->exists($configFilePath)) {
+                if ($this->fileSystem->exists($configFilePath)) {
                     $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
                     break;
                 }
@@ -213,9 +157,9 @@ abstract class BaseSkeletonWizard extends BaseWizard
     {
         try {
             $composerLockPath = $targetDirectory . '/composer.lock';
-            if (!$this->filesystem->exists($composerLockPath)) {
+            if (!$this->fileSystem->exists($composerLockPath)) {
                 $composerJsonPath = $targetDirectory . '/composer.json';
-                if ($this->filesystem->exists($composerJsonPath)) {
+                if ($this->fileSystem->exists($composerJsonPath)) {
                     $requires = $this->getComposerJsonInformation($targetDirectory, 'require', []);
                     if (array_key_exists($packageName, $requires)) {
                         $version = $requires[$packageName];
@@ -302,7 +246,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     protected function getComposerJsonInformation($targetDirectory, $infoPath, $default = null)
     {
         $composerJsonPath = $targetDirectory . '/composer.json';
-        if (!$this->filesystem->exists($composerJsonPath)) {
+        if (!$this->fileSystem->exists($composerJsonPath)) {
             throw new FileNotFoundException(sprintf('The composer.json doesn\'t exist in the %s directory!', $targetDirectory));
         }
 
@@ -334,7 +278,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     public function isBuilt($targetProjectDirectory)
     {
         if ($this->getBuiltCheckFile()) {
-            return $this->filesystem->exists($targetProjectDirectory . '/' . $this->getBuiltCheckFile());
+            return $this->fileSystem->exists($targetProjectDirectory . '/' . $this->getBuiltCheckFile());
         }
 
         return false;
@@ -343,5 +287,34 @@ abstract class BaseSkeletonWizard extends BaseWizard
     protected function getBuiltCheckFile()
     {
         return null;
+    }
+
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event) {}
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent) {}
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent) {}
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event) {}
+
+    protected function eventBeforeDumpFile(DumpFileEvent $event) {}
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event) {}
+    protected function eventAfterDumpFile(DumpFileEvent $event)
+    {
+        $this->printDumpedFile($event);
+    }
+    protected function eventSkipDumpFile(DumpFileEvent $event) {}
+
+    protected function printDumpedFile(DumpFileEvent $event)
+    {
+        $skeletonFile = $event->getSkeletonFile();
+        $status = $skeletonFile->getHandleExisting() == SkeletonFile::HANDLE_EXISTING_APPEND
+            ? 'modified'
+            : 'created'
+        ;
+
+        $this->output->writeln(sprintf(
+            '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been %s.</info>',
+            $skeletonFile->getRelativePath(),
+            $skeletonFile->getFileName(),
+            $status
+        ));
     }
 }

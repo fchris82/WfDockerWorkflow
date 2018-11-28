@@ -7,6 +7,8 @@
  */
 
 namespace Wizards\DockerProject;
+use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Skeleton\FileType\SkeletonFile;
 use App\Wizard\WizardInterface;
 use Wizards\Docker\BaseDocker;
 
@@ -54,37 +56,15 @@ class DockerProjectWizard extends BaseDocker implements WizardInterface
         return array_merge($variables, $defaults);
     }
 
-    /**
-     * Eltérő fájloknál eltérő műveletet kell alkalmazni. Vhol simán létre kell hozni a fájlt, vhol viszont append-elni
-     * kell a már létezőt, párnál pedig YML-lel kell összefésülni az adatokat.
-     * <code>
-     *  switch ($targetPath) {
-     *      case '/this/is/an/existing/file':
-     *          $this->filesystem->appendToFile($targetPath, $fileContent);
-     *          break;
-     *      default:
-     *          $this->filesystem->dumpFile($targetPath, $fileContent);
-     *  }
-     * </code>.
-     *
-     * @param string $targetPath
-     * @param string $fileContent
-     * @param string $relativePathName
-     * @param int    $permission
-     */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
     {
-        switch (strtolower($relativePathName)) {
+        parent::eventBeforeDumpTargetExists($event);
+
+        switch (strtolower($event->getSkeletonFile()->getBaseFileInfo()->getFilename())) {
             case '.gitignore':
             case 'readme.md':
-                $this->filesystem->appendToFile($targetPath, $fileContent);
+                $event->getSkeletonFile()->setHandleExisting(SkeletonFile::HANDLE_EXISTING_APPEND);
                 break;
-            default:
-                $this->filesystem->dumpFile($targetPath, $fileContent);
-
-                if ($permission) {
-                    $this->filesystem->chmod($targetPath, $permission);
-                }
         }
     }
 

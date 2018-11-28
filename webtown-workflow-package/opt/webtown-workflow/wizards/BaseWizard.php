@@ -16,12 +16,19 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class BaseSkeleton.
  */
 abstract class BaseWizard implements WizardInterface
 {
+    /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
     /**
      * @var Command
      */
@@ -46,6 +53,11 @@ abstract class BaseWizard implements WizardInterface
      * @var string
      */
     protected $runCommandsWorkdir;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     abstract public function getDefaultName();
 
@@ -118,6 +130,22 @@ abstract class BaseWizard implements WizardInterface
         return $this->getQuestionHelper()->ask($this->input, $this->output, $question);
     }
 
+    /**
+     * runBuild()
+     *      ├── initBuild()
+     *      │   ├── checkReuires()
+     *      │   └── init()
+     *      │
+     *      ├── build()
+     *      │
+     *      └── cleanUp()
+     *
+     * @param $targetProjectDirectory
+     *
+     * @return string
+     *
+     * @throws WizardHasAlreadyBuiltException
+     */
     public function runBuild($targetProjectDirectory)
     {
         $this->initBuild($targetProjectDirectory);
@@ -128,6 +156,11 @@ abstract class BaseWizard implements WizardInterface
         return $targetProjectDirectory;
     }
 
+    /**
+     * @param $targetProjectDirectory
+     *
+     * @throws WizardHasAlreadyBuiltException
+     */
     protected function initBuild($targetProjectDirectory)
     {
         $this->checkRequires($targetProjectDirectory);

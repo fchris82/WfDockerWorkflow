@@ -6,7 +6,7 @@
  * Time: 13:28
  */
 
-namespace App\Event;
+namespace App\Event\Configuration;
 
 use Symfony\Component\EventDispatcher\Event;
 

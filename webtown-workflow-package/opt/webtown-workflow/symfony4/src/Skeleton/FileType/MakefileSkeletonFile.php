@@ -6,7 +6,7 @@
  * Time: 22:00
  */
 
-namespace App\Skeleton;
+namespace App\Skeleton\FileType;
 
 class MakefileSkeletonFile extends SkeletonFile
 {

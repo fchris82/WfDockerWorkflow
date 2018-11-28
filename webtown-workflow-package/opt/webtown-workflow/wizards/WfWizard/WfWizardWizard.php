@@ -8,13 +8,11 @@
 
 namespace Wizards\WfWizard;
 
+use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Exception\WizardSomethingIsRequiredException;
-use App\Skeleton\SkeletonFile;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Wizards\BaseSkeletonWizard;
 
 class WfWizardWizard extends BaseSkeletonWizard
@@ -57,7 +55,7 @@ class WfWizardWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function setVariables($targetProjectDirectory)
+    protected function getSkeletonVars($targetProjectDirectory)
     {
         $wizardQuestion = new Question('Please give a class name. You have to finish with "Wizard", eg: <comment>MyCustomWizard</comment>');
         $wizardQuestion->setValidator(function ($answer) {
@@ -97,34 +95,29 @@ class WfWizardWizard extends BaseSkeletonWizard
         return $this->variables;
     }
 
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event)
+    {
+        parent::eventAfterBuildFile($event);
+        $skeletonFile = $event->getSkeletonFile();
+        switch ($skeletonFile->getRelativePathname()) {
+            case 'Wizard.php':
+                $skeletonFile
+                    ->setRelativePath($this->getRelativeTargetDirectory())
+                    ->setFileName($this->variables['wizard_class'] . '.php');
+        }
+    }
+
     /**
      * @param $targetProjectDirectory
      *
-     * @throws \ReflectionException
+     * @todo (Chris) refactorálni
      */
     protected function build($targetProjectDirectory)
     {
-        $phpClass = $this->getTempSkeletonFileInfo('Wizard.php');
-        $phpClassSkeleton = new SkeletonFile($phpClass);
-        $phpClassSkeleton
-            ->setRelativePath($this->getRelativeTargetDirectory())
-            ->setFileName($this->variables['wizard_class'] . '.php')
-            ->setContents($this->parseTemplateFile(
-                $phpClassSkeleton->getBaseFileInfo(),
-                $this->variables
-            ))
-        ;
-        $this->doBuildFile($targetProjectDirectory, $phpClassSkeleton);
-        $this->output->writeln(sprintf(
-            '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
-            $phpClassSkeleton->getRelativePath(),
-            basename($phpClassSkeleton->getRelativePathname())
-        ));
-
         // Create skeletons directory
         if ($this->variables['parent_wizard'] == 'BaseSkeletonWizard') {
             $target = $targetProjectDirectory . '/' . $this->getRelativeTargetDirectory() . '/skeletons';
-            $this->filesystem->mkdir($target);
+            $this->fileSystem->mkdir($target);
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> directory has been created.</info>',
                 dirname($target),

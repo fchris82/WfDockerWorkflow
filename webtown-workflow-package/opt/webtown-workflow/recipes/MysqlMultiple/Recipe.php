@@ -9,7 +9,7 @@
 namespace Recipes\MysqlMultiple;
 
 use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\DockerComposeSkeletonFile;
+use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\Mysql\Recipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;

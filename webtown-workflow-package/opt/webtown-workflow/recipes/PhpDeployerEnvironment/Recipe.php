@@ -12,6 +12,7 @@ class Recipe extends BaseRecipe
     {
         return static::NAME;
     }
+
     public function getConfig()
     {
         $rootNode = parent::getConfig();

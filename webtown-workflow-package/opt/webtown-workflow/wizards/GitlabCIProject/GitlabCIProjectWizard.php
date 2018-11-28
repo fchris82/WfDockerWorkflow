@@ -29,7 +29,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         return 'Composer';
     }
 
-    protected function setVariables($targetProjectDirectory)
+    protected function getSkeletonVars($targetProjectDirectory)
     {
         $wfConfiguration = $this->getWorkflowConfiguration($targetProjectDirectory);
         $symfonyRecipeName = null;

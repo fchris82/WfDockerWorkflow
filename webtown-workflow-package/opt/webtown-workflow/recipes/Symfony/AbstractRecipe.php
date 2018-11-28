@@ -8,7 +8,8 @@
 
 namespace Recipes\Symfony;
 
-use App\Skeleton\DockerComposeSkeletonFile;
+use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -31,14 +32,14 @@ class AbstractRecipe extends BaseRecipe
         return static::NAME;
     }
 
-    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
     {
         return array_merge(
             [
                 'sf_console_command' => static::SF_CONSOLE_COMMAND,
                 'sf_bin_dir' => static::SF_BIN_DIR,
             ],
-            parent::getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+            parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
         );
     }
 
@@ -138,9 +139,13 @@ class AbstractRecipe extends BaseRecipe
 
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        // Volume settings
-        if ($fileInfo->getFilename() == 'docker-compose.user-volumes.yml' && isset($config['share_base_user_configs']) && $config['share_base_user_configs'] > 0) {
-            return new DockerComposeSkeletonFile($fileInfo);
+        switch ($fileInfo->getFilename()) {
+            // Volume settings
+            case 'docker-compose.user-volumes.yml':
+                if (!isset($config['share_base_user_configs']) || !$config['share_base_user_configs']) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
         }
 
         return parent::buildSkeletonFile($fileInfo, $config);

@@ -6,8 +6,9 @@ use App\Configuration\Builder;
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
 use App\Event\ConfigurationEvents;
-use App\Event\DumpEvent;
-use App\Event\VerboseInfoEvent;
+use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Event\SkeletonBuildBaseEvents;
+use App\Event\Configuration\VerboseInfoEvent;
 use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -121,7 +122,7 @@ class ReconfigureCommand extends ContainerAwareCommand
             );
         }
         $eventDispatcher->addListener(
-            ConfigurationEvents::BEFORE_DUMP,
+            SkeletonBuildBaseEvents::BEFORE_DUMP_FILE,
             [$this, 'insertGeneratedFileWarning']
         );
     }
@@ -143,15 +144,16 @@ class ReconfigureCommand extends ContainerAwareCommand
     /**
      * Add warnings to almost all configured file.
      *
-     * @param DumpEvent $dumpEvent
+     * @param DumpFileEvent $event
      */
-    public function insertGeneratedFileWarning(DumpEvent $dumpEvent)
+    public function insertGeneratedFileWarning(DumpFileEvent $event)
     {
+        $skeletonFile = $event->getSkeletonFile();
         $warning = sprintf(
             'This is an auto generated file from `%s` config file! You shouldn\'t edit this.',
             $this->input->getOption('file')
         );
-        $ext = pathinfo($dumpEvent->getTargetPath(), PATHINFO_EXTENSION);
+        $ext = pathinfo($skeletonFile->getFullTargetPathname(), PATHINFO_EXTENSION);
 
         $commentPattern = "# %s\n\n";
         switch ($ext) {
@@ -164,7 +166,7 @@ class ReconfigureCommand extends ContainerAwareCommand
                 return;
         }
 
-        $newContents = sprintf($commentPattern, $warning) . $dumpEvent->getContents();
-        $dumpEvent->setContents($newContents);
+        $newContents = sprintf($commentPattern, $warning) . $skeletonFile->getContents();
+        $skeletonFile->setContents($newContents);
     }
 }

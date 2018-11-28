@@ -6,7 +6,7 @@
  * Time: 19:22
  */
 
-namespace App\Event;
+namespace App\Event\Configuration;
 
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Filesystem\Filesystem;

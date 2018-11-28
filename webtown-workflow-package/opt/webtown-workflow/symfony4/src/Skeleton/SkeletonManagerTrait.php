@@ -8,8 +8,15 @@
 
 namespace App\Skeleton;
 
+use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Event\SkeletonBuildBaseEvents;
 use App\Exception\CircularReferenceException;
 use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\FileType\SkeletonFile;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -21,9 +28,19 @@ trait SkeletonManagerTrait
     protected $twig;
 
     /**
+     * @var EventDispatcher
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var string
      */
     protected $twigSkeletonNamespace;
+
+    abstract protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event);
+    abstract protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $event);
+    abstract protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event);
+    abstract protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event);
 
     /**
      * @param $templateVars
@@ -32,24 +49,46 @@ trait SkeletonManagerTrait
      * @return array|SkeletonFile[]
      *
      * @throws \Exception
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     protected function buildSkeletonFiles($templateVars, $buildConfig = [])
     {
+        $preBuildEvent = new PreBuildSkeletonFilesEvent($this, $templateVars, $buildConfig);
+        $this->eventBeforeBuildFiles($preBuildEvent);
+        $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_BUILD_FILES, $preBuildEvent);
+
         $skeletonFiles = [];
+        $baseSkeletonFileInfos = $preBuildEvent->getSkeletonFileInfos() ?: $this->getSkeletonFinder($buildConfig);
+        $templateVars = $preBuildEvent->getTemplateVars();
+        $buildConfig = $preBuildEvent->getBuildConfig();
+
         /** @var SplFileInfo $skeletonFileInfo */
-        foreach ($this->getSkeletonFinder() as $skeletonFileInfo) {
+        foreach ($baseSkeletonFileInfos as $skeletonFileInfo) {
             try {
-                $skeletonFile = $this->buildSkeletonFile($skeletonFileInfo, $buildConfig);
+                $preEvent = new PreBuildSkeletonFileEvent($this, $skeletonFileInfo, $templateVars, $buildConfig);
+                $this->eventBeforeBuildFile($preEvent);
+                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_BUILD_FILE, $preEvent);
+                $skeletonFile = $preEvent->getSkeletonFile()
+                    ?: $this->buildSkeletonFile($preEvent->getSourceFileInfo(), $preEvent->getBuildConfig());
                 $skeletonFile->setContents($this->parseTemplateFile(
                     $skeletonFileInfo,
-                    $templateVars
+                    $preEvent->getTemplateVars()
                 ));
-                $skeletonFiles[] = $skeletonFile;
+                $postEvent = new PostBuildSkeletonFileEvent($this, $skeletonFile, $skeletonFileInfo, $preEvent->getTemplateVars(), $preEvent->getBuildConfig());
+                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_BUILD_FILE, $postEvent);
+                $this->eventAfterBuildFile($postEvent);
+                $skeletonFiles[] = $postEvent->getSkeletonFile();
             } catch (SkipSkeletonFileException $exception) {
             }
         }
 
-        return $skeletonFiles;
+        $postBuildEvent = new PostBuildSkeletonFilesEvent($this, $skeletonFiles, $templateVars, $buildConfig);
+        $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_BUILD_FILES, $postBuildEvent);
+        $this->eventAfterBuildFiles($postBuildEvent);
+
+        return $postBuildEvent->getSkeletonFiles();
     }
 
     /**
@@ -57,12 +96,25 @@ trait SkeletonManagerTrait
      * @param array $buildConfig
      *
      * @return SkeletonFile
+     * 
+     * @throws SkipSkeletonFileException
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildConfig = [])
     {
         return new SkeletonFile($fileInfo);
     }
 
+    /**
+     * @param SplFileInfo $templateFile
+     * @param array $templateVariables
+     *
+     * @return string
+     *
+     * @throws \Exception
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
+     */
     protected function parseTemplateFile(SplFileInfo $templateFile, $templateVariables)
     {
         foreach ($this->twig->getLoader()->getPaths($this->twigSkeletonNamespace) as $path) {
@@ -81,9 +133,9 @@ trait SkeletonManagerTrait
         throw new \Exception('Twig path not found');
     }
 
-    protected function getSkeletonFinder()
+    protected function getSkeletonFinder($buildConfig)
     {
-        $paths = static::getSkeletonPaths();
+        $paths = static::getSkeletonPaths($buildConfig);
         if (count($paths) == 0) {
             return [];
         }
@@ -97,16 +149,18 @@ trait SkeletonManagerTrait
     }
 
     /**
+     * @param array $buildConfig
+     *
      * @return Finder
      *
-     * @throws \ReflectionException
      * @throws CircularReferenceException
+     * @throws \ReflectionException
      */
-    public static function getSkeletonPaths()
+    public static function getSkeletonPaths($buildConfig = [])
     {
         $skeletonPaths = [];
         foreach (static::getSkeletonParents() as $class) {
-            $skeletonPaths = array_merge($skeletonPaths, $class::getSkeletonPaths());
+            $skeletonPaths = array_merge($skeletonPaths, $class::getSkeletonPaths($buildConfig));
         }
         $uniquePaths = array_unique($skeletonPaths);
         if ($uniquePaths != $skeletonPaths) {
@@ -128,21 +182,5 @@ trait SkeletonManagerTrait
     public static function getSkeletonParents()
     {
         return [];
-    }
-
-    /**
-     * @param string $tempFile The template filename.
-     *
-     * @return SplFileInfo
-     *
-     * @throws \ReflectionException
-     */
-    protected function getTempSkeletonFileInfo($tempFile)
-    {
-        $refClass = new \ReflectionClass($this);
-        $skeletonsPath = dirname($refClass->getFileName()) . '/template';
-        $tmpFileInfo = new SplFileInfo($skeletonsPath . '/' . $tempFile, '', $tempFile);
-
-        return $tmpFileInfo;
     }
 }

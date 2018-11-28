@@ -8,8 +8,10 @@
 
 namespace Wizards\PhpCsFixer;
 
+use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
+use App\Skeleton\FileType\SkeletonFile;
 use Wizards\BaseSkeletonWizard;
 
 class PhpCsFixerWizard extends BaseSkeletonWizard
@@ -66,35 +68,14 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
         return $targetProjectDirectory;
     }
 
-    /**
-     * Eltérő fájloknál eltérő műveletet kell alkalmazni. Vhol simán létre kell hozni a fájlt, vhol viszont append-elni
-     * kell a már létezőt, párnál pedig YML-lel kell összefésülni az adatokat.
-     * <code>
-     *  switch ($targetPath) {
-     *      case '/this/is/an/existing/file':
-     *          $this->filesystem->appendToFile($targetPath, $fileContent);
-     *          break;
-     *      default:
-     *          $this->filesystem->dumpFile($targetPath, $fileContent);
-     *  }
-     * </code>.
-     *
-     * @param string $targetPath
-     * @param string $fileContent
-     * @param string $relativePathName
-     * @param int    $permission
-     */
-    protected function doWriteFile($targetPath, $fileContent, $relativePathName, $permission = null)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
     {
-        $append = [
-            '.gitignore',
-        ];
-        switch (true) {
-            case in_array($relativePathName, $append):
-                $this->filesystem->appendToFile($targetPath, $fileContent);
+        parent::eventBeforeDumpTargetExists($event);
+
+        switch ($event->getSkeletonFile()->getBaseFileInfo()->getFilename()) {
+            case '.gitignore':
+                $event->getSkeletonFile()->setHandleExisting(SkeletonFile::HANDLE_EXISTING_APPEND);
                 break;
-            default:
-                parent::doWriteFile($targetPath, $fileContent, $relativePathName, $permission);
         }
     }
 }

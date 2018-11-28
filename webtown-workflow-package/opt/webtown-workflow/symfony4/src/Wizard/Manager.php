@@ -13,7 +13,6 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Wizards\BaseWizard;
 
 /**
  * Class Manager.
@@ -194,22 +193,5 @@ class Manager implements ContainerAwareInterface
         }
 
         return false;
-    }
-
-    /**
-     * @param string $recipeName
-     *
-     * @return BaseRecipe
-     *
-     * @throws MissingRecipeException
-     */
-    public function getRecipe($recipeName)
-    {
-        $recipes = $this->getWizards();
-        if (!array_key_exists($recipeName, $recipes)) {
-            throw new MissingRecipeException(sprintf('The `%s` recipe is missing!', $recipeName));
-        }
-
-        return $recipes[$recipeName];
     }
 }

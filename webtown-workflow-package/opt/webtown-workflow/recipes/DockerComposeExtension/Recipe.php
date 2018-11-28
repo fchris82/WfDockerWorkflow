@@ -48,7 +48,7 @@ class Recipe extends HiddenRecipe
      *
      * @see \App\Configuration\Builder::build()
      */
-    public function getTemplateVars($targetPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
     {
         if (empty($globalConfig['docker_compose']['extension'])) {
             throw new SkipRecipeException();
@@ -62,6 +62,6 @@ class Recipe extends HiddenRecipe
             ]
         );
 
-        return parent::getTemplateVars($targetPath, $recipeConfig, $globalConfig);
+        return parent::getSkeletonVars($targetPath, $recipeConfig, $globalConfig);
     }
 }

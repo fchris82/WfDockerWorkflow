@@ -67,7 +67,7 @@ abstract class BaseDocker extends BaseSkeletonWizard
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function setVariables($targetProjectDirectory)
+    protected function getSkeletonVars($targetProjectDirectory)
     {
         $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.2</info>]', '7.2');
         $variables['php_version'] = $this->ask($phpVersionQuestion);

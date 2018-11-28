@@ -6,7 +6,7 @@
  * Time: 22:01
  */
 
-namespace App\Skeleton;
+namespace App\Skeleton\FileType;
 
 class DockerComposeSkeletonFile extends SkeletonFile
 {

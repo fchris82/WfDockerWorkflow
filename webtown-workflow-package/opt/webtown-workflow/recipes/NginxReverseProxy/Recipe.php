@@ -8,11 +8,14 @@
 
 namespace Recipes\NginxReverseProxy;
 
+use App\Event\RegisterEventListenersInterface;
+use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use Recipes\BaseRecipe;
 use App\Configuration\Environment;
-use App\Event\BuildInitEvent;
+use App\Event\Configuration\BuildInitEvent;
 use App\Event\ConfigurationEvents;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Recipe
@@ -21,7 +24,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  *
  * @package Recipes\NginxReverseProxy
  */
-class Recipe extends BaseRecipe implements EventSubscriberInterface
+class Recipe extends BaseRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'nginx_reverse_proxy';
 
@@ -35,42 +38,26 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
     protected $environment;
 
     /**
+     * @var string
+     */
+    protected $projectName;
+
+    /**
      * Recipe constructor.
      *
      * @param \Twig_Environment $twig
+     * @param EventDispatcherInterface $eventDispatcher
      * @param Environment $environment
      */
-    public function __construct(\Twig_Environment $twig, Environment $environment)
+    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
-        parent::__construct($twig);
+        parent::__construct($twig, $eventDispatcher);
         $this->environment = $environment;
     }
 
     public function getName()
     {
         return static::NAME;
-    }
-
-    /**
-     * Create default host (only [project_name].[default_tld] for the FIRST service)
-     *
-     * @param $projectPath
-     * @param $recipeConfig
-     * @param $globalConfig
-     *
-     * @return \App\Skeleton\SkeletonFile[]|array
-     *
-     * @throws \Exception
-     * @throws \ReflectionException
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     */
-    public function build($projectPath, $recipeConfig, $globalConfig)
-    {
-        $recipeConfig = $this->setTheDefaultHostIfNotSet($projectPath, $recipeConfig, $globalConfig);
-
-        return parent::build($projectPath, $recipeConfig, $globalConfig);
     }
 
     public function getConfig()
@@ -135,37 +122,45 @@ class Recipe extends BaseRecipe implements EventSubscriberInterface
         return $rootNode;
     }
 
-    /**
-     * We need to the project name from the config. We put a placeholder to `host` values, and we will have to change it!
-     *
-     * Returns an array of event names this subscriber wants to listen to.
-     *
-     * The array keys are event names and the value can be:
-     *
-     *  * The method name to call (priority defaults to 0)
-     *  * An array composed of the method name to call and the priority
-     *  * An array of arrays composed of the method names to call and respective
-     *    priorities, or 0 if unset
-     *
-     * For instance:
-     *
-     *  * array('eventName' => 'methodName')
-     *  * array('eventName' => array('methodName', $priority))
-     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2')))
-     *
-     * @return array The event names to listen to
-     */
-    public static function getSubscribedEvents()
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
     {
-        return [
-            ConfigurationEvents::BUILD_INIT => 'findProjectName',
-        ];
+        $eventDispatcher->addListener(ConfigurationEvents::BUILD_INIT, [$this, 'findProjectName']);
     }
 
     public function findProjectName(BuildInitEvent $buildInitEvent)
     {
         $config = $buildInitEvent->getConfig();
         $buildInitEvent->setParameter(static::PROJECT_NAME_PARAMETER_NAME, $config['name']);
+        $this->projectName = $config['name'];
+    }
+
+    /**
+     * Create default host (only [project_name].[default_tld] for the FIRST service)
+     */
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    {
+        parent::eventBeforeBuildFiles($event);
+
+        $recipeConfig = $event->getBuildConfig();
+
+        $defaultTld = trim(
+            $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
+            '.'
+        );
+        $defaultHost = sprintf('%s.%s', $this->projectName, $defaultTld);
+
+        if (!$this->defaultHostIsSet($recipeConfig, $defaultHost)) {
+            foreach ($recipeConfig['settings'] as $serviceName => $settings) {
+                // Only the default host name exists: [service_name].[project_name].[tld]
+                if (strpos($settings['host'], $serviceName) === 0) {
+                    $settings['host'] = $defaultHost . ' ' . $settings['host'];
+                    $recipeConfig['settings'][$serviceName] = $settings;
+                }
+                break;
+            }
+        }
+
+        $event->setBuildConfig($recipeConfig);
     }
 
     /**

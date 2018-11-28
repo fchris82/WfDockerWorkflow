@@ -8,7 +8,8 @@
 
 namespace Recipes\Php;
 
-use App\Skeleton\DockerComposeSkeletonFile;
+use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -117,11 +118,17 @@ class Recipe extends BaseRecipe
         return $rootNode;
     }
 
+    /**
+     * @inheritdoc
+     */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        // Volume settings
-        if ($fileInfo->getFilename() == 'docker-compose.user-volumes.yml' && isset($config['share_base_user_configs']) && $config['share_base_user_configs'] > 0) {
-            return new DockerComposeSkeletonFile($fileInfo);
+        switch ($fileInfo->getFilename()) {
+            case 'docker-compose.user-volumes.yml':
+                if (!isset($config['share_base_user_configs']) || !$config['share_base_user_configs']) {
+                    throw new SkipSkeletonFileException();
+                }
+                break;
         }
 
         return parent::buildSkeletonFile($fileInfo, $config);

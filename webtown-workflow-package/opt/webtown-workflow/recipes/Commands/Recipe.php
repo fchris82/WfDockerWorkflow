@@ -8,24 +8,52 @@
 
 namespace Recipes\Commands;
 
+use App\Event\Configuration\BuildInitEvent;
+use App\Event\ConfigurationEvents;
+use App\Event\RegisterEventListenersInterface;
 use Recipes\HiddenRecipe;
-use App\Skeleton\ExecutableSkeletonFile;
+use App\Skeleton\FileType\ExecutableSkeletonFile;
 use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-class Recipe extends HiddenRecipe
+class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'commands';
+
+    /**
+     * @var array
+     */
+    protected $globalConfig;
 
     public function getName()
     {
         return static::NAME;
     }
 
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    {
+        $eventDispatcher->addListener(ConfigurationEvents::BUILD_INIT, [$this, 'init']);
+    }
+
+    public function init(BuildInitEvent $event)
+    {
+        $this->globalConfig = $event->getConfig();
+    }
+
     /**
-     * @inheritdoc
+     * @param $templateVars
+     * @param array $buildConfig
+     *
+     * @return \App\Skeleton\FileType\SkeletonFile[]|array
+     *
+     * @throws \Exception
+     * @throws \ReflectionException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    public function build($projectPath, $recipeConfig, $globalConfig)
+    protected function buildSkeletonFiles($templateVars, $buildConfig = [])
     {
         // Start creating .sh files
         $tmpSkeletonFileInfo = $this->getTempSkeletonFileInfo('bin.sh');
@@ -34,17 +62,17 @@ class Recipe extends HiddenRecipe
         $skeletonFiles = [];
         // Collect the targets for makefile
         $makefileTargets = [];
-        foreach ($globalConfig['commands'] as $commandName => $commands) {
-            $templateVars = $this->getTemplateVars($projectPath, $recipeConfig, $globalConfig);
-            $templateVars['commands'] = $commands;
-            $skeletonFile = $this->createSkeletonFile($tmpSkeletonFileInfo, $commandName, $templateVars);
+        foreach ($this->globalConfig[static::NAME] as $commandName => $commands) {
+            $commandTemplateVars = $templateVars;
+            $commandTemplateVars['commands'] = $commands;
+            $skeletonFile = $this->createSkeletonFile($tmpSkeletonFileInfo, $commandName, $commandTemplateVars);
             $skeletonFiles[] = $skeletonFile;
             $makefileTargets[$commandName] = $skeletonFile->getRelativePathname();
         }
 
         // Create makefile
-        $recipeConfig['makefileTargets'] = $makefileTargets;
-        $skeletonFiles = array_merge($skeletonFiles, parent::build($projectPath, $recipeConfig, $globalConfig));
+        $templateVars['makefileTargets'] = $makefileTargets;
+        $skeletonFiles = array_merge($skeletonFiles, parent::buildSkeletonFiles($templateVars, $buildConfig));
 
         return $skeletonFiles;
     }

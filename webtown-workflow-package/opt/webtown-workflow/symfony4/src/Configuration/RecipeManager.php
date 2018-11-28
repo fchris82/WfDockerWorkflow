@@ -47,7 +47,12 @@ class RecipeManager implements ContainerAwareInterface
     {
         if (!$this->recipes) {
             $finder = new Finder();
-            $finder->in($this->recipesPath)->name('Recipe.php');
+            $finder
+                ->in($this->recipesPath)
+                ->name('*Recipe.php')
+                ->exclude('skeletons')
+                ->depth(1)
+            ;
             $this->recipes = [];
             /** @var SplFileInfo $recipeFile */
             foreach ($finder as $recipeFile) {
@@ -56,8 +61,9 @@ class RecipeManager implements ContainerAwareInterface
                     continue;
                 }
                 $fullClass = sprintf(
-                    'Recipes\\%s\\Recipe',
-                    str_replace('/', '\\', $recipeFile->getRelativePath())
+                    'Recipes\\%s\\%s',
+                    str_replace('/', '\\', $recipeFile->getRelativePath()),
+                    $recipeFile->getBasename('.php')
                 );
                 /** @var BaseRecipe $recipe */
                 $recipe = $this->container->get($fullClass);

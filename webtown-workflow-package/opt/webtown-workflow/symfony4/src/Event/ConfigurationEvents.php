@@ -21,11 +21,6 @@ class ConfigurationEvents
     const VERBOSE_INFO = 'app.configuration.event.verbose_info';
 
     /**
-     * @see DumpEvent
-     */
-    const BEFORE_DUMP = 'app.configuration.event.before_dump_skeleton';
-
-    /**
      * @see FinishEvent
      */
     const FINISH = 'app.configuration.event.finish';

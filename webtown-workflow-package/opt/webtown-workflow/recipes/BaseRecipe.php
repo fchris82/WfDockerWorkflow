@@ -8,17 +8,20 @@
 
 namespace Recipes;
 
-use App\Exception\CircularReferenceException;
-use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\DockerComposeSkeletonFile;
-use App\Skeleton\ExecutableSkeletonFile;
-use App\Skeleton\MakefileSkeletonFile;
-use App\Skeleton\SkeletonFile;
+use App\DependencyInjection\Compiler\TwigExtendingPass;
+use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
+use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Skeleton\FileType\DockerComposeSkeletonFile;
+use App\Skeleton\FileType\ExecutableSkeletonFile;
+use App\Skeleton\FileType\MakefileSkeletonFile;
+use App\Skeleton\FileType\SkeletonFile;
 use App\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\Finder\Finder;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 abstract class BaseRecipe
@@ -34,10 +37,13 @@ abstract class BaseRecipe
      * BaseRecipe constructor.
      *
      * @param \Twig_Environment $twig
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(\Twig_Environment $twig)
+    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
     {
         $this->twig = $twig;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->twigSkeletonNamespace = TwigExtendingPass::RECIPE_TWIG_NAMESPACE;
     }
 
     abstract public function getName();
@@ -60,68 +66,20 @@ abstract class BaseRecipe
      *
      * @return array|SkeletonFile[]
      *
+     * @throws \Exception
+     * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
-     * @throws \ReflectionException
-     * @throws \Exception
      */
     public function build($projectPath, $recipeConfig, $globalConfig)
     {
-        $skeletonFiles = [];
-        $templateVars = $this->getTemplateVars($projectPath, $recipeConfig, $globalConfig);
+        $templateVars = $this->getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
-        $skeletonFinder = Finder::create()
-            ->files()
-            ->in(static::getSkeletonPaths())
-            ->ignoreDotFiles(false);
-
-        /** @var SplFileInfo $skeletonFileInfo */
-        foreach ($skeletonFinder as $skeletonFileInfo) {
-            try {
-                $skeletonFile = $this->buildSkeletonFile($skeletonFileInfo, $recipeConfig);
-                $skeletonFile->setContents($this->parseTemplateFile(
-                    $skeletonFileInfo,
-                    $templateVars
-                ));
-                $skeletonFiles[] = $skeletonFile;
-            } catch (SkipSkeletonFileException $exception) {
-            }
-        }
-
-        return $skeletonFiles;
+        return $this->buildSkeletonFiles($templateVars, $recipeConfig);
     }
 
-    /**
-     * @param SplFileInfo $templateFile
-     * @param array $templateVariables
-     *
-     * @return string
-     *
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     * @throws \Exception
-     */
-    protected function parseTemplateFile(SplFileInfo $templateFile, array $templateVariables)
-    {
-        foreach ($this->twig->getLoader()->getPaths('recipe') as $path) {
-            if (strpos($templateFile->getPathname(), realpath($path)) === 0) {
-                $twigPath = str_replace(
-                    realpath($path),
-                    '',
-                    $templateFile->getPathname()
-                );
-                $file = sprintf('@recipe/%s', $twigPath);
-
-                return $this->twig->render($file, $templateVariables);
-            }
-        }
-
-        throw new \Exception('Twig path not found');
-    }
-
-    public function getTemplateVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
     {
         if (is_string($recipeConfig)) {
             $recipeConfig = ['value' => $recipeConfig];
@@ -171,4 +129,36 @@ abstract class BaseRecipe
     {
         return $fileInfo->isExecutable();
     }
+
+    public function getDirectoryName()
+    {
+        return $this->getName();
+    }
+
+    /**
+     * Formatting helper for makefiles, eg:
+     * <code>
+     *  # makefileMultilineFormatter('FOO := %s', ['value1', 'value2', 'value3'])
+     *  FOO := value1 \
+     *         value2 \
+     *         value3
+     * </code>
+     *
+     * @param string $pattern `printf` format pattern
+     * @param array  $array
+     *
+     * @return string
+     */
+    protected function makefileMultilineFormatter($pattern, $array)
+    {
+        $emptyPattern = sprintf($pattern, '');
+        $glue = sprintf(" \\\n%s", str_repeat(' ', strlen($emptyPattern)));
+
+        return sprintf($pattern, implode($glue, $array));
+    }
+
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event) {}
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent) {}
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent) {}
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event) {}
 }

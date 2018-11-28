@@ -1,6 +1,7 @@
 #!/bin/bash
 # Debug mode:
 # set -x
+[[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
 API_PATH="/api/v4"
 HOST=$(git config --get remote.origin.url | egrep -o '(//|@)[^:/]+' | grep -o '[^@\]*') || exit 1
