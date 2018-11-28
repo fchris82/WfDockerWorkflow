@@ -79,7 +79,6 @@ class ReconfigureCommand extends ContainerAwareCommand
                 ;
 
                 $output->writeln('<info>The (new) docker environment was build!</info>');
-
             } catch (MissingRecipeException $e) {
                 // It is maybe an impossible exception, but it will throw we catch it.
                 $output->writeln('<comment>' . $e->getMessage() . '</comment>');
