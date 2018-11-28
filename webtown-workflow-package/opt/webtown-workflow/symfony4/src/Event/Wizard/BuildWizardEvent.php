@@ -29,6 +29,7 @@ class BuildWizardEvent extends Event
 
     /**
      * BuildWizardEvent constructor.
+     *
      * @param string $workingDirectory
      */
     public function __construct(string $workingDirectory)

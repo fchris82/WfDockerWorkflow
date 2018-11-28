@@ -36,7 +36,7 @@ abstract class BaseRecipe
     /**
      * BaseRecipe constructor.
      *
-     * @param \Twig_Environment $twig
+     * @param \Twig_Environment        $twig
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
@@ -64,13 +64,13 @@ abstract class BaseRecipe
      * @param $recipeConfig
      * @param $globalConfig
      *
-     * @return array|SkeletonFile[]
-     *
      * @throws \Exception
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return array|SkeletonFile[]
      */
     public function build($projectPath, $recipeConfig, $globalConfig)
     {
@@ -81,7 +81,7 @@ abstract class BaseRecipe
 
     public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
     {
-        if (is_string($recipeConfig)) {
+        if (\is_string($recipeConfig)) {
             $recipeConfig = ['value' => $recipeConfig];
         }
 
@@ -116,13 +116,13 @@ abstract class BaseRecipe
 
     protected function isMakefile(SplFileInfo $fileInfo)
     {
-        return $fileInfo->getFilename() == 'makefile';
+        return 'makefile' == $fileInfo->getFilename();
     }
 
     protected function isDockerComposeFile(SplFileInfo $fileInfo)
     {
-        return strpos($fileInfo->getFilename(), 'docker-compose') === 0
-            && $fileInfo->getExtension() == 'yml';
+        return 0 === strpos($fileInfo->getFilename(), 'docker-compose')
+            && 'yml' == $fileInfo->getExtension();
     }
 
     protected function isExecutableFile(SplFileInfo $fileInfo)
@@ -152,13 +152,24 @@ abstract class BaseRecipe
     protected function makefileMultilineFormatter($pattern, $array)
     {
         $emptyPattern = sprintf($pattern, '');
-        $glue = sprintf(" \\\n%s", str_repeat(' ', strlen($emptyPattern)));
+        $glue = sprintf(" \\\n%s", str_repeat(' ', \strlen($emptyPattern)));
 
         return sprintf($pattern, implode($glue, $array));
     }
 
-    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event) {}
-    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent) {}
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent) {}
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event) {}
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    {
+    }
+
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent)
+    {
+    }
+
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    {
+    }
+
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    {
+    }
 }

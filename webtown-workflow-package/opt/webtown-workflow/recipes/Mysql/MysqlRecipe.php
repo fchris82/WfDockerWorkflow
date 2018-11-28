@@ -8,8 +8,8 @@
 
 namespace Recipes\Mysql;
 
-use App\Skeleton\FileType\SkeletonFile;
 use App\Exception\SkipSkeletonFileException;
+use App\Skeleton\FileType\SkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -63,22 +63,22 @@ class MysqlRecipe extends BaseRecipe
                     ->info("<comment>If you want to enable this container from outside set the port number. You can use these values:</comment>\n" .
                         " <info>false</info>        <comment>no create opened port number</comment>\n" .
                         " <info>0</info>            <comment>create a custom, random port number</comment>\n" .
-                        " <info>[1-65535]</info>    <comment>use this port number</comment>")
+                        ' <info>[1-65535]</info>    <comment>use this port number</comment>')
                     ->defaultFalse()
                     // Available parameters: false, [0-65536]
                     ->beforeNormalization()
-                        ->always(function($v) {
-                            if ($v === false || is_int($v)) {
+                        ->always(function ($v) {
+                            if (false === $v || \is_int($v)) {
                                 return $v;
                             }
-                            if (!is_string($v)) {
+                            if (!\is_string($v)) {
                                 throw new InvalidConfigurationException(sprintf(
                                     'The `%s` needs to be false or integer instead of %s!',
                                     'port',
-                                    gettype($v)
+                                    \gettype($v)
                                 ));
                             }
-                            if (in_array(strtolower(trim($v)), ['false', 'off', 'no'])) {
+                            if (\in_array(strtolower(trim($v)), ['false', 'off', 'no'])) {
                                 return false;
                             }
                             if (preg_match('^\d+$', trim($v))) {
@@ -108,7 +108,7 @@ class MysqlRecipe extends BaseRecipe
 
     protected function needPortSkeletonFile($config)
     {
-        return isset($config['port']) && $config['port'] !== false;
+        return isset($config['port']) && false !== $config['port'];
     }
 
     protected function needVolumeSkeletonFile($config)
@@ -120,9 +120,9 @@ class MysqlRecipe extends BaseRecipe
      * @param SplFileInfo $fileInfo
      * @param $config
      *
-     * @return SkeletonFile
-     *
      * @throws SkipSkeletonFileException
+     *
+     * @return SkeletonFile
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {

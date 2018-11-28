@@ -8,7 +8,6 @@
 
 namespace App\Wizard;
 
-
 class ConfigurationItem
 {
     /**
@@ -22,7 +21,7 @@ class ConfigurationItem
     protected $name;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $enabled;
 
@@ -32,20 +31,21 @@ class ConfigurationItem
     protected $group;
 
     /**
-     * @var integer
+     * @var int
      */
     protected $priority;
 
     /**
      * ConfigurationItem constructor.
+     *
      * @param string|object $class
-     * @param bool $enabled
-     * @param string $group
-     * @param int $priority
+     * @param bool          $enabled
+     * @param string        $group
+     * @param int           $priority
      */
-    public function __construct($class, string $name, bool $enabled = true, string $group = "", int $priority = 0)
+    public function __construct($class, string $name, bool $enabled = true, string $group = '', int $priority = 0)
     {
-        $this->class = is_object($class) ? get_class($class) : $class;
+        $this->class = \is_object($class) ? \get_class($class) : $class;
         $this->name = $name;
         $this->enabled = $enabled;
         $this->group = $group;
@@ -112,6 +112,7 @@ class ConfigurationItem
     public function setEnabled(bool $enabled)
     {
         $this->enabled = $enabled;
+
         return $this;
     }
 
@@ -123,6 +124,7 @@ class ConfigurationItem
     public function setGroup(string $group)
     {
         $this->group = $group;
+
         return $this;
     }
 
@@ -134,6 +136,7 @@ class ConfigurationItem
     public function setPriority(int $priority)
     {
         $this->priority = $priority;
+
         return $this;
     }
 }

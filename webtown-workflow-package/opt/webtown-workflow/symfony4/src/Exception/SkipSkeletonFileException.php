@@ -12,8 +12,6 @@ namespace App\Exception;
  * Class SkipSkeletonFileException
  *
  * You can skip a skeletonfile
- *
- * @package App\Exception
  */
 class SkipSkeletonFileException extends \Exception
 {

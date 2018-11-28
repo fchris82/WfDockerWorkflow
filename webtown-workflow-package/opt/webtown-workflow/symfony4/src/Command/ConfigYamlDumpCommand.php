@@ -81,6 +81,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
                 if ($a[0] == $b[0]) {
                     return 0;
                 }
+
                 return $a[0] < $b[0] ? -1 : 1;
             });
             $io->table($headers, $rows);
@@ -104,8 +105,8 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
         $recipeManager = $this->getContainer()->get(RecipeManager::class);
         $altFqn = sprintf('Recipes\%s\Recipe', $nameOrClass);
         foreach ($recipeManager->getRecipes() as $recipe) {
-            if (get_class($recipe) == $nameOrClass
-                || get_class($recipe) == $altFqn
+            if (\get_class($recipe) == $nameOrClass
+                || \get_class($recipe) == $altFqn
                 || $recipe->getName() == $nameOrClass
             ) {
                 return $recipe;

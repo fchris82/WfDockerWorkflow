@@ -39,6 +39,7 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Configuration constructor.
+     *
      * @param RecipeManager $recipeManager
      */
     public function __construct(RecipeManager $recipeManager)
@@ -51,15 +52,15 @@ class Configuration implements ConfigurationInterface
      * @param string|null $pwd
      * @param string|null $wfVersion
      *
-     * @return array
-     *
      * @throws FileLoaderImportCircularReferenceException
      * @throws InvalidWfVersionException
+     *
+     * @return array
      */
     public function loadConfig($configFile, $pwd = null, $wfVersion = null)
     {
-        if (is_null($pwd)) {
-            $pwd = dirname($configFile);
+        if (null === $pwd) {
+            $pwd = \dirname($configFile);
         }
         $ymlFilePath = file_exists($configFile) && is_file($configFile)
             ? $configFile
@@ -170,7 +171,7 @@ class Configuration implements ConfigurationInterface
                             ->end()
                             ->validate()
                                 ->ifTrue(function ($v) {
-                                    return !is_array($v);
+                                    return !\is_array($v);
                                 })
                                 ->thenInvalid('You have to set array value!')
                             ->end()
@@ -202,9 +203,9 @@ class Configuration implements ConfigurationInterface
     /**
      * @param string $ymlFilePath
      *
-     * @return array
-     *
      * @throws FileLoaderImportCircularReferenceException
+     *
+     * @return array
      */
     protected function readConfig($ymlFilePath)
     {
@@ -239,13 +240,13 @@ class Configuration implements ConfigurationInterface
      * @param array  $baseConfig
      * @param string $baseConfigYmlFullPath
      *
-     * @return array
-     *
      * @throws FileLoaderImportCircularReferenceException
+     *
+     * @return array
      */
     protected function handleImports($baseConfig, $baseConfigYmlFullPath)
     {
-        $sourceDirectory = dirname($baseConfigYmlFullPath);
+        $sourceDirectory = \dirname($baseConfigYmlFullPath);
         if (array_key_exists('imports', $baseConfig)) {
             // Ebbe gyűjtjük össze az import configokat.
             $fullImportConfig = [];
@@ -260,7 +261,7 @@ class Configuration implements ConfigurationInterface
                 }
 
                 $importYml = realpath($importYml);
-                if (in_array($importYml, $this->importCache)) {
+                if (\in_array($importYml, $this->importCache)) {
                     $this->importCache[] = $importYml;
                     throw new FileLoaderImportCircularReferenceException($this->importCache);
                 }
@@ -296,11 +297,11 @@ class Configuration implements ConfigurationInterface
     protected function isConfigLeaf($value)
     {
         // Not array or empty array
-        if (!is_array($value) || $value === []) {
+        if (!\is_array($value) || $value === []) {
             return true;
         }
         // It is a sequential array, like a list
-        if (array_keys($value) === range(0, count($value) - 1)) {
+        if (array_keys($value) === range(0, \count($value) - 1)) {
             return $value;
         }
 
@@ -316,7 +317,7 @@ class Configuration implements ConfigurationInterface
             ->beforeNormalization()
                 ->always(function ($v) {
                     foreach ($v as $service => $value) {
-                        if ($value === false) {
+                        if (false === $value) {
                             unset($v[$service]);
                         }
                     }

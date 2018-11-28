@@ -32,8 +32,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      * PostBuildSkeletonFilesEvent constructor.
      *
      * @param $namespace
-     * @param array $templateVars
-     * @param array $buildConfig
+     * @param array                $templateVars
+     * @param array                $buildConfig
      * @param SkeletonFile[]|array $skeletonFiles
      */
     public function __construct($namespace, $skeletonFiles, array $templateVars, array $buildConfig)

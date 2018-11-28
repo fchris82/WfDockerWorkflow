@@ -8,13 +8,10 @@
 
 namespace Recipes\MysqlMultiple;
 
-use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\Mysql\MysqlRecipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Finder\SplFileInfo;
 
 class MysqlMultipleRecipe extends BaseRecipe
 {
@@ -26,9 +23,9 @@ class MysqlMultipleRecipe extends BaseRecipe
     }
 
     /**
-     * @return ArrayNodeDefinition|NodeDefinition
-     *
      * @throws \ReflectionException
+     *
+     * @return ArrayNodeDefinition|NodeDefinition
      */
     public function getConfig()
     {
@@ -71,10 +68,10 @@ class MysqlMultipleRecipe extends BaseRecipe
 
         $rootNode
             ->beforeNormalization()
-                ->always(function($v) {
-                    if (is_array($v)) {
+                ->always(function ($v) {
+                    if (\is_array($v)) {
                         // Handle defaults
-                        if (array_key_exists('defaults', $v) && is_array($v['defaults'])) {
+                        if (array_key_exists('defaults', $v) && \is_array($v['defaults'])) {
                             foreach ($v['defaults'] as $key => $defaultValue) {
                                 foreach ($v['databases'] as $dockerContainerName => $config) {
                                     // If the config empty, then we use only defaults
@@ -82,14 +79,14 @@ class MysqlMultipleRecipe extends BaseRecipe
                                         $config = [
                                             'database' => $dockerContainerName . '_db',
                                         ];
-                                    } elseif (!is_array($config)) {
+                                    } elseif (!\is_array($config)) {
                                         throw new InvalidConfigurationException(sprintf(
                                             'Invalid configuration value in the <info>mysql.databases.%s</info> place. You have to use array or null instead of %s',
                                             $dockerContainerName,
-                                            gettype($config)
+                                            \gettype($config)
                                         ));
                                     }
-                                    if (!array_key_exists($key, $config) || is_null($config[$key])) {
+                                    if (!array_key_exists($key, $config) || null === $config[$key]) {
                                         $v['databases'][$dockerContainerName][$key] = $defaultValue;
                                     }
                                 }
@@ -109,7 +106,7 @@ class MysqlMultipleRecipe extends BaseRecipe
     protected function needPortSkeletonFile($config)
     {
         foreach ($config['databases'] as $name => $dbConfig) {
-            if (isset($dbConfig['port']) && $dbConfig['port'] !== false) {
+            if (isset($dbConfig['port']) && false !== $dbConfig['port']) {
                 return true;
             }
         }

@@ -36,7 +36,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         $wfConfiguration = $this->getWorkflowConfiguration($targetProjectDirectory);
         $symfonyRecipeName = null;
         foreach ($wfConfiguration['recipes'] as $recipeName => $recipeConfig) {
-            if (strpos($recipeName, 'symfony') === 0) {
+            if (0 === strpos($recipeName, 'symfony')) {
                 $symfonyRecipeName = $recipeName;
                 break;
             }
@@ -73,10 +73,10 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
     /**
      * @param $targetProjectDirectory
      *
-     * @return bool
-     *
      * @throws WizardSomethingIsRequiredException
      * @throws WizardWfIsRequiredException
+     *
+     * @return bool
      */
     public function checkRequires($targetProjectDirectory)
     {

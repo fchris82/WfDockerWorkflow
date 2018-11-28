@@ -38,20 +38,23 @@ trait SkeletonManagerTrait
     protected $twigSkeletonNamespace;
 
     abstract protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event);
+
     abstract protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $event);
+
     abstract protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event);
+
     abstract protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event);
 
     /**
      * @param $templateVars
      * @param array $buildConfig
      *
-     * @return array|SkeletonFile[]
-     *
      * @throws \Exception
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return array|SkeletonFile[]
      */
     protected function buildSkeletonFiles($templateVars, $buildConfig = [])
     {
@@ -93,11 +96,11 @@ trait SkeletonManagerTrait
 
     /**
      * @param SplFileInfo $fileInfo
-     * @param array $buildConfig
+     * @param array       $buildConfig
+     *
+     * @throws SkipSkeletonFileException
      *
      * @return SkeletonFile
-     * 
-     * @throws SkipSkeletonFileException
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildConfig = [])
     {
@@ -106,19 +109,19 @@ trait SkeletonManagerTrait
 
     /**
      * @param SplFileInfo $templateFile
-     * @param array $templateVariables
-     *
-     * @return string
+     * @param array       $templateVariables
      *
      * @throws \Exception
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return string
      */
     protected function parseTemplateFile(SplFileInfo $templateFile, $templateVariables)
     {
         foreach ($this->twig->getLoader()->getPaths($this->twigSkeletonNamespace) as $path) {
-            if (strpos($templateFile->getPathname(), realpath($path)) === 0) {
+            if (0 === strpos($templateFile->getPathname(), realpath($path))) {
                 $twigPath = str_replace(
                     realpath($path),
                     '',
@@ -136,7 +139,7 @@ trait SkeletonManagerTrait
     protected function getSkeletonFinder($buildConfig)
     {
         $paths = static::getSkeletonPaths($buildConfig);
-        if (count($paths) == 0) {
+        if (0 == \count($paths)) {
             return [];
         }
 
@@ -151,10 +154,10 @@ trait SkeletonManagerTrait
     /**
      * @param array $buildConfig
      *
-     * @return Finder
-     *
      * @throws CircularReferenceException
      * @throws \ReflectionException
+     *
+     * @return Finder
      */
     public static function getSkeletonPaths($buildConfig = [])
     {
@@ -168,7 +171,7 @@ trait SkeletonManagerTrait
         }
 
         $refClass = new \ReflectionClass(static::class);
-        $skeletonPath = dirname($refClass->getFileName()) . '/skeletons';
+        $skeletonPath = \dirname($refClass->getFileName()) . '/skeletons';
         if (is_dir($skeletonPath)) {
             $skeletonPaths[] = $skeletonPath;
         }

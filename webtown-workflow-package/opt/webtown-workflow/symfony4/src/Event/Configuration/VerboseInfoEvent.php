@@ -16,6 +16,7 @@ class VerboseInfoEvent extends Event
 
     /**
      * VerboseInfoEvent constructor.
+     *
      * @param $info
      */
     public function __construct($info)

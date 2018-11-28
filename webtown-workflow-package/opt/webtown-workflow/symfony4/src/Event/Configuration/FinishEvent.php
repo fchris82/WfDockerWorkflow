@@ -20,6 +20,7 @@ class FinishEvent extends Event
 
     /**
      * FinishEvent constructor.
+     *
      * @param Filesystem $fileSystem
      */
     public function __construct(Filesystem $fileSystem)

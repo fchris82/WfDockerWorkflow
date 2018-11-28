@@ -14,8 +14,6 @@ use Recipes\HiddenRecipe;
  * Class Recipe
  *
  * The BASE.
- *
- * @package Recipes\Base
  */
 class BaseRecipe extends HiddenRecipe
 {

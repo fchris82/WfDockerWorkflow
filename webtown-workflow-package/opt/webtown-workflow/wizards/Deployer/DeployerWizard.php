@@ -8,7 +8,6 @@
 
 namespace Wizards\Deployer;
 
-
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
@@ -38,10 +37,10 @@ class DeployerWizard extends BaseSkeletonWizard
     /**
      * @param $targetProjectDirectory
      *
-     * @return bool
-     *
      * @throws WizardSomethingIsRequiredException
      * @throws WizardWfIsRequiredException
+     *
+     * @return bool
      */
     public function checkRequires($targetProjectDirectory)
     {

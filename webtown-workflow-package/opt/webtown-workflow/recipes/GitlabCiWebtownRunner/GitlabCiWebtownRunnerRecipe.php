@@ -33,7 +33,6 @@ class GitlabCiWebtownRunnerRecipe extends BaseRecipe
          *          mysql:
          *              data: /var/lib/mysql
          */
-
         $rootNode
             ->info('<comment>GitLab CI Webtown Runner</comment>')
             ->children()
@@ -56,7 +55,7 @@ class GitlabCiWebtownRunnerRecipe extends BaseRecipe
                         ->validate()
                             ->always(function ($v) {
                                 foreach ($v as $name => $target) {
-                                    if (!is_string($name)) {
+                                    if (!\is_string($name)) {
                                         throw new InvalidConfigurationException(sprintf('You have to use string key in `%s`.volumes', static::NAME));
                                     }
                                 }
@@ -82,6 +81,7 @@ class GitlabCiWebtownRunnerRecipe extends BaseRecipe
 
         $output = [];
         exec(sprintf('cd %s && git rev-parse --short HEAD', $projectPath), $output);
+
         return array_merge($baseVars, [
             'git_hash' => trim(implode('', $output)),
         ]);
@@ -91,20 +91,20 @@ class GitlabCiWebtownRunnerRecipe extends BaseRecipe
      * @param SplFileInfo $fileInfo
      * @param $config
      *
-     * @return SkeletonFile
-     *
      * @throws SkipSkeletonFileException
+     *
+     * @return SkeletonFile
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
         switch ($fileInfo->getFilename()) {
             case 'docker-compose.home.yml':
-                if (!isset($config['share_home_with']) || count($config['share_home_with']) == 0) {
+                if (!isset($config['share_home_with']) || 0 == \count($config['share_home_with'])) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
             case 'docker-compose.volumes.yml':
-                if (!isset($config['volumes']) || count($config['volumes']) == 0) {
+                if (!isset($config['volumes']) || 0 == \count($config['volumes'])) {
                     throw new SkipSkeletonFileException();
                 }
                 break;

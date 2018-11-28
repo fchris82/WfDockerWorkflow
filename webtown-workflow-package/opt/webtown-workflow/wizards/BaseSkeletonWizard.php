@@ -104,7 +104,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
         foreach ($event->getSkeletonVars() as $key => $value) {
             $table->addRow([
                 $key,
-                is_array($value) || is_object($value)
+                \is_array($value) || \is_object($value)
                     ? json_encode($value, JSON_PRETTY_PRINT)
                     : $value,
             ]);
@@ -114,7 +114,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
 
     protected function getWorkflowConfiguration($workingDirectory)
     {
-        if (is_null($this->workflowConfigurationCache)) {
+        if (null === $this->workflowConfigurationCache) {
             $wfFiles = [
                 '.wf.base.yml',
                 '.wf.yml.dist',
@@ -127,7 +127,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
                     break;
                 }
             }
-            if (is_null($this->workflowConfigurationCache)) {
+            if (null === $this->workflowConfigurationCache) {
                 throw new FileNotFoundException(sprintf(
                     'We couldn\'t find any WF configuration yaml file (or they are empty): `%s`! (Directory: %s)',
                     implode('`, `', $wfFiles),
@@ -149,7 +149,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
      *
      * @param string $workingDirectory
      * @param string $packageName
-     * @param bool $allowAsk
+     * @param bool   $allowAsk
      *
      * @return string
      */
@@ -254,7 +254,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
         $keys = explode('.', $infoPath);
         $current = $data;
         foreach ($keys as $key) {
-            if (!is_array($current) || !array_key_exists($key, $current)) {
+            if (!\is_array($current) || !array_key_exists($key, $current)) {
                 return $default;
             }
             $current = $current[$key];
@@ -289,10 +289,21 @@ abstract class BaseSkeletonWizard extends BaseWizard
         return null;
     }
 
-    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event) {}
-    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent) {}
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent) {}
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event) {}
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    {
+    }
+
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent)
+    {
+    }
+
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    {
+    }
+
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    {
+    }
 
     protected function eventBeforeDumpFile(DumpFileEvent $event)
     {
@@ -324,17 +335,23 @@ EOS;
         }
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event) {}
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    {
+    }
+
     protected function eventAfterDumpFile(DumpFileEvent $event)
     {
         $this->printDumpedFile($event);
     }
-    protected function eventSkipDumpFile(DumpFileEvent $event) {}
+
+    protected function eventSkipDumpFile(DumpFileEvent $event)
+    {
+    }
 
     protected function printDumpedFile(DumpFileEvent $event)
     {
         $skeletonFile = $event->getSkeletonFile();
-        $status = $skeletonFile->getHandleExisting() == SkeletonFile::HANDLE_EXISTING_APPEND
+        $status = SkeletonFile::HANDLE_EXISTING_APPEND == $skeletonFile->getHandleExisting()
             ? 'modified'
             : 'created'
         ;
@@ -352,13 +369,13 @@ EOS;
         $filename = $skeletonFile->getFileName();
         $extension = $skeletonFile->getBaseFileInfo()->getExtension();
 
-        if (strpos($filename, '.wf') !== 0) {
+        if (0 !== strpos($filename, '.wf')) {
             return false;
         }
 
-        if (in_array($extension, ['yml', 'yaml'])
-            || substr($filename, -9) == '.yml.dist'
-            || substr($filename, -10) == '.yaml.dist'
+        if (\in_array($extension, ['yml', 'yaml'])
+            || '.yml.dist' == substr($filename, -9)
+            || '.yaml.dist' == substr($filename, -10)
         ) {
             return true;
         }

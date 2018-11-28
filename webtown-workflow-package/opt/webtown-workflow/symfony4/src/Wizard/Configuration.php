@@ -8,7 +8,6 @@
 
 namespace App\Wizard;
 
-
 use App\Exception\ConfigurationItemNotFoundException;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -46,6 +45,7 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Configuration constructor.
+     *
      * @param string $wizardUserConfigurationFile
      */
     public function __construct(string $wizardUserConfigurationFile)
@@ -102,7 +102,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getAllEnabled()
     {
-        return array_filter($this->getConfigurationList(), function(ConfigurationItem $item) {
+        return array_filter($this->getConfigurationList(), function (ConfigurationItem $item) {
             return $item->isEnabled();
         });
     }
@@ -158,8 +158,8 @@ class Configuration implements ConfigurationInterface
 
     public function get($class)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
+        if (\is_object($class)) {
+            $class = \get_class($class);
         }
 
         foreach ($this->getConfigurationList() as $configurationItem) {
@@ -173,8 +173,8 @@ class Configuration implements ConfigurationInterface
 
     public function has($class)
     {
-        if (is_object($class)) {
-            $class = get_class($class);
+        if (\is_object($class)) {
+            $class = \get_class($class);
         }
 
         foreach ($this->getConfigurationList() as $configurationItem) {
@@ -192,11 +192,11 @@ class Configuration implements ConfigurationInterface
     public function remove($classOrItem)
     {
         $class = $classOrItem;
-        if (is_object($classOrItem)) {
+        if (\is_object($classOrItem)) {
             if ($classOrItem instanceof ConfigurationItem) {
                 $class = $classOrItem->getClass();
             } else {
-                $class = get_class($classOrItem);
+                $class = \get_class($classOrItem);
             }
         }
 
@@ -211,7 +211,7 @@ class Configuration implements ConfigurationInterface
     protected function addChanges($changeType, ConfigurationItem $configurationItem)
     {
         foreach ($this->changes as $type => $items) {
-            if (is_array($items)) {
+            if (\is_array($items)) {
                 foreach ($items as $n => $item) {
                     if ($item->getClass() == $configurationItem->getClass()) {
                         unset($this->changes[$type][$n]);
@@ -225,11 +225,12 @@ class Configuration implements ConfigurationInterface
 
     /**
      * @param null $changeType
+     *
      * @return array|ConfigurationItem[]
      */
     public function getChanges($changeType = null)
     {
-        if (is_null($changeType)) {
+        if (null === $changeType) {
             return $this->changes;
         }
 
@@ -242,11 +243,11 @@ class Configuration implements ConfigurationInterface
 
     public function hasChanges($changeType = null)
     {
-        if (is_null($changeType)) {
-            return count($this->changes) > 0;
+        if (null === $changeType) {
+            return \count($this->changes) > 0;
         }
 
-        return array_key_exists($changeType, $this->changes) && count($this->changes[$changeType]) > 0;
+        return array_key_exists($changeType, $this->changes) && \count($this->changes[$changeType]) > 0;
     }
 
     public function saveConfigurationList()
@@ -265,7 +266,8 @@ class Configuration implements ConfigurationInterface
         file_put_contents($this->configurationFilePath, $content);
     }
 
-    public static function sort(ConfigurationItem $a, ConfigurationItem $b) {
+    public static function sort(ConfigurationItem $a, ConfigurationItem $b)
+    {
         if ($a->getGroup() == $b->getGroup()) {
             if ($a->getPriority() == $b->getPriority()) {
                 return strnatcmp($a->getClass(), $b->getClass());

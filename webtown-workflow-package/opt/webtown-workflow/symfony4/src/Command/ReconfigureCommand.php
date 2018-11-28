@@ -5,10 +5,10 @@ namespace App\Command;
 use App\Configuration\Builder;
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
+use App\Event\Configuration\VerboseInfoEvent;
 use App\Event\ConfigurationEvents;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
-use App\Event\Configuration\VerboseInfoEvent;
 use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
@@ -80,12 +80,12 @@ class ReconfigureCommand extends ContainerAwareCommand
 
                 $output->writeln('<info>The (new) docker environment was build!</info>');
 
-            // It is maybe an impossible exception, but it will throw we catch it.
             } catch (MissingRecipeException $e) {
+                // It is maybe an impossible exception, but it will throw we catch it.
                 $output->writeln('<comment>' . $e->getMessage() . '</comment>');
                 $output->writeln('The available recipes:');
                 foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
-                    $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), get_class($recipe)));
+                    $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), \get_class($recipe)));
                 }
             }
         } catch (InvalidWfVersionException $e) {
@@ -101,7 +101,7 @@ class ReconfigureCommand extends ContainerAwareCommand
         // 2 sort kihagyunk
         $output->writeln("\n");
         $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen(strip_tags($title)))));
+        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', \strlen(strip_tags($title)))));
         $output->writeln('');
     }
 
@@ -109,7 +109,7 @@ class ReconfigureCommand extends ContainerAwareCommand
      * @todo (Chris) Esetleg ezt az egész eseménykezelőst dolgot áthelyezhetnénk egy külön service-be, ami set-tel megkapja az input és output értékeket, majd az alapján cselekszik.
      * Registering event listeners.
      *
-     * @param InputInterface $input
+     * @param InputInterface  $input
      * @param OutputInterface $output
      */
     protected function registerEventListeners(InputInterface $input, OutputInterface $output)
@@ -135,7 +135,7 @@ class ReconfigureCommand extends ContainerAwareCommand
     public function verboseInfo(VerboseInfoEvent $event)
     {
         $info = $event->getInfo();
-        if (is_array($info)) {
+        if (\is_array($info)) {
             $info = Yaml::dump($info, 4);
         }
         $this->output->writeln($info);

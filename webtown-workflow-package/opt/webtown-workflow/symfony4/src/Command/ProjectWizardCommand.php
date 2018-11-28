@@ -4,18 +4,17 @@ namespace App\Command;
 
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Helper\WordWrapper;
-use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\Console\Formatter\OutputFormatterInterface;
-use Symfony\Component\Console\Helper\Helper;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use Wizards\BaseWizard;
 use App\Wizard\Manager;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Formatter\OutputFormatter;
+use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
+use Symfony\Component\Console\Style\SymfonyStyle;
+use Wizards\BaseWizard;
 
 /**
  * Class ProjectWizardCommand.
@@ -43,20 +42,20 @@ the <comment>wizard --config</comment> command are aliases:
 Examples:
     <comment>wizard --full</comment>
     List all installed wizards, the disabled wizards too.
-    
+
     <comment>wizard --force</comment>
     List all <info>enabled</info> wizards without requires or built check.
-    
+
     <comment>wizard --force --full</comment>
     List all installed wizards. 
-    
+
     <comment>wizard --config</comment>
     You can configure your installed wizards. You can change the visible <info>names</info>, <info>groups</info>, <info>priority</info>
     and <info>availability</info> (enabled/disabled). 
-    
+
     <comment>wizard <fg=cyan>--dev</></comment>
     The <fg=cyan>--dev</> switch develop debug mode on. 
-    
+
     <comment>wizard <fg=cyan>--dev</> --config</comment>
     Run config command with develop debug mode.
 EOS
@@ -86,7 +85,7 @@ EOS
         $wizardManager = $this->getContainer()->get(Manager::class);
         $enabledWizards = $isFull ? $wizardManager->getAllWizards() : $wizardManager->getAllEnabledWizards();
 
-        if (count($enabledWizards) == 0) {
+        if (0 == \count($enabledWizards)) {
             $this->writeNote($io, 'There isn\'t any installed/enabled wizard! The program exited.');
 
             return;
@@ -155,10 +154,10 @@ EOS
 
         // ----------------------------------------- PRINT CHOICES -----------------------------------------------------
 
-        if (count($choices) > 0) {
-            $countUnavailable = count($enabledWizards) - count($choices);
+        if (\count($choices) > 0) {
+            $countUnavailable = \count($enabledWizards) - \count($choices);
             if ($countUnavailable > 0) {
-                $pattern = $countUnavailable == 1
+                $pattern = 1 == $countUnavailable
                     ? ' - <options=bold>There is <comment>%d</comment> not available command</>'
                     : ' - <options=bold>There are <comment>%d</comment> not available commands</>'
                 ;
@@ -213,12 +212,12 @@ EOS
 
     /**
      * @param OutputInterface $output
-     * @param string $message
-     * @param string|null $type
-     * @param string|null $style
-     * @param string $prefix
-     * @param bool $padding
-     * @param bool $escape
+     * @param string          $message
+     * @param string|null     $type
+     * @param string|null     $style
+     * @param string          $prefix
+     * @param bool            $padding
+     * @param bool            $escape
      *
      * @return array
      *
@@ -250,10 +249,10 @@ EOS
 
         foreach ($lines as $i => &$line) {
             if (null !== $type) {
-                $line = $firstLineIndex === $i ? $type.$line : $lineIndentation.$line;
+                $line = $firstLineIndex === $i ? $type . $line : $lineIndentation . $line;
             }
 
-            $line = $prefix.$line;
+            $line = $prefix . $line;
             $line .= str_repeat(' ', 120 - Helper::strlenWithoutDecoration($output->getFormatter(), $line));
 
             if ($style) {

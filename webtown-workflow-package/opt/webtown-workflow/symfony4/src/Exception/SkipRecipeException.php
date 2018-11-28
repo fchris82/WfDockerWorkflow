@@ -12,8 +12,6 @@ namespace App\Exception;
  * Class SkipRecipeException
  *
  * You can skip a recipe if you want with this.
- *
- * @package App\Exception
  */
 class SkipRecipeException extends \Exception
 {

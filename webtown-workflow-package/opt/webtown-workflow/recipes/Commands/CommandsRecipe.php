@@ -11,8 +11,8 @@ namespace Recipes\Commands;
 use App\Event\Configuration\BuildInitEvent;
 use App\Event\ConfigurationEvents;
 use App\Event\RegisterEventListenersInterface;
-use Recipes\HiddenRecipe;
 use App\Skeleton\FileType\ExecutableSkeletonFile;
+use Recipes\HiddenRecipe;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
@@ -45,13 +45,13 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
      * @param $templateVars
      * @param array $buildConfig
      *
-     * @return \App\Skeleton\FileType\SkeletonFile[]|array
-     *
      * @throws \Exception
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return \App\Skeleton\FileType\SkeletonFile[]|array
      */
     protected function buildSkeletonFiles($templateVars, $buildConfig = [])
     {
@@ -84,12 +84,12 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
      * @param string      $commandName
      * @param array       $templateVars
      *
-     * @return ExecutableSkeletonFile
-     *
      * @throws \Exception
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
+     * @return ExecutableSkeletonFile
      */
     protected function createSkeletonFile(SplFileInfo $tmpFileInfo, $commandName, $templateVars)
     {
@@ -107,16 +107,16 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
     }
 
     /**
-     * @param string $tempFile The template filename.
-     *
-     * @return SplFileInfo
+     * @param string $tempFile the template filename
      *
      * @throws \ReflectionException
+     *
+     * @return SplFileInfo
      */
     protected function getTempSkeletonFileInfo($tempFile)
     {
         $refClass = new \ReflectionClass($this);
-        $skeletonsPath = dirname($refClass->getFileName()) . '/template';
+        $skeletonsPath = \dirname($refClass->getFileName()) . '/template';
         $tmpFileInfo = new SplFileInfo($skeletonsPath . '/' . $tempFile, '', $tempFile);
 
         return $tmpFileInfo;

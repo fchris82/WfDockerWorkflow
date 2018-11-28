@@ -9,7 +9,6 @@
 namespace Recipes\Php;
 
 use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -17,8 +16,6 @@ use Symfony\Component\Finder\SplFileInfo;
  * Class AbstractRecipe
  *
  * Symfony friendly environment
- *
- * @package Recipes\Symfony
  */
 class PhpRecipe extends BaseRecipe
 {
@@ -119,7 +116,7 @@ class PhpRecipe extends BaseRecipe
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {

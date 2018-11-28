@@ -9,11 +9,11 @@
 namespace Wizards\Ez;
 
 use App\Event\Wizard\BuildWizardEvent;
-use Wizards\BaseWizard;
 use App\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
+use Wizards\BaseWizard;
 
 class EzBuildWizard extends BaseWizard implements WizardInterface
 {
@@ -26,7 +26,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
             : '.';
-        $targetProjectDirectory = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR . $directory;
+        $targetProjectDirectory = $event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . $directory;
         $event->setWorkingDirectory($targetProjectDirectory);
 
         $config = [
@@ -62,11 +62,11 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 
         $this->run('git init && git add . && git commit -m "Init"');
 
-        if ($package != 'ezsystems/ezplatform') {
+        if ('ezsystems/ezplatform' != $package) {
             $this->createAuthJson($targetProjectDirectory);
         }
 
-        if (count($composerRequired) > 0) {
+        if (\count($composerRequired) > 0) {
             $this->runCmdInContainer(sprintf('composer require %s', implode(' ', $composerRequired)));
             $this->run('git init && git add . && git commit -m "Add some composer package"');
         }

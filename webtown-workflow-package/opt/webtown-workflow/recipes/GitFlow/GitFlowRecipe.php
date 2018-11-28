@@ -14,8 +14,6 @@ use Recipes\BaseRecipe;
  * Class Recipe
  *
  * Extends the base functions with the gitflow commands.
- *
- * @package Recipes\GitFlow
  */
 class GitFlowRecipe extends BaseRecipe
 {
@@ -25,7 +23,6 @@ class GitFlowRecipe extends BaseRecipe
     {
         return static::NAME;
     }
-
 
     public function getConfig()
     {

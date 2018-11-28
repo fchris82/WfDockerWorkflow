@@ -8,11 +8,10 @@
 
 namespace App\Configuration;
 
-
 use App\Event\Configuration\BuildInitEvent;
-use App\Event\ConfigurationEvents;
 use App\Event\Configuration\FinishEvent;
 use App\Event\Configuration\VerboseInfoEvent;
+use App\Event\ConfigurationEvents;
 use App\Event\RegisterEventListenersInterface;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
@@ -46,8 +45,9 @@ class Builder
 
     /**
      * Builder constructor.
-     * @param Filesystem $fileSystem
-     * @param RecipeManager $recipeManager
+     *
+     * @param Filesystem               $fileSystem
+     * @param RecipeManager            $recipeManager
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(Filesystem $fileSystem, RecipeManager $recipeManager, EventDispatcherInterface $eventDispatcher)
@@ -78,7 +78,7 @@ class Builder
     }
 
     /**
-     * @param array $config
+     * @param array  $config
      * @param string $projectPath
      * @param string $configHash
      *
@@ -144,11 +144,11 @@ class Builder
      */
     protected function configReplaceParameters($config, $parameters)
     {
-        if (is_array($config)) {
+        if (\is_array($config)) {
             foreach ($config as $key => $value) {
                 $config[$key] = $this->configReplaceParameters($value, $parameters);
             }
-        } elseif (is_string($config)) {
+        } elseif (\is_string($config)) {
             return strtr($config, $parameters);
         }
 
@@ -185,7 +185,7 @@ class Builder
 
         $dataPath = $config['docker_data_dir'];
         // If it is an relative path
-        if (!in_array($dataPath[0], ['/', '~'])) {
+        if (!\in_array($dataPath[0], ['/', '~'])) {
             $dataPath = $initEvent->getProjectPath() . '/' . $dataPath;
         }
         // The $dataPath would be a symbolic link if you are using deployer. If it is a symbolic link, it can link to
@@ -199,10 +199,10 @@ class Builder
         //      ├── current -> releases/28
         //      ├── release -> releases/29
         //      ├── releases
-        //      │   ├── 28
+        //      │   ├── 28
         //      │   │   └── [...]
         //      │   │
-        //      │   └── 29
+        //      │   └── 29
         //      │       ├── .wf
         //      │       │   └── .data -> ../../../shared/.wf/.data
         //      │       │
@@ -261,8 +261,8 @@ class Builder
      *
      * @param string $projectPath
      * @param string $recipeName
-     * @param array $recipeConfig
-     * @param array $globalConfig
+     * @param array  $recipeConfig
+     * @param array  $globalConfig
      *
      * @throws \App\Exception\MissingRecipeException
      * @throws \Exception
@@ -288,7 +288,6 @@ class Builder
             $this->fixFilePath($projectPath, $recipe, $skeletonFiles);
 
             $this->dumpSkeletonFiles($skeletonFiles);
-
         } catch (SkipRecipeException $e) {
             // do nothing
             $this->verboseInfo(sprintf('<comment>Skip the <options=underscore>%s</> recipe</comment>', $recipeName));
@@ -297,14 +296,14 @@ class Builder
 
     /**
      * @param $projectPath
-     * @param BaseRecipe $recipe
+     * @param BaseRecipe     $recipe
      * @param SkeletonFile[] $skeletonFiles
      */
     protected function fixFilePath($projectPath, BaseRecipe $recipe, $skeletonFiles)
     {
         foreach ($skeletonFiles as $skeletonFile) {
             $relativeTargetPath = sprintf(
-                implode(DIRECTORY_SEPARATOR, ['%s', '%s']),
+                implode(\DIRECTORY_SEPARATOR, ['%s', '%s']),
                 $this->targetDirectory,
                 $recipe->getDirectoryName()
             );
@@ -361,11 +360,22 @@ class Builder
     public function fileVerboseInfo(DumpFileEvent $event)
     {
         $skeletonFile = $event->getSkeletonFile();
-        $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $skeletonFile->getRelativePath(), get_class($skeletonFile)));
+        $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $skeletonFile->getRelativePath(), \get_class($skeletonFile)));
     }
 
-    protected function eventBeforeDumpFile(DumpFileEvent $event) {}
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event) {}
-    protected function eventAfterDumpFile(DumpFileEvent $event) {}
-    protected function eventSkipDumpFile(DumpFileEvent $event) {}
+    protected function eventBeforeDumpFile(DumpFileEvent $event)
+    {
+    }
+
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    {
+    }
+
+    protected function eventAfterDumpFile(DumpFileEvent $event)
+    {
+    }
+
+    protected function eventSkipDumpFile(DumpFileEvent $event)
+    {
+    }
 }

@@ -8,8 +8,6 @@
 
 namespace App\Skeleton\FileType;
 
-
 class SkeletonDirectory extends SkeletonFile
 {
-
 }

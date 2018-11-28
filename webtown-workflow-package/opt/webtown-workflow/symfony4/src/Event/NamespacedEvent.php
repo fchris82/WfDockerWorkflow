@@ -19,12 +19,13 @@ class NamespacedEvent extends Event
 
     /**
      * NamespacedEvent constructor.
+     *
      * @param $namespace
      */
     public function __construct($namespace)
     {
-        if (is_object($namespace)) {
-            $namespace = get_class($namespace);
+        if (\is_object($namespace)) {
+            $namespace = \get_class($namespace);
         }
         $this->namespace = $namespace;
     }
@@ -44,8 +45,8 @@ class NamespacedEvent extends Event
      */
     public function isNamespace($namespace)
     {
-        if (is_object($namespace)) {
-            $namespace = get_class($namespace);
+        if (\is_object($namespace)) {
+            $namespace = \get_class($namespace);
         }
 
         return $this->namespace == $namespace;

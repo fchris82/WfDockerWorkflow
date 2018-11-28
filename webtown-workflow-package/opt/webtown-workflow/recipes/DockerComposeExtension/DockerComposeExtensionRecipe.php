@@ -8,8 +8,8 @@
 
 namespace Recipes\DockerComposeExtension;
 
-use Recipes\HiddenRecipe;
 use App\Exception\SkipRecipeException;
+use Recipes\HiddenRecipe;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -25,8 +25,6 @@ use Symfony\Component\Yaml\Yaml;
  *                  environment:
  *                      TEST: test
  * <code>
- *
- * @package Recipes\DockerComposeExtension
  */
 class DockerComposeExtensionRecipe extends HiddenRecipe
 {
@@ -39,12 +37,12 @@ class DockerComposeExtensionRecipe extends HiddenRecipe
 
     /**
      * @param string $targetPath
-     * @param array $recipeConfig Here it is the `$globalConfig`
-     * @param array $globalConfig
-     *
-     * @return array
+     * @param array  $recipeConfig Here it is the `$globalConfig`
+     * @param array  $globalConfig
      *
      * @throws SkipRecipeException
+     *
+     * @return array
      *
      * @see \App\Configuration\Builder::build()
      */

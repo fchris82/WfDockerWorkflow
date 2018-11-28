@@ -91,7 +91,7 @@ class SkeletonFile
      */
     public function setRelativePath($relativePath)
     {
-        $this->relativePath = rtrim($relativePath, DIRECTORY_SEPARATOR);
+        $this->relativePath = rtrim($relativePath, \DIRECTORY_SEPARATOR);
 
         return $this;
     }
@@ -111,8 +111,8 @@ class SkeletonFile
      */
     public function setFileName($newFileName)
     {
-        $relativeDirectory = rtrim($this->getRelativePath(), DIRECTORY_SEPARATOR);
-        $this->setRelativePathname($relativeDirectory . DIRECTORY_SEPARATOR . $newFileName);
+        $relativeDirectory = rtrim($this->getRelativePath(), \DIRECTORY_SEPARATOR);
+        $this->setRelativePathname($relativeDirectory . \DIRECTORY_SEPARATOR . $newFileName);
 
         $this->fileName = $newFileName;
 
@@ -125,7 +125,7 @@ class SkeletonFile
     public function getRelativePathname()
     {
         return $this->relativePath
-            ? $this->getRelativePath() . DIRECTORY_SEPARATOR . $this->getFileName()
+            ? $this->getRelativePath() . \DIRECTORY_SEPARATOR . $this->getFileName()
             : $this->getBaseFileInfo()->getRelativePathname();
     }
 
@@ -166,7 +166,7 @@ class SkeletonFile
      */
     public function getContents()
     {
-        return $this->contents === null ? $this->baseFileInfo->getContents() : $this->contents ;
+        return null === $this->contents ? $this->baseFileInfo->getContents() : $this->contents;
     }
 
     /**
@@ -203,7 +203,7 @@ class SkeletonFile
 
     public function move($directory)
     {
-        $directory = rtrim($directory, DIRECTORY_SEPARATOR);
-        $this->setFullTargetPathname($directory . DIRECTORY_SEPARATOR . $this->getRelativePathname());
+        $directory = rtrim($directory, \DIRECTORY_SEPARATOR);
+        $this->setFullTargetPathname($directory . \DIRECTORY_SEPARATOR . $this->getRelativePathname());
     }
 }

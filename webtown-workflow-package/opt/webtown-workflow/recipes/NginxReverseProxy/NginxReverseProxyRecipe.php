@@ -8,21 +8,18 @@
 
 namespace Recipes\NginxReverseProxy;
 
-use App\Event\RegisterEventListenersInterface;
-use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
-use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use Recipes\BaseRecipe;
 use App\Configuration\Environment;
 use App\Event\Configuration\BuildInitEvent;
 use App\Event\ConfigurationEvents;
+use App\Event\RegisterEventListenersInterface;
+use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use Recipes\BaseRecipe;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Recipe
  *
  * Allow nginx-reverse-proxy config.
- *
- * @package Recipes\NginxReverseProxy
  */
 class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListenersInterface
 {
@@ -45,9 +42,9 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
     /**
      * Recipe constructor.
      *
-     * @param \Twig_Environment $twig
+     * @param \Twig_Environment        $twig
      * @param EventDispatcherInterface $eventDispatcher
-     * @param Environment $environment
+     * @param Environment              $environment
      */
     public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
@@ -92,8 +89,8 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
 
                                 return [
                                     // If the project name: `project` --> `project.loc`
-                                    'host' => is_array($v) && array_key_exists('host', $v) ? $v['host'] : $defaultHost,
-                                    'port' => (int) (is_array($v) && array_key_exists('port', $v) ? $v['port'] : (!is_array($v) && $v ? $v : $defaultPort)),
+                                    'host' => \is_array($v) && array_key_exists('host', $v) ? $v['host'] : $defaultHost,
+                                    'port' => (int) (\is_array($v) && array_key_exists('port', $v) ? $v['port'] : (!\is_array($v) && $v ? $v : $defaultPort)),
                                 ];
                             })
                             ->end()
@@ -152,7 +149,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         if (!$this->defaultHostIsSet($recipeConfig, $defaultHost)) {
             foreach ($recipeConfig['settings'] as $serviceName => $settings) {
                 // Only the default host name exists: [service_name].[project_name].[tld]
-                if (strpos($settings['host'], $serviceName) === 0) {
+                if (0 === strpos($settings['host'], $serviceName)) {
                     $settings['host'] = $defaultHost . ' ' . $settings['host'];
                     $recipeConfig['settings'][$serviceName] = $settings;
                 }
@@ -183,7 +180,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         if (!$this->defaultHostIsSet($recipeConfig, $defaultHost)) {
             foreach ($recipeConfig['settings'] as $serviceName => $settings) {
                 // Only the default host name exists: [service_name].[project_name].[tld]
-                if (strpos($settings['host'], $serviceName) === 0) {
+                if (0 === strpos($settings['host'], $serviceName)) {
                     $settings['host'] = $defaultHost . ' ' . $settings['host'];
                     $recipeConfig['settings'][$serviceName] = $settings;
                 }
@@ -207,7 +204,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
     {
         foreach ($recipeConfig['settings'] as $serviceName => $settings) {
             $hosts = explode(' ', $settings['host']);
-            if (in_array($defaultHost, $hosts)) {
+            if (\in_array($defaultHost, $hosts)) {
                 return true;
             }
         }

@@ -28,8 +28,8 @@ class DumpFileEvent extends NamespacedEvent
      * DumpFileEvent constructor.
      *
      * @param string|object $namespace
-     * @param SkeletonFile $skeletonFile
-     * @param Filesystem $fileSystem
+     * @param SkeletonFile  $skeletonFile
+     * @param Filesystem    $fileSystem
      */
     public function __construct($namespace, SkeletonFile $skeletonFile, Filesystem $fileSystem)
     {

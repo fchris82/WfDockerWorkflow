@@ -57,7 +57,7 @@ class RecipeManager implements ContainerAwareInterface
             /** @var SplFileInfo $recipeFile */
             foreach ($finder as $recipeFile) {
                 // Skip the files in route!
-                if ($recipeFile->getRelativePath() == '') {
+                if ('' == $recipeFile->getRelativePath()) {
                     continue;
                 }
                 $fullClass = sprintf(
@@ -71,8 +71,8 @@ class RecipeManager implements ContainerAwareInterface
                     throw new InvalidConfigurationException(sprintf(
                         'The `%s` recipe has been already existed! [`%s` vs `%s`]',
                         $recipe->getName(),
-                        get_class($this->recipes[$recipe->getName()]),
-                        get_class($recipe)
+                        \get_class($this->recipes[$recipe->getName()]),
+                        \get_class($recipe)
                     ));
                 }
                 $this->recipes[$recipe->getName()] = $recipe;
@@ -85,9 +85,9 @@ class RecipeManager implements ContainerAwareInterface
     /**
      * @param string $recipeName
      *
-     * @return BaseRecipe
-     *
      * @throws MissingRecipeException
+     *
+     * @return BaseRecipe
      */
     public function getRecipe($recipeName)
     {

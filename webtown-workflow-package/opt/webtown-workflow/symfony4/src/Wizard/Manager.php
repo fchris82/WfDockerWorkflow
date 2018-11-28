@@ -72,7 +72,7 @@ class Manager implements ContainerAwareInterface
             /** @var SplFileInfo $wizardFile */
             foreach ($finder as $wizardFile) {
                 // Skip the files in route!
-                if ($wizardFile->getRelativePath() == '') {
+                if ('' == $wizardFile->getRelativePath()) {
                     continue;
                 }
                 $fullClass = sprintf(
@@ -86,8 +86,8 @@ class Manager implements ContainerAwareInterface
                     throw new InvalidConfigurationException(sprintf(
                         'The `%s` recipe has been already existed! [`%s` vs `%s`]',
                         $wizard->getDefaultName(),
-                        get_class($this->wizards[$wizard->getDefaultName()]),
-                        get_class($wizard)
+                        \get_class($this->wizards[$wizard->getDefaultName()]),
+                        \get_class($wizard)
                     ));
                 }
                 if (!$wizard->isHidden()) {
@@ -99,7 +99,8 @@ class Manager implements ContainerAwareInterface
         return $this->wizards;
     }
 
-    public function syncConfiguration() {
+    public function syncConfiguration()
+    {
         if (!$this->configurationIsSynced) {
             $wizards = $this->findAllWizards();
             foreach ($wizards as $installedWizard) {
@@ -116,7 +117,7 @@ class Manager implements ContainerAwareInterface
             foreach ($this->configuration->getConfigurationList() as $configurationItem) {
                 $exists = false;
                 foreach ($wizards as $wizard) {
-                    if ($configurationItem->getClass() == get_class($wizard)) {
+                    if ($configurationItem->getClass() == \get_class($wizard)) {
                         $exists = true;
                         break;
                     }
@@ -178,11 +179,11 @@ class Manager implements ContainerAwareInterface
     protected function wizardIs($changeType, $wizardOrClass)
     {
         $class = $wizardOrClass;
-        if (is_object($wizardOrClass)) {
+        if (\is_object($wizardOrClass)) {
             if ($wizardOrClass instanceof ConfigurationItem) {
                 $class = $wizardOrClass->getClass();
             } else {
-                $class = get_class($wizardOrClass);
+                $class = \get_class($wizardOrClass);
             }
         }
 

@@ -20,8 +20,6 @@ use Symfony\Component\Yaml\Yaml;
  * Class Recipe
  *
  * After the all
- *
- * @package Recipes\PostBase
  */
 class PostBaseRecipe extends HiddenRecipe implements RegisterEventListenersInterface
 {

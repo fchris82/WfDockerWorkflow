@@ -14,7 +14,6 @@ use App\Exception\SkipSkeletonFileException;
 use App\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Skeleton\FileType\SkeletonDirectory;
 use App\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -31,8 +30,11 @@ trait BuilderTrait
     protected $eventDispatcher;
 
     abstract protected function eventBeforeDumpFile(DumpFileEvent $event);
+
     abstract protected function eventBeforeDumpTargetExists(DumpFileEvent $event);
+
     abstract protected function eventAfterDumpFile(DumpFileEvent $event);
+
     abstract protected function eventSkipDumpFile(DumpFileEvent $event);
 
     /**
@@ -54,7 +56,7 @@ trait BuilderTrait
                 $skeletonFile = $event->getSkeletonFile();
                 if ($skeletonFile instanceof SkeletonDirectory) {
                     $this->fileSystem->mkdir($skeletonFile->getRelativePathname());
-                } elseif ($skeletonFile->getHandleExisting() == SkeletonFile::HANDLE_EXISTING_APPEND) {
+                } elseif (SkeletonFile::HANDLE_EXISTING_APPEND == $skeletonFile->getHandleExisting()) {
                     $this->fileSystem->appendToFile(
                         $skeletonFile->getFullTargetPathname(),
                         $skeletonFile->getContents()

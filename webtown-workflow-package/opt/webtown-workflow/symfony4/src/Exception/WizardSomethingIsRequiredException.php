@@ -8,7 +8,6 @@
 
 namespace App\Exception;
 
-
 class WizardSomethingIsRequiredException extends \Exception
 {
 }

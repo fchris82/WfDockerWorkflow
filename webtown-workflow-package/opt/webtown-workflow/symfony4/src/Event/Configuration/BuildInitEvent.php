@@ -40,7 +40,7 @@ class BuildInitEvent extends Event
     /**
      * BuildInitEvent constructor.
      *
-     * @param array $config
+     * @param array  $config
      * @param string $projectPath
      * @param string $targetDirectory
      * @param string $configHash
@@ -114,6 +114,7 @@ class BuildInitEvent extends Event
             $key = '%env.' . $name . '%';
             $envParameters[$key] = $value;
         }
+
         return array_merge(
             $baseParameters,
             $envParameters,

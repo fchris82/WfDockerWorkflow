@@ -21,7 +21,6 @@ class PhpDeployerEnvironmentRecipe extends BaseRecipe
          *  php_deployer_environment:
          *      share: engine
          */
-
         $rootNode
             ->info('<comment>PHP Deployer environment</comment>')
             ->children()

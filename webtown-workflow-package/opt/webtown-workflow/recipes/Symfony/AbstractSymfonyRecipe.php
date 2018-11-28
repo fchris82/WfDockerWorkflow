@@ -9,7 +9,6 @@
 namespace Recipes\Symfony;
 
 use App\Exception\SkipSkeletonFileException;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -17,8 +16,6 @@ use Symfony\Component\Finder\SplFileInfo;
  * Class AbstractRecipe
  *
  * Symfony friendly environment
- *
- * @package Recipes\Symfony
  */
 class AbstractSymfonyRecipe extends BaseRecipe
 {

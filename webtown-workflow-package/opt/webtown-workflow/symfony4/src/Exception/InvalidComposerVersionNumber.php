@@ -8,7 +8,6 @@
 
 namespace App\Exception;
 
-
 use Throwable;
 
 class InvalidComposerVersionNumber extends \InvalidArgumentException
@@ -18,7 +17,7 @@ class InvalidComposerVersionNumber extends \InvalidArgumentException
      */
     protected $version;
 
-    public function __construct(string $version = null, string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(string $version = null, string $message = '', int $code = 0, Throwable $previous = null)
     {
         $this->version = $version;
 

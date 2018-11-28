@@ -90,7 +90,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         // 2 sort kihagyunk
         $output->writeln("\n");
         $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', strlen(strip_tags($title)))));
+        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', \strlen(strip_tags($title)))));
         $output->writeln('');
     }
 
@@ -164,7 +164,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         $table = new Table($output);
         $table->setHeaders([
             'Property',
-            'Value'
+            'Value',
         ]);
         $configurationItem = $wizardManager->getConfiguration()->get($class);
         $table->addRows([
@@ -204,25 +204,25 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
             $config = [
                 'name' => [
                     'question' => new Question('Name: ', $configurationItem->getName()),
-                    'handle' => function(ConfigurationItem $configurationItem, $name) {
+                    'handle' => function (ConfigurationItem $configurationItem, $name) {
                         $configurationItem->setName($name);
                     },
                 ],
                 'group' => [
                     'question' => $groupQuestion,
-                    'handle' => function(ConfigurationItem $configurationItem, $group) {
+                    'handle' => function (ConfigurationItem $configurationItem, $group) {
                         $configurationItem->setGroup($group);
                     },
                 ],
                 'priority' => [
                     'question' => $priorityQuestion,
-                    'handle' => function(ConfigurationItem $configurationItem, $priority) {
+                    'handle' => function (ConfigurationItem $configurationItem, $priority) {
                         $configurationItem->setPriority($priority);
                     },
                 ],
                 'enabled' => [
                     'question' => new ConfirmationQuestion('Wizard is enabled? ', $configurationItem->isEnabled()),
-                    'handle' => function(ConfigurationItem $configurationItem, $enabled) {
+                    'handle' => function (ConfigurationItem $configurationItem, $enabled) {
                         $configurationItem->setEnabled($enabled);
                     },
                 ],
@@ -234,7 +234,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
                 /** @var Question $itemQuestion */
                 $itemQuestion = $item['question'];
                 $label = $itemQuestion->getDefault();
-                if (is_bool($label)) {
+                if (\is_bool($label)) {
                     $label = $label ? static::ENABLED_SIGN : static::DISABLED_SIGN;
                 }
                 $questions[$n] = (string) $label;
@@ -247,7 +247,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
                 $newValue = $this->questionHelper->ask($input, $output, $subQuestion);
                 $config[$change]['handle']($configurationItem, $newValue);
             }
-        } while($change != static::EXIT_SIGN);
+        } while ($change != static::EXIT_SIGN);
 
         // If something was changed
         if ($originalContent != serialize($configurationItem)) {

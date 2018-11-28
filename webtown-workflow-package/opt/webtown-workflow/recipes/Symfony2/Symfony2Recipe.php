@@ -14,8 +14,6 @@ use Recipes\Symfony\AbstractSymfonyRecipe;
  * Class Recipe
  *
  * Symfony 2 friendly environment
- *
- * @package Recipes\Symfony2
  */
 class Symfony2Recipe extends AbstractSymfonyRecipe
 {

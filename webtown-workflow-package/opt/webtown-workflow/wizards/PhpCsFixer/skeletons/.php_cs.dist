@@ -23,7 +23,10 @@ return PhpCsFixer\Config::create()
         // Erre azért van szükség, mert pl a JMSTranslationBundle miatt elhelyezhetünk a kódon belül pl /** @Ignore */ -t
         'phpdoc_to_comment' => false,
         // Néha bizony van értelme behúzni a tömböknél az értéket, ezért kikapcsoljuk, hogy levágja a "szóközöket" a => operátor körül.
-        'binary_operator_spaces' => ['align_double_arrow' => null],
+        'binary_operator_spaces' => ['operators' => [
+            "=>" => null,
+            "=" => null,
+        ]],
         'heredoc_to_nowdoc' => false,
     ])
     ->setRiskyAllowed(true)

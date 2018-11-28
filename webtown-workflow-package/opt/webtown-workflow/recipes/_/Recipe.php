@@ -48,7 +48,7 @@ class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
      * Recipe constructor.
      *
      * @param \Twig_Environment $twig
-     * @param Environment $environment
+     * @param Environment       $environment
      */
     public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
@@ -72,9 +72,9 @@ class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
      */
     public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
     {
-        $dockerComposeFiles = array_map(function($v) {
+        $dockerComposeFiles = array_map(function ($v) {
             // If the path start with `/` or `~` we won't change, else we put the project path before it
-            return in_array($v[0], ['/', '~']) ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
+            return \in_array($v[0], ['/', '~']) ? $v : '$(PROJECT_WORKING_DIRECTORY)/' . $v;
         }, $this->dockerComposeFiles);
 
         return array_merge(parent::getSkeletonVars($targetPath, $recipeConfig, $globalConfig), [
@@ -108,7 +108,7 @@ class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
     protected function renameMakefile(PostBuildSkeletonFileEvent $event)
     {
         $skeletonFile = $event->getSkeletonFile();
-        if ($skeletonFile->getFileName() == 'makefile') {
+        if ('makefile' == $skeletonFile->getFileName()) {
             $skeletonFile->setFileName($this->makefileName);
         }
     }

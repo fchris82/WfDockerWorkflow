@@ -8,9 +8,6 @@
 
 namespace App\Configuration;
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\Filesystem\Filesystem;
-
 class Environment
 {
     const CONFIG_PROGRAM_REPOSITORY = 'WF_PROGRAM_REPOSITORY';

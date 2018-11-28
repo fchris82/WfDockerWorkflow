@@ -9,11 +9,11 @@
 namespace Wizards;
 
 use App\Event\Wizard\BuildWizardEvent;
+use App\Exception\WizardHasAlreadyBuiltException;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Wizard\WizardInterface;
-use App\Exception\WizardHasAlreadyBuiltException;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\Question;
@@ -64,12 +64,12 @@ abstract class BaseWizard implements WizardInterface
 
     public function getDefaultGroup()
     {
-        return "";
+        return '';
     }
 
     public function getInfo()
     {
-        return "";
+        return '';
     }
 
     public function isHidden()
@@ -134,8 +134,8 @@ abstract class BaseWizard implements WizardInterface
     /**
      * runBuild()
      *      ├── initBuild()
-     *      │   ├── checkReuires()
-     *      │   └── init()
+     *      │   ├── checkReuires()
+     *      │   └── init()
      *      │
      *      ├── build()
      *      │
@@ -143,9 +143,9 @@ abstract class BaseWizard implements WizardInterface
      *
      * @param $targetProjectDirectory
      *
-     * @return string
-     *
      * @throws WizardHasAlreadyBuiltException
+     *
+     * @return string
      */
     public function runBuild($targetProjectDirectory)
     {
@@ -183,7 +183,7 @@ abstract class BaseWizard implements WizardInterface
         // User function
     }
 
-    protected function call($workingDirectory, BaseWizard $wizard)
+    protected function call($workingDirectory, self $wizard)
     {
         $wizard
             ->setInput($this->input)
@@ -231,13 +231,13 @@ abstract class BaseWizard implements WizardInterface
 
         $this->output->writeln(sprintf('[exec] <comment>%s</comment>', $printedCmd));
         passthru($cmd, $return);
-        if ($return == 0) {
+        if (0 == $return) {
             $this->output->writeln(sprintf('[<info>OK</info>] %s', $printedCmd));
         } else {
             $this->output->writeln(sprintf('[<error>ERROR</error> (%d)] %s', $return, $printedCmd));
         }
 
-        if (is_callable($handleReturn)) {
+        if (\is_callable($handleReturn)) {
             $handleReturn($return);
         }
     }

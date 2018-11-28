@@ -8,7 +8,6 @@
 
 namespace App\Helper;
 
-
 class WordWrapper
 {
     protected $width;
@@ -26,7 +25,7 @@ class WordWrapper
 
     protected function closeLine()
     {
-        if (count($this->newLineTokens)) {
+        if (\count($this->newLineTokens)) {
             $this->newLines[] = implode(' ', $this->newLineTokens);
             $this->newLineTokens = [];
             $this->currentLength = 0;
@@ -56,13 +55,13 @@ class WordWrapper
 
     protected function getCurrentLineLength()
     {
-        return $this->currentLength + count($this->newLineTokens) - 1;
+        return $this->currentLength + \count($this->newLineTokens) - 1;
     }
 
     protected function getVirtualTokenLength($token)
     {
         $virtualTokenLength = mb_strlen($token);
-        if (strpos($token, '<') !== false) {
+        if (false !== strpos($token, '<')) {
             $untaggedToken = preg_replace('/<[^>]+>/', '', $token);
             $virtualTokenLength = mb_strlen($untaggedToken);
         }
@@ -85,7 +84,7 @@ class WordWrapper
                     if ($virtualTokenLength < $this->width) {
                         $this->closeLine();
                         $this->addTokenToLine($token, $virtualTokenLength);
-                    } elseif (!$cut || mb_substr($token, 0, 4) == 'http') {
+                    } elseif (!$cut || 'http' == mb_substr($token, 0, 4)) {
                         $this->closeLine();
                         $this->addTokenToLine($token, $virtualTokenLength);
                         $this->closeLine();
@@ -130,7 +129,7 @@ class WordWrapper
 
     protected function sliceToken($token, $freeChars)
     {
-        if ($token[0] == '<' && mb_substr($token, -1) == '>') {
+        if ('<' == $token[0] && '>' == mb_substr($token, -1)) {
             return [$token, '', 0];
         }
         $blockLength = mb_strlen($token);

@@ -10,9 +10,8 @@ namespace Wizards\Symfony;
 
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
-use Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
-use Wizards\BaseWizard;
+use Wizards\BaseSkeletonWizard;
 
 class SymfonyBuildWizard extends BaseSkeletonWizard
 {
@@ -63,7 +62,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
             : '.';
-        $this->workingDirectory = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR . $directory;
+        $this->workingDirectory = $event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . $directory;
         $event->setWorkingDirectory($this->workingDirectory);
 
         $version = $this->ask($versionQuestion);
@@ -106,7 +105,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         ));
 
         // Composer config upgrade, eg: platform.php --> 7.1
-        if (count($composerConfigChanges) > 0) {
+        if (\count($composerConfigChanges) > 0) {
             foreach ($composerConfigChanges as $key => $value) {
                 $this->runCmdInContainer(sprintf('composer config %s %s', $key, $value), $tmpDir);
             }

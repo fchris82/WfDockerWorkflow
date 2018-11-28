@@ -38,9 +38,9 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * PreBuildSkeletonFileEvent constructor.
      *
      * @param string|object $namespace
-     * @param SplFileInfo $sourceFileInfo
-     * @param array $templateVars
-     * @param array $buildConfig
+     * @param SplFileInfo   $sourceFileInfo
+     * @param array         $templateVars
+     * @param array         $buildConfig
      */
     public function __construct($namespace, SplFileInfo $sourceFileInfo, array $templateVars, array $buildConfig)
     {
@@ -86,6 +86,7 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     public function setTemplateVars(array $templateVars)
     {
         $this->templateVars = $templateVars;
+
         return $this;
     }
 

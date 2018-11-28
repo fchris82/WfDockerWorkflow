@@ -38,10 +38,10 @@ class PhpMdWizard extends BaseSkeletonWizard
     /**
      * @param $targetProjectDirectory
      *
-     * @return bool
-     *
      * @throws WizardSomethingIsRequiredException
      * @throws WizardWfIsRequiredException
+     *
+     * @return bool
      */
     public function checkRequires($targetProjectDirectory)
     {

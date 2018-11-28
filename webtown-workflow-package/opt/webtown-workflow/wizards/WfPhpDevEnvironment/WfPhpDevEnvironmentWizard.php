@@ -10,7 +10,6 @@ namespace Wizards\WfPhpDevEnvironment;
 
 use App\Event\Wizard\BuildWizardEvent;
 use Symfony\Component\Console\Question\Question;
-use Wizards\BaseSkeletonWizard;
 use Wizards\WfDevEnvironment\WfDevEnvironmentWizard;
 
 /**

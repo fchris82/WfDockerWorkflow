@@ -4,8 +4,6 @@ namespace App\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\Finder\Finder;
-use Twig\Loader\FilesystemLoader;
 
 class TwigExtendingPass implements CompilerPassInterface
 {

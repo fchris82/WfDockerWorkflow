@@ -7,6 +7,7 @@
  */
 
 namespace Wizards\WfSymfonyEnvironment;
+
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Skeleton\FileType\SkeletonFile;
@@ -82,28 +83,28 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
         }
         switch (substr($symfonyVersion, 0, 2)) {
             case '4.':
-                $variables['sf_version']     = 4;
+                $variables['sf_version'] = 4;
                 $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
-                $variables['shared_dirs']    = 'var';
-                $variables['web_directory']  = 'public';
-                $variables['index_file']     = 'index.php';
+                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
+                $variables['shared_dirs'] = 'var';
+                $variables['web_directory'] = 'public';
+                $variables['index_file'] = 'index.php';
                 break;
             case '3.':
-                $variables['sf_version']     = 3;
+                $variables['sf_version'] = 3;
                 $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
-                $variables['shared_dirs']    = 'var';
-                $variables['web_directory']  = 'web';
-                $variables['index_file']     = 'app.php';
+                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
+                $variables['shared_dirs'] = 'var';
+                $variables['web_directory'] = 'web';
+                $variables['index_file'] = 'app.php';
                 break;
             case '2.':
-                $variables['sf_version']     = 2;
+                $variables['sf_version'] = 2;
                 $variables['sf_console_cmd'] = 'app/console';
-                $variables['sf_bin_dir']     = $this->readSymfonyBinDir($targetProjectDirectory, 'bin');
-                $variables['shared_dirs']    = 'app/cache app/logs';
-                $variables['web_directory']  = 'web';
-                $variables['index_file']     = 'app.php';
+                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'bin');
+                $variables['shared_dirs'] = 'app/cache app/logs';
+                $variables['web_directory'] = 'web';
+                $variables['index_file'] = 'app.php';
                 break;
             default:
                 throw new \InvalidArgumentException('Invalid selection! Missiong settings!');

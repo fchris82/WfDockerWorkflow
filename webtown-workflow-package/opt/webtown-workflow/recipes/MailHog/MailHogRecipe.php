@@ -14,8 +14,6 @@ use Recipes\BaseRecipe;
  * Class Recipe
  *
  * E-mail sender.
- *
- * @package Recipes\Mail
  */
 class MailHogRecipe extends BaseRecipe
 {

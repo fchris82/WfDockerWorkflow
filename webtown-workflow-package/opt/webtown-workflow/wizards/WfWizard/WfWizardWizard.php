@@ -43,9 +43,9 @@ class WfWizardWizard extends BaseSkeletonWizard
     /**
      * @param string $targetProjectDirectory
      *
-     * @return bool
-     *
      * @throws WizardSomethingIsRequiredException
+     *
+     * @return bool
      */
     public function checkRequires($targetProjectDirectory)
     {
@@ -61,7 +61,7 @@ class WfWizardWizard extends BaseSkeletonWizard
         $wizardQuestion = new Question('Please give a class name. You have to finish with "Wizard", eg: <comment>MyCustomWizard</comment>');
         $wizardQuestion->setValidator(function ($answer) {
             $answer = trim($answer);
-            if (!is_string($answer) || 'Wizard' !== substr($answer, -6)) {
+            if (!\is_string($answer) || 'Wizard' !== substr($answer, -6)) {
                 throw new \RuntimeException('The class of wizard should be suffixed with \'Wizard\'');
             }
             if (strpos($answer, '_')) {
@@ -116,14 +116,14 @@ class WfWizardWizard extends BaseSkeletonWizard
     protected function build(BuildWizardEvent $event)
     {
         // Create skeletons directory
-        if ($this->variables['parent_wizard'] == 'BaseSkeletonWizard') {
-            $target = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR
-                . $this->getRelativeTargetDirectory() . DIRECTORY_SEPARATOR
+        if ('BaseSkeletonWizard' == $this->variables['parent_wizard']) {
+            $target = $event->getWorkingDirectory() . \DIRECTORY_SEPARATOR
+                . $this->getRelativeTargetDirectory() . \DIRECTORY_SEPARATOR
                 . 'skeletons';
             $this->fileSystem->mkdir($target);
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> directory has been created.</info>',
-                dirname($target),
+                \dirname($target),
                 basename($target)
             ));
         }
@@ -132,7 +132,7 @@ class WfWizardWizard extends BaseSkeletonWizard
     protected function getRelativeTargetDirectory()
     {
         return static::RELATIVE_TARGET_DIRECTORY
-            . DIRECTORY_SEPARATOR
+            . \DIRECTORY_SEPARATOR
             . $this->variables['namespace'];
     }
 }

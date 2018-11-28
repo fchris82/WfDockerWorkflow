@@ -30,6 +30,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * PreBuildSkeletonFilesEvent constructor.
+     *
      * @param array $templateVars
      * @param array $buildConfig
      */

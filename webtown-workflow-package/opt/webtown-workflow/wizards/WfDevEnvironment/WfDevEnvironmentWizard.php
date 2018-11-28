@@ -9,7 +9,6 @@
 namespace Wizards\WfDevEnvironment;
 
 use App\Event\Wizard\BuildWizardEvent;
-use Symfony\Component\Console\Question\Question;
 use Wizards\BaseSkeletonWizard;
 
 /**
@@ -58,7 +57,7 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
     {
         $this->output->writeln('<comment>We created a simple and "empty" <info>.wf.yml</info> file, you have to edit it!</comment>');
         $this->output->writeln('');
-        $this->output->writeln(file_get_contents($event->getWorkingDirectory() . DIRECTORY_SEPARATOR . '.wf.yml'));
+        $this->output->writeln(file_get_contents($event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . '.wf.yml'));
         $this->output->writeln('');
         $this->output->writeln('<question>List available recipes:</question>');
         $this->output->writeln('<info>wf --config-dump --only-recipes</info>');
