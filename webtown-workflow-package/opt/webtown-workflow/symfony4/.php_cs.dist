@@ -1,7 +1,11 @@
 <?php
 $srcDir = __DIR__ . DIRECTORY_SEPARATOR . 'src';
+$recipesDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'recipes';
+$wizardsDir = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'wizards';
 $finder = PhpCsFixer\Finder::create()
-    ->in($srcDir)
+    ->in([$srcDir, $recipesDir, $wizardsDir])
+    ->exclude('skeletons')
+    ->exclude('template')
 ;
 
 return PhpCsFixer\Config::create()
@@ -11,16 +15,19 @@ return PhpCsFixer\Config::create()
         '@Symfony:risky' => true,
         'array_syntax' => ['syntax' => 'short'],
         'concat_space' => ['spacing' => 'one'],
-        'no_multiline_whitespace_before_semicolons' => true,
         'no_php4_constructor' => true,
         'ordered_imports' => true,
         'no_unreachable_default_argument_value' => true,
         'braces' => ['allow_single_line_closure' => true],
         'phpdoc_order' => true,
+        // Problémát okozhat, ha törli nevet, pláne, ha többet szeretnénk megadni pl egy for ciklus előtt.
+        'phpdoc_var_without_name' => false,
+        // Nem szeretnénk '.'-ot minden doccomment végére
+        'phpdoc_summary' => false,
         // Erre azért van szükség, mert pl a JMSTranslationBundle miatt elhelyezhetünk a kódon belül pl /** @Ignore */ -t
         'phpdoc_to_comment' => false,
         // Néha bizony van értelme behúzni a tömböknél az értéket, ezért kikapcsoljuk, hogy levágja a "szóközöket" a => operátor körül.
-        'binary_operator_spaces' => ['align_double_arrow' => null],
+        'binary_operator_spaces' => ['operators' => ['align_double_arrow' => null]],
         'heredoc_to_nowdoc' => false,
     ])
     ->setRiskyAllowed(true)
