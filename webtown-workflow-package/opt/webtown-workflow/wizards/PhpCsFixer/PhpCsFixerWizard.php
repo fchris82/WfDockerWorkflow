@@ -9,6 +9,7 @@
 namespace Wizards\PhpCsFixer;
 
 use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use App\Skeleton\FileType\SkeletonFile;
@@ -57,15 +58,13 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @return string
      */
-    public function build($targetProjectDirectory)
+    public function build(BuildWizardEvent $event)
     {
-        $this->runCmdInContainer('composer require --dev friendsofphp/php-cs-fixer', $targetProjectDirectory);
-
-        return $targetProjectDirectory;
+        $this->runCmdInContainer('composer require --dev friendsofphp/php-cs-fixer', $event->getWorkingDirectory());
     }
 
     protected function eventBeforeDumpTargetExists(DumpFileEvent $event)

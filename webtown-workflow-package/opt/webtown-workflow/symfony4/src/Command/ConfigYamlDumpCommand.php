@@ -54,7 +54,12 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             $recipe = $this->getRecipeByNameOrClass($recipeNameOrClass);
             /** @var ArrayNode $rootNode */
             $rootNode = $recipe->getConfig();
-            $io->write($dumper->dumpNode($rootNode->getNode(true)));
+            $ymlTree = $dumper->dumpNode($rootNode->getNode(true));
+            // Add indent if we want to use this: wf --config-dump --recipe=php --no-ansi >> .wf.yml
+            if (!$io->isDecorated()) {
+                $ymlTree = preg_replace('/^[^\n]/m', '    $0', $ymlTree);
+            }
+            $io->write($ymlTree);
         } elseif ($input->getOption('only-recipes')) {
             /** @var ArrayNode $rootNode */
             $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();

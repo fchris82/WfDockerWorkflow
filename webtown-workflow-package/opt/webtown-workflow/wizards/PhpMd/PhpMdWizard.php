@@ -8,6 +8,7 @@
 
 namespace Wizards\PhpMd;
 
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use Wizards\BaseSkeletonWizard;
@@ -55,14 +56,12 @@ class PhpMdWizard extends BaseSkeletonWizard
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @return string
      */
-    public function build($targetProjectDirectory)
+    public function build(BuildWizardEvent $event)
     {
-        $this->runCmdInContainer('composer require --dev phpmd/phpmd', $targetProjectDirectory);
-
-        return $targetProjectDirectory;
+        $this->runCmdInContainer('composer require --dev phpmd/phpmd', $event->getWorkingDirectory());
     }
 }

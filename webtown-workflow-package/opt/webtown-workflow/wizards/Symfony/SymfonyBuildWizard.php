@@ -8,6 +8,8 @@
 
 namespace Wizards\Symfony;
 
+use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Event\Wizard\BuildWizardEvent;
 use Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
 use Wizards\BaseWizard;
@@ -20,6 +22,11 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
      * @var array
      */
     protected $config = [];
+
+    /**
+     * @var string
+     */
+    protected $workingDirectory;
 
     public function getDefaultName()
     {
@@ -41,27 +48,14 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         return $this->wfIsInitialized($targetProjectDirectory) || file_exists($targetProjectDirectory . '/.git');
     }
 
-    /**
-     * @param string $targetProjectDirectory
-     *
-     * @return mixed|string
-     *
-     * @throws \App\Exception\WizardHasAlreadyBuiltException
-     * @throws \Exception
-     */
-    public function initBuild($targetProjectDirectory)
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
     {
-        BaseWizard::initBuild($targetProjectDirectory);
+        parent::eventAfterBuildFile($postBuildSkeletonFileEvent);
 
-        $templateVariables = $this->getSkeletonVars($targetProjectDirectory);
-        $targetProjectDirectory = $this->config['target_project_directory'];
-        $this->printHeader($templateVariables);
-        $this->doBuildFiles($targetProjectDirectory, $templateVariables);
-
-        return $targetProjectDirectory;
+        $postBuildSkeletonFileEvent->getSkeletonFile()->move($this->workingDirectory);
     }
 
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function getSkeletonVars(BuildWizardEvent $event)
     {
         $directoryQuestion = new Question('Add meg a könyvtárat, ahová szeretnéd telepíteni: [<info>.</info>] ', '.');
         $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>x.x</info>] ');
@@ -69,13 +63,14 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
             : '.';
+        $this->workingDirectory = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR . $directory;
+        $event->setWorkingDirectory($this->workingDirectory);
 
         $version = $this->ask($versionQuestion);
         $sfVersion = $version ?
             $version[1] :
             4;
         $this->config = [
-            'target_project_directory' => $targetProjectDirectory . DIRECTORY_SEPARATOR . $directory,
             'version'                  => $version,
             'sf_version'               => $sfVersion,
         ];
@@ -83,14 +78,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         return $this->config;
     }
 
-    /**
-     * @param $targetProjectDirectory
-     *
-     * @return string
-     *
-     * @todo (Chris) Refactorálni, eseménykezelőkkel
-     */
-    public function build($targetProjectDirectory)
+    protected function build(BuildWizardEvent $event)
     {
         // Alapértelmezett adatok
         $package = 'symfony/website-skeleton';
@@ -105,9 +93,8 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
             ];
         }
 
-        $workDir = $this->config['target_project_directory'];
+        $workDir = $event->getWorkingDirectory();
         $tmpDir = $workDir . '/_tmp';
-        $this->cd($targetProjectDirectory);
         $this->run('mkdir -p ' . $tmpDir);
 
         $this->cd($workDir);
@@ -131,7 +118,5 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         $this->run('mv _tmp/.[!.]* ./');
         $this->run('rm -r _tmp');
         $this->run('git init && git add . && git commit -m "Init"');
-
-        return $targetProjectDirectory;
     }
 }

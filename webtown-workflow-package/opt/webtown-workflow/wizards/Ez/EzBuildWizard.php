@@ -8,6 +8,7 @@
 
 namespace Wizards\Ez;
 
+use App\Event\Wizard\BuildWizardEvent;
 use Wizards\BaseWizard;
 use App\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -18,14 +19,16 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 {
     protected $askDirectory = true;
 
-    public function build($targetProjectDirectory)
+    public function build(BuildWizardEvent $event)
     {
         $directoryQuestion = new Question('Installation directory: ', '.');
 
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
             : '.';
-        $targetProjectDirectory = $targetProjectDirectory . DIRECTORY_SEPARATOR . $directory;
+        $targetProjectDirectory = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR . $directory;
+        $event->setWorkingDirectory($targetProjectDirectory);
+
         $config = [
             'ezsystems/ezplatform-ee' => 'studio-clean',
             'ezsystems/ezplatform-ee-demo' => 'demo',

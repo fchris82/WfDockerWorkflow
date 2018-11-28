@@ -8,6 +8,7 @@
 
 namespace Wizards\GitlabCIProject;
 
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use Wizards\BaseSkeletonWizard;
@@ -29,8 +30,9 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         return 'Composer';
     }
 
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function getSkeletonVars(BuildWizardEvent $event)
     {
+        $targetProjectDirectory = $event->getWorkingDirectory();
         $wfConfiguration = $this->getWorkflowConfiguration($targetProjectDirectory);
         $symfonyRecipeName = null;
         foreach ($wfConfiguration['recipes'] as $recipeName => $recipeConfig) {
@@ -89,17 +91,18 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @return string
      */
-    public function build($targetProjectDirectory)
+    public function build(BuildWizardEvent $event)
     {
+        $workingDirectory = $event->getWorkingDirectory();
         // Ha létezik parameters.yml, akkor annak is létrehozunk egy gitlab verziót
-        if ($this->filesystem->exists($targetProjectDirectory . '/app/config/parameters.yml.dist')) {
-            $this->filesystem->copy(
-                $targetProjectDirectory . '/app/config/parameters.yml.dist',
-                $targetProjectDirectory . '/app/config/parameters.gitlab-ci.yml'
+        if ($this->fileSystem->exists($workingDirectory . '/app/config/parameters.yml.dist')) {
+            $this->fileSystem->copy(
+                $workingDirectory . '/app/config/parameters.yml.dist',
+                $workingDirectory . '/app/config/parameters.gitlab-ci.yml'
             );
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
@@ -107,7 +110,5 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
                 'parameters.gitlab-ci.yml'
             ));
         }
-
-        return $targetProjectDirectory;
     }
 }

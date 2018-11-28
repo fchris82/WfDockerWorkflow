@@ -8,6 +8,7 @@
 
 namespace Wizards;
 
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Wizard\WizardInterface;
 use App\Exception\WizardHasAlreadyBuiltException;
@@ -148,50 +149,50 @@ abstract class BaseWizard implements WizardInterface
      */
     public function runBuild($targetProjectDirectory)
     {
-        $this->initBuild($targetProjectDirectory);
-        $targetProjectDirectory = $this->build($targetProjectDirectory);
-        // @todo (Chris) Megoldani, hogy lehessen target directory-t váltani. Pl ha git clone-ozunk egy alkönyvtárba, akkor a továbbiakban ott fussanak le a dolgok!
-        $this->cleanUp($targetProjectDirectory);
+        $event = new BuildWizardEvent($targetProjectDirectory);
+        $this->initBuild($event);
+        $this->build($event);
+        $this->cleanUp($event);
 
         return $targetProjectDirectory;
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @throws WizardHasAlreadyBuiltException
      */
-    protected function initBuild($targetProjectDirectory)
+    protected function initBuild(BuildWizardEvent $event)
     {
-        $this->checkRequires($targetProjectDirectory);
-        if ($this->isBuilt($targetProjectDirectory)) {
-            throw new WizardHasAlreadyBuiltException($this, $targetProjectDirectory);
+        $this->checkRequires($event->getWorkingDirectory());
+        if ($this->isBuilt($event->getWorkingDirectory())) {
+            throw new WizardHasAlreadyBuiltException($this, $event->getWorkingDirectory());
         }
-        $this->init($targetProjectDirectory);
+        $this->init($event);
     }
 
-    protected function init($targetProjectDirectory)
+    protected function init(BuildWizardEvent $event)
     {
         // User function
     }
 
-    abstract protected function build($targetProjectDirectory);
+    abstract protected function build(BuildWizardEvent $event);
 
-    protected function cleanUp($targetProjectDirectory)
+    protected function cleanUp(BuildWizardEvent $event)
     {
         // User function
     }
 
-    protected function call($targetProjectDirectory, BaseWizard $wizard)
+    protected function call($workingDirectory, BaseWizard $wizard)
     {
         $wizard
             ->setInput($this->input)
             ->setOutput($this->output)
             ->setCommand($this->command);
         try {
-            $wizard->checkRequires($targetProjectDirectory);
-            if (!$wizard->isBuilt($targetProjectDirectory)) {
-                $stepTargetProjectDirectory = $wizard->runBuild($targetProjectDirectory);
+            $wizard->checkRequires($workingDirectory);
+            if (!$wizard->isBuilt($workingDirectory)) {
+                $stepTargetProjectDirectory = $wizard->runBuild($workingDirectory);
             }
         } catch (WizardSomethingIsRequiredException $e) {
             $this->output->writeln($e->getMessage());

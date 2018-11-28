@@ -10,6 +10,7 @@ namespace Wizards\Deployer;
 
 
 use App\Event\SkeletonBuild\DumpFileEvent;
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use App\Skeleton\FileType\SkeletonFile;
@@ -60,20 +61,19 @@ class DeployerWizard extends BaseSkeletonWizard
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @return string
      */
-    public function build($targetProjectDirectory)
+    public function build(BuildWizardEvent $event)
     {
-        $this->runCmdInContainer('composer require --dev deployer/deployer', $targetProjectDirectory);
-
-        return $targetProjectDirectory;
+        $this->runCmdInContainer('composer require --dev deployer/deployer', $event->getWorkingDirectory());
     }
 
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function getSkeletonVars(BuildWizardEvent $event)
     {
         try {
+            $targetProjectDirectory = $event->getWorkingDirectory();
             $ezVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'ezsystems/ezpublish-kernel');
             $kaliopVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'kaliop/ezmigrationbundle');
             $ezYmlExists = file_exists($targetProjectDirectory . '/.ez.yml');

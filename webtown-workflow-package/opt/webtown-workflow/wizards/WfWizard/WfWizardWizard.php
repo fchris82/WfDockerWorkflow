@@ -9,6 +9,7 @@
 namespace Wizards\WfWizard;
 
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
@@ -55,7 +56,7 @@ class WfWizardWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function getSkeletonVars(BuildWizardEvent $event)
     {
         $wizardQuestion = new Question('Please give a class name. You have to finish with "Wizard", eg: <comment>MyCustomWizard</comment>');
         $wizardQuestion->setValidator(function ($answer) {
@@ -108,15 +109,17 @@ class WfWizardWizard extends BaseSkeletonWizard
     }
 
     /**
-     * @param $targetProjectDirectory
+     * @param BuildWizardEvent $event
      *
      * @todo (Chris) refactorálni
      */
-    protected function build($targetProjectDirectory)
+    protected function build(BuildWizardEvent $event)
     {
         // Create skeletons directory
         if ($this->variables['parent_wizard'] == 'BaseSkeletonWizard') {
-            $target = $targetProjectDirectory . '/' . $this->getRelativeTargetDirectory() . '/skeletons';
+            $target = $event->getWorkingDirectory() . DIRECTORY_SEPARATOR
+                . $this->getRelativeTargetDirectory() . DIRECTORY_SEPARATOR
+                . 'skeletons';
             $this->fileSystem->mkdir($target);
             $this->output->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> directory has been created.</info>',
@@ -129,7 +132,7 @@ class WfWizardWizard extends BaseSkeletonWizard
     protected function getRelativeTargetDirectory()
     {
         return static::RELATIVE_TARGET_DIRECTORY
-            . '/'
+            . DIRECTORY_SEPARATOR
             . $this->variables['namespace'];
     }
 }

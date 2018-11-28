@@ -14,6 +14,7 @@ use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\InvalidComposerVersionNumber;
 use App\Skeleton\BuilderTrait;
 use App\Skeleton\FileType\SkeletonFile;
@@ -58,50 +59,49 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function getSkeletonVars(BuildWizardEvent $event)
     {
         return [];
     }
 
     /**
-     * @param string $targetProjectDirectory
-     *
-     * @return string
+     * @param BuildWizardEvent $event
      *
      * @throws \App\Exception\WizardHasAlreadyBuiltException
      * @throws \Exception
      */
-    public function initBuild($targetProjectDirectory)
+    public function initBuild(BuildWizardEvent $event)
     {
-        parent::initBuild($targetProjectDirectory);
+        parent::initBuild($event);
 
-        $templateVariables = $this->getSkeletonVars($targetProjectDirectory);
-        $this->printHeader($templateVariables);
-        $this->doBuildFiles($targetProjectDirectory, $templateVariables);
+        $event->setSkeletonVars($this->getSkeletonVars($event));
 
-        return $targetProjectDirectory;
+        $this->printHeader($event);
+        $this->doBuildFiles($event);
     }
 
     /**
-     * @param $targetProjectDirectory
-     * @param $templateVariables
+     * @param BuildWizardEvent $event
      *
      * @throws \Exception
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
-    protected function doBuildFiles($targetProjectDirectory, $templateVariables)
+    protected function doBuildFiles(BuildWizardEvent $event)
     {
-        $skeletonFiles = $this->buildSkeletonFiles($templateVariables);
+        $skeletonFiles = $this->buildSkeletonFiles($event->getSkeletonVars());
         $this->dumpSkeletonFiles($skeletonFiles);
     }
 
-    protected function printHeader($templateVariables)
+    protected function printHeader(BuildWizardEvent $event)
     {
         $this->output->writeln("\n <comment>⏲</comment> <info>Start build...</info>\n");
 
         $table = new Table($this->output);
         $table
             ->setHeaders(['Placeholder', 'Value']);
-        foreach ($templateVariables as $key => $value) {
+        foreach ($event->getSkeletonVars() as $key => $value) {
             $table->addRow([
                 $key,
                 is_array($value) || is_object($value)
@@ -112,7 +112,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
         $table->render();
     }
 
-    protected function getWorkflowConfiguration($targetDirectory)
+    protected function getWorkflowConfiguration($workingDirectory)
     {
         if (is_null($this->workflowConfigurationCache)) {
             $wfFiles = [
@@ -121,7 +121,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
                 '.wf.yml',
             ];
             foreach ($wfFiles as $wfFile) {
-                $configFilePath = $targetDirectory . '/' . $wfFile;
+                $configFilePath = $workingDirectory . '/' . $wfFile;
                 if ($this->fileSystem->exists($configFilePath)) {
                     $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
                     break;
@@ -131,7 +131,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
                 throw new FileNotFoundException(sprintf(
                     'We couldn\'t find any WF configuration yaml file (or they are empty): `%s`! (Directory: %s)',
                     implode('`, `', $wfFiles),
-                    $targetDirectory
+                    $workingDirectory
                 ));
             }
         }
@@ -147,26 +147,26 @@ abstract class BaseSkeletonWizard extends BaseWizard
      *  3. Try to find in `composer.json` (require-dev)
      *  4. [$allowNoExists == true]: Ask the user
      *
-     * @param string $targetDirectory
+     * @param string $workingDirectory
      * @param string $packageName
      * @param bool $allowAsk
      *
      * @return string
      */
-    protected function getComposerPackageVersion($targetDirectory, $packageName, $allowAsk = true)
+    protected function getComposerPackageVersion($workingDirectory, $packageName, $allowAsk = true)
     {
         try {
-            $composerLockPath = $targetDirectory . '/composer.lock';
+            $composerLockPath = $workingDirectory . '/composer.lock';
             if (!$this->fileSystem->exists($composerLockPath)) {
-                $composerJsonPath = $targetDirectory . '/composer.json';
+                $composerJsonPath = $workingDirectory . '/composer.json';
                 if ($this->fileSystem->exists($composerJsonPath)) {
-                    $requires = $this->getComposerJsonInformation($targetDirectory, 'require', []);
+                    $requires = $this->getComposerJsonInformation($workingDirectory, 'require', []);
                     if (array_key_exists($packageName, $requires)) {
                         $version = $requires[$packageName];
 
                         return $this->readComposerVersion($version);
                     }
-                    $devRequires = $this->getComposerJsonInformation($targetDirectory, 'require-dev', []);
+                    $devRequires = $this->getComposerJsonInformation($workingDirectory, 'require-dev', []);
                     if (array_key_exists($packageName, $devRequires)) {
                         $version = $devRequires[$packageName];
 
@@ -183,7 +183,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
                         return $this->readComposerVersion($version);
                     }
                 } else {
-                    throw new FileNotFoundException(sprintf('The composer.lock and composer.json don\'t exist in the %s directory!', $targetDirectory));
+                    throw new FileNotFoundException(sprintf('The composer.lock and composer.json don\'t exist in the %s directory!', $workingDirectory));
                 }
             } else {
                 $composer = json_decode(file_get_contents($composerLockPath), true);
@@ -294,7 +294,36 @@ abstract class BaseSkeletonWizard extends BaseWizard
     protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent) {}
     protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event) {}
 
-    protected function eventBeforeDumpFile(DumpFileEvent $event) {}
+    protected function eventBeforeDumpFile(DumpFileEvent $event)
+    {
+        if ($this->isWfConfigYamlFile($event->getSkeletonFile())) {
+            $content = $event->getSkeletonFile()->getContents();
+            $helpComment = <<<EOS
+# Available configuration parameters
+# ==================================
+#
+# List all:
+#   wf --config-dump
+#
+# List only names:
+#   wf --config-dump --only-recipes
+#
+# List only a recipe:
+#   wf --config-dump --recipe=symfony3
+#
+# Save to a file to edit:
+#    wf --config-dump --no-ansi > .wf.yml
+#
+# Add new recipe:
+#    wf --config-dump --recipe=php --no-ansi >> .wf.yml
+#
+# ----------------------------------------------------------------------------------------------------------------------
+
+EOS;
+            $event->getSkeletonFile()->setContents($helpComment . $content);
+        }
+    }
+
     protected function eventBeforeDumpTargetExists(DumpFileEvent $event) {}
     protected function eventAfterDumpFile(DumpFileEvent $event)
     {
@@ -316,5 +345,24 @@ abstract class BaseSkeletonWizard extends BaseWizard
             $skeletonFile->getFileName(),
             $status
         ));
+    }
+
+    protected function isWfConfigYamlFile(SkeletonFile $skeletonFile)
+    {
+        $filename = $skeletonFile->getFileName();
+        $extension = $skeletonFile->getBaseFileInfo()->getExtension();
+
+        if (strpos($filename, '.wf') !== 0) {
+            return false;
+        }
+
+        if (in_array($extension, ['yml', 'yaml'])
+            || substr($filename, -9) == '.yml.dist'
+            || substr($filename, -10) == '.yaml.dist'
+        ) {
+            return true;
+        }
+
+        return false;
     }
 }
