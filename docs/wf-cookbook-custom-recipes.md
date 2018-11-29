@@ -23,7 +23,7 @@ $ wf --reload
 
 ## How to write custom recipe
 
-> You can find the included recipes in the `webtown-workflow-package/opt/webtown-workflow/recipes` directory.
+> You can find the included recipes in the `webtown-workflow-package/opt/webtown-workflow/symfony4/src/Recipes` directory.
 
 **Important**
 

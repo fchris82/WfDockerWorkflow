@@ -11,7 +11,7 @@ namespace App\Tests;
 use App\Configuration\Environment;
 use App\Tests\TestCase;
 use Mockery as m;
-use Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
+use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
 
 class NginxReverseProxyTest extends TestCase
 {

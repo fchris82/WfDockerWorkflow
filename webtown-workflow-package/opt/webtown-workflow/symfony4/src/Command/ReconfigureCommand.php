@@ -11,6 +11,7 @@ use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
 use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
+use App\Recipes\BaseRecipe;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -83,6 +84,7 @@ class ReconfigureCommand extends ContainerAwareCommand
                 // It is maybe an impossible exception, but it will throw we catch it.
                 $output->writeln('<comment>' . $e->getMessage() . '</comment>');
                 $output->writeln('The available recipes:');
+                /** @var BaseRecipe $recipe */
                 foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
                     $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), \get_class($recipe)));
                 }

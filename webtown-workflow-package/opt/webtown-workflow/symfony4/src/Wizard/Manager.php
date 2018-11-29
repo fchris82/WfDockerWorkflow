@@ -76,7 +76,7 @@ class Manager implements ContainerAwareInterface
                     continue;
                 }
                 $fullClass = sprintf(
-                    'Wizards\\%s\\%s',
+                    'App\\Wizards\\%s\\%s',
                     str_replace('/', '\\', $wizardFile->getRelativePath()),
                     $wizardFile->getBasename('.php')
                 );
@@ -84,7 +84,7 @@ class Manager implements ContainerAwareInterface
                 $wizard = $this->container->get($fullClass);
                 if (array_key_exists($wizard->getDefaultName(), $this->wizards)) {
                     throw new InvalidConfigurationException(sprintf(
-                        'The `%s` recipe has been already existed! [`%s` vs `%s`]',
+                        'The `%s` wizard has been already existed! [`%s` vs `%s`]',
                         $wizard->getDefaultName(),
                         \get_class($this->wizards[$wizard->getDefaultName()]),
                         \get_class($wizard)

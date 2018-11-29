@@ -9,8 +9,8 @@
 namespace App\Configuration;
 
 use App\Exception\InvalidWfVersionException;
-use Recipes\BaseRecipe;
-use Recipes\HiddenRecipe;
+use App\Recipes\BaseRecipe;
+use App\Recipes\HiddenRecipe;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;

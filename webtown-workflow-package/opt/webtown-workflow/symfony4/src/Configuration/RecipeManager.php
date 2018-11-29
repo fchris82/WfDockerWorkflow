@@ -9,7 +9,7 @@
 namespace App\Configuration;
 
 use App\Exception\MissingRecipeException;
-use Recipes\BaseRecipe;
+use App\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -61,7 +61,7 @@ class RecipeManager implements ContainerAwareInterface
                     continue;
                 }
                 $fullClass = sprintf(
-                    'Recipes\\%s\\%s',
+                    'App\\Recipes\\%s\\%s',
                     str_replace('/', '\\', $recipeFile->getRelativePath()),
                     $recipeFile->getBasename('.php')
                 );

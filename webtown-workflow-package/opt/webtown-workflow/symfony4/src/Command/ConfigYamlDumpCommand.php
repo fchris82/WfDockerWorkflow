@@ -4,6 +4,7 @@ namespace App\Command;
 
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
+use App\Recipes\BaseRecipe;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
@@ -98,15 +99,13 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
     /**
      * @param string $nameOrClass
      *
-     * @return \Recipes\BaseRecipe
+     * @return BaseRecipe
      */
     protected function getRecipeByNameOrClass($nameOrClass)
     {
         $recipeManager = $this->getContainer()->get(RecipeManager::class);
-        $altFqn = sprintf('Recipes\%s\Recipe', $nameOrClass);
-        foreach ($recipeManager->getRecipes() as $recipe) {
+        foreach ($recipeManager->getRecipes() as $name => $recipe) {
             if (\get_class($recipe) == $nameOrClass
-                || \get_class($recipe) == $altFqn
                 || $recipe->getName() == $nameOrClass
             ) {
                 return $recipe;

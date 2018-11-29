@@ -33,10 +33,6 @@ define DOCKER_EXEC
 docker exec -i $$($(CMD_DOCKER_BASE) ps -q $(1)) $(2)
 endef
 
-# Ezt használjuk az INVERZ grep-ben: egrep -v "\-\-($(ENABLED_GITFLOW_PARAMETERS))"
-#                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-ENABLED_GITFLOW_PARAMETERS := from-this|disable-db|reload-db
-
 .PHONY: info
 info::
 	@echo -e "$$PROJECT_INFO"

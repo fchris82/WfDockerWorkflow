@@ -8,7 +8,7 @@
 
 namespace App\Exception;
 
-use Wizards\BaseWizard;
+use App\Wizards\BaseWizard;
 
 class WizardWfIsRequiredException extends WizardSomethingIsRequiredException
 {

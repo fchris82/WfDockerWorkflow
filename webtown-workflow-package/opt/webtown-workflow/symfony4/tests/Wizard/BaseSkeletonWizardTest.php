@@ -10,7 +10,7 @@ namespace App\Tests\Wizard;
 
 use App\Tests\Dummy\Filesystem;
 use App\Tests\Tool\BaseSkeletonTestCase;
-use Wizards\BaseSkeletonWizard;
+use App\Wizards\BaseSkeletonWizard;
 use PHPUnit\Framework\SkippedTestError;
 
 class BaseSkeletonWizardTest extends BaseSkeletonTestCase
@@ -19,7 +19,7 @@ class BaseSkeletonWizardTest extends BaseSkeletonTestCase
      * @param $initDir
      * @param $responseDir
      *
-     * @throws \App\Exception\ProjectHasDecoratedException
+     * @throws ProjectHasDecoratedException
      *
      * @dataProvider getDirs
      */

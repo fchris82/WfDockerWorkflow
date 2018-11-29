@@ -27,9 +27,7 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/",
-            "Recipes\\": "../recipes",
-            "Wizards\\": "../wizards"
+            "App\\": "src/"
         }
     },
     "autoload-dev": {

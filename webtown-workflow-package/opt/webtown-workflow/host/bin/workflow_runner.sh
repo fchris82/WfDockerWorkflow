@@ -142,9 +142,9 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
     ENV_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME}):${WORKDIR}/${WF_ENV_FILE_NAME}"
 fi
 
-# Insert custom recipes
+# Insert custom recipes from your home, default: ~/.webtown-workflow/recipes.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
-    RECIPES_PATH=/opt/webtown-workflow/recipes
+    RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
     RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             RECIPES_SOURCE=$line
@@ -155,9 +155,9 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
         done
     )
 fi
-# Insert custom wizards
+# Insert custom wizards from your home, default: ~/.webtown-workflow/wizards.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
-    WIZARDS_PATH=/opt/webtown-workflow/wizards
+    WIZARDS_PATH=/opt/webtown-workflow/symfony4/src/Wizards
     WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             WIZARDS_SOURCE=$line
