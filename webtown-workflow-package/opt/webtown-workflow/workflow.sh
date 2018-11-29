@@ -80,6 +80,10 @@ case $1 in
     --enter)
         /bin/bash
     ;;
+    --dev-run)
+        shift
+        cd /opt/webtown-workflow/symfony4 && ${@}
+    ;;
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"

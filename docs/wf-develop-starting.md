@@ -30,7 +30,7 @@ $ wfdev --no-dev wf --clean-cache
 
 ## Background
 
-The `wfdev` add 2 argument to your calling:
+The `wfdev` adds 2 argument to your calling:
 
 - `--develop`, to switch on wf developing mode
 - `--dev`, to set `dev` symfony environment and switch on **xdebug**
@@ -38,6 +38,19 @@ The `wfdev` add 2 argument to your calling:
 `wfdev wf --help` --> `workflow_runner.sh --develop wf --dev --help`
 
 If you use the `--develop` attribute, the program create a docker volume to override the "original" `opt/webtown-workflow` directory with the cloned and edited `[project dir]/webtown-workflow-package/opt/webtown-workflow` directory. Now you can test and check the working with the new code(s). **It is important**: the program will use your `~/.webtown-workflow/config/*` files! If you want to play with configs you have to test with your "host" file, and then you have to copy the changes to "here".
+
+> There are two useful arguments:
+>
+>  - `--enter` : you can "enter" the `wf` container
+>  - `--dev-run` : you can run a command directly in the `wf` container
+>
+> ```shell
+> # Composer update
+> $ wfdev wf --dev-run composer update
+>
+> # Run PHP CS fixer
+> $ wfdev wf --dev-run php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --dry-run --config=/opt/webtown-workflow/symfony4/.php_cs.dist
+> ```
 
 ## Cache !!!
 
