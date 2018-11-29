@@ -23,14 +23,11 @@ test:deb:
         - rm -rf /tmp/deb
         - rm -rf /tmp/original
         - dpkg-deb -R webtown-workflow.deb /tmp/deb
-        - rsync -r --delete --force --filter=":- webtown-workflow-package/opt/webtown-workflow/symfony/.gitignore" webtown-workflow-package/* /tmp/original
-        - ORIGINAL_MD5=$(find /tmp/original -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
-        - echo ${ORIGINAL_MD5}
-        - NEW_MD5=$(find /tmp/deb -type f -exec sh -c "md5sum '{}' | cut -d ' ' -f 1" \; | sort)
-        - echo ${NEW_MD5}
+        - rsync -r --delete --delete-excluded --delete-before --force --exclude=.git --exclude-from="$(git -C webtown-workflow-package ls-files --exclude-standard -oi --directory >.git/ignores.tmp && echo .git/ignores.tmp)" webtown-workflow-package/* /tmp/original
+        - DIFF=$(diff -qr /tmp/original /tmp/deb)
         - rm -rf /tmp/deb
         - rm -rf /tmp/original
-        - if [[ ${ORIGINAL_MD5} != ${NEW_MD5} ]]; then echo "You didn't refresh the deb package! Run the 'make build' command and commit the new deb package too!"; exit 1; fi
+        - if [[ ! -z ${DIFF} ]]; then echo $DIFF; echo "You didn't refresh the deb package! Run the 'make rebuild_wf' command and commit the new deb package too!"; exit 1; fi
 
 test:tests:
     stage: test
