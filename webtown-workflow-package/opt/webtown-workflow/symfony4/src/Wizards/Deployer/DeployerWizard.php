@@ -82,13 +82,16 @@ class DeployerWizard extends BaseSkeletonWizard
         $variables['is_ez'] = $ezVersion || $kaliopVersion || $ezYmlExists ? true : false;
         $variables['project_directory'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
 
-        $gitRemoteOrigin = $this->run('git config --get remote.origin.url', $targetProjectDirectory);
-        if (!$gitRemoteOrigin) {
+        $gitRemoteOrigin = $this->run('git config --get remote.origin.url', $targetProjectDirectory, function ($return, $output) {
+            if (0 === $return && trim($output)) {
+                return $output;
+            }
+
             $io = new SymfonyStyle($this->input, $this->output);
             $io->title('Missing <info>remote.origin.url</info>');
             $question = new Question('You have to set the git remote origin url: ', '--you-have-to-set-it--');
-            $gitRemoteOrigin = $this->ask($question);
-        }
+            return $this->ask($question);
+        });
         $variables['remote_url'] = trim($gitRemoteOrigin);
         $variables['project_name'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
 
