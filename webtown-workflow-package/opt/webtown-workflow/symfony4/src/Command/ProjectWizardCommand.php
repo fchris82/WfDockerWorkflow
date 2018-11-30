@@ -187,10 +187,6 @@ EOS
                 foreach ($selected as $key) {
                     /** @var BaseWizard $wizard */
                     $wizard = $wizardChoices[(int) $key];
-                    $wizard
-                        ->setCommand($this)
-                        ->setInput($input)
-                        ->setOutput($output);
 
                     $io->title($choices[(int) $key]);
                     $output->writeln($wizard->getInfo());

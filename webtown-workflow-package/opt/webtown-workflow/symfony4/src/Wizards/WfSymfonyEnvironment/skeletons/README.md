@@ -14,6 +14,12 @@ Probléma esetén használd:
 wf reinstall
 ```
 
+{% if sf_version >= 4 %}
+## Yarn
+
+Ha használni szeretnéd a Yarn-t, akkor a `.wf.yml` fájlodban importáld be a `.wf.dev.yml` fájlt is! A `wf up`-ra automatikusan elindul a `yarn run watch` parancs.
+
+{% endif %}
 ### XDebug használat
 
 Alapból települ az **XDebug**. A probléma, hogy az eZ admin felülettel nem túl hatékony a működése, ezért alapból ki van kapcsolva.

@@ -8,13 +8,58 @@
 
 namespace App\Wizards\GitlabCIProject;
 
+use App\Environment\Commander;
+use App\Environment\EzEnvironmentParser;
+use App\Environment\IoManager;
+use App\Environment\EnvParser;
+use App\Environment\WfEnvironmentParser;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class GitlabCIProjectWizard extends BaseSkeletonWizard
 {
+    /**
+     * @var EzEnvironmentParser
+     */
+    protected $ezEnvironmentParser;
+
+    /**
+     * @var WfEnvironmentParser
+     */
+    protected $wfEnvironmentParser;
+
+    /**
+     * @var EnvParser
+     */
+    protected $envParser;
+
+    /**
+     * GitlabCIProjectWizard constructor.
+     * @param EnvParser $envParser
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param \Twig_Environment $twig
+     * @param Filesystem $filesystem
+     */
+    public function __construct(
+        EzEnvironmentParser $ezEnvironmentParser,
+        WfEnvironmentParser $wfEnvironmentParser,
+        EnvParser $envParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
+        parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
+        $this->ezEnvironmentParser = $ezEnvironmentParser;
+        $this->wfEnvironmentParser = $wfEnvironmentParser;
+        $this->envParser = $envParser;
+    }
+
     public function getDefaultName()
     {
         return 'GitlabCI';
@@ -33,7 +78,8 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
     protected function getSkeletonVars(BuildWizardEvent $event)
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
-        $wfConfiguration = $this->getWorkflowConfiguration($targetProjectDirectory);
+        $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
+        $wfConfiguration = $this->wfEnvironmentParser->getWorkflowConfiguration($targetProjectDirectory);
         $symfonyRecipeName = null;
         foreach ($wfConfiguration['recipes'] as $recipeName => $recipeConfig) {
             if (0 === strpos($recipeName, 'symfony')) {
@@ -41,28 +87,11 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
                 break;
             }
         }
-        $installedSfVersion = $this->getSymfonyVersion($targetProjectDirectory);
-        if (!$installedSfVersion) {
-            throw new \Exception('We don\'t find any symfony package!');
-        }
-        $sfConsoleCmd = version_compare($installedSfVersion, '3.0', '>=')
-            ? 'bin/console'
-            : 'app/console';
-        // If the bin path is overridden in composer.json file, we use it.
-        $sfBinDir = $this->readSymfonyBinDir($targetProjectDirectory);
-        // If it doesn't exist in composer.json, we set it from SF version.
-        if (!$sfBinDir) {
-            $sfBinDir = version_compare($installedSfVersion, '3.0', '>=')
-                ? 'vendor/bin'
-                : 'bin';
-        }
 
-        return [
-            'project_name' => basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory)),
+        return array_merge($variables, [
+            'project_name' => basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory)),
             'sf_recipe_name' => $symfonyRecipeName,
-            'sf_console_cmd' => $sfConsoleCmd,
-            'sf_bin_dir' => $sfBinDir,
-        ];
+        ]);
     }
 
     protected function getBuiltCheckFile()
@@ -83,7 +112,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
         }
-        if (!$this->wfIsInitialized($targetProjectDirectory)) {
+        if (!$this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)) {
             throw new WizardWfIsRequiredException($this, $targetProjectDirectory);
         }
 
@@ -104,7 +133,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
                 $workingDirectory . '/app/config/parameters.yml.dist',
                 $workingDirectory . '/app/config/parameters.gitlab-ci.yml'
             );
-            $this->output->writeln(sprintf(
+            $this->ioManager->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been created or modified.</info>',
                 'app/config',
                 'parameters.gitlab-ci.yml'

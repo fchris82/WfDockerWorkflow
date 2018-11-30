@@ -39,17 +39,19 @@ commands:
     install:
         - wf composer install
         - wf dbreload ${1}
+{% if sf_version < 4 %}
 #        - wf exec engine npm install
 #        - wf exec engine gulp build
 #        - wf sf assets:install --symlink
 #        - wf sf assetic:dump
+{% endif %}
         - echo "<info>✔ Now you can use the project!</info>"
 
     dbreload:
         - wf up
         - if [ "${1}" == "--full" ]; then wf sf doctrine:database:drop --if-exists --force; fi
         - wf sf doctrine:database:create --if-not-exists
-        {# @todo (Chris) Beszúrni (if is_ez)-ket #}
+{% if is_ez %}
         # 'ezsystems/ezplatform-ee' => 'studio-clean',
         # 'ezsystems/ezplatform-ee-demo' => 'demo',
         # 'ezsystems/ezplatform' => 'clean',
@@ -57,11 +59,14 @@ commands:
 #        - wf sf ezplatform:install [studio-clean|demo|clean|platform-demo]
         # Ha van telepítve doctrine:schema:validate és van is mit validálni (vannak ez táblán kívüli táblák)
 #        - wf sf doctrine:schema:validate --skip-mapping || wf sf ezplatform:install [studio-clean|demo|clean|platform-demo]
+{% endif %}
         - wf sf doctrine:migrations:migrate -n --allow-no-migration
         # Did you install the doctrine fixture bundle?
 #        - if [ "${1}" == "--full" ]; then wf sf doctrine:fixtures:load -n; fi
+{% if is_ez %}
         # A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
 #        - wf sf kaliop:migration:migrate -n -u --default-language=hun-HU
+{% endif %}
 
     reinstall:
         - wf sf doctrine:database:drop --if-exists --force
@@ -80,9 +85,11 @@ commands:
     dep:
         - wf php-exec {{ sf_bin_dir }}/dep ${@}
 
+{% if is_ez %}
     # Csak EZ!
 #    kaliop_type_gen:
 #        - if [ "${1}" == "" ]; then echo "Meg kell adnod az identifier-t!"; else wf sf kaliop:migration:generate --type=content_type --match-type=identifier --match-value=${1} --mode=create -n AppBundle content_type_${1}; fi
+{% endif %}
 
 # The configs of recipes
 # List all available recipes: `wf --config-dump --only-recipes`

@@ -44,7 +44,7 @@ class WfPhpDevEnvironmentWizard extends WfDevEnvironmentWizard
 
     public function isBuilt($targetProjectDirectory)
     {
-        return $this->wfIsInitialized($targetProjectDirectory);
+        return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
     protected function getSkeletonVars(BuildWizardEvent $event)

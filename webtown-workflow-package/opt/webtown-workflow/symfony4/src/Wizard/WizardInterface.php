@@ -28,25 +28,4 @@ interface WizardInterface
      * @return string
      */
     public function runBuild($targetProjectDirectory);
-
-    /**
-     * @param InputInterface $input
-     *
-     * @return WizardInterface
-     */
-    public function setInput(InputInterface $input);
-
-    /**
-     * @param OutputInterface $output
-     *
-     * @return WizardInterface
-     */
-    public function setOutput(OutputInterface $output);
-
-    /**
-     * @param Command $command
-     *
-     * @return WizardInterface
-     */
-    public function setCommand(Command $command);
 }

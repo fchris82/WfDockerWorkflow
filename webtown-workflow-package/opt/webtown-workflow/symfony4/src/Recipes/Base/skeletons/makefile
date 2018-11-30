@@ -104,6 +104,7 @@ help:
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)
 
+# @todo (Chris) Itt a git-et máshogy kellene keresni és fel kellene ksézülni a .hg keresésre is!
 BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo $$(pwd))
 THIS_FILE       := $(firstword $(MAKEFILE_LIST))
 CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)

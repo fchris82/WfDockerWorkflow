@@ -8,8 +8,13 @@
 
 namespace App\Wizards\WfDevEnvironment;
 
+use App\Environment\Commander;
+use App\Environment\IoManager;
+use App\Environment\WfEnvironmentParser;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class DevEnvironment.
@@ -25,6 +30,23 @@ use App\Wizards\BaseSkeletonWizard;
  */
 class WfDevEnvironmentWizard extends BaseSkeletonWizard
 {
+    /**
+     * @var WfEnvironmentParser
+     */
+    protected $wfEnvironmentParser;
+
+    public function __construct(
+        WfEnvironmentParser $wfEnvironmentParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
+        parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
+        $this->wfEnvironmentParser = $wfEnvironmentParser;
+    }
+
     public function getDefaultName()
     {
         return 'WF Environment - Git ignored/outside';
@@ -43,7 +65,7 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
 
     public function isBuilt($targetProjectDirectory)
     {
-        return $this->wfIsInitialized($targetProjectDirectory);
+        return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
     protected function getSkeletonVars(BuildWizardEvent $event)
@@ -55,13 +77,13 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
 
     protected function build(BuildWizardEvent $event)
     {
-        $this->output->writeln('<comment>We created a simple and "empty" <info>.wf.yml</info> file, you have to edit it!</comment>');
-        $this->output->writeln('');
-        $this->output->writeln(file_get_contents($event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . '.wf.yml'));
-        $this->output->writeln('');
-        $this->output->writeln('<question>List available recipes:</question>');
-        $this->output->writeln('<info>wf --config-dump --only-recipes</info>');
-        $this->output->writeln('<question>Add full recipe config with defaults:</question>');
-        $this->output->writeln('<info>wf --config-dump --recipe=<comment>[recipe_name]</comment> --no-ansi >> .wf.yml</info>');
+        $this->ioManager->writeln('<comment>We created a simple and "empty" <info>.wf.yml</info> file, you have to edit it!</comment>');
+        $this->ioManager->writeln('');
+        $this->ioManager->writeln(file_get_contents($event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . '.wf.yml'));
+        $this->ioManager->writeln('');
+        $this->ioManager->writeln('<question>List available recipes:</question>');
+        $this->ioManager->writeln('<info>wf --config-dump --only-recipes</info>');
+        $this->ioManager->writeln('<question>Add full recipe config with defaults:</question>');
+        $this->ioManager->writeln('<info>wf --config-dump --recipe=<comment>[recipe_name]</comment> --no-ansi >> .wf.yml</info>');
     }
 }

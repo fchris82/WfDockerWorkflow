@@ -8,17 +8,63 @@
 
 namespace App\Wizards\Deployer;
 
+use App\Environment\Commander;
+use App\Environment\EzEnvironmentParser;
+use App\Environment\IoManager;
+use App\Environment\EnvParser;
+use App\Environment\MicroParser\ComposerInstalledVersionParser;
+use App\Environment\WfEnvironmentParser;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
+use App\Exception\CommanderRunException;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Exception\WizardWfIsRequiredException;
 use App\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class DeployerWizard extends BaseSkeletonWizard
 {
+    /**
+     * @var ComposerInstalledVersionParser
+     */
+    protected $composerInstalledVersionParser;
+
+    /**
+     * @var WfEnvironmentParser
+     */
+    protected $wfEnvironmentParser;
+
+    /**
+     * @var EzEnvironmentParser
+     */
+    protected $ezEnvironmentParser;
+
+    /**
+     * @var EnvParser
+     */
+    protected $envParser;
+
+    public function __construct(
+        ComposerInstalledVersionParser $composerInstalledVersionParser,
+        WfEnvironmentParser $wfEnvironmentParser,
+        EzEnvironmentParser $ezEnvironmentParser,
+        EnvParser $envParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
+        parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
+        $this->composerInstalledVersionParser = $composerInstalledVersionParser;
+        $this->wfEnvironmentParser = $wfEnvironmentParser;
+        $this->ezEnvironmentParser = $ezEnvironmentParser;
+        $this->envParser = $envParser;
+    }
+
     public function getDefaultName()
     {
         return 'Deployer';
@@ -47,11 +93,17 @@ class DeployerWizard extends BaseSkeletonWizard
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
         }
-        if (!$this->wfIsInitialized($targetProjectDirectory)) {
+        if (!$this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)) {
             throw new WizardWfIsRequiredException($this, $targetProjectDirectory);
         }
 
         return parent::checkRequires($targetProjectDirectory);
+    }
+
+    public function isBuilt($targetProjectDirectory)
+    {
+        return parent::isBuilt($targetProjectDirectory)
+            && $this->composerInstalledVersionParser->get($targetProjectDirectory, 'deployer/deployer');
     }
 
     protected function getBuiltCheckFile()
@@ -61,8 +113,6 @@ class DeployerWizard extends BaseSkeletonWizard
 
     /**
      * @param BuildWizardEvent $event
-     *
-     * @return string
      */
     public function build(BuildWizardEvent $event)
     {
@@ -71,29 +121,25 @@ class DeployerWizard extends BaseSkeletonWizard
 
     protected function getSkeletonVars(BuildWizardEvent $event)
     {
+        $targetProjectDirectory = $event->getWorkingDirectory();
+
+        $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
+        $variables['is_ez'] = $this->ezEnvironmentParser->isEzProject($targetProjectDirectory);
+        $variables['project_directory'] = basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory));
+
         try {
-            $targetProjectDirectory = $event->getWorkingDirectory();
-            $ezVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'ezsystems/ezpublish-kernel');
-            $kaliopVersion = $this->getComposerPackageVersion($targetProjectDirectory, 'kaliop/ezmigrationbundle');
-            $ezYmlExists = file_exists($targetProjectDirectory . '/.ez.yml');
-        } catch (\InvalidArgumentException $e) {
-            $kaliopVersion = false;
+            $gitRemoteOrigin = trim($this->commander->run('git config --get remote.origin.url', $targetProjectDirectory));
+        } catch (CommanderRunException $e) {
+            $gitRemoteOrigin = false;
         }
-        $variables['is_ez'] = $ezVersion || $kaliopVersion || $ezYmlExists ? true : false;
-        $variables['project_directory'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
-
-        $gitRemoteOrigin = $this->run('git config --get remote.origin.url', $targetProjectDirectory, function ($return, $output) {
-            if (0 === $return && trim($output)) {
-                return $output;
-            }
-
-            $io = new SymfonyStyle($this->input, $this->output);
-            $io->title('Missing <info>remote.origin.url</info>');
+        if (!$gitRemoteOrigin) {
+            $this->ioManager->getIo()->title('Missing <info>remote.origin.url</info>');
             $question = new Question('You have to set the git remote origin url: ', '--you-have-to-set-it--');
-            return $this->ask($question);
-        });
+            $gitRemoteOrigin = $this->ask($question);
+        }
+
         $variables['remote_url'] = trim($gitRemoteOrigin);
-        $variables['project_name'] = basename($this->getEnv('ORIGINAL_PWD', $targetProjectDirectory));
+        $variables['project_name'] = basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory));
 
         return $variables;
     }

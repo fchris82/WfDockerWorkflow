@@ -8,21 +8,66 @@
 
 namespace App\Wizards\Ez;
 
+use App\Environment\Commander;
+use App\Environment\EzEnvironmentParser;
+use App\Environment\IoManager;
+use App\Environment\WfEnvironmentParser;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use App\Wizards\BaseWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EzBuildWizard extends BaseWizard implements WizardInterface
 {
     protected $askDirectory = true;
 
+    /**
+     * @var WfEnvironmentParser
+     */
+    protected $wfEnvironmentParser;
+
+    /**
+     * @var EzEnvironmentParser
+     */
+    protected $ezEnvironmentParser;
+
+    public function __construct(
+        WfEnvironmentParser $wfEnvironmentParser,
+        EzEnvironmentParser $ezEnvironmentParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher
+    ) {
+        $this->wfEnvironmentParser = $wfEnvironmentParser;
+        $this->ezEnvironmentParser = $ezEnvironmentParser;
+        parent::__construct($ioManager, $commander, $eventDispatcher);
+    }
+
+    public function getDefaultName()
+    {
+        return 'eZ Project Builder';
+    }
+
+    public function getInfo()
+    {
+        return 'Create an eZ project';
+    }
+
+    public function getDefaultGroup()
+    {
+        return 'Builder';
+    }
+
+    /**
+     * @param BuildWizardEvent $event
+     * @throws \App\Exception\CommanderRunException
+     */
     public function build(BuildWizardEvent $event)
     {
         $directoryQuestion = new Question('Installation directory: ', '.');
-
         $directory = $this->askDirectory
             ? $this->ask($directoryQuestion)
             : '.';
@@ -56,11 +101,10 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
             $composerRequired[] = 'doctrine/doctrine-migrations-bundle';
         }
 
-        $this->run(sprintf('mkdir -p %s', $targetProjectDirectory));
-        $this->cd($targetProjectDirectory);
+        $this->commander->run(sprintf('mkdir -p %s', $targetProjectDirectory));
+        $this->commander->cd($targetProjectDirectory);
         $this->runCmdInContainer(sprintf('composer create-project %s .', $package));
-
-        $this->run('git init && git add . && git commit -m "Init"');
+        $this->commander->run('git init && git add . && git commit -m "Init"');
 
         if ('ezsystems/ezplatform' != $package) {
             $this->createAuthJson($targetProjectDirectory);
@@ -68,22 +112,20 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 
         if (\count($composerRequired) > 0) {
             $this->runCmdInContainer(sprintf('composer require %s', implode(' ', $composerRequired)));
-            $this->run('git init && git add . && git commit -m "Add some composer package"');
+            $this->commander->run('git init && git add . && git commit -m "Add some composer package"');
         }
 
         if ($requireKaliopMigration) {
-            $this->output->writeln('<info>Please register the <comment>kaliop migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
+            $this->ioManager->writeln('<info>Please register the <comment>kaliop migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
         }
         if ($requireDoctrineMigrations) {
-            $this->output->writeln('<info>Please register the <comment>doctrine migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
+            $this->ioManager->writeln('<info>Please register the <comment>doctrine migration bundle</comment> in the <comment>AppKernel.php</comment> file</info>');
         }
-
-        return $targetProjectDirectory;
     }
 
     protected function createAuthJson($targetProjectDirectory)
     {
-        $this->output->writeln('');
+        $this->ioManager->writeln('');
         $usernameQuestion = new Question('<comment>Username</comment> for <info>updates.ez.no</info> repository: ');
         $auth_username = $this->ask($usernameQuestion);
         $passwordQuestion = new Question('<comment>Password</comment>: ');
@@ -101,29 +143,19 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 EOL;
 
         file_put_contents($targetProjectDirectory . '/auth.json', $tpl);
-        $this->output->writeln('The <info>auth.json</info> is created');
-    }
-
-    public function getDefaultName()
-    {
-        return 'eZ Project Builder';
-    }
-
-    public function getInfo()
-    {
-        return 'Create an eZ project';
-    }
-
-    public function getDefaultGroup()
-    {
-        return 'Builder';
+        $this->ioManager->writeln('The <info>auth.json</info> is created');
     }
 
     public function isBuilt($targetProjectDirectory)
     {
-        return $this->wfIsInitialized($targetProjectDirectory) || file_exists($targetProjectDirectory . '/.git');
+        return $this->ezEnvironmentParser->isEzProject($targetProjectDirectory)
+            || $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)
+            || file_exists($targetProjectDirectory . '/.git');
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function getDockerImage()
     {
         return 'fchris82/symfony:ez2';

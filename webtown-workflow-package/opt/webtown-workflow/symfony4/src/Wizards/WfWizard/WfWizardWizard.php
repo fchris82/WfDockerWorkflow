@@ -79,7 +79,7 @@ class WfWizardWizard extends BaseSkeletonWizard
         $nameQuestion = new Question('"Human" name of wizard (it will be shown in table)');
         $groupQuestion = new Question('Group');
 
-        $io = new SymfonyStyle($this->input, $this->output);
+        $io = $this->ioManager->getIo();
         $class = $io->askQuestion($wizardQuestion);
         $useSkeletons = $io->askQuestion($baseQuestion);
         $name = $io->askQuestion($nameQuestion);

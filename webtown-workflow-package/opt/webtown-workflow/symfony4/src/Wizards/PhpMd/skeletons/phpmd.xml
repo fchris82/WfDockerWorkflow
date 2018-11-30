@@ -34,4 +34,8 @@
         </properties>
     </rule>
 
+{% if sf_version >= 4 %}
+    <exclude-pattern>src/Migrations/*</exclude-pattern>
+{% endif %}
+
 </ruleset>

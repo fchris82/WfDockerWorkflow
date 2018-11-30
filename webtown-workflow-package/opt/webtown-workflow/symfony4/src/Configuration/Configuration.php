@@ -225,6 +225,12 @@ class Configuration implements ConfigurationInterface
      */
     protected function validateWfVersion($config, $wfVersion)
     {
+        // We call the loadConfiguration from Wizard too, and then it isn't important this
+        // @todo (Chris) Ez nem biztos, hogy így a legjobb megoldás, néha elnyelhetünk hibákat.
+        if (is_null($wfVersion)) {
+            return true;
+        }
+
         $wfMinimumVersion = $config['version']['wf_minimum_version'];
         if ($wfMinimumVersion && version_compare($wfVersion, $wfMinimumVersion, '<')) {
             throw new InvalidWfVersionException(sprintf(

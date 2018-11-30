@@ -248,7 +248,7 @@ deploy:branch:
         SLACK_COLOR: '#fff'
         WF_ENV: |
             DEPLOY_DIR=${CI_PROJECT_PATH_SLUG}/${CI_BUILD_REF_SLUG}
-            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.ezplatformhu.amapa.webtown.hu
+            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.{{ project_name }}.amapa.webtown.hu
             DEPLOY_NAME=${BASENAME}${CI_JOB_ID}
             CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
 #        WF_DEBUG:       2
@@ -270,7 +270,7 @@ review:stop:
         DEPLOY_ACTION: deploy:remove
         WF_ENV: |
             DEPLOY_DIR=${CI_PROJECT_PATH_SLUG}/${CI_BUILD_REF_SLUG}
-            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.ezplatformhu.amapa.webtown.hu
+            DEPLOY_DOMAIN=${CI_BUILD_REF_SLUG}.{{ project_name }}.amapa.webtown.hu
             DEPLOY_NAME=${BASENAME}${CI_JOB_ID}
             CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME}
     script: *deploy

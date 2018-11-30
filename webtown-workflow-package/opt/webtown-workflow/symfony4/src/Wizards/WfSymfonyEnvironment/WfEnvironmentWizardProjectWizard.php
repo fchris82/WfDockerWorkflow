@@ -8,12 +8,17 @@
 
 namespace App\Wizards\WfSymfonyEnvironment;
 
+use App\Environment\Commander;
+use App\Environment\IoManager;
+use App\Environment\EnvParser;
+use App\Environment\EzEnvironmentParser;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\Question;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * Class DockerProject.
@@ -29,6 +34,30 @@ use App\Wizards\BaseSkeletonWizard;
  */
 class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
 {
+    /**
+     * @var EzEnvironmentParser
+     */
+    protected $ezEnvironmentParser;
+
+    /**
+     * @var EnvParser
+     */
+    protected $envParser;
+
+    public function __construct(
+        EzEnvironmentParser $EzEnvironmentParser,
+        EnvParser $envParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
+        parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
+        $this->ezEnvironmentParser = $EzEnvironmentParser;
+        $this->envParser = $envParser;
+    }
+
     public function getDefaultName()
     {
         return 'WF Symfony Environment';
@@ -67,51 +96,13 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
     protected function getSkeletonVars(BuildWizardEvent $event)
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
+        $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
+
         $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.2</info>]', '7.2');
         $variables['php_version'] = $this->ask($phpVersionQuestion);
 
-        // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik
-        $symfonyVersion = $this->getSymfonyVersion($targetProjectDirectory);
-
-        if (!$symfonyVersion) {
-            $symfonyVersionQuestion = new ChoiceQuestion(
-                'Which symfony version do you want to use? [<info>4.*</info>]',
-                ['4.*', '3.* (eZ project + LTE)', '2.* [deprecated]'],
-                0
-            );
-            $symfonyVersion = $this->ask($symfonyVersionQuestion);
-        }
-        switch (substr($symfonyVersion, 0, 2)) {
-            case '4.':
-                $variables['sf_version'] = 4;
-                $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
-                $variables['shared_dirs'] = 'var';
-                $variables['web_directory'] = 'public';
-                $variables['index_file'] = 'index.php';
-                break;
-            case '3.':
-                $variables['sf_version'] = 3;
-                $variables['sf_console_cmd'] = 'bin/console';
-                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'vendor/bin');
-                $variables['shared_dirs'] = 'var';
-                $variables['web_directory'] = 'web';
-                $variables['index_file'] = 'app.php';
-                break;
-            case '2.':
-                $variables['sf_version'] = 2;
-                $variables['sf_console_cmd'] = 'app/console';
-                $variables['sf_bin_dir'] = $this->readSymfonyBinDir($targetProjectDirectory, 'bin');
-                $variables['shared_dirs'] = 'app/cache app/logs';
-                $variables['web_directory'] = 'web';
-                $variables['index_file'] = 'app.php';
-                break;
-            default:
-                throw new \InvalidArgumentException('Invalid selection! Missiong settings!');
-        }
-
-        $variables['project_name'] = basename($this->getEnv('ORIGINAL_PWD', $event->getWorkingDirectory()));
-        $variables['current_wf_version'] = $this->input->getOption('wf-version');
+        $variables['project_name'] = basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory));
+        $variables['current_wf_version'] = $this->ioManager->getInput()->getOption('wf-version');
 
         return $variables;
     }

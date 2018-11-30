@@ -9,18 +9,18 @@
 namespace App\Wizards;
 
 use App\DependencyInjection\Compiler\TwigExtendingPass;
+use App\Environment\Commander;
+use App\Environment\IoManager;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Event\Wizard\BuildWizardEvent;
-use App\Exception\InvalidComposerVersionNumber;
 use App\Skeleton\BuilderTrait;
 use App\Skeleton\FileType\SkeletonFile;
 use App\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
@@ -44,16 +44,22 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * BaseSkeleton constructor.
      *
+     * @param IoManager $ioManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param \Twig_Environment        $twig
-     * @param Filesystem               $filesystem
+     * @param \Twig_Environment $twig
+     * @param Filesystem $filesystem
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, \Twig_Environment $twig, Filesystem $filesystem)
-    {
+    public function __construct(
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
         $this->twig = $twig;
         $this->fileSystem = $filesystem;
         $this->twigSkeletonNamespace = TwigExtendingPass::WIZARD_TWIG_NAMESPACE;
-        parent::__construct($eventDispatcher);
+        parent::__construct($ioManager, $commander, $eventDispatcher);
     }
 
     /**
@@ -96,9 +102,10 @@ abstract class BaseSkeletonWizard extends BaseWizard
 
     protected function printHeader(BuildWizardEvent $event)
     {
-        $this->output->writeln("\n <comment>⏲</comment> <info>Start build...</info>\n");
+        $output = $this->ioManager->getOutput();
+        $output->writeln("\n <comment>⏲</comment> <info>Start build...</info>\n");
 
-        $table = new Table($this->output);
+        $table = new Table($output);
         $table
             ->setHeaders(['Placeholder', 'Value']);
         foreach ($event->getSkeletonVars() as $key => $value) {
@@ -110,169 +117,6 @@ abstract class BaseSkeletonWizard extends BaseWizard
             ]);
         }
         $table->render();
-    }
-
-    protected function getWorkflowConfiguration($workingDirectory)
-    {
-        if (null === $this->workflowConfigurationCache) {
-            $wfFiles = [
-                '.wf.base.yml',
-                '.wf.yml.dist',
-                '.wf.yml',
-            ];
-            foreach ($wfFiles as $wfFile) {
-                $configFilePath = $workingDirectory . '/' . $wfFile;
-                if ($this->fileSystem->exists($configFilePath)) {
-                    $this->workflowConfigurationCache = Yaml::parse(file_get_contents($configFilePath));
-                    break;
-                }
-            }
-            if (null === $this->workflowConfigurationCache) {
-                throw new FileNotFoundException(sprintf(
-                    'We couldn\'t find any WF configuration yaml file (or they are empty): `%s`! (Directory: %s)',
-                    implode('`, `', $wfFiles),
-                    $workingDirectory
-                ));
-            }
-        }
-
-        return $this->workflowConfigurationCache;
-    }
-
-    /**
-     * Read the installed version number of a package:
-     *
-     *  1. Try to find in `composer.lock`
-     *  2. Try to find in `composer.json` (require)
-     *  3. Try to find in `composer.json` (require-dev)
-     *  4. [$allowNoExists == true]: Ask the user
-     *
-     * @param string $workingDirectory
-     * @param string $packageName
-     * @param bool   $allowAsk
-     *
-     * @return string
-     */
-    protected function getComposerPackageVersion($workingDirectory, $packageName, $allowAsk = true)
-    {
-        try {
-            $composerLockPath = $workingDirectory . '/composer.lock';
-            if (!$this->fileSystem->exists($composerLockPath)) {
-                $composerJsonPath = $workingDirectory . '/composer.json';
-                if ($this->fileSystem->exists($composerJsonPath)) {
-                    $requires = $this->getComposerJsonInformation($workingDirectory, 'require', []);
-                    if (array_key_exists($packageName, $requires)) {
-                        $version = $requires[$packageName];
-
-                        return $this->readComposerVersion($version);
-                    }
-                    $devRequires = $this->getComposerJsonInformation($workingDirectory, 'require-dev', []);
-                    if (array_key_exists($packageName, $devRequires)) {
-                        $version = $devRequires[$packageName];
-
-                        return $this->readComposerVersion($version);
-                    }
-
-                    if ($allowAsk) {
-                        $versionQuestion = new Question(sprintf(
-                            'We don\'t find the <info>%s</info> package in composer.json file and the composer.lock hasn\'t created yet. Please set the version manually: ',
-                            $packageName
-                        ));
-                        $version = $this->ask($versionQuestion);
-
-                        return $this->readComposerVersion($version);
-                    }
-                } else {
-                    throw new FileNotFoundException(sprintf('The composer.lock and composer.json don\'t exist in the %s directory!', $workingDirectory));
-                }
-            } else {
-                $composer = json_decode(file_get_contents($composerLockPath), true);
-                foreach ($composer['packages'] as $package) {
-                    if ($package['name'] == $packageName) {
-                        $version = $package['version'];
-
-                        return $this->readComposerVersion($version);
-                    }
-                }
-            }
-        } catch (InvalidComposerVersionNumber $e) {
-            if ($allowAsk) {
-                $versionQuestion = new Question(sprintf(
-                    'We need the version of the <info>%s</info> package but we got invalid version number string (<info>%s</info>). Please set the version manually:  ',
-                    $packageName,
-                    $e->getVersion()
-                ));
-                $version = $this->ask($versionQuestion);
-
-                return $this->readComposerVersion($version);
-            }
-        }
-
-        return false;
-    }
-
-    protected function readComposerVersion($versionText)
-    {
-        if (preg_match('{[\d\.]+}', $versionText, $matches)) {
-            return $matches[0];
-        }
-
-        throw new InvalidComposerVersionNumber($versionText);
-    }
-
-    /**
-     * Different projects and versions contains different packages, so we need to check more then one option.
-     *
-     * @param $targetDirectory
-     *
-     * @return bool|string
-     */
-    protected function getSymfonyVersion($targetDirectory)
-    {
-        $symfonyPackages = [
-            'symfony/symfony',
-            'symfony/config',
-        ];
-        foreach ($symfonyPackages as $symfonyPackage) {
-            $packageVersion = $this->getComposerPackageVersion($targetDirectory, $symfonyPackage, true);
-            if ($packageVersion) {
-                return $packageVersion;
-            }
-        }
-
-        return false;
-    }
-
-    protected function getComposerJsonInformation($targetDirectory, $infoPath, $default = null)
-    {
-        $composerJsonPath = $targetDirectory . '/composer.json';
-        if (!$this->fileSystem->exists($composerJsonPath)) {
-            throw new FileNotFoundException(sprintf('The composer.json doesn\'t exist in the %s directory!', $targetDirectory));
-        }
-
-        $data = json_decode(file_get_contents($composerJsonPath), true);
-        $keys = explode('.', $infoPath);
-        $current = $data;
-        foreach ($keys as $key) {
-            if (!\is_array($current) || !array_key_exists($key, $current)) {
-                return $default;
-            }
-            $current = $current[$key];
-        }
-
-        return $current;
-    }
-
-    protected function readSymfonyBinDir($targetDirectory, $default = null)
-    {
-        $byExtra = $this->getComposerJsonInformation($targetDirectory, 'extra.symfony-bin-dir');
-        if ($byExtra) {
-            return $byExtra;
-        }
-
-        $byConfig = $this->getComposerJsonInformation($targetDirectory, 'config.bin-path');
-
-        return $byConfig ?: $default;
     }
 
     public function isBuilt($targetProjectDirectory)
@@ -356,7 +200,7 @@ EOS;
             : 'created'
         ;
 
-        $this->output->writeln(sprintf(
+        $this->ioManager->getOutput()->writeln(sprintf(
             '<info> ✓ The </info>%s/<comment>%s</comment><info> file has been %s.</info>',
             $skeletonFile->getRelativePath(),
             $skeletonFile->getFileName(),

@@ -8,14 +8,36 @@
 
 namespace App\Wizards\Symfony;
 
+use App\Environment\Commander;
+use App\Environment\IoManager;
+use App\Environment\WfEnvironmentParser;
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use Symfony\Component\Console\Question\Question;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class SymfonyBuildWizard extends BaseSkeletonWizard
 {
     protected $askDirectory = true;
+
+    /**
+     * @var WfEnvironmentParser
+     */
+    protected $wfEnvironmentParser;
+
+    public function __construct(
+        WfEnvironmentParser $wfEnvironmentParser,
+        IoManager $ioManager,
+        Commander $commander,
+        EventDispatcherInterface $eventDispatcher,
+        \Twig_Environment $twig,
+        Filesystem $filesystem
+    ) {
+        parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
+        $this->wfEnvironmentParser = $wfEnvironmentParser;
+    }
 
     /**
      * @var array
@@ -44,7 +66,8 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
 
     public function isBuilt($targetProjectDirectory)
     {
-        return $this->wfIsInitialized($targetProjectDirectory) || file_exists($targetProjectDirectory . '/.git');
+        return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)
+            || $this->fileSystem->exists($targetProjectDirectory . '/.git');
     }
 
     protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
@@ -63,15 +86,18 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
             ? $this->ask($directoryQuestion)
             : '.';
         $this->workingDirectory = $event->getWorkingDirectory() . \DIRECTORY_SEPARATOR . $directory;
+        // @todo (Chris) Itt ellenőrizni kellene, hogy a könyvtár létezik-e, és ha igen, akkor üres-e. Ha pedig nem üres, akkor hibát kellene dobni, különben a program elhasal.
         $event->setWorkingDirectory($this->workingDirectory);
 
+        // string!
         $version = $this->ask($versionQuestion);
+        // integer!
         $sfVersion = $version ?
-            $version[1] :
+            (int) $version[1] :
             4;
         $this->config = [
-            'version'                  => $version,
-            'sf_version'               => $sfVersion,
+            'version'    => $version,
+            'sf_version' => $sfVersion,
         ];
 
         return $this->config;
@@ -94,9 +120,9 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
 
         $workDir = $event->getWorkingDirectory();
         $tmpDir = $workDir . '/_tmp';
-        $this->run('mkdir -p ' . $tmpDir);
+        $this->commander->run('mkdir -p ' . $tmpDir);
 
-        $this->cd($workDir);
+        $this->commander->cd($workDir);
         $this->runCmdInContainer(sprintf(
             'composer create-project %s %s %s',
             $package,
@@ -112,10 +138,10 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
             $this->runCmdInContainer('composer update', $tmpDir);
         }
 
-        $this->run('rm -rf .[^.] .??*');
-        $this->run('mv _tmp/* ./');
-        $this->run('mv _tmp/.[!.]* ./');
-        $this->run('rm -r _tmp');
-        $this->run('git init && git add . && git commit -m "Init"');
+        $this->commander->run('rm -rf .[^.] .??*');
+        $this->commander->run('mv _tmp/* ./');
+        $this->commander->run('mv _tmp/.[!.]* ./');
+        $this->commander->run('rm -r _tmp');
+        $this->commander->run('git init && git add . && git commit -m "Init"');
     }
 }
