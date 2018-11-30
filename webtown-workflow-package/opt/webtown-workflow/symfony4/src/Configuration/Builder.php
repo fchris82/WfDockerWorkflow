@@ -303,9 +303,10 @@ class Builder
     {
         foreach ($skeletonFiles as $skeletonFile) {
             $relativeTargetPath = sprintf(
-                implode(\DIRECTORY_SEPARATOR, ['%s', '%s']),
+                implode(\DIRECTORY_SEPARATOR, ['%s', '%s', '%s']),
                 $this->targetDirectory,
-                $recipe->getDirectoryName()
+                $recipe->getDirectoryName(),
+                $skeletonFile->getRelativePath()
             );
             $skeletonFile->setRelativePath($relativeTargetPath);
             $skeletonFile->move($projectPath);
