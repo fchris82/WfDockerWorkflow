@@ -34,7 +34,7 @@ case $1 in
         /tmp/install-wf.sh
         rm /tmp/install-wf.sh
         echo "Cleaning the cache..."
-        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache
+        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache >/dev/null
     ;;
     # !!! Don't extend here! Read above!
     *)
