@@ -50,6 +50,9 @@ If you use the `--develop` attribute, the program create a docker volume to over
 >
 > # Run PHP CS fixer
 > $ wfdev wf --dev-run php /opt/webtown-workflow/symfony4/vendor/bin/php-cs-fixer fix --dry-run --config=/opt/webtown-workflow/symfony4/.php_cs.dist
+>
+> # Run PHPUnit
+> $ wfdev wf --dev-run php vendor/bin/phpunit /opt/webtown-workflow/symfony4/tests/Tool
 > ```
 
 ## Cache !!!
