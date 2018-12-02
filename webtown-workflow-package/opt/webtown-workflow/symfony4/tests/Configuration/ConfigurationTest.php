@@ -13,6 +13,8 @@ class ConfigurationTest extends TestCase
      * @param $new
      * @param $result
      *
+     * @throws \ReflectionException
+     *
      * @dataProvider getConfigurations
      */
     public function testConfigDeepMerge($base, $new, $result)
