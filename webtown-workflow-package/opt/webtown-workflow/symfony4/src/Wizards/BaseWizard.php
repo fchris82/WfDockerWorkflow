@@ -13,6 +13,7 @@ use App\Environment\IoManager;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardHasAlreadyBuiltException;
 use App\Exception\WizardSomethingIsRequiredException;
+use App\Extension\ExtensionInterface;
 use App\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -21,7 +22,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class BaseSkeleton.
  */
-abstract class BaseWizard implements WizardInterface
+abstract class BaseWizard implements WizardInterface, ExtensionInterface
 {
     /**
      * @var IoManager
@@ -182,5 +183,15 @@ abstract class BaseWizard implements WizardInterface
     public function checkRequires($targetProjectDirectory)
     {
         return true;
+    }
+
+    public function getExtensionName()
+    {
+        return $this->getDefaultName();
+    }
+
+    public function getExtensionType()
+    {
+        return 'Wizard';
     }
 }

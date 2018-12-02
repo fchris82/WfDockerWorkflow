@@ -13,6 +13,7 @@ use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
 use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Extension\ExtensionInterface;
 use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Skeleton\FileType\MakefileSkeletonFile;
@@ -24,7 +25,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-abstract class BaseRecipe
+abstract class BaseRecipe implements ExtensionInterface
 {
     use SkeletonManagerTrait;
 
@@ -171,5 +172,15 @@ abstract class BaseRecipe
 
     protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
     {
+    }
+
+    public function getExtensionName()
+    {
+        return $this->getName();
+    }
+
+    public function getExtensionType()
+    {
+        return 'Recipe';
     }
 }

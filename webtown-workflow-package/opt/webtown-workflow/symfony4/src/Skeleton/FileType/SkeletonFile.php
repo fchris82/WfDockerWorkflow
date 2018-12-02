@@ -205,5 +205,7 @@ class SkeletonFile
     {
         $directory = rtrim($directory, \DIRECTORY_SEPARATOR);
         $this->setFullTargetPathname($directory . \DIRECTORY_SEPARATOR . $this->getRelativePathname());
+
+        return $this;
     }
 }

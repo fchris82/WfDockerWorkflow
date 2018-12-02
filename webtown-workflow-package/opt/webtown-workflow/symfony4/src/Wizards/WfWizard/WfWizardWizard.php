@@ -18,7 +18,7 @@ use App\Wizards\BaseSkeletonWizard;
 
 class WfWizardWizard extends BaseSkeletonWizard
 {
-    const RELATIVE_TARGET_DIRECTORY = '/webtown-workflow-package/opt/webtown-workflow/symfony4/src/Wizards';
+    const RELATIVE_TARGET_DIRECTORY = 'webtown-workflow-package/opt/webtown-workflow/symfony4/src/Wizards';
 
     /**
      * @var array
@@ -49,7 +49,7 @@ class WfWizardWizard extends BaseSkeletonWizard
      */
     public function checkRequires($targetProjectDirectory)
     {
-        if (!file_exists($targetProjectDirectory . self::RELATIVE_TARGET_DIRECTORY)) {
+        if (!file_exists($targetProjectDirectory . DIRECTORY_SEPARATOR . self::RELATIVE_TARGET_DIRECTORY)) {
             throw new WizardSomethingIsRequiredException('You can use this command in the `webtown-workflow` develop directory.');
         }
 
@@ -121,12 +121,25 @@ class WfWizardWizard extends BaseSkeletonWizard
                 . $this->getRelativeTargetDirectory() . \DIRECTORY_SEPARATOR
                 . 'skeletons';
             $this->fileSystem->mkdir($target);
-            $this->output->writeln(sprintf(
+            $this->ioManager->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> directory has been created.</info>',
                 \dirname($target),
                 basename($target)
             ));
         }
+    }
+
+    protected function cleanUp(BuildWizardEvent $event)
+    {
+        parent::cleanUp($event);
+        $io = $this->ioManager->getIo();
+        $io->newLine(2);
+        $io->title(sprintf('The %s wizard created succesfully', $this->variables['wizard_class']));
+        $io->listing([
+            sprintf('Go to <comment>%s</comment> directory', $this->getRelativeTargetDirectory()),
+            sprintf('Edit the <comment>%s.php</comment> file.', $this->variables['wizard_class']),
+            'Create git repository: <comment>git init && git add . && git commit -m "Init"</comment> to "save" and share your wizard.',
+        ]);
     }
 
     protected function getRelativeTargetDirectory()

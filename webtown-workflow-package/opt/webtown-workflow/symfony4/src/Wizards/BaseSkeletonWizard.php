@@ -22,9 +22,7 @@ use App\Skeleton\FileType\SkeletonFile;
 use App\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class BaseSkeleton.
