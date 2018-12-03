@@ -8,35 +8,46 @@
 
 namespace App\Command;
 
+use App\Environment\IoManager;
 use App\Wizard\Configuration;
 use App\Wizard\ConfigurationItem;
 use App\Wizard\Manager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
-use Symfony\Component\Console\Helper\QuestionHelper;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
-class ProjectWizardConfigCommand extends ContainerAwareCommand
+class ProjectWizardConfigCommand extends Command
 {
     const EXIT_SIGN = '🢤';
     const ENABLED_SIGN = '✓';
     const DISABLED_SIGN = '∅';
 
     /**
-     * @var QuestionHelper
+     * @var Manager
      */
-    protected $questionHelper;
+    protected $wizardManager;
 
     /**
-     * @var SymfonyStyle
+     * @var IoManager
      */
-    protected $io;
+    protected $ioManager;
+
+    /**
+     * ProjectWizardConfigCommand constructor.
+     * @param Manager $wizardManager
+     */
+    public function __construct(Manager $wizardManager, IoManager $ioManager)
+    {
+        $this->wizardManager = $wizardManager;
+        $this->ioManager = $ioManager;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -55,46 +66,33 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $this->io = new SymfonyStyle($input, $output);
-        $this->questionHelper = $this->getHelper('question');
-
         $output->writeln('');
         $output->writeln(' <comment>!> If the <question>CTRL-C</question> doesn\'t work, you can use the <question>^P + ^Q + ^C</question> (^ == CTRL).</comment>');
         $output->writeln('');
 
-        $wizardManager = $this->getContainer()->get(Manager::class);
-        $wizardManager->syncConfiguration();
+        $this->wizardManager->syncConfiguration();
 
         do {
-            $this->renderSummaryTable($wizardManager);
-            $summaryQuestion = $this->getSummaryQuestion($wizardManager);
-            if ($selectedClass = $this->questionHelper->ask($input, $output, $summaryQuestion)) {
-                $this->editConfigItem($selectedClass, $wizardManager, $input, $output);
+            $this->renderSummaryTable();
+            $summaryQuestion = $this->getSummaryQuestion();
+            if ($selectedClass = $this->ioManager->ask($summaryQuestion)) {
+                $this->editConfigItem($selectedClass);
             }
         } while ($selectedClass);
 
-        if ($wizardManager->getConfiguration()->hasChanges()) {
+        if ($this->wizardManager->getConfiguration()->hasChanges()) {
             $doYouWantToSaveQuestion = new ConfirmationQuestion('There are some changes. Do you want to save them?', true);
-            $wantToSave = $this->io->askQuestion($doYouWantToSaveQuestion);
+            $wantToSave = $this->ioManager->ioAsk($doYouWantToSaveQuestion);
             if ($wantToSave) {
-                $wizardManager->getConfiguration()->saveConfigurationList();
-                $this->io->success('Wizard configuration is updated! (Default location on host: ~/.webtown-workflow/config/wizards.yml)');
+                $this->wizardManager->getConfiguration()->saveConfigurationList();
+                $this->ioManager->getIo()->success('Wizard configuration is updated! (Default location on host: ~/.webtown-workflow/config/wizards.yml)');
             } else {
-                $this->io->writeln('Nothing changed');
+                $this->ioManager->getIo()->writeln('Nothing changed');
             }
         }
     }
 
-    protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'fg=white')
-    {
-        // 2 sort kihagyunk
-        $output->writeln("\n");
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, $title));
-        $output->writeln(sprintf('<%1$s>%2$s</%1$s>', $colorStyle, str_repeat('=', \strlen(strip_tags($title)))));
-        $output->writeln('');
-    }
-
-    protected function getIcon(ConfigurationItem $configurationItem, Manager $wizardManager)
+    protected function getIcon(ConfigurationItem $configurationItem)
     {
         if ($configurationItem->isEnabled()) {
             return static::ENABLED_SIGN;
@@ -103,30 +101,30 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         return static::DISABLED_SIGN;
     }
 
-    protected function getStyle(ConfigurationItem $configurationItem, Manager $wizardManager)
+    protected function getStyle(ConfigurationItem $configurationItem)
     {
-        if ($wizardManager->wizardIsNew($configurationItem)) {
+        if ($this->wizardManager->wizardIsNew($configurationItem)) {
             return 'info';
         }
-        if ($wizardManager->wizardIsUpdated($configurationItem)) {
+        if ($this->wizardManager->wizardIsUpdated($configurationItem)) {
             return 'comment';
         }
 
         return null;
     }
 
-    protected function renderSummaryTable(Manager $wizardManager)
+    protected function renderSummaryTable()
     {
-        $table = new Table($this->io);
+        $table = new Table($this->ioManager->getIo());
         $table->setHeaders([
             'Name',
             'Group',
             'Priority',
         ]);
-        foreach ($wizardManager->getAllWizards() as $configurationItem) {
+        foreach ($this->wizardManager->getAllWizards() as $configurationItem) {
             $name = $configurationItem->getName();
-            $icon = $this->getIcon($configurationItem, $wizardManager);
-            $style = $this->getStyle($configurationItem, $wizardManager);
+            $icon = $this->getIcon($configurationItem);
+            $style = $this->getStyle($configurationItem);
             $table->addRow([
                 $style ? sprintf('<%1$s>%2$s %3$s</%1s>', $style, $icon, $name) : "$icon $name",
                 $configurationItem->getGroup(),
@@ -136,7 +134,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
 
         // Missing/deleted, but has been configured wizards
         /** @var ConfigurationItem $configurationItem */
-        foreach ($wizardManager->getConfiguration()->getChanges(Configuration::CHANGES_REMOVED) as $configurationItem) {
+        foreach ($this->wizardManager->getConfiguration()->getChanges(Configuration::CHANGES_REMOVED) as $configurationItem) {
             $table->addRow([
                 sprintf('<error>❌ %s</error>', $configurationItem->getClass()),
                 $configurationItem->getGroup(),
@@ -146,12 +144,12 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         $table->render();
     }
 
-    protected function getSummaryQuestion(Manager $wizardManager)
+    protected function getSummaryQuestion()
     {
         $choices = [
             '' => '<comment>Exit</comment>',
         ];
-        foreach ($wizardManager->getAllWizards() as $configurationItem) {
+        foreach ($this->wizardManager->getAllWizards() as $configurationItem) {
             $choices[$configurationItem->getClass()] = $configurationItem->getName();
         }
         $question = new ChoiceQuestion('Which one do you want to edit?', $choices, '');
@@ -159,14 +157,14 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         return $question;
     }
 
-    protected function renderItemSummaryTable($class, Manager $wizardManager, OutputInterface $output)
+    protected function renderItemSummaryTable($class, OutputInterface $output)
     {
         $table = new Table($output);
         $table->setHeaders([
             'Property',
             'Value',
         ]);
-        $configurationItem = $wizardManager->getConfiguration()->get($class);
+        $configurationItem = $this->wizardManager->getConfiguration()->get($class);
         $table->addRows([
             ['name', $configurationItem->getName()],
             ['class', $configurationItem->getClass()],
@@ -176,17 +174,11 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
         $table->render();
     }
 
-    protected function clearScreen(OutputInterface $output)
+    protected function editConfigItem($wizardClass)
     {
-//        $output->write(sprintf("\033\143"));
-        $output->write("\n\n\n");
-    }
-
-    protected function editConfigItem($wizardClass, Manager $wizardManager, InputInterface $input, OutputInterface $output)
-    {
-        $this->clearScreen($output);
-        $configurationItem = $wizardManager->getConfiguration()->get($wizardClass);
-        $this->io->title($wizardClass);
+        $this->ioManager->clearScreen();
+        $configurationItem = $this->wizardManager->getConfiguration()->get($wizardClass);
+        $this->ioManager->getIo()->title($wizardClass);
         $originalContent = serialize($configurationItem);
 
         do {
@@ -199,7 +191,7 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
                 return (int) $value;
             });
             $groupQuestion = new Question('Group: ', $configurationItem->getGroup());
-            $groupQuestion->setAutocompleterValues($this->getAllExistingGroups($wizardManager));
+            $groupQuestion->setAutocompleterValues($this->getAllExistingGroups());
 
             $config = [
                 'name' => [
@@ -241,26 +233,26 @@ class ProjectWizardConfigCommand extends ContainerAwareCommand
             }
             $question = new ChoiceQuestion('What do you want to change?', $questions, static::EXIT_SIGN);
 
-            if ('🢤' != $change = $this->questionHelper->ask($input, $output, $question)) {
+            if ('🢤' != $change = $this->ioManager->ask($question)) {
                 /** @var Question $question */
                 $subQuestion = $config[$change]['question'];
-                $newValue = $this->questionHelper->ask($input, $output, $subQuestion);
+                $newValue = $this->ioManager->ask($subQuestion);
                 $config[$change]['handle']($configurationItem, $newValue);
             }
         } while ($change != static::EXIT_SIGN);
 
         // If something was changed
         if ($originalContent != serialize($configurationItem)) {
-            $wizardManager->getConfiguration()->set($configurationItem);
+            $this->wizardManager->getConfiguration()->set($configurationItem);
         }
 
-        $this->clearScreen($output);
+        $this->ioManager->clearScreen();
     }
 
-    protected function getAllExistingGroups(Manager $wizardManager)
+    protected function getAllExistingGroups()
     {
         $existingGroups = [];
-        foreach ($wizardManager->getConfiguration()->getConfigurationList() as $configurationItem) {
+        foreach ($this->wizardManager->getConfiguration()->getConfigurationList() as $configurationItem) {
             $existingGroups[] = $configurationItem->getGroup();
         }
         array_unique($existingGroups);

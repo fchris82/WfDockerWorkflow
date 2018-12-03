@@ -2,10 +2,11 @@
 
 namespace App\Command;
 
+use App\Environment\IoManager;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Helper\WordWrapper;
 use App\Wizard\Manager;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Console\Helper\QuestionHelper;
@@ -19,8 +20,30 @@ use App\Wizards\BaseWizard;
 /**
  * Class ProjectWizardCommand.
  */
-class ProjectWizardCommand extends ContainerAwareCommand
+class ProjectWizardCommand extends Command
 {
+    /**
+     * @var Manager
+     */
+    protected $wizardManager;
+
+    /**
+     * @var IoManager
+     */
+    protected $ioManager;
+
+    /**
+     * ProjectWizardCommand constructor.
+     * @param Manager $wizardManager
+     */
+    public function __construct(Manager $wizardManager, IoManager $ioManager)
+    {
+        $this->wizardManager = $wizardManager;
+        $this->ioManager = $ioManager;
+
+        parent::__construct();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -69,8 +92,6 @@ EOS
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
         // ---------------------------------------- DEFAULT INFORMATION ------------------------------------------------
 
         $output->writeln('');
@@ -82,16 +103,17 @@ EOS
         $isForce = $input->getOption('force');
         $isFull = $input->getOption('full');
 
-        $wizardManager = $this->getContainer()->get(Manager::class);
-        $enabledWizards = $isFull ? $wizardManager->getAllWizards() : $wizardManager->getAllEnabledWizards();
+        $enabledWizards = $isFull
+            ? $this->wizardManager->getAllWizards()
+            : $this->wizardManager->getAllEnabledWizards();
 
         if (0 == \count($enabledWizards)) {
-            $this->writeNote($io, 'There isn\'t any installed/enabled wizard! The program exited.');
+            $this->writeNote( 'There isn\'t any installed/enabled wizard! The program exited.');
 
             return;
         }
 
-        $io->writeln($this->createBlock(
+        $this->ioManager->writeln($this->createBlock(
             $output,
             'You can see information about all available wizards with <info>h</info>. If the name is <comment>yellow</comment> the program is unavailable here. The reason would be there are missing requires OR it has already built/run. Use the <comment>--force</comment> option to disable this check. You can read more information with <comment>wizard --help</comment> command.',
             null,
@@ -111,7 +133,7 @@ EOS
         foreach ($enabledWizards as $configurationItem) {
             $wizardHelp = [];
             /** @var BaseWizard $wizard */
-            $wizard = $this->getContainer()->get($configurationItem->getClass());
+            $wizard = $this->wizardManager->getWizard($configurationItem->getClass());
             $missingRequires = false;
             $built = false;
             if (!$isForce) {
@@ -173,6 +195,7 @@ EOS
             $question->setMultiselect(true);
             // @todo (Chris) Szar a defaultValidator, az ugyanis összecsukja a szóközöket, azonban ellenőrzésnél nem tesz így, így a szóköz nélküli értéket nem találja a tömbben.
             $question->setAutocompleterValues(null);
+            $io = $this->ioManager->getIo();
             while (['h'] == $selected = $helper->ask($input, $output, $question)) {
                 $io->newLine();
                 $io->title('Command list & information');
@@ -197,13 +220,13 @@ EOS
                 $io->writeln('Quit');
             }
         } else {
-            $this->writeNote($io, 'There isn\'t any callable wizard! The program exited. You can use the `--force` or `--full` arguments.');
+            $this->writeNote('There isn\'t any callable wizard! The program exited. You can use the `--force` or `--full` arguments.');
         }
     }
 
-    protected function writeNote(SymfonyStyle $io, $note, $colorStyle = 'fg=white;bg=yellow;options=bold')
+    protected function writeNote($note, $colorStyle = 'fg=white;bg=yellow;options=bold')
     {
-        $io->block($note, 'NOTE', $colorStyle, ' ', true);
+        $this->ioManager->getIo()->block($note, 'NOTE', $colorStyle, ' ', true);
     }
 
     /**

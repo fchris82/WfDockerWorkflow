@@ -5,37 +5,79 @@ namespace App\Command;
 use App\Configuration\Builder;
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
+use App\Environment\IoManager;
 use App\Event\Configuration\VerboseInfoEvent;
 use App\Event\ConfigurationEvents;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
+use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
 use App\Recipes\BaseRecipe;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class ConfigYamlReaderCommand.
  */
-class ReconfigureCommand extends ContainerAwareCommand
+class ReconfigureCommand extends Command
 {
     const DEFAULT_CONFIG_FILE = '.wf.yml';
     const DEFAULT_TARGET_DIRECTORY = '.wf';
 
     /**
-     * @var InputInterface
+     * @var Configuration
      */
-    protected $input;
+    protected $configuration;
 
     /**
-     * @var OutputInterface
+     * @var Builder
      */
-    protected $output;
+    protected $builder;
+
+    /**
+     * @var RecipeManager
+     */
+    protected $recipeManager;
+
+    /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
+     * @var IoManager
+     */
+    protected $ioManager;
+
+    /**
+     * ReconfigureCommand constructor.
+     * @param Configuration $configuration
+     * @param Builder $builder
+     * @param RecipeManager $recipeManager
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param IoManager $ioManager
+     */
+    public function __construct(
+        Configuration $configuration,
+        Builder $builder,
+        RecipeManager $recipeManager,
+        EventDispatcherInterface $eventDispatcher,
+        IoManager $ioManager
+    ) {
+        $this->configuration = $configuration;
+        $this->builder = $builder;
+        $this->recipeManager = $recipeManager;
+        $this->eventDispatcher = $eventDispatcher;
+        $this->ioManager = $ioManager;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritdoc}
@@ -61,20 +103,13 @@ class ReconfigureCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         try {
-            $this->input = $input;
-            $this->output = $output;
-
             $baseDirectory = $input->getArgument('base');
-            /** @var Configuration $configuration */
-            $configuration = $this->getContainer()->get(Configuration::class);
-            $config = $configuration->loadConfig($input->getOption('file'), $baseDirectory, $input->getOption('wf-version'));
+            $config = $this->configuration->loadConfig($input->getOption('file'), $baseDirectory, $input->getOption('wf-version'));
 
-            $this->registerEventListeners($input, $output);
+            $this->registerEventListeners();
 
-            /** @var Builder $builder */
-            $builder = $this->getContainer()->get(Builder::class);
             try {
-                $builder
+                $this->builder
                     ->setTargetDirectory($input->getOption('target-directory'))
                     ->build($config, $baseDirectory, $input->getOption('config-hash'))
                 ;
@@ -85,7 +120,7 @@ class ReconfigureCommand extends ContainerAwareCommand
                 $output->writeln('<comment>' . $e->getMessage() . '</comment>');
                 $output->writeln('The available recipes:');
                 /** @var BaseRecipe $recipe */
-                foreach ($this->getContainer()->get(RecipeManager::class)->getRecipes() as $recipe) {
+                foreach ($this->recipeManager->getRecipes() as $recipe) {
                     $output->writeln(sprintf('  - <info>%s</info> @%s', $recipe->getName(), \get_class($recipe)));
                 }
             }
@@ -109,20 +144,16 @@ class ReconfigureCommand extends ContainerAwareCommand
     /**
      * @todo (Chris) Esetleg ezt az egész eseménykezelőst dolgot áthelyezhetnénk egy külön service-be, ami set-tel megkapja az input és output értékeket, majd az alapján cselekszik.
      * Registering event listeners.
-     *
-     * @param InputInterface  $input
-     * @param OutputInterface $output
      */
-    protected function registerEventListeners(InputInterface $input, OutputInterface $output)
+    protected function registerEventListeners()
     {
-        $eventDispatcher = $this->getContainer()->get('event_dispatcher');
-        if ($output->isVerbose()) {
-            $eventDispatcher->addListener(
+        if ($this->ioManager->getOutput()->isVerbose()) {
+            $this->eventDispatcher->addListener(
                 ConfigurationEvents::VERBOSE_INFO,
                 [$this, 'verboseInfo']
             );
         }
-        $eventDispatcher->addListener(
+        $this->eventDispatcher->addListener(
             SkeletonBuildBaseEvents::BEFORE_DUMP_FILE,
             [$this, 'insertGeneratedFileWarning']
         );
@@ -139,7 +170,7 @@ class ReconfigureCommand extends ContainerAwareCommand
         if (\is_array($info)) {
             $info = Yaml::dump($info, 4);
         }
-        $this->output->writeln($info);
+        $this->ioManager->writeln($info);
     }
 
     /**
@@ -152,7 +183,7 @@ class ReconfigureCommand extends ContainerAwareCommand
         $skeletonFile = $event->getSkeletonFile();
         $warning = sprintf(
             'This is an auto generated file from `%s` config file! You shouldn\'t edit this.',
-            $this->input->getOption('file')
+            $this->ioManager->getInput()->getOption('file')
         );
         $ext = pathinfo($skeletonFile->getFullTargetPathname(), PATHINFO_EXTENSION);
 

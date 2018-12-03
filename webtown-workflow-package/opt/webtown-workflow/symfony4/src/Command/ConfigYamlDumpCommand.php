@@ -4,10 +4,11 @@ namespace App\Command;
 
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
+use App\Environment\IoManager;
 use App\Recipes\BaseRecipe;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,8 +18,38 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 /**
  * Class ConfigYamlDumpCommand.
  */
-class ConfigYamlDumpCommand extends ContainerAwareCommand
+class ConfigYamlDumpCommand extends Command
 {
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * @var RecipeManager
+     */
+    protected $recipeManager;
+
+    /**
+     * @var IoManager
+     */
+    protected $ioManager;
+
+    /**
+     * ConfigYamlDumpCommand constructor.
+     * 
+     * @param Configuration $configuration
+     * @param RecipeManager $recipeManager
+     */
+    public function __construct(Configuration $configuration, RecipeManager $recipeManager, IoManager $ioManager)
+    {
+        $this->configuration = $configuration;
+        $this->recipeManager = $recipeManager;
+        $this->ioManager = $ioManager;
+
+        parent::__construct();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -40,8 +71,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $io = new SymfonyStyle($input, $output);
-
+        $io = $this->ioManager->getIo();
         // We show it if the user don't want to put it into a file!
         if ($io->isDecorated() && !$input->getOption('only-recipes')) {
             $io->title('All available parameters');
@@ -50,7 +80,6 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
 
         $dumper = new YamlReferenceDumper();
 
-        $baseConfiguration = $this->getContainer()->get(Configuration::class);
         if ($recipeNameOrClass = $input->getOption('recipe')) {
             $recipe = $this->getRecipeByNameOrClass($recipeNameOrClass);
             /** @var ArrayNode $rootNode */
@@ -63,7 +92,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             $io->write($ymlTree);
         } elseif ($input->getOption('only-recipes')) {
             /** @var ArrayNode $rootNode */
-            $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();
+            $rootNode = $this->configuration->getConfigTreeBuilder()->buildTree();
             $recipeNodes = $rootNode->getChildren()['recipes']->getChildren();
             $headers = [
                 'Root',
@@ -88,7 +117,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
             $io->table($headers, $rows);
         } else {
             /** @var ArrayNode $rootNode */
-            $rootNode = $baseConfiguration->getConfigTreeBuilder()->buildTree();
+            $rootNode = $this->configuration->getConfigTreeBuilder()->buildTree();
             // Show only the children
             foreach ($rootNode->getChildren() as $node) {
                 $io->write($dumper->dumpNode($node));
@@ -103,8 +132,7 @@ class ConfigYamlDumpCommand extends ContainerAwareCommand
      */
     protected function getRecipeByNameOrClass($nameOrClass)
     {
-        $recipeManager = $this->getContainer()->get(RecipeManager::class);
-        foreach ($recipeManager->getRecipes() as $name => $recipe) {
+        foreach ($this->recipeManager->getRecipes() as $name => $recipe) {
             if (\get_class($recipe) == $nameOrClass
                 || $recipe->getName() == $nameOrClass
             ) {
