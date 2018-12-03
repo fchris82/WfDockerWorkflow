@@ -72,6 +72,12 @@ class IoManager implements EventSubscriberInterface
         $this->io = new SymfonyStyle($this->input, $this->output);
     }
 
+    public function clearScreen()
+    {
+//        $output->write(sprintf("\033\143"));
+        $this->output->write("\n\n\n");
+    }
+
     public function ask(Question $question)
     {
         return $this->questionHelper->ask($this->input, $this->output, $question);

@@ -99,6 +99,11 @@ class Manager implements ContainerAwareInterface
         return $this->wizards;
     }
 
+    public function getWizard($class)
+    {
+        return $this->configuration->get($class);
+    }
+
     public function syncConfiguration()
     {
         if (!$this->configurationIsSynced) {
