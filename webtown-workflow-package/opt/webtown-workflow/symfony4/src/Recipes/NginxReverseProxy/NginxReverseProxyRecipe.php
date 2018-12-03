@@ -139,6 +139,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         parent::eventBeforeBuildFiles($event);
 
         $recipeConfig = $event->getBuildConfig();
+        $templateVariables = $event->getTemplateVars();
 
         $defaultTld = trim(
             $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
@@ -155,9 +156,18 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
                 }
                 break;
             }
+            foreach ($templateVariables['settings'] as $serviceName => $settings) {
+                // Only the default host name exists: [service_name].[project_name].[tld]
+                if (0 === strpos($settings['host'], $serviceName)) {
+                    $settings['host'] = $defaultHost . ' ' . $settings['host'];
+                    $templateVariables['settings'][$serviceName] = $settings;
+                }
+                break;
+            }
         }
 
         $event->setBuildConfig($recipeConfig);
+        $event->setTemplateVars($templateVariables);
     }
 
     /**
