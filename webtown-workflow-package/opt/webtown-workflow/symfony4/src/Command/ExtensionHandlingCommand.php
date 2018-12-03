@@ -28,7 +28,7 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\Finder\SplFileInfo;
 
-class ExtensionHandlingCommand extends ContainerAwareCommand implements InteractiveCommandInterface
+class ExtensionHandlingCommand extends ContainerAwareCommand
 {
     const EXIT_SIGN = '🢤';
     const ENABLED_SIGN = '✓';

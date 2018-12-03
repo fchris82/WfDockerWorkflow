@@ -19,7 +19,7 @@ use App\Wizards\BaseWizard;
 /**
  * Class ProjectWizardCommand.
  */
-class ProjectWizardCommand extends ContainerAwareCommand implements InteractiveCommandInterface
+class ProjectWizardCommand extends ContainerAwareCommand
 {
     /**
      * {@inheritdoc}
