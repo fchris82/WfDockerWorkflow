@@ -42,7 +42,7 @@ class ExtensionManager
     /**
      * @var string
      */
-    protected $hostConfigurationPath = '~/.webtown-workflow';
+    protected $hostConfigurationPath;
 
     /**
      * @var Filesystem

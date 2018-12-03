@@ -84,6 +84,11 @@ case $1 in
         shift
         cd /opt/webtown-workflow/symfony4 && ${@}
     ;;
+    --extensions)
+        shift
+        php /opt/webtown-workflow/symfony4/bin/console app:extension \
+            ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+    ;;
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
