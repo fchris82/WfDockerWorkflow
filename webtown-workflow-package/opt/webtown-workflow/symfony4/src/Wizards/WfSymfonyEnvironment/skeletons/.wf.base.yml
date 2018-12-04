@@ -110,7 +110,7 @@ recipes:
     # List all available options: `wf --config-dump --recipe=mysql`
     mysql:
         # Docker image tag
-        version:   "5.6"
+        version:   "5.7"
         # Database name
         database:  "symfony"
         # The root password.
