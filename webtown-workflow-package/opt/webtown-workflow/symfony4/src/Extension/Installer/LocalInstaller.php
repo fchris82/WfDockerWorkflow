@@ -26,16 +26,30 @@ class LocalInstaller implements InstallerInterface
         $this->fileSystem = $fileSystem;
     }
 
-    public function getName()
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
     {
         return 'local';
     }
 
-    public function install($source, $target)
+    /**
+     * @inheritdoc
+     */
+    public function install(string $source, string $target)
     {
         $this->fileSystem->mirror($source, $target, null, [
             'override' => true,
             'delete' => true,
         ]);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getPriority(): int
+    {
+        return 0;
     }
 }

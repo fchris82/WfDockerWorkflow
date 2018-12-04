@@ -35,12 +35,18 @@ class GitInstaller implements InstallerInterface
         $this->commander = $commander;
     }
 
-    public function getName()
+    /**
+     * @inheritdoc
+     */
+    public function getName(): string
     {
         return 'git';
     }
 
-    public function install($source, $target)
+    /**
+     * @inheritdoc
+     */
+    public function install(string $source, string $target)
     {
         if ($this->fileSystem->exists($target)) {
             $this->run(sprintf('rm -rf %s', $target));
@@ -48,5 +54,13 @@ class GitInstaller implements InstallerInterface
         $this->fileSystem->mkdir($target);
         $cmd = sprintf('git clone %s .', $source);
         $this->commander->run($cmd, $target);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public static function getPriority(): int
+    {
+        return 100;
     }
 }

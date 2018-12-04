@@ -11,6 +11,20 @@ namespace App\Extension\Installer;
 
 interface InstallerInterface
 {
-    public function getName();
-    public function install($source, $target);
+    /**
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * @param string $source
+     * @param string $target
+     * @return void
+     */
+    public function install(string $source, string $target);
+
+    /**
+     * @return integer
+     */
+    public static function getPriority(): int;
 }

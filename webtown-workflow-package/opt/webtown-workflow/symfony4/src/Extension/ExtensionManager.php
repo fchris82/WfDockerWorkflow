@@ -60,6 +60,11 @@ class ExtensionManager
     protected $installers = [];
 
     /**
+     * @var array
+     */
+    protected $installerPriorities = [];
+
+    /**
      * ExtensionManager constructor.
      * @param string $hostConfigurationPath
      * @param Filesystem $fileSystem
@@ -72,9 +77,17 @@ class ExtensionManager
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    public function addInstaller(InstallerInterface $installer)
+    /**
+     * Register installer
+     *
+     * @param InstallerInterface $installer
+     * @param int|null $priority
+     */
+    public function addInstaller(InstallerInterface $installer, int $priority = null)
     {
         $this->installers[$installer->getName()] = $installer;
+        $this->installerPriorities[$installer->getName()] = $priority ?: $installer::getPriority();
+        sort($this->installerPriorities, SORT_NUMERIC|SORT_DESC);
     }
 
     /**
@@ -149,7 +162,17 @@ class ExtensionManager
         return $this->parseSource($fullSource, static::SOURCE_SOURCE);
     }
 
-    protected function parseSource($fullSource, $n)
+    /**
+     * Parse a source. See the self::SOURCE_* constants!
+     *
+     * @param string $fullSource
+     * @param int    $n
+     *
+     * @return mixed
+     *
+     * @throws MissingSourceTypeException
+     */
+    protected function parseSource(string $fullSource, int $n)
     {
         $parts = explode(static::SOURCE_TYPE_SEPARATOR, $fullSource, 2);
 
@@ -166,7 +189,14 @@ class ExtensionManager
         return $parts[$n];
     }
 
-    protected function getExtensionNamespace()
+    /**
+     * In the downloaded extension dir try to find a PHP file to read the extension namespace.
+     *
+     * @return string
+     *
+     * @throws UnknownOrInvalidExtension
+     */
+    protected function getExtensionNamespace(): string
     {
         $finder = Finder::create()
             ->in(static::INSTALL_TMP_DIR)
@@ -186,7 +216,14 @@ class ExtensionManager
         }
     }
 
-    protected function parseNamespace($src)
+    /**
+     * Read the PHP file namespace from file by file source.
+     *
+     * @param string $src
+     *
+     * @return null|string
+     */
+    protected function parseNamespace(string $src): ?string
     {
         $tokens = token_get_all($src);
         $count = count($tokens);
@@ -216,7 +253,16 @@ class ExtensionManager
         }
     }
 
-    protected function getTargetPathByNamespace($namespace)
+    /**
+     * Get the path where we should install the extension by PHP namespace.
+     *
+     * @param string $namespace
+     *
+     * @return string
+     *
+     * @throws UnknownOrInvalidNamespace
+     */
+    protected function getTargetPathByNamespace(string $namespace): string
     {
         list ($mainNamespace, $typeNamespace, $baseNamespace, $other) = explode('\\', $namespace, 4);
         if (!$other) {
@@ -236,12 +282,28 @@ class ExtensionManager
         return sprintf('%s/%s/%s', $this->hostConfigurationPath, $subDirectory, $baseNamespace);
     }
 
+    /**
+     * Get list of ordered installers.
+     *
+     * @return array
+     */
     public function getInstallers()
     {
-        return $this->installers;
+        $orderedInstallers = [];
+        foreach (array_keys($this->installerPriorities) as $installerName) {
+            $orderedInstallers[$installerName] = $this->installers[$installerName];
+        }
+        return $orderedInstallers;
     }
 
-    public function getInstaller($sourceType)
+    /**
+     * @param string $sourceType
+     *
+     * @return InstallerInterface
+     *
+     * @throws InvalidSourceException
+     */
+    public function getInstaller(string $sourceType): InstallerInterface
     {
         if (!array_key_exists($sourceType, $this->installers)) {
             throw new InvalidSourceException(sprintf(
@@ -255,7 +317,10 @@ class ExtensionManager
         return $this->installers[$sourceType];
     }
 
-    public function getAllowedInstallerTypes()
+    /**
+     * @return array|string[]
+     */
+    public function getAllowedInstallerTypes(): array
     {
         return array_keys($this->installers);
     }
@@ -263,7 +328,7 @@ class ExtensionManager
     /**
      * @return array|SplFileInfo[]
      */
-    public function getInstalledExtensions()
+    public function getInstalledExtensions(): array
     {
         $recipesPath = $this->hostConfigurationPath . DIRECTORY_SEPARATOR . static::RECIPE_SUBDIRECTORY;
         $wizardsPath = $this->hostConfigurationPath . DIRECTORY_SEPARATOR . static::WIZARD_SUBDIRECTORY;

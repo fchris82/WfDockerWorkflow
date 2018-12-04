@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\DependencyInjection\Compiler\CollectExtensionInstallersPass;
 use App\DependencyInjection\Compiler\TwigExtendingPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
@@ -51,6 +52,7 @@ class Kernel extends BaseKernel
         $loader->load($confDir . '/{services}_' . $this->environment . self::CONFIG_EXTS, 'glob');
 
         $container->addCompilerPass(new TwigExtendingPass());
+        $container->addCompilerPass(new CollectExtensionInstallersPass());
     }
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
