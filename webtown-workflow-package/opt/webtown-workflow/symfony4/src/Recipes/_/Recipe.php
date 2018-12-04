@@ -15,9 +15,9 @@ use App\Event\RegisterEventListenersInterface;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
+use App\Recipes\HiddenRecipe;
 use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Skeleton\FileType\MakefileSkeletonFile;
-use App\Recipes\HiddenRecipe;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Recipe extends HiddenRecipe implements RegisterEventListenersInterface

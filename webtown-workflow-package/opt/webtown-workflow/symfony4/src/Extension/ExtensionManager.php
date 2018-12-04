@@ -66,8 +66,9 @@ class ExtensionManager
 
     /**
      * ExtensionManager constructor.
-     * @param string $hostConfigurationPath
-     * @param Filesystem $fileSystem
+     *
+     * @param string                   $hostConfigurationPath
+     * @param Filesystem               $fileSystem
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(string $hostConfigurationPath, Filesystem $fileSystem, EventDispatcherInterface $eventDispatcher)
@@ -81,13 +82,13 @@ class ExtensionManager
      * Register installer
      *
      * @param InstallerInterface $installer
-     * @param int|null $priority
+     * @param int|null           $priority
      */
     public function addInstaller(InstallerInterface $installer, int $priority = null)
     {
         $this->installers[$installer->getName()] = $installer;
         $this->installerPriorities[$installer->getName()] = $priority ?: $installer::getPriority();
-        sort($this->installerPriorities, SORT_NUMERIC|SORT_DESC);
+        sort($this->installerPriorities, SORT_NUMERIC | SORT_DESC);
     }
 
     /**
@@ -109,7 +110,7 @@ class ExtensionManager
         $installer->install($this->getCleanSource($fullSource), $event->getTargetPath());
         // Create source cache file
         $this->fileSystem->dumpFile(
-            $event->getTargetPath() . DIRECTORY_SEPARATOR . static::SOURCE_FILE_CACHE,
+            $event->getTargetPath() . \DIRECTORY_SEPARATOR . static::SOURCE_FILE_CACHE,
             $fullSource
         );
 
@@ -136,7 +137,7 @@ class ExtensionManager
 
     public function updateExtension($path)
     {
-        $cacheFile = trim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . static::SOURCE_FILE_CACHE;
+        $cacheFile = trim($path, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR . static::SOURCE_FILE_CACHE;
         if (!$this->fileSystem->exists($cacheFile)) {
             throw new MissingSourceCacheFileException($path);
         }
@@ -168,15 +169,15 @@ class ExtensionManager
      * @param string $fullSource
      * @param int    $n
      *
-     * @return mixed
-     *
      * @throws MissingSourceTypeException
+     *
+     * @return mixed
      */
     protected function parseSource(string $fullSource, int $n)
     {
         $parts = explode(static::SOURCE_TYPE_SEPARATOR, $fullSource, 2);
 
-        if (count($parts) < 2) {
+        if (\count($parts) < 2) {
             throw new MissingSourceTypeException(sprintf(
                 'Missing source type: `%s`. You have to set the source type wiht `%s`, eg: `%s%s...',
                 $fullSource,
@@ -192,9 +193,9 @@ class ExtensionManager
     /**
      * In the downloaded extension dir try to find a PHP file to read the extension namespace.
      *
-     * @return string
-     *
      * @throws UnknownOrInvalidExtension
+     *
+     * @return string
      */
     protected function getExtensionNamespace(): string
     {
@@ -226,25 +227,25 @@ class ExtensionManager
     protected function parseNamespace(string $src): ?string
     {
         $tokens = token_get_all($src);
-        $count = count($tokens);
+        $count = \count($tokens);
         $i = 0;
         $namespace = '';
         $namespace_ok = false;
         while ($i < $count) {
             $token = $tokens[$i];
-            if (is_array($token) && $token[0] === T_NAMESPACE) {
+            if (\is_array($token) && T_NAMESPACE === $token[0]) {
                 // Found namespace declaration
                 while (++$i < $count) {
-                    if ($tokens[$i] === ';') {
+                    if (';' === $tokens[$i]) {
                         $namespace_ok = true;
                         $namespace = trim($namespace);
                         break;
                     }
-                    $namespace .= is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
+                    $namespace .= \is_array($tokens[$i]) ? $tokens[$i][1] : $tokens[$i];
                 }
                 break;
             }
-            $i++;
+            ++$i;
         }
         if (!$namespace_ok) {
             return null;
@@ -258,13 +259,13 @@ class ExtensionManager
      *
      * @param string $namespace
      *
-     * @return string
-     *
      * @throws UnknownOrInvalidNamespace
+     *
+     * @return string
      */
     protected function getTargetPathByNamespace(string $namespace): string
     {
-        list ($mainNamespace, $typeNamespace, $baseNamespace, $other) = explode('\\', $namespace, 4);
+        list($mainNamespace, $typeNamespace, $baseNamespace, $other) = explode('\\', $namespace, 4);
         if (!$other) {
             throw new UnknownOrInvalidNamespace('Invalid namespace: ' . $namespace);
         }
@@ -293,15 +294,16 @@ class ExtensionManager
         foreach (array_keys($this->installerPriorities) as $installerName) {
             $orderedInstallers[$installerName] = $this->installers[$installerName];
         }
+
         return $orderedInstallers;
     }
 
     /**
      * @param string $sourceType
      *
-     * @return InstallerInterface
-     *
      * @throws InvalidSourceException
+     *
+     * @return InstallerInterface
      */
     public function getInstaller(string $sourceType): InstallerInterface
     {
@@ -330,8 +332,8 @@ class ExtensionManager
      */
     public function getInstalledExtensions(): array
     {
-        $recipesPath = $this->hostConfigurationPath . DIRECTORY_SEPARATOR . static::RECIPE_SUBDIRECTORY;
-        $wizardsPath = $this->hostConfigurationPath . DIRECTORY_SEPARATOR . static::WIZARD_SUBDIRECTORY;
+        $recipesPath = $this->hostConfigurationPath . \DIRECTORY_SEPARATOR . static::RECIPE_SUBDIRECTORY;
+        $wizardsPath = $this->hostConfigurationPath . \DIRECTORY_SEPARATOR . static::WIZARD_SUBDIRECTORY;
         $finder = Finder::create()
             ->in([$recipesPath, $wizardsPath])
             ->directories()

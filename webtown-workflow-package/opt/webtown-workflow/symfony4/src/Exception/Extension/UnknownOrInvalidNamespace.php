@@ -8,8 +8,6 @@
 
 namespace App\Exception\Extension;
 
-
 class UnknownOrInvalidNamespace extends ExtensionException
 {
-
 }

@@ -8,7 +8,6 @@
 
 namespace App\Extension\Installer;
 
-
 interface InstallerInterface
 {
     /**
@@ -19,12 +18,11 @@ interface InstallerInterface
     /**
      * @param string $source
      * @param string $target
-     * @return void
      */
     public function install(string $source, string $target);
 
     /**
-     * @return integer
+     * @return int
      */
     public static function getPriority(): int;
 }

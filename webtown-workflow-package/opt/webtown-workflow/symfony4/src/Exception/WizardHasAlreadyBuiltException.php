@@ -8,8 +8,8 @@
 
 namespace App\Exception;
 
-use Throwable;
 use App\Wizards\BaseWizard;
+use Throwable;
 
 class WizardHasAlreadyBuiltException extends \Exception
 {

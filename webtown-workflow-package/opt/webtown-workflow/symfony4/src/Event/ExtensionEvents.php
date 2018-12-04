@@ -8,7 +8,6 @@
 
 namespace App\Event;
 
-
 class ExtensionEvents
 {
     const PRE_INSTALL_EVENT = 'app.extension.pre_install';

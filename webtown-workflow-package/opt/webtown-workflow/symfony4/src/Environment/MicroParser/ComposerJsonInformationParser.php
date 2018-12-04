@@ -27,6 +27,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
 
     /**
      * ComposerInstalledVersionParser constructor.
+     *
      * @param Filesystem $fileSystem
      */
     public function __construct(Filesystem $fileSystem)
@@ -51,9 +52,9 @@ class ComposerJsonInformationParser implements MicroParserInterface
     /**
      * @param $workingDirectory
      *
-     * @return mixed
-     *
      * @throws FileNotFoundException
+     *
+     * @return mixed
      */
     protected function getComposerJsonConfig($workingDirectory)
     {
@@ -76,15 +77,15 @@ class ComposerJsonInformationParser implements MicroParserInterface
     {
         $value = $this->get($workingDirectory, $infoPath, new ValueIsMissingException());
 
-        return (!$value instanceof ValueIsMissingException);
+        return !$value instanceof ValueIsMissingException;
     }
 
     /**
      * @param $versionText
      *
-     * @return string
-     *
      * @throws InvalidComposerVersionNumber
+     *
+     * @return string
      */
     public function readComposerVersion($versionText)
     {

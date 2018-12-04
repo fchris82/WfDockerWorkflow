@@ -19,6 +19,7 @@ class LocalInstaller implements InstallerInterface
 
     /**
      * LocalInstaller constructor.
+     *
      * @param Filesystem $fileSystem
      */
     public function __construct(Filesystem $fileSystem)
@@ -27,7 +28,7 @@ class LocalInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -35,7 +36,7 @@ class LocalInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function install(string $source, string $target)
     {
@@ -46,7 +47,7 @@ class LocalInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getPriority(): int
     {

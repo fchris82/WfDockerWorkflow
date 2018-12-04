@@ -8,7 +8,6 @@
 
 namespace App\Exception;
 
-
 use Throwable;
 
 class CommanderRunException extends \Exception
@@ -23,7 +22,7 @@ class CommanderRunException extends \Exception
      */
     protected $output;
 
-    public function __construct(string $command, string $output, string $message = "", int $code = 0, Throwable $previous = null)
+    public function __construct(string $command, string $output, string $message = '', int $code = 0, Throwable $previous = null)
     {
         $this->command = $command;
         $this->output = $output;

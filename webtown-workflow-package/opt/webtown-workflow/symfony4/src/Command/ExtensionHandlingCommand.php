@@ -52,7 +52,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
      * ExtensionHandlingCommand constructor.
      *
      * @param ExtensionManager $extensionManager
-     * @param Filesystem $fileSystem
+     * @param Filesystem       $fileSystem
      */
     public function __construct(ExtensionManager $extensionManager, Filesystem $fileSystem, IoManager $ioManager)
     {
@@ -72,7 +72,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
             ->setName('app:extension')
             ->setDescription('It can install third party recipes or wizards.')
             ->addArgument('action', InputArgument::OPTIONAL, 'Action', static::ACTION_MANAGE)
-            ->addArgument('source', InputArgument::OPTIONAL|InputArgument::IS_ARRAY, 'List of sources.')
+            ->addArgument('source', InputArgument::OPTIONAL | InputArgument::IS_ARRAY, 'List of sources.')
         ;
     }
 
@@ -112,6 +112,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
         switch (strtolower($action)) {
             case 'q':
                 $this->ioManager->writeln('Quit');
+
                 return;
             case 'l':
                 $this->renderSummaryTable();
@@ -131,7 +132,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
     protected function handleInstall($sources)
     {
         $io = $this->ioManager->getIo();
-        if (count($sources) == 0) {
+        if (0 == \count($sources)) {
             $question = new Question(sprintf(
                 'Set the source with type. Allowed types: <comment>%s</comment>. Pattern: <comment>[type]%s[source]</comment>',
                 implode('</comment>, <comment>', $this->extensionManager->getAllowedInstallerTypes()),
@@ -155,7 +156,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
 
     protected function runUpdate($sources)
     {
-        if (count($sources) == 0) {
+        if (0 == \count($sources)) {
             $paths = $this->extensionManager->getAllInstalledPaths();
         }
         $this->extensionManager->fullUpdate();
@@ -165,7 +166,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
     protected function renderSummaryTable()
     {
         $extensionDirectories = $this->extensionManager->getInstalledExtensions();
-        if (count($extensionDirectories)) {
+        if (\count($extensionDirectories)) {
             $table = new Table($this->ioManager->getIo());
             $table->setHeaders([
                 'Name',
@@ -189,7 +190,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
 
     protected function getIcon(SplFileInfo $directory)
     {
-        $sourceCacheFile = $directory->getPathname() . DIRECTORY_SEPARATOR . ExtensionManager::SOURCE_FILE_CACHE;
+        $sourceCacheFile = $directory->getPathname() . \DIRECTORY_SEPARATOR . ExtensionManager::SOURCE_FILE_CACHE;
 
         if ($this->fileSystem->exists($sourceCacheFile)) {
             return static::ENABLED_SIGN;
@@ -200,7 +201,7 @@ class ExtensionHandlingCommand extends ContainerAwareCommand
 
     protected function getStyle(SplFileInfo $directory)
     {
-        $sourceCacheFile = $directory->getPathname() . DIRECTORY_SEPARATOR . ExtensionManager::SOURCE_FILE_CACHE;
+        $sourceCacheFile = $directory->getPathname() . \DIRECTORY_SEPARATOR . ExtensionManager::SOURCE_FILE_CACHE;
 
         if ($this->fileSystem->exists($sourceCacheFile)) {
             return 'info';

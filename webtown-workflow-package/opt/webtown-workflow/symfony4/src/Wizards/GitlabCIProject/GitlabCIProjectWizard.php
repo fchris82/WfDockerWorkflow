@@ -9,9 +9,9 @@
 namespace App\Wizards\GitlabCIProject;
 
 use App\Environment\Commander;
+use App\Environment\EnvParser;
 use App\Environment\EzEnvironmentParser;
 use App\Environment\IoManager;
-use App\Environment\EnvParser;
 use App\Environment\WfEnvironmentParser;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
@@ -39,10 +39,11 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
 
     /**
      * GitlabCIProjectWizard constructor.
-     * @param EnvParser $envParser
+     *
+     * @param EnvParser                $envParser
      * @param EventDispatcherInterface $eventDispatcher
-     * @param \Twig_Environment $twig
-     * @param Filesystem $filesystem
+     * @param \Twig_Environment        $twig
+     * @param Filesystem               $filesystem
      */
     public function __construct(
         EzEnvironmentParser $ezEnvironmentParser,

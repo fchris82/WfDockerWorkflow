@@ -39,6 +39,7 @@ class ProjectWizardConfigCommand extends Command
 
     /**
      * ProjectWizardConfigCommand constructor.
+     *
      * @param Manager $wizardManager
      */
     public function __construct(Manager $wizardManager, IoManager $ioManager)

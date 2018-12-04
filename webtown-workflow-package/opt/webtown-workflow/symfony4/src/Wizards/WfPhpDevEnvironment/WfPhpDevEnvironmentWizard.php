@@ -9,8 +9,8 @@
 namespace App\Wizards\WfPhpDevEnvironment;
 
 use App\Event\Wizard\BuildWizardEvent;
-use Symfony\Component\Console\Question\Question;
 use App\Wizards\WfDevEnvironment\WfDevEnvironmentWizard;
+use Symfony\Component\Console\Question\Question;
 
 /**
  * Class DevEnvironment.

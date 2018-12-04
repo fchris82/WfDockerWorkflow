@@ -8,7 +8,6 @@
 
 namespace App\Environment;
 
-
 use App\Configuration\Configuration;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -31,8 +30,9 @@ class WfEnvironmentParser
 
     /**
      * WfEnvironmentParser constructor.
+     *
      * @param Configuration $configuration
-     * @param Filesystem $fileSystem
+     * @param Filesystem    $fileSystem
      */
     public function __construct(Configuration $configuration, Filesystem $fileSystem)
     {

@@ -42,10 +42,10 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * BaseSkeleton constructor.
      *
-     * @param IoManager $ioManager
+     * @param IoManager                $ioManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param \Twig_Environment $twig
-     * @param Filesystem $filesystem
+     * @param \Twig_Environment        $twig
+     * @param Filesystem               $filesystem
      */
     public function __construct(
         IoManager $ioManager,

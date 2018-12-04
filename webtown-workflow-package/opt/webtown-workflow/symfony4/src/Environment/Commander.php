@@ -8,7 +8,6 @@
 
 namespace App\Environment;
 
-
 use App\Exception\CommanderRunException;
 
 class Commander
@@ -30,7 +29,8 @@ class Commander
 
     /**
      * Commander constructor.
-     * @param IoManager $ioManager
+     *
+     * @param IoManager           $ioManager
      * @param WfEnvironmentParser $wfEnvironmentParser
      */
     public function __construct(IoManager $ioManager, WfEnvironmentParser $wfEnvironmentParser)
@@ -75,7 +75,7 @@ class Commander
         }
 
         $this->ioManager->writeln(sprintf('[<error>ERROR</error> (%d)] %s', $return, $printedCmd));
-        throw new CommanderRunException($cmd, $output, "", $return);
+        throw new CommanderRunException($cmd, $output, '', $return);
     }
 
     public function runCmdInContainer($cmd, $image, $extraParameters = '', $workdir = null)
@@ -128,20 +128,18 @@ class Commander
 
     protected function liveExecuteCommand($cmd)
     {
-
-        while (@ ob_end_flush()); // end all output buffers if any
+        while (@ob_end_flush()); // end all output buffers if any
 
         $proc = popen("$cmd 2>&1 ; echo Exit status : $?", 'r');
 
-        $live_output     = "";
-        $complete_output = "";
+        $live_output     = '';
+        $complete_output = '';
 
-        while (!feof($proc))
-        {
+        while (!feof($proc)) {
             $live_output     = fread($proc, 4096);
             $complete_output = $complete_output . $live_output;
             echo "$live_output";
-            @ flush();
+            @flush();
         }
 
         pclose($proc);
@@ -150,9 +148,9 @@ class Commander
         preg_match('/[0-9]+$/', $complete_output, $matches);
 
         // return exit status and intended output
-        return array (
-            'exit_status'  => intval($matches[0]),
-            'output'       => rtrim(str_replace("Exit status : " . $matches[0], '', $complete_output))
-        );
+        return [
+            'exit_status'  => (int) ($matches[0]),
+            'output'       => rtrim(str_replace('Exit status : ' . $matches[0], '', $complete_output)),
+        ];
     }
 }

@@ -11,8 +11,8 @@ namespace App\Recipes\PostBase;
 use App\Event\RegisterEventListenersInterface;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Recipes\HiddenRecipe;
+use App\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 

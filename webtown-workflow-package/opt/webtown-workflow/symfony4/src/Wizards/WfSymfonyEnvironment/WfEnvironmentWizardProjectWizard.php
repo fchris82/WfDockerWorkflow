@@ -9,14 +9,14 @@
 namespace App\Wizards\WfSymfonyEnvironment;
 
 use App\Environment\Commander;
-use App\Environment\IoManager;
 use App\Environment\EnvParser;
 use App\Environment\EzEnvironmentParser;
+use App\Environment\IoManager;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\Console\Question\Question;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

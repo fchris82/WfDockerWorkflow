@@ -13,8 +13,8 @@ use App\Environment\IoManager;
 use App\Environment\WfEnvironmentParser;
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
-use Symfony\Component\Console\Question\Question;
 use App\Wizards\BaseSkeletonWizard;
+use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

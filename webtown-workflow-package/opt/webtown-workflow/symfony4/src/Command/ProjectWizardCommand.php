@@ -6,6 +6,7 @@ use App\Environment\IoManager;
 use App\Exception\WizardSomethingIsRequiredException;
 use App\Helper\WordWrapper;
 use App\Wizard\Manager;
+use App\Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Helper;
@@ -14,8 +15,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Wizards\BaseWizard;
 
 /**
  * Class ProjectWizardCommand.
@@ -34,6 +33,7 @@ class ProjectWizardCommand extends Command
 
     /**
      * ProjectWizardCommand constructor.
+     *
      * @param Manager $wizardManager
      */
     public function __construct(Manager $wizardManager, IoManager $ioManager)
@@ -108,7 +108,7 @@ EOS
             : $this->wizardManager->getAllEnabledWizards();
 
         if (0 == \count($enabledWizards)) {
-            $this->writeNote( 'There isn\'t any installed/enabled wizard! The program exited.');
+            $this->writeNote('There isn\'t any installed/enabled wizard! The program exited.');
 
             return;
         }

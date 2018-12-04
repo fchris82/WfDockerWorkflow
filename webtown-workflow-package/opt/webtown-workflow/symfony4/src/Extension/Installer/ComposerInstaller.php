@@ -8,7 +8,6 @@
 
 namespace App\Extension\Installer;
 
-
 use App\Environment\Commander;
 use Symfony\Component\Filesystem\Filesystem;
 
@@ -26,8 +25,9 @@ class ComposerInstaller implements InstallerInterface
 
     /**
      * ComposerInstaller constructor.
+     *
      * @param Filesystem $fileSystem
-     * @param Commander $commander
+     * @param Commander  $commander
      */
     public function __construct(Filesystem $fileSystem, Commander $commander)
     {
@@ -36,7 +36,7 @@ class ComposerInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getName(): string
     {
@@ -44,7 +44,7 @@ class ComposerInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function install(string $source, string $target)
     {
@@ -57,7 +57,7 @@ class ComposerInstaller implements InstallerInterface
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public static function getPriority(): int
     {

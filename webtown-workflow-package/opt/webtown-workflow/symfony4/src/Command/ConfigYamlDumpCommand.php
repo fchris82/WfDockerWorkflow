@@ -13,7 +13,6 @@ use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Style\SymfonyStyle;
 
 /**
  * Class ConfigYamlDumpCommand.
@@ -37,7 +36,7 @@ class ConfigYamlDumpCommand extends Command
 
     /**
      * ConfigYamlDumpCommand constructor.
-     * 
+     *
      * @param Configuration $configuration
      * @param RecipeManager $recipeManager
      */

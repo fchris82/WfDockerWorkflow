@@ -227,7 +227,7 @@ class Configuration implements ConfigurationInterface
     {
         // We call the loadConfiguration from Wizard too, and then it isn't important this
         // @todo (Chris) Ez nem biztos, hogy így a legjobb megoldás, néha elnyelhetünk hibákat.
-        if (is_null($wfVersion)) {
+        if (null === $wfVersion) {
             return true;
         }
 

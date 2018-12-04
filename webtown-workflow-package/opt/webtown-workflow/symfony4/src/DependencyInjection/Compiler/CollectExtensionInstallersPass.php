@@ -8,7 +8,6 @@
 
 namespace App\DependencyInjection\Compiler;
 
-
 use App\Extension\ExtensionManager;
 use App\Extension\Installer\InstallerInterface;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

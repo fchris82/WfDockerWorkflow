@@ -30,9 +30,10 @@ class InstallEvent extends Event
 
     /**
      * InstallEvent constructor.
-     * @param string $fullSource
+     *
+     * @param string             $fullSource
      * @param InstallerInterface $installer
-     * @param string $targetPath
+     * @param string             $targetPath
      */
     public function __construct(string $fullSource, InstallerInterface $installer, string $targetPath)
     {

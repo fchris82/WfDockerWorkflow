@@ -8,7 +8,6 @@
 
 namespace App\Environment;
 
-
 use App\Exception\InvalidComposerVersionNumber;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 

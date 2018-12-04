@@ -11,10 +11,9 @@ namespace App\Wizards\WfWizard;
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
+use App\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\Console\Style\SymfonyStyle;
-use App\Wizards\BaseSkeletonWizard;
 
 class WfWizardWizard extends BaseSkeletonWizard
 {
@@ -49,7 +48,7 @@ class WfWizardWizard extends BaseSkeletonWizard
      */
     public function checkRequires($targetProjectDirectory)
     {
-        if (!file_exists($targetProjectDirectory . DIRECTORY_SEPARATOR . self::RELATIVE_TARGET_DIRECTORY)) {
+        if (!file_exists($targetProjectDirectory . \DIRECTORY_SEPARATOR . self::RELATIVE_TARGET_DIRECTORY)) {
             throw new WizardSomethingIsRequiredException('You can use this command in the `webtown-workflow` develop directory.');
         }
 

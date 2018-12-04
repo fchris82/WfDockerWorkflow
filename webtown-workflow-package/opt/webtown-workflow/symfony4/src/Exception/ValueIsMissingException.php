@@ -8,7 +8,6 @@
 
 namespace App\Exception;
 
-
 class ValueIsMissingException extends \Exception
 {
 }

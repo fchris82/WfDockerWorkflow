@@ -10,7 +10,6 @@ use App\Event\Configuration\VerboseInfoEvent;
 use App\Event\ConfigurationEvents;
 use App\Event\SkeletonBuild\DumpFileEvent;
 use App\Event\SkeletonBuildBaseEvents;
-use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\InvalidWfVersionException;
 use App\Exception\MissingRecipeException;
 use App\Recipes\BaseRecipe;
@@ -57,11 +56,12 @@ class ReconfigureCommand extends Command
 
     /**
      * ReconfigureCommand constructor.
-     * @param Configuration $configuration
-     * @param Builder $builder
-     * @param RecipeManager $recipeManager
+     *
+     * @param Configuration            $configuration
+     * @param Builder                  $builder
+     * @param RecipeManager            $recipeManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param IoManager $ioManager
+     * @param IoManager                $ioManager
      */
     public function __construct(
         Configuration $configuration,

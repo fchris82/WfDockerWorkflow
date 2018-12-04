@@ -8,9 +8,9 @@
 
 namespace App\Extension;
 
-
 interface ExtensionInterface
 {
     public function getExtensionName();
+
     public function getExtensionType();
 }

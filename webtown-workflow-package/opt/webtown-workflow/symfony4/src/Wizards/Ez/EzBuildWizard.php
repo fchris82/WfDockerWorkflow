@@ -14,10 +14,10 @@ use App\Environment\IoManager;
 use App\Environment\WfEnvironmentParser;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Wizard\WizardInterface;
+use App\Wizards\BaseWizard;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use App\Wizards\BaseWizard;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class EzBuildWizard extends BaseWizard implements WizardInterface
@@ -63,6 +63,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 
     /**
      * @param BuildWizardEvent $event
+     *
      * @throws \App\Exception\CommanderRunException
      */
     public function build(BuildWizardEvent $event)

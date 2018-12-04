@@ -26,9 +26,9 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
      * @param string $workingDirectory
      * @param string $packageName
      *
-     * @return string
-     *
      * @throws InvalidComposerVersionNumber
+     *
+     * @return string
      */
     public function get($workingDirectory, $packageName, $default = false)
     {
@@ -69,9 +69,9 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
     /**
      * @param $workingDirectory
      *
-     * @return mixed
-     *
      * @throws FileNotFoundException
+     *
+     * @return mixed
      */
     protected function getComposerLockConfig($workingDirectory)
     {

@@ -33,6 +33,7 @@ class SymfonyEnvironmentParser
 
     /**
      * SymfonyEnvironmentParser constructor.
+     *
      * @param ComposerInstalledVersionParser $composerParser
      */
     public function __construct(IoManager $ioManager, ComposerInstalledVersionParser $composerParser)
@@ -40,7 +41,6 @@ class SymfonyEnvironmentParser
         $this->ioManager = $ioManager;
         $this->composerParser = $composerParser;
     }
-
 
     /**
      * Different projects and versions contains different packages, so we need to check more then one option.

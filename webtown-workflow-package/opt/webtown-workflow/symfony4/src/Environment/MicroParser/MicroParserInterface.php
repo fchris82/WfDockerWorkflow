@@ -8,7 +8,6 @@
 
 namespace App\Environment\MicroParser;
 
-
 interface MicroParserInterface
 {
     public function get($workingDirectory, $key, $default);

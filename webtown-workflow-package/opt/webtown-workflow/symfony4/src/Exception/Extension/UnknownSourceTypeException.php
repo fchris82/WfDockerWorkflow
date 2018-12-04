@@ -8,7 +8,6 @@
 
 namespace App\Exception\Extension;
 
-
 class UnknownSourceTypeException extends InvalidSourceException
 {
 }
