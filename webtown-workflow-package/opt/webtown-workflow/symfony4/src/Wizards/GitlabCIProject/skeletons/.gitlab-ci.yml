@@ -53,7 +53,7 @@ variables:
         - wf up
         - wf docker-compose exec -T engine /usr/local/bin/entrypoint.sh --wait-for-init
         # waiting for mysql
-        - wf exec engine wait-for-it.sh mysql:3306
+        - wf exec engine wait-for-it.sh mysql:3306 -t 60
         - printf "\n\n\n\n\tSTART\n\n\n\n\n"
     after_script:
         - printf "\n\n\n\n\tEND\n\n\n\n\n"
@@ -110,7 +110,7 @@ variables:
         #   - SLACK_ICON_EMOJI
         #   - SLACK_ICON_16x16
         # We switch off $DEPLOY_ACTION when the deploy action is stoping
-        - '[[ ! -z "$SLACK_API_URL" ]] && [[ "${DEPLOY_ACTION:-deploy}" -eq "deploy" ]] && curl -X POST --data-urlencode "payload={
+        - '[[ ! -z "$SLACK_API_URL" ]] && [[ "${DEPLOY_ACTION:-deploy}" == "deploy" ]] && curl -X POST --data-urlencode "payload={
             \"channel\": \"#gitlab\",
             \"username\": \"GitLab\",
             \"text\": \"*${CI_PROJECT_NAME}* has deployed to *${STAGE}*\",
@@ -167,6 +167,7 @@ build:
         - wf reconfigure
         - wf debug-docker-config
         - wf up
+        - wf exec engine wait-for-it.sh mysql:3306 -t 60
         - wf install
 #        - wf composer install -n
 #        - wf sf doctrine:database:create --if-not-exists
