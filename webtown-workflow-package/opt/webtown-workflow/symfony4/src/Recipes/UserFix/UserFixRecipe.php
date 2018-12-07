@@ -66,7 +66,6 @@ class UserFixRecipe extends BaseRecipe
                                 ->isRequired()
                                 ->cannotBeEmpty()
                             ->end()
-                            // @todo (Chris) Ezt maszkolni kellene, mert ha bonyolult, megzavarodhat a generált fájlttól!
                             ->scalarNode('entrypoint')
                                 ->info('<comment>The <info>original FULL entrypoint</info> what the container is using.</comment>')
                                 ->example('docker-entrypoint.sh mysqld')
