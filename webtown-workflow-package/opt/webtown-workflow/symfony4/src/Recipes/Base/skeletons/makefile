@@ -4,6 +4,7 @@ DOCKER_BASENAME				:=	$${LOCAL_USER_NAME:-base}p{{ config.name | default('$${PWD
 DOCKER_DATA_DIR				:=	{{ config.docker_data_dir }}
 DOCKER_ENVIRONMENTS	:=
 DOCKER_CLI_NAME		:=	engine
+# @todo (Chris) Commitok fordítása
 # Az aktuális projekt gazdája
 WWW_DATA_UID		:=	$$(stat -c '%u' .)
 # Az Docker group
@@ -104,10 +105,10 @@ help:
 BASE_MAKEFILE_PATH	:=	$(WORKFLOW_MAKEFILE_PATH).$(VERSION)
 include $(BASE_MAKEFILE_PATH)
 
-# @todo (Chris) Itt a git-et máshogy kellene keresni és fel kellene ksézülni a .hg keresésre is!
-BASE_DIRECTORY  := $$(git rev-parse --show-toplevel || echo $$(pwd))
-THIS_FILE       := $(firstword $(MAKEFILE_LIST))
-CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(THIS_FILE) $(MAKEOVERRIDES)
+BASE_MAKEFILE   := $(firstword $(MAKEFILE_LIST))
+# The base makefile location is: `[PROJECT BASE DIRECTORY]/.wf/` directory.
+BASE_DIRECTORY  := $$(realpath $$(dirname $(abspath $(BASE_MAKEFILE)))/..)
+CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(BASE_MAKEFILE) $(MAKEOVERRIDES)
 
 # Docker commands
 # Ha szeretnéd az nginx-et debug módban futtatni, akkor írd át:
