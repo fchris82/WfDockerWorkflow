@@ -1,0 +1,16 @@
+{
+  "description": "WF extension installation",
+  "keywords": ["workflow", "extension"],
+  "homepage": "http://github.com/Seldaek/monolog",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Krisztián Ferenczi",
+      "email": "ferenczi.krisztian@gmail.com"
+    }
+  ],
+  "config": {
+    "vendor-dir": "extensions"
+  }
+}

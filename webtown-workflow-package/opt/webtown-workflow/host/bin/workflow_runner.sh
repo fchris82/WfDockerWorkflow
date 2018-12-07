@@ -142,6 +142,36 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
     ENV_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME}):${WORKDIR}/${WF_ENV_FILE_NAME}"
 fi
 
+if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
+    EXTENSIONS_SHARE=$(cat ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
+else
+    if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions ]; then
+        RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
+        RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
+            while IFS= read -r -d $'\0' line; do
+                RECIPES_SOURCE=$line
+                if [ -L $RECIPES_SOURCE ]; then
+                    RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
+                fi
+                echo "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) "
+            done
+        )
+
+        WIZARDS_PATH=/opt/webtown-workflow/symfony4/src/Wizards
+        WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
+            while IFS= read -r -d $'\0' line; do
+                WIZARDS_SOURCE=$line
+                if [ -L $WIZARDS_SOURCE ]; then
+                    WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
+                fi
+                echo "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) "
+            done
+        )
+        EXTENSIONS_SHARE="${RECIPES_SHARE}${WIZARDS_SHARE}"
+        echo "${EXTENSIONS_SHARE}" > ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes
+    fi
+fi
+
 # Insert custom recipes from your home, default: ~/.webtown-workflow/recipes.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
     RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
@@ -178,7 +208,7 @@ docker run ${TTY} \
             ${CONFIG_FILE_SHARE} \
             ${ENV_FILE_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
-            ${RECIPES_SHARE} \
+            ${EXTENSIONS_SHARE} \
             ${SHARED_SF_CACHE} \
             ${SHARED_WIZARD_CONFIGURATION} \
             -v /var/run/docker.sock:/var/run/docker.sock \
