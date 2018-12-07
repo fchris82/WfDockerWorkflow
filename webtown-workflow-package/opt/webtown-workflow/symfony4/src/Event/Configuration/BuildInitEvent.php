@@ -102,7 +102,6 @@ class BuildInitEvent extends Event
      */
     public function getParameters()
     {
-        // @todo (Chris) itt kellene vmi, amivel ki tudom listázni az elérhető változókat illetve helyőrzőket, mert így kicsit a sötétben tapogatózom én is, hogy mik érhetőek el
         $baseParameters = [
             '%wf.project_path%'     => $this->projectPath,
             '%wf.target_directory%' => $this->targetDirectory,

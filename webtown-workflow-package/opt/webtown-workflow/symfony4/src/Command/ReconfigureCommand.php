@@ -6,6 +6,7 @@ use App\Configuration\Builder;
 use App\Configuration\Configuration;
 use App\Configuration\RecipeManager;
 use App\Environment\IoManager;
+use App\Event\Configuration\BuildInitEvent;
 use App\Event\Configuration\VerboseInfoEvent;
 use App\Event\ConfigurationEvents;
 use App\Event\SkeletonBuild\DumpFileEvent;
@@ -142,7 +143,6 @@ class ReconfigureCommand extends Command
     }
 
     /**
-     * @todo (Chris) Esetleg ezt az egész eseménykezelőst dolgot áthelyezhetnénk egy külön service-be, ami set-tel megkapja az input és output értékeket, majd az alapján cselekszik.
      * Registering event listeners.
      */
     protected function registerEventListeners()
@@ -151,6 +151,11 @@ class ReconfigureCommand extends Command
             $this->eventDispatcher->addListener(
                 ConfigurationEvents::VERBOSE_INFO,
                 [$this, 'verboseInfo']
+            );
+            $this->eventDispatcher->addListener(
+                ConfigurationEvents::BUILD_INIT,
+                [$this, 'parametersInfo'],
+                -1000
             );
         }
         $this->eventDispatcher->addListener(
@@ -171,6 +176,23 @@ class ReconfigureCommand extends Command
             $info = Yaml::dump($info, 4);
         }
         $this->ioManager->writeln($info);
+    }
+
+    public function parametersInfo(BuildInitEvent $event)
+    {
+        $this->ioManager->getIo()->title('Replacing placeholders');
+        $parameters = [];
+        foreach ($event->getParameters() as $key => $value) {
+            $parameters[] = ["<comment>$key</comment>", $value];
+        }
+        $this->ioManager->getIo()->table([
+            'Parameter',
+            'Value',
+        ], $parameters);
+
+        $this->ioManager->getIo()->block('Full configuration:');
+        $baseConfig = Yaml::dump($event->getConfig(), 4);
+        $this->ioManager->writeln($baseConfig);
     }
 
     /**

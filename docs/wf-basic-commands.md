@@ -113,6 +113,7 @@ recipes:
 
 | Placeholder | Default value | Description |
 | ----------- | --------------- | ----------- |
+| `%config.name%` |  | The project name from config (`name` parameter). |
 | `%wf.target_directory%` | `.wf` | The value of `WF_WORKING_DIRECTORY_NAME` [config parameter](wf-configuration.md). This is the "build/cache" directory. The program will put here the generated files, like **docker-compose** files, **.sh** files and **makefiles** |
 | `%wf.project_path%` | "`pwd`" | Dynamically generated string. The project absolute path. |
 | `%wf.config_hash%` |  | Dynamically generated string. The hash value of the configuration files (include the first level imports too). See the `imports` project configuration! |
@@ -120,7 +121,9 @@ recipes:
 
 > Listen to the `%` signs! There are two, one prefix and one postfix!
 
-> You can define custom placeholders in you own recipe!
+> You can define custom placeholders in your own recipe!
+
+> You can check the used placeholders when you call `reconfigure` with `-v[vv]` parameter.
 
 #### `imports`
 
