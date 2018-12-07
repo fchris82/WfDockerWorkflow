@@ -153,7 +153,7 @@ else
                 if [ -L $RECIPES_SOURCE ]; then
                     RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
                 fi
-                echo "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) "
+                echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
             done
         )
 
@@ -164,11 +164,11 @@ else
                 if [ -L $WIZARDS_SOURCE ]; then
                     WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
                 fi
-                echo "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) "
+                echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
             done
         )
         EXTENSIONS_SHARE="${RECIPES_SHARE}${WIZARDS_SHARE}"
-        echo "${EXTENSIONS_SHARE}" > ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes
+        echo -e "${EXTENSIONS_SHARE}\c" > ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes
     fi
 fi
 
@@ -181,7 +181,7 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
             if [ -L $RECIPES_SOURCE ]; then
                 RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
             fi
-            echo "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) "
+            echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
         done
     )
 fi
@@ -194,7 +194,7 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
             if [ -L $WIZARDS_SOURCE ]; then
                 WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
             fi
-            echo "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) "
+            echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
         done
     )
 fi
