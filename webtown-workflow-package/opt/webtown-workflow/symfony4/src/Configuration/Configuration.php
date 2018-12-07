@@ -124,11 +124,16 @@ class Configuration implements ConfigurationInterface
                         })
                     ->end()
                 ->end()
-                // @todo (Chris) Ez elméletileg nem tartalmazhat speciális karaktereket, mert sem a docker, sem a "domain" esetén nem szerencsés, ha tartalmaz olyasmit.
                 ->scalarNode('name')
-                    ->info('<comment>You have to set a name for the project.</comment>')
+                    ->info('<comment>You have to set a name for the project. Avoid special characters and spaces, you should use latin characters and numbers, otherwise you can encounter problems.</comment>')
                     ->isRequired()
                     ->cannotBeEmpty()
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return preg_match('/[^a-zA-Z0-9\-_\.]/', $v);
+                        })
+                        ->thenInvalid('Avoid special characters and spaces, you should use latin characters and numbers, otherwise you can encounter problems.')
+                    ->end()
                 ->end()
                 ->scalarNode('docker_data_dir')
                     ->info('<comment>You can set an alternative docker data directory.</comment>')
@@ -226,7 +231,6 @@ class Configuration implements ConfigurationInterface
     protected function validateWfVersion($config, $wfVersion)
     {
         // We call the loadConfiguration from Wizard too, and then it isn't important this
-        // @todo (Chris) Ez nem biztos, hogy így a legjobb megoldás, néha elnyelhetünk hibákat.
         if (null === $wfVersion) {
             return true;
         }
