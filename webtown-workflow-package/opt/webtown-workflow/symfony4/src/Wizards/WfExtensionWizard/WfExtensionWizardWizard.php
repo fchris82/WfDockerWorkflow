@@ -57,8 +57,8 @@ class WfExtensionWizardWizard extends AbstractExtensionWizard
             if (strpos($answer, '_')) {
                 throw new \RuntimeException('You need to use CamelCase syntax! Don\'t use `_` in the class name!');
             }
-            if (!preg_match('/^[a-zA-Z][a-zA-Z0-9]*Wizard$/', $answer)) {
-                throw new \RuntimeException('Invalid class name! You need to start with letter, and you mustn\'t use special characters or space in the name!');
+            if (!preg_match('/^[A-Z][a-zA-Z0-9]*Wizard$/', $answer)) {
+                throw new \RuntimeException('Invalid class name! You need to start with upper letter, and you mustn\'t use special characters or space in the name!');
             }
 
             return $answer;
@@ -89,11 +89,11 @@ class WfExtensionWizardWizard extends AbstractExtensionWizard
         parent::eventAfterBuildFile($event);
         /** @var SkeletonFile $skeletonFile */
         $skeletonFile = $event->getSkeletonFile();
+        $skeletonFile
+            ->move($this->getRelativeTargetDirectory($event->getSkeletonVar('namespace')));
         switch ($skeletonFile->getRelativePathname()) {
             case 'Wizard.php':
-                $skeletonFile
-                    ->setRelativePath($this->getRelativeTargetDirectory($event->getSkeletonVar('namespace')))
-                    ->setFileName($event->getSkeletonVar('wizard_class') . '.php');
+                    $skeletonFile->rename($event->getSkeletonVar('wizard_class') . '.php');
         }
     }
 
@@ -142,7 +142,6 @@ class WfExtensionWizardWizard extends AbstractExtensionWizard
         $io->listing([
             sprintf('Go to <comment>%s</comment> directory', $this->getRelativeTargetDirectory($event->getSkeletonVar('namespace'))),
             sprintf('Edit the <comment>%s.php</comment> file.', $event->getSkeletonVar('wizard_class')),
-            'Create git repository: <comment>git init && git add . && git commit -m "Init"</comment> to "save" and share your wizard.',
         ]);
     }
 
