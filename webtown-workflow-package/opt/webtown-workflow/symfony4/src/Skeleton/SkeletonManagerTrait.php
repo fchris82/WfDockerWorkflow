@@ -64,7 +64,7 @@ trait SkeletonManagerTrait
 
         $skeletonFiles = [];
         $baseSkeletonFileInfos = $preBuildEvent->getSkeletonFileInfos() ?: $this->getSkeletonFinder($buildConfig);
-        $templateVars = $preBuildEvent->getTemplateVars();
+        $templateVars = $preBuildEvent->getSkeletonVars();
         $buildConfig = $preBuildEvent->getBuildConfig();
 
         /** @var SplFileInfo $skeletonFileInfo */
@@ -77,9 +77,9 @@ trait SkeletonManagerTrait
                     ?: $this->buildSkeletonFile($preEvent->getSourceFileInfo(), $preEvent->getBuildConfig());
                 $skeletonFile->setContents($this->parseTemplateFile(
                     $skeletonFileInfo,
-                    $preEvent->getTemplateVars()
+                    $preEvent->getSkeletonVars()
                 ));
-                $postEvent = new PostBuildSkeletonFileEvent($this, $skeletonFile, $skeletonFileInfo, $preEvent->getTemplateVars(), $preEvent->getBuildConfig());
+                $postEvent = new PostBuildSkeletonFileEvent($this, $skeletonFile, $skeletonFileInfo, $preEvent->getSkeletonVars(), $preEvent->getBuildConfig());
                 $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_BUILD_FILE, $postEvent);
                 $this->eventAfterBuildFile($postEvent);
                 $skeletonFiles[] = $postEvent->getSkeletonFile();

@@ -16,7 +16,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * @var array
      */
-    protected $templateVars;
+    protected $skeletonVars;
 
     /**
      * @var array
@@ -31,32 +31,32 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * PreBuildSkeletonFilesEvent constructor.
      *
-     * @param array $templateVars
+     * @param array $skeletonVars
      * @param array $buildConfig
      */
-    public function __construct($namespace, array $templateVars, array $buildConfig)
+    public function __construct($namespace, array $skeletonVars, array $buildConfig)
     {
         parent::__construct($namespace);
-        $this->templateVars = $templateVars;
+        $this->skeletonVars = $skeletonVars;
         $this->buildConfig = $buildConfig;
     }
 
     /**
      * @return array
      */
-    public function getTemplateVars(): array
+    public function getSkeletonVars(): array
     {
-        return $this->templateVars;
+        return $this->skeletonVars;
     }
 
     /**
-     * @param array $templateVars
+     * @param array $skeletonVars
      *
      * @return $this
      */
-    public function setTemplateVars(array $templateVars)
+    public function setSkeletonVars(array $skeletonVars)
     {
-        $this->templateVars = $templateVars;
+        $this->skeletonVars = $skeletonVars;
 
         return $this;
     }

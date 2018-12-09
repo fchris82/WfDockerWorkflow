@@ -139,7 +139,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         parent::eventBeforeBuildFiles($event);
 
         $recipeConfig = $event->getBuildConfig();
-        $templateVariables = $event->getTemplateVars();
+        $templateVariables = $event->getSkeletonVars();
 
         $defaultTld = trim(
             $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
@@ -167,7 +167,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         }
 
         $event->setBuildConfig($recipeConfig);
-        $event->setTemplateVars($templateVariables);
+        $event->setSkeletonVars($templateVariables);
     }
 
     /**

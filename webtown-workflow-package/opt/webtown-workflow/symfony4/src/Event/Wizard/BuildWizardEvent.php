@@ -20,7 +20,7 @@ class BuildWizardEvent extends Event
     /**
      * @var array
      */
-    protected $skeletonVars;
+    protected $skeletonVars = [];
 
     /**
      * @var array
@@ -70,6 +70,15 @@ class BuildWizardEvent extends Event
         $this->skeletonVars[$key] = $value;
 
         return $this;
+    }
+
+    public function getSkeletonVar(string $key, $default = null)
+    {
+        if (!array_key_exists($key, $this->skeletonVars)) {
+            return $default;
+        }
+
+        return $this->skeletonVars[$key];
     }
 
     /**

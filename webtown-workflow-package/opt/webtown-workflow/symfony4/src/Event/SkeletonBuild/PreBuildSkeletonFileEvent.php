@@ -22,7 +22,7 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     /**
      * @var array
      */
-    protected $templateVars;
+    protected $skeletonVars;
 
     /**
      * @var array
@@ -39,14 +39,14 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      *
      * @param string|object $namespace
      * @param SplFileInfo   $sourceFileInfo
-     * @param array         $templateVars
+     * @param array         $skeletonVars
      * @param array         $buildConfig
      */
-    public function __construct($namespace, SplFileInfo $sourceFileInfo, array $templateVars, array $buildConfig)
+    public function __construct($namespace, SplFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {
         parent::__construct($namespace);
         $this->sourceFileInfo = $sourceFileInfo;
-        $this->templateVars = $templateVars;
+        $this->skeletonVars = $skeletonVars;
         $this->buildConfig = $buildConfig;
     }
 
@@ -73,21 +73,30 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     /**
      * @return array
      */
-    public function getTemplateVars(): array
+    public function getSkeletonVars(): array
     {
-        return $this->templateVars;
+        return $this->skeletonVars;
     }
 
     /**
-     * @param array $templateVars
+     * @param array $skeletonVars
      *
      * @return $this
      */
-    public function setTemplateVars(array $templateVars)
+    public function setSkeletonVars(array $skeletonVars)
     {
-        $this->templateVars = $templateVars;
+        $this->skeletonVars = $skeletonVars;
 
         return $this;
+    }
+
+    public function getSkeletonVar(string $key, $default = null)
+    {
+        if (!array_key_exists($key, $this->skeletonVars)) {
+            return $default;
+        }
+
+        return $this->skeletonVars[$key];
     }
 
     /**

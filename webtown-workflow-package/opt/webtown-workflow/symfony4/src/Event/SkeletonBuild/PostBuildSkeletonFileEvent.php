@@ -19,13 +19,13 @@ class PostBuildSkeletonFileEvent extends PreBuildSkeletonFileEvent
      * @param string|object $namespace
      * @param SkeletonFile  $skeletonFile
      * @param SplFileInfo   $sourceFileInfo
-     * @param array         $templateVars
+     * @param array         $skeletonVars
      * @param array         $buildConfig
      */
-    public function __construct($namespace, SkeletonFile $skeletonFile, SplFileInfo $sourceFileInfo, array $templateVars, array $buildConfig)
+    public function __construct($namespace, SkeletonFile $skeletonFile, SplFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {
         $this->skeletonFile = $skeletonFile;
 
-        parent::__construct($namespace, $sourceFileInfo, $templateVars, $buildConfig);
+        parent::__construct($namespace, $sourceFileInfo, $skeletonVars, $buildConfig);
     }
 }
