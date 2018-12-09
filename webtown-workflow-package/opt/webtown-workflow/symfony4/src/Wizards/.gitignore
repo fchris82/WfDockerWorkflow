@@ -11,6 +11,7 @@
 !Symfony
 !WfDevEnvironment
 !WfExtension
+!WfExtensionRecipe
 !WfExtensionWizard
 !WfPhpDevEnvironment
 !WfSymfonyEnvironment

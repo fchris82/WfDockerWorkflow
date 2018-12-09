@@ -88,6 +88,8 @@ class SkeletonFile
      * @param string|null $relativePath
      *
      * @return $this
+     *
+     * @deprecated Use move() instead
      */
     public function setRelativePath($relativePath)
     {
@@ -108,6 +110,8 @@ class SkeletonFile
      * @param string|null $newFileName
      *
      * @return $this
+     *
+     * @deprecated Use the rename() instead
      */
     public function setFileName($newFileName)
     {
@@ -133,6 +137,8 @@ class SkeletonFile
      * @param string|null $relativePathname
      *
      * @return $this
+     *
+     * @deprecated Use the move() instead
      */
     public function setRelativePathname($relativePathname)
     {
@@ -153,6 +159,8 @@ class SkeletonFile
      * @param null|string $fullTargetPathname
      *
      * @return $this
+     *
+     * @deprecated Use the move() instead
      */
     public function setFullTargetPathname(?string $fullTargetPathname)
     {
@@ -207,5 +215,16 @@ class SkeletonFile
         $this->setFullTargetPathname($directory . \DIRECTORY_SEPARATOR . $this->getRelativePathname());
 
         return $this;
+    }
+
+    public function rename($newFilename)
+    {
+        $this->setFileName($newFilename);
+        if ($this->fullTargetPathname) {
+            $pathItems = explode(DIRECTORY_SEPARATOR, $this->fullTargetPathname);
+            $currentFilename = array_pop($pathItems);
+            $pathItems[] = $newFilename;
+            $this->setFullTargetPathname(implode(\DIRECTORY_SEPARATOR, $pathItems));
+        }
     }
 }
