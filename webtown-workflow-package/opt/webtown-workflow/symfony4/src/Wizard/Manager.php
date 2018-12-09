@@ -101,7 +101,7 @@ class Manager implements ContainerAwareInterface
 
     public function getWizard($class)
     {
-        return $this->configuration->get($class);
+        return $this->container->get($class);
     }
 
     public function syncConfiguration()
