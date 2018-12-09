@@ -1,7 +1,7 @@
 {
   "description": "WF extension installation",
-  "keywords": ["workflow", "extension"],
-  "homepage": "http://github.com/Seldaek/monolog",
+  "keywords": ["workflow", "wf-extensions"],
+  "homepage": "http://github.com/???",
   "type": "project",
   "license": "MIT",
   "authors": [
