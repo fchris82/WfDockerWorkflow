@@ -119,7 +119,7 @@ class DeployerWizard extends BaseSkeletonWizard
         $this->runCmdInContainer('composer require --dev deployer/deployer', $event->getWorkingDirectory());
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
 

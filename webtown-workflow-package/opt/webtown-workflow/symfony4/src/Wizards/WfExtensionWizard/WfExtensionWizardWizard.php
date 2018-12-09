@@ -1,32 +1,22 @@
 <?php
-/**
- * Created by IntelliJ IDEA.
- * User: chris
- * Date: 2018.11.22.
- * Time: 12:59
- */
 
-namespace App\Wizards\WfWizard;
+namespace App\Wizards\WfExtensionWizard;
 
 use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Event\Wizard\BuildWizardEvent;
 use App\Exception\WizardSomethingIsRequiredException;
-use App\Wizards\BaseSkeletonWizard;
+use App\Skeleton\FileType\SkeletonFile;
+use App\Wizards\WfExtension\Base\AbstractExtensionWizard;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 
-class WfWizardWizard extends BaseSkeletonWizard
+class WfExtensionWizardWizard extends AbstractExtensionWizard
 {
-    const RELATIVE_TARGET_DIRECTORY = 'webtown-workflow-package/opt/webtown-workflow/symfony4/src/Wizards';
-
-    /**
-     * @var array
-     */
-    protected $variables;
+    const DIRECTORY_NAME = 'Wizards';
 
     public function getDefaultName()
     {
-        return 'WF wizard init';
+        return 'WF extensions: wizard init';
     }
 
     public function getDefaultGroup()
@@ -48,16 +38,17 @@ class WfWizardWizard extends BaseSkeletonWizard
      */
     public function checkRequires($targetProjectDirectory)
     {
-        if (!file_exists($targetProjectDirectory . \DIRECTORY_SEPARATOR . self::RELATIVE_TARGET_DIRECTORY)) {
-            throw new WizardSomethingIsRequiredException('You can use this command in the `webtown-workflow` develop directory.');
+        // `wf-extension` keyword exists in the composer.json file
+        if (!$this->workingDirectoryIsAnExtension($targetProjectDirectory)) {
+            throw new WizardSomethingIsRequiredException('You can use this command in an extension directory!');
         }
 
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
-        $wizardQuestion = new Question('Please give a class name. You have to finish with "Wizard", eg: <comment>MyCustomWizard</comment>');
+        $wizardQuestion = new Question('Please give a class name. You have to finish with "Wizard", eg: <comment>MyCustomWizard</comment>. You have to use unique name!');
         $wizardQuestion->setValidator(function ($answer) {
             $answer = trim($answer);
             if (!\is_string($answer) || 'Wizard' !== substr($answer, -6)) {
@@ -84,26 +75,25 @@ class WfWizardWizard extends BaseSkeletonWizard
         $name = $io->askQuestion($nameQuestion);
         $group = $io->askQuestion($groupQuestion);
 
-        $this->variables = [
+        return [
             'wizard_class' => $class,
             'namespace' => substr($class, 0, -6),
             'parent_wizard' => $useSkeletons ? 'BaseSkeletonWizard' : 'BaseWizard',
             'name' => $name,
             'group' => $group,
         ];
-
-        return $this->variables;
     }
 
     protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event)
     {
         parent::eventAfterBuildFile($event);
+        /** @var SkeletonFile $skeletonFile */
         $skeletonFile = $event->getSkeletonFile();
         switch ($skeletonFile->getRelativePathname()) {
             case 'Wizard.php':
                 $skeletonFile
-                    ->setRelativePath($this->getRelativeTargetDirectory())
-                    ->setFileName($this->variables['wizard_class'] . '.php');
+                    ->setRelativePath($this->getRelativeTargetDirectory($event->getSkeletonVar('namespace')))
+                    ->setFileName($event->getSkeletonVar('wizard_class') . '.php');
         }
     }
 
@@ -115,10 +105,13 @@ class WfWizardWizard extends BaseSkeletonWizard
     protected function build(BuildWizardEvent $event)
     {
         // Create skeletons directory
-        if ('BaseSkeletonWizard' == $this->variables['parent_wizard']) {
-            $target = $event->getWorkingDirectory() . \DIRECTORY_SEPARATOR
-                . $this->getRelativeTargetDirectory() . \DIRECTORY_SEPARATOR
-                . 'skeletons';
+        if ('BaseSkeletonWizard' == $event->getSkeletonVar('parent_wizard')) {
+            $target = implode(\DIRECTORY_SEPARATOR,[
+                $event->getWorkingDirectory(),
+                static::DIRECTORY_NAME,
+                $event->getSkeletonVar('namespace'),
+                'skeletons'
+            ]);
             $this->fileSystem->mkdir($target);
             $this->ioManager->writeln(sprintf(
                 '<info> ✓ The </info>%s/<comment>%s</comment><info> directory has been created.</info>',
@@ -131,20 +124,30 @@ class WfWizardWizard extends BaseSkeletonWizard
     protected function cleanUp(BuildWizardEvent $event)
     {
         parent::cleanUp($event);
+
+        $symlink = $this->createSymlink(
+            $event->getWorkingDirectory(),
+            static::DIRECTORY_NAME,
+            $event->getSkeletonVar('namespace')
+        );
+
         $io = $this->ioManager->getIo();
         $io->newLine(2);
-        $io->title(sprintf('The %s wizard created succesfully', $this->variables['wizard_class']));
+        $io->title(sprintf('The %s wizard created successfully', $event->getSkeletonVar('wizard_class')));
+        if ($symlink) {
+            $io->note(sprintf('The %s symlink was created!', $symlink));
+        } else {
+            $io->note('The symlink wasn\'t created!');
+        }
         $io->listing([
-            sprintf('Go to <comment>%s</comment> directory', $this->getRelativeTargetDirectory()),
-            sprintf('Edit the <comment>%s.php</comment> file.', $this->variables['wizard_class']),
+            sprintf('Go to <comment>%s</comment> directory', $this->getRelativeTargetDirectory($event->getSkeletonVar('namespace'))),
+            sprintf('Edit the <comment>%s.php</comment> file.', $event->getSkeletonVar('wizard_class')),
             'Create git repository: <comment>git init && git add . && git commit -m "Init"</comment> to "save" and share your wizard.',
         ]);
     }
 
-    protected function getRelativeTargetDirectory()
+    protected function getRelativeTargetDirectory($namespace): string
     {
-        return static::RELATIVE_TARGET_DIRECTORY
-            . \DIRECTORY_SEPARATOR
-            . $this->variables['namespace'];
+        return static::DIRECTORY_NAME . \DIRECTORY_SEPARATOR . $namespace;
     }
 }

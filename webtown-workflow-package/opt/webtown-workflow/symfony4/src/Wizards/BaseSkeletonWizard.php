@@ -63,7 +63,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         return [];
     }
@@ -78,7 +78,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     {
         parent::initBuild($event);
 
-        $event->setSkeletonVars($this->getSkeletonVars($event));
+        $event->setSkeletonVars($this->readSkeletonVars($event));
 
         $this->printHeader($event);
         $this->doBuildFiles($event);

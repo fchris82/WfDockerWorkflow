@@ -76,7 +76,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         return 'Composer';
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
         $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);

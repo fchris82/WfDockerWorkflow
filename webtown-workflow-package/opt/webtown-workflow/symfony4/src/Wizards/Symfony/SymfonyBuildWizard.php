@@ -77,7 +77,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         $postBuildSkeletonFileEvent->getSkeletonFile()->move($this->workingDirectory);
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         $directoryQuestion = new Question('Add meg a könyvtárat, ahová szeretnéd telepíteni: [<info>.</info>] ', '.');
         $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>x.x</info>] ');

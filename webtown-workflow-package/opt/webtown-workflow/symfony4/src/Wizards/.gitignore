@@ -10,6 +10,7 @@
 !PhpMd
 !Symfony
 !WfDevEnvironment
+!WfExtension
+!WfExtensionWizard
 !WfPhpDevEnvironment
 !WfSymfonyEnvironment
-!WfWizard

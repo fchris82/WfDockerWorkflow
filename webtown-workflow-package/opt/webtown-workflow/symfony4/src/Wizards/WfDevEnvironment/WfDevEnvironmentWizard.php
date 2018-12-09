@@ -68,7 +68,7 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         return [
             'project_name' => basename($event->getWorkingDirectory()),

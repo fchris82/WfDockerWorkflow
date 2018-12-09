@@ -93,7 +93,7 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
         return '.wf.yml.dist';
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
         $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);

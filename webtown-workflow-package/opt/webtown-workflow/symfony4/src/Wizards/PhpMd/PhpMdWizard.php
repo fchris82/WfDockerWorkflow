@@ -85,7 +85,7 @@ class PhpMdWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
         return $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($event->getWorkingDirectory());
     }

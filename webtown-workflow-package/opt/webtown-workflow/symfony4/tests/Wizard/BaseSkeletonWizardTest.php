@@ -98,7 +98,7 @@ class TestSkeletonWizard extends BaseSkeletonWizard
     /**
      * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
      */
-    protected function getSkeletonVars($targetProjectDirectory)
+    protected function readSkeletonVars($targetProjectDirectory)
     {
         return [];
     }
