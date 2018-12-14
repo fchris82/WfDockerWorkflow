@@ -214,4 +214,4 @@ docker run ${TTY} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
-            fchris82/wf ${CMD} ${@}
+            ${USER}/wf ${CMD} ${@}
