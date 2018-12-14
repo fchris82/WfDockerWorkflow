@@ -21,7 +21,6 @@ use App\Recipes\HiddenRecipe;
 use App\Skeleton\BuilderTrait;
 use App\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
