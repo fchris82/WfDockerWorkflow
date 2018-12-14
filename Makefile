@@ -54,6 +54,7 @@ __build_wf: __versionupgrade __build_rsync
 .PHONY: __versionupgrade
 __versionupgrade: GIT_BRANCH := $$(git rev-parse --abbrev-ref HEAD)
 __versionupgrade:
+    # We automatically change in master and develop branch!
     ifneq ("$(GIT_BRANCH)","master")
         ifneq ("$(GIT_BRANCH)","develop")
 			$(eval nochange = 1)
