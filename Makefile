@@ -52,14 +52,21 @@ __build_wf: __versionupgrade __build_rsync
 
 # Upgrade the version number. It needs a PACKAGE version!!!
 .PHONY: __versionupgrade
+__versionupgrade: GIT_BRANCH := $$(git rev-parse --abbrev-ref HEAD)
 __versionupgrade:
+    ifneq ("$(GIT_BRANCH)","master")
+        ifneq ("$(GIT_BRANCH)","develop")
+			$(eval nochange = 1)
+        endif
+    endif
     ifeq (,$(KEEPVERSION))
         ifeq (,$(VERSION))
             # Original Version + New Version
-			ov=$$(grep Version $(PACKAGE)/DEBIAN/control | egrep -o '[0-9\.]*'); \
+			@if [ -z "$(nochange)" ]; then ov=$$(grep Version $(PACKAGE)/DEBIAN/control | egrep -o '[0-9\.]*'); \
 				nv=$$(echo "$${ov%.*}.$$(($${ov##*.}+1))"); \
 				sed -i -e "s/Version: *$${ov}/Version: $${nv}/" $(PACKAGE)/DEBIAN/control; \
-				echo "Version: $${nv}"
+				echo "Version: $${nv}"; \
+			fi
         else
 			sed -i -e "s/Version: *[0-9\.]*/Version: $(VERSION)/" $(PACKAGE)/DEBIAN/control; \
 				echo "Version: $(VERSION)"
@@ -97,24 +104,33 @@ build_proxy: __versionupgrade
 enter:
 	webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh /bin/bash
 
+.PHONY: __get_image_tag
+__get_image_tag: GIT_BRANCH := $$(git rev-parse --abbrev-ref HEAD)
+__get_image_tag:
+    ifeq ("$(GIT_BRANCH)","master")
+		$(eval IMAGE=fchris82/wf)
+    else
+		$(eval IMAGE=$(shell echo "fchris82/wf:$$(basename $(GIT_BRANCH))"))
+    endif
+
 # Create a docker image
 .PHONY: build_docker
-build_docker:
-	docker-compose -f docker/docker-compose.yml build --no-cache
+build_docker: __get_image_tag
+	docker build --no-cache -t $(IMAGE) .
 
 # Create a docker image with cache
 .PHONY: fast_build_docker
-fast_build_docker:
-	docker-compose -f docker/docker-compose.yml build
+fast_build_docker: __get_image_tag
+	docker build -t $(IMAGE) .
 
 # Push docker image
 .PHONY: push_docker
 push_docker: USER_IS_LOGGED_IN := `cat ~/.docker/config.json | jq '.auths."https://index.docker.io/v1/"'`
-push_docker:
+push_docker: __get_image_tag
 	if [ "$(USER_IS_LOGGED_IN)" = "null" ]; then \
 		docker login; \
 	fi
-	docker-compose -f docker/docker-compose.yml push
+	docker push $(IMAGE)
 
 # @todo
 .PHONY: tests
