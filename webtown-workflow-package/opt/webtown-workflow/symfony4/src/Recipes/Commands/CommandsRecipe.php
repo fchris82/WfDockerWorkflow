@@ -8,11 +8,11 @@
 
 namespace App\Recipes\Commands;
 
-use App\Event\Configuration\BuildInitEvent;
-use App\Event\ConfigurationEvents;
-use App\Event\RegisterEventListenersInterface;
-use App\Recipes\HiddenRecipe;
-use App\Skeleton\FileType\ExecutableSkeletonFile;
+use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
+use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;

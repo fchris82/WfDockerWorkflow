@@ -22,19 +22,19 @@ case $1 in
         showHelp
         echo "${WHITE}SYMFONY COMMAND HELP${RESTORE}"
         echo ""
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard \
+        php ${SYMFONY_CONSOLE} app:wizard \
             --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     --config)
         shift
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard:config \
+        php ${SYMFONY_CONSOLE} app:wizard:config \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     # RUN wizard
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:wizard \
+        php ${SYMFONY_CONSOLE} app:wizard \
             --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;

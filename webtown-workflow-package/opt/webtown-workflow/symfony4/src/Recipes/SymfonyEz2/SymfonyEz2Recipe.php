@@ -8,7 +8,7 @@
 
 namespace App\Recipes\SymfonyEz2;
 
-use App\Recipes\Symfony3\Symfony3Recipe;
+use App\Webtown\WorkflowBundle\Recipes\Symfony3\Symfony3Recipe;
 
 class SymfonyEz2Recipe extends Symfony3Recipe
 {

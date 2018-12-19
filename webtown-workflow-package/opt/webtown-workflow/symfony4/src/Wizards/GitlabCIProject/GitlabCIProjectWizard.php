@@ -8,15 +8,15 @@
 
 namespace App\Wizards\GitlabCIProject;
 
-use App\Environment\Commander;
-use App\Environment\EnvParser;
-use App\Environment\EzEnvironmentParser;
-use App\Environment\IoManager;
-use App\Environment\WfEnvironmentParser;
-use App\Event\Wizard\BuildWizardEvent;
-use App\Exception\WizardSomethingIsRequiredException;
-use App\Exception\WizardWfIsRequiredException;
-use App\Wizards\BaseSkeletonWizard;
+use App\Webtown\WorkflowBundle\Environment\Commander;
+use App\Webtown\WorkflowBundle\Environment\EnvParser;
+use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
+use App\Webtown\WorkflowBundle\Environment\IoManager;
+use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

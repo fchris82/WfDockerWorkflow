@@ -2,7 +2,7 @@
 
 namespace App\Recipes\PhpDeployerEnvironment;
 
-use App\Recipes\BaseRecipe as BaseRecipe;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as BaseRecipe;
 
 class PhpDeployerEnvironmentRecipe extends BaseRecipe
 {

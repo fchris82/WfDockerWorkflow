@@ -9,6 +9,11 @@ ENV APP_ENV dev
 
 ARG LOCALE=en_US
 ENV XDEBUG_CONFIG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disable
+# Useful paths
+ENV SYMFONY_PATH=/opt/webtown-workflow/symfony4
+ENV SYMFONY_CONSOLE=$SYMFONY_PATH/bin/console
+ENV WIZARDS_PATH=$SYMFONY_PATH/src/Wizards
+ENV RECIPES_PATH=$SYMFONY_PATH/src/Recipes
 
 # Ez direkt a legelejére kerül, hogy már itt hibát dobjon, ha hiányzik a deb!
 # @todo (Chris) Ha erre lesz jobb ötlet, hogy itt töltsük le a deb-et, akkor azt kellene használni

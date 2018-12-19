@@ -8,7 +8,7 @@
 
 namespace App\Recipes\MailHog;
 
-use App\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 /**
  * Class Recipe

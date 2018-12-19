@@ -8,7 +8,7 @@
 
 namespace App\Recipes\Symfony2;
 
-use App\Recipes\Symfony\AbstractSymfonyRecipe;
+use App\Webtown\WorkflowBundle\Recipes\Symfony\AbstractSymfonyRecipe;
 
 /**
  * Class Recipe

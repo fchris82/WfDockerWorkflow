@@ -2,11 +2,11 @@
 
 namespace App\Wizards\WfExtensionRecipe;
 
-use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use App\Event\Wizard\BuildWizardEvent;
-use App\Exception\WizardSomethingIsRequiredException;
-use App\Skeleton\FileType\SkeletonFile;
-use App\Wizards\WfExtension\Base\AbstractExtensionWizard;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use App\Webtown\WorkflowBundle\Wizards\WfExtension\Base\AbstractExtensionWizard;
 use Symfony\Component\Console\Question\Question;
 
 class WfExtensionRecipeWizard extends AbstractExtensionWizard

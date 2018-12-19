@@ -8,16 +8,16 @@
 
 namespace App\Wizards\PhpCsFixer;
 
-use App\Environment\Commander;
-use App\Environment\IoManager;
-use App\Environment\SymfonyEnvironmentParser;
-use App\Environment\WfEnvironmentParser;
-use App\Event\SkeletonBuild\DumpFileEvent;
-use App\Event\Wizard\BuildWizardEvent;
-use App\Exception\WizardSomethingIsRequiredException;
-use App\Exception\WizardWfIsRequiredException;
-use App\Skeleton\FileType\SkeletonFile;
-use App\Wizards\BaseSkeletonWizard;
+use App\Webtown\WorkflowBundle\Environment\Commander;
+use App\Webtown\WorkflowBundle\Environment\IoManager;
+use App\Webtown\WorkflowBundle\Environment\SymfonyEnvironmentParser;
+use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

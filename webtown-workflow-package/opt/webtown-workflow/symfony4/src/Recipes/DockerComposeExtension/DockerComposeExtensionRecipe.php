@@ -8,8 +8,8 @@
 
 namespace App\Recipes\DockerComposeExtension;
 
-use App\Exception\SkipRecipeException;
-use App\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
+use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use Symfony\Component\Yaml\Yaml;
 
 /**

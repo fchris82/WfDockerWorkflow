@@ -129,7 +129,7 @@ if [ "${CI}" == "0" ] && [ "${WF_TTY}" == "1" ]; then
 fi
 if [ "${CI}" == "0" ]; then
     # We use the shared cache only out of cache
-    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache"
+    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:${SYMFONY_PATH}/var/cache"
     SHARED_WIZARD_CONFIGURATION="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/config/wizards.yml:/opt/webtown-workflow/host/config/wizards.yml"
 fi
 
@@ -146,7 +146,6 @@ if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
     EXTENSIONS_SHARE=$(cat ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
 else
     if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions ]; then
-        RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
         RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
             while IFS= read -r -d $'\0' line; do
                 RECIPES_SOURCE=$line
@@ -157,7 +156,6 @@ else
             done
         )
 
-        WIZARDS_PATH=/opt/webtown-workflow/symfony4/src/Wizards
         WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
             while IFS= read -r -d $'\0' line; do
                 WIZARDS_SOURCE=$line
@@ -174,7 +172,6 @@ fi
 
 # Insert custom recipes from your home, default: ~/.webtown-workflow/recipes.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
-    RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
     RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             RECIPES_SOURCE=$line
@@ -187,7 +184,6 @@ if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
 fi
 # Insert custom wizards from your home, default: ~/.webtown-workflow/wizards.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
-    WIZARDS_PATH=/opt/webtown-workflow/symfony4/src/Wizards
     WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             WIZARDS_SOURCE=$line

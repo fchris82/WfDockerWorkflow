@@ -3,14 +3,14 @@
 namespace App\Wizards\{{ namespace }};
 
 {% if parent_wizard == 'BaseSkeletonWizard' %}
-use App\Event\SkeletonBuild\DumpFileEvent;
-use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use App\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use App\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
-use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 {% endif %}
-use App\Event\Wizard\BuildWizardEvent;
-use App\Wizards\{{ parent_wizard }};
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Wizards\{{ parent_wizard }};
 
 class {{ wizard_class }} extends {{ parent_wizard }}
 {

@@ -8,12 +8,12 @@
 
 namespace App\Recipes\NginxReverseProxy;
 
-use App\Configuration\Environment;
-use App\Event\Configuration\BuildInitEvent;
-use App\Event\ConfigurationEvents;
-use App\Event\RegisterEventListenersInterface;
-use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use App\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Configuration\Environment;
+use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
+use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**

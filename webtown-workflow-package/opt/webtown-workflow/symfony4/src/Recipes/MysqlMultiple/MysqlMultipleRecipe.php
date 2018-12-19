@@ -8,7 +8,7 @@
 
 namespace App\Recipes\MysqlMultiple;
 
-use App\Recipes\Mysql\MysqlRecipe as BaseRecipe;
+use App\Webtown\WorkflowBundle\Recipes\Mysql\MysqlRecipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;

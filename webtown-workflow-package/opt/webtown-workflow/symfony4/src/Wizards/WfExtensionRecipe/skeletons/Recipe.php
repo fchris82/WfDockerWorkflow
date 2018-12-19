@@ -2,9 +2,9 @@
 
 namespace App\Recipes\{{ namespace }};
 
-use App\Exception\SkipSkeletonFileException;
-use App\Recipes\BaseRecipe;
-use App\Skeleton\FileType\SkeletonFile;
+use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 

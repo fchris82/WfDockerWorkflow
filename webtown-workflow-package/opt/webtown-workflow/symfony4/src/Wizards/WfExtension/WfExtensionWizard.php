@@ -8,14 +8,14 @@
 
 namespace App\Wizards\WfExtension;
 
-use App\Environment\Commander;
-use App\Environment\IoManager;
-use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use App\Event\Wizard\BuildWizardEvent;
-use App\Exception\WizardSomethingIsRequiredException;
-use App\Wizards\BaseSkeletonWizard;
-use App\Wizards\WfExtension\Base\AbstractExtensionWizard;
+use App\Webtown\WorkflowBundle\Environment\Commander;
+use App\Webtown\WorkflowBundle\Environment\IoManager;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use App\Webtown\WorkflowBundle\Wizards\WfExtension\Base\AbstractExtensionWizard;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
