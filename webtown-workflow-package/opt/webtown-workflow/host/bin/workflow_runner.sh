@@ -24,6 +24,15 @@ if [ "$1" == "--develop" ]; then
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
     WF_DEVELOP_PATH="$(realpath ${DIR}/../../../../..)"
     DOCKER_DEVELOP_PATH_VOLUME="-v ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow:/opt/webtown-workflow"
+
+    # Change docker image, if it needs. Maybe you should build first with make command:
+    #
+    #  $ make -s rebuild_wf build_docker
+    #
+    GIT_BRANCH=$(cd ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow && git rev-parse --abbrev-ref HEAD)
+    if [[ "$GIT_BRANCH" != "master" ]]; then
+        WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
+    fi
 fi
 
 # COMMAND
@@ -210,4 +219,4 @@ docker run ${TTY} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
-            ${USER}/wf ${CMD} ${@}
+            ${WF_IMAGE:-${USER}/wf} ${CMD} ${@}
