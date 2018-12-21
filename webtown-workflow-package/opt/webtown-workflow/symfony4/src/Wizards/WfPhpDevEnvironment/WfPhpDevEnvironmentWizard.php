@@ -9,7 +9,7 @@
 namespace App\Wizards\WfPhpDevEnvironment;
 
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Wizards\WfDevEnvironment\WfDevEnvironmentWizard;
+use App\Wizards\WfDevEnvironment\WfDevEnvironmentWizard;
 use Symfony\Component\Console\Question\Question;
 
 /**

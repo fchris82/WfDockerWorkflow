@@ -8,12 +8,12 @@
 
 namespace App\Recipes\MysqlMultiple;
 
-use App\Webtown\WorkflowBundle\Recipes\Mysql\MysqlRecipe as BaseRecipe;
+use App\Recipes\Mysql\MysqlRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
-class MysqlMultipleRecipe extends BaseRecipe
+class MysqlMultipleRecipe extends MysqlRecipe
 {
     const NAME = 'mysql_multiple';
 

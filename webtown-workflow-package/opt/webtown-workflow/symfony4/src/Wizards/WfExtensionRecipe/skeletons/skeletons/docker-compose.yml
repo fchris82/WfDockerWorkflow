@@ -1,8 +1,0 @@
-version: "{{ '{{ config.docker_compose.version }}' }}"
-
-services:
-    {{ name }}:
-        # @todo
-        image: hello-world
-        environment:
-            CUSTOM_ENV: ${CUSTOM_ENV}
