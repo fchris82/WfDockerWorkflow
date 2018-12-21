@@ -9,7 +9,7 @@
 namespace App\Webtown\WorkflowBundle\Event\SkeletonBuild;
 
 use App\Webtown\WorkflowBundle\Event\NamespacedEvent;
-use Symfony\Component\Finder\SplFileInfo;
+use App\Webtown\WorkflowBundle\Skeleton\SkeletonTwigFileInfo;
 
 class PreBuildSkeletonFilesEvent extends NamespacedEvent
 {
@@ -24,7 +24,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     protected $buildConfig;
 
     /**
-     * @var array|SplFileInfo[]
+     * @var array|SkeletonTwigFileInfo[]
      */
     protected $skeletonFileInfos;
 
@@ -81,13 +81,13 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
         return $this;
     }
 
-    public function addSkeletonFileInfo(SplFileInfo $fileInfo)
+    public function addSkeletonFileInfo(SkeletonTwigFileInfo $fileInfo)
     {
         $this->skeletonFileInfos[] = $fileInfo;
     }
 
     /**
-     * @return array|SplFileInfo[]
+     * @return array|SkeletonTwigFileInfo[]
      */
     public function getSkeletonFileInfos()
     {
@@ -95,7 +95,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     }
 
     /**
-     * @param array|SplFileInfo[] $skeletonFileInfos
+     * @param array|SkeletonTwigFileInfo[] $skeletonFileInfos
      *
      * @return $this
      */

@@ -56,7 +56,6 @@ abstract class BaseSkeletonWizard extends BaseWizard
     ) {
         $this->twig = $twig;
         $this->fileSystem = $filesystem;
-        $this->twigSkeletonNamespace = TwigExtendingPass::WIZARD_TWIG_NAMESPACE;
         parent::__construct($ioManager, $commander, $eventDispatcher);
     }
 

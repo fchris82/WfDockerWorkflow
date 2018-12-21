@@ -13,7 +13,6 @@ use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Webtown\WorkflowBundle\Extension\ExtensionInterface;
 use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcher;
@@ -22,7 +21,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 /**
  * Class BaseSkeleton.
  */
-abstract class BaseWizard implements WizardInterface, ExtensionInterface
+abstract class BaseWizard implements WizardInterface
 {
     /**
      * @var IoManager
@@ -183,15 +182,5 @@ abstract class BaseWizard implements WizardInterface, ExtensionInterface
     public function checkRequires($targetProjectDirectory)
     {
         return true;
-    }
-
-    public function getExtensionName()
-    {
-        return $this->getDefaultName();
-    }
-
-    public function getExtensionType()
-    {
-        return 'Wizard';
     }
 }

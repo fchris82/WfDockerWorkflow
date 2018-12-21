@@ -32,11 +32,6 @@ trait SkeletonManagerTrait
      */
     protected $eventDispatcher;
 
-    /**
-     * @var string
-     */
-    protected $twigSkeletonNamespace;
-
     abstract protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event);
 
     abstract protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $event);
@@ -63,11 +58,11 @@ trait SkeletonManagerTrait
         $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_BUILD_FILES, $preBuildEvent);
 
         $skeletonFiles = [];
-        $baseSkeletonFileInfos = $preBuildEvent->getSkeletonFileInfos() ?: $this->getSkeletonFinder($buildConfig);
+        $baseSkeletonFileInfos = $preBuildEvent->getSkeletonFileInfos() ?: $this->getSkeletonFiles($buildConfig);
         $templateVars = $preBuildEvent->getSkeletonVars();
         $buildConfig = $preBuildEvent->getBuildConfig();
 
-        /** @var SplFileInfo $skeletonFileInfo */
+        /** @var SkeletonTwigFileInfo $skeletonFileInfo */
         foreach ($baseSkeletonFileInfos as $skeletonFileInfo) {
             try {
                 $preEvent = new PreBuildSkeletonFileEvent($this, $skeletonFileInfo, $templateVars, $buildConfig);
@@ -108,8 +103,8 @@ trait SkeletonManagerTrait
     }
 
     /**
-     * @param SplFileInfo $templateFile
-     * @param array       $templateVariables
+     * @param SkeletonTwigFileInfo $templateFile
+     * @param array                $templateVariables
      *
      * @throws \Exception
      * @throws \Twig_Error_Loader
@@ -118,37 +113,31 @@ trait SkeletonManagerTrait
      *
      * @return string
      */
-    protected function parseTemplateFile(SplFileInfo $templateFile, $templateVariables)
+    protected function parseTemplateFile(SkeletonTwigFileInfo $templateFile, $templateVariables)
     {
-        foreach ($this->twig->getLoader()->getPaths($this->twigSkeletonNamespace) as $path) {
-            if (0 === strpos($templateFile->getPathname(), realpath($path))) {
-                $twigPath = str_replace(
-                    realpath($path),
-                    '',
-                    $templateFile->getPathname()
-                );
-                $file = sprintf('@%s/%s', $this->twigSkeletonNamespace, $twigPath);
-
-                return $this->twig->render($file, $templateVariables);
-            }
-        }
-
-        throw new \Exception('Twig path not found');
+        return $this->twig->render($templateFile->getTwigPath(), $templateVariables);
     }
 
-    protected function getSkeletonFinder($buildConfig)
+    protected function getSkeletonFiles($buildConfig)
     {
-        $paths = static::getSkeletonPaths($buildConfig);
-        if (0 == \count($paths)) {
+        $pathsWithTwigNamespace = static::getSkeletonPaths($buildConfig);
+        if (0 == \count($pathsWithTwigNamespace)) {
             return [];
         }
 
-        $skeletonFinder = Finder::create()
-            ->files()
-            ->in($paths)
-            ->ignoreDotFiles(false);
+        $skeletonFiles = [];
+        foreach ($pathsWithTwigNamespace as $twigNamespace => $path) {
+            $skeletonFinder = Finder::create()
+                ->files()
+                ->in($path)
+                ->ignoreDotFiles(false);
 
-        return $skeletonFinder;
+            foreach ($skeletonFinder as $fileInfo) {
+                $skeletonFiles[] = SkeletonTwigFileInfo::create($fileInfo, $twigNamespace);
+            }
+        }
+
+        return $skeletonFiles;
     }
 
     /**
@@ -171,9 +160,9 @@ trait SkeletonManagerTrait
         }
 
         $refClass = new \ReflectionClass(static::class);
-        $skeletonPath = \dirname($refClass->getFileName()) . '/skeletons';
+        $skeletonPath = \dirname($refClass->getFileName()) . DIRECTORY_SEPARATOR . SkeletonHelper::DIR;
         if (is_dir($skeletonPath)) {
-            $skeletonPaths[] = $skeletonPath;
+            $skeletonPaths[SkeletonHelper::generateTwigNamespace($refClass)] = $skeletonPath;
         }
 
         return $skeletonPaths;

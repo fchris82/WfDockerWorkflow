@@ -10,12 +10,12 @@ namespace App\Webtown\WorkflowBundle\Event\SkeletonBuild;
 
 use App\Webtown\WorkflowBundle\Event\NamespacedEvent;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\Finder\SplFileInfo;
+use App\Webtown\WorkflowBundle\Skeleton\SkeletonTwigFileInfo;
 
 class PreBuildSkeletonFileEvent extends NamespacedEvent
 {
     /**
-     * @var SplFileInfo
+     * @var SkeletonTwigFileInfo
      */
     protected $sourceFileInfo;
 
@@ -38,11 +38,11 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * PreBuildSkeletonFileEvent constructor.
      *
      * @param string|object $namespace
-     * @param SplFileInfo   $sourceFileInfo
+     * @param SkeletonTwigFileInfo   $sourceFileInfo
      * @param array         $skeletonVars
      * @param array         $buildConfig
      */
-    public function __construct($namespace, SplFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
+    public function __construct($namespace, SkeletonTwigFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {
         parent::__construct($namespace);
         $this->sourceFileInfo = $sourceFileInfo;
@@ -51,19 +51,19 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     }
 
     /**
-     * @return SplFileInfo
+     * @return SkeletonTwigFileInfo
      */
-    public function getSourceFileInfo(): SplFileInfo
+    public function getSourceFileInfo(): SkeletonTwigFileInfo
     {
         return $this->sourceFileInfo;
     }
 
     /**
-     * @param SplFileInfo $sourceFileInfo
+     * @param SkeletonTwigFileInfo $sourceFileInfo
      *
      * @return $this
      */
-    public function setSourceFileInfo(SplFileInfo $sourceFileInfo)
+    public function setSourceFileInfo(SkeletonTwigFileInfo $sourceFileInfo)
     {
         $this->sourceFileInfo = $sourceFileInfo;
 

@@ -2,25 +2,26 @@
 
 namespace App\Webtown\WorkflowBundle\DependencyInjection\Compiler;
 
-use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
+use App\Webtown\WorkflowBundle\WebtownWorkflowBundle;
 use App\Webtown\WorkflowBundle\Wizard\Manager;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class CollectWizardsPass implements CompilerPassInterface
+class CollectWizardsPass extends AbstractTwigSkeletonPass
 {
-    const TAG_NAME = 'wf.wizard';
-
     /**
      * You can modify the container here before it is dumped to PHP code.
      */
     public function process(ContainerBuilder $container)
     {
         $definition = $container->getDefinition(Manager::class);
+        $twigFilesystemLoaderDefinition = $container->getDefinition(parent::DEFAULT_TWIG_LOADER);
 
-        foreach ($container->findTaggedServiceIds(self::TAG_NAME) as $serviceId => $taggedService) {
+        foreach ($container->findTaggedServiceIds(WebtownWorkflowBundle::WIZARD_TAG) as $serviceId => $taggedService) {
             $definition->addMethodCall('addWizard', [new Reference($serviceId)]);
+
+            $serviceDefinition = $container->getDefinition($serviceId);
+            $this->registerSkeletonService($serviceDefinition, $twigFilesystemLoaderDefinition);
         }
     }
 }

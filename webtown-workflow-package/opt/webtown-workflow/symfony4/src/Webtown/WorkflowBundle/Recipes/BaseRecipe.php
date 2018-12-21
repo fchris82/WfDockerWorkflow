@@ -8,12 +8,10 @@
 
 namespace App\Webtown\WorkflowBundle\Recipes;
 
-use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use App\Webtown\WorkflowBundle\Extension\ExtensionInterface;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
@@ -25,7 +23,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-abstract class BaseRecipe implements ExtensionInterface
+abstract class BaseRecipe
 {
     use SkeletonManagerTrait;
 
@@ -44,7 +42,6 @@ abstract class BaseRecipe implements ExtensionInterface
     {
         $this->twig = $twig;
         $this->eventDispatcher = $eventDispatcher;
-        $this->twigSkeletonNamespace = TwigExtendingPass::RECIPE_TWIG_NAMESPACE;
     }
 
     abstract public function getName();
@@ -172,15 +169,5 @@ abstract class BaseRecipe implements ExtensionInterface
 
     protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
     {
-    }
-
-    public function getExtensionName()
-    {
-        return $this->getName();
-    }
-
-    public function getExtensionType()
-    {
-        return 'Recipe';
     }
 }

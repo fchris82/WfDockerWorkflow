@@ -3,6 +3,8 @@
 namespace App\Webtown\WorkflowBundle;
 
 use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\CollectExtensionInstallersPass;
+use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\CollectRecipesPass;
+use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\CollectWizardsPass;
 use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
@@ -11,14 +13,17 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class WebtownWorkflowBundle extends Bundle
 {
+    const RECIPE_TAG = 'wf.recipe';
+    const WIZARD_TAG = 'wf.wizard';
+
     public function build(ContainerBuilder $container)
     {
         $container->registerForAutoconfiguration(BaseRecipe::class)
-            ->addTag('wf.recipe');
+            ->addTag(static::RECIPE_TAG);
         $container->registerForAutoconfiguration(WizardInterface::class)
-            ->addTag('wf.wizard');
+            ->addTag(static::WIZARD_TAG);
 
-        $container->addCompilerPass(new TwigExtendingPass());
-        $container->addCompilerPass(new CollectExtensionInstallersPass());
+        $container->addCompilerPass(new CollectRecipesPass());
+        $container->addCompilerPass(new CollectWizardsPass());
     }
 }

@@ -8,22 +8,14 @@
 
 namespace App\Webtown\WorkflowBundle\Wizard;
 
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
-
 /**
  * Class Manager.
  *
  * Ezzel a Manager-rel kezeljük igazából a `wizard` taget a service-ek kapcsán. Itt gyűjtjük össze és itt rendezzük az
  * elérhető Wizard service-eket.
  */
-class Manager implements ContainerAwareInterface
+class Manager
 {
-    use ContainerAwareTrait;
-
     /**
      * @var WizardInterface[]
      */

@@ -11,33 +11,25 @@ namespace App\Webtown\WorkflowBundle\Configuration;
 use App\Webtown\WorkflowBundle\Exception\MissingRecipeException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 
-class RecipeManager implements ContainerAwareInterface
+class RecipeManager
 {
-    use ContainerAwareTrait;
-
-    /**
-     * @var string
-     */
-    protected $recipesPath;
-
     /**
      * @var BaseRecipe[]
      */
-    protected $recipes;
+    protected $recipes = [];
 
-    /**
-     * RecipeManager constructor.
-     *
-     * @param string $recipesPath
-     */
-    public function __construct($recipesPath)
+    public function addRecipe(BaseRecipe $recipe)
     {
-        $this->recipesPath = $recipesPath;
+        if (array_key_exists($recipe->getName(), $this->recipes)) {
+            throw new InvalidConfigurationException(sprintf(
+                'The `%s` recipe has been already existed! [`%s` vs `%s`]',
+                $recipe->getName(),
+                \get_class($this->recipes[$recipe->getName()]),
+                \get_class($recipe)
+            ));
+        }
+        $this->recipes[$recipe->getName()] = $recipe;
     }
 
     /**
@@ -45,40 +37,6 @@ class RecipeManager implements ContainerAwareInterface
      */
     public function getRecipes()
     {
-        if (!$this->recipes) {
-            $finder = new Finder();
-            $finder
-                ->in($this->recipesPath)
-                ->name('*Recipe.php')
-                ->exclude('skeletons')
-                ->depth(1)
-            ;
-            $this->recipes = [];
-            /** @var SplFileInfo $recipeFile */
-            foreach ($finder as $recipeFile) {
-                // Skip the files in route!
-                if ('' == $recipeFile->getRelativePath()) {
-                    continue;
-                }
-                $fullClass = sprintf(
-                    'App\Webtown\WorkflowBundle\\Recipes\\%s\\%s',
-                    str_replace('/', '\\', $recipeFile->getRelativePath()),
-                    $recipeFile->getBasename('.php')
-                );
-                /** @var BaseRecipe $recipe */
-                $recipe = $this->container->get($fullClass);
-                if (array_key_exists($recipe->getName(), $this->recipes)) {
-                    throw new InvalidConfigurationException(sprintf(
-                        'The `%s` recipe has been already existed! [`%s` vs `%s`]',
-                        $recipe->getName(),
-                        \get_class($this->recipes[$recipe->getName()]),
-                        \get_class($recipe)
-                    ));
-                }
-                $this->recipes[$recipe->getName()] = $recipe;
-            }
-        }
-
         return $this->recipes;
     }
 
