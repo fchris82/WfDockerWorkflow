@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class CollectRecipesPass extends AbstractTwigSkeletonPass
 {
     /**
-     * You can modify the container here before it is dumped to PHP code.
+     * Register all Recipe service.
      *
      * @throws InvalidArgumentException
      * @throws ServiceNotFoundException

@@ -22,7 +22,7 @@ class TemplateTwigFileInfo extends SkeletonTwigFileInfo
         $this->dir = $dir;
     }
 
-    protected function getDirectory()
+    protected function getDirectory(): string
     {
         return $this->dir;
     }

@@ -10,6 +10,11 @@ namespace App\Webtown\WorkflowBundle\Skeleton;
 
 use Symfony\Component\Finder\SplFileInfo;
 
+/**
+ * Class SkeletonTwigFileInfo
+ *
+ * We need the twig namespace of file and path together!
+ */
 class SkeletonTwigFileInfo extends SplFileInfo
 {
     /**
@@ -36,7 +41,7 @@ class SkeletonTwigFileInfo extends SplFileInfo
         return $this->twigNamespace;
     }
 
-    protected function getDirectory()
+    protected function getDirectory(): string
     {
         return SkeletonHelper::SKELETONS_DIR;
     }

@@ -12,11 +12,27 @@ use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\Definition;
 
+/**
+ * Class AbstractTwigSkeletonPass
+ *
+ * Add capability to register twig namespaces and paths.
+ *
+ * @see SkeletonHelper::generateTwigNamespace()
+ */
 abstract class AbstractTwigSkeletonPass implements CompilerPassInterface
 {
     const DEFAULT_TWIG_LOADER = 'twig.loader.native_filesystem';
 
     /**
+     * Register custom twig namespaces and paths.
+     * Eg, file: App\Test\TestBundle\Recipes\TestRecipe.php
+     *
+     *  -> namespace: AppTestTestBundleRecipesTestRecipe
+     *  -> path:
+     *          1. [project]/templates/bundles/[namespace] --> [project]/templates/bundles/AppTestTestBundleRecipesTestRecipe/skeletons/overridden.file.php
+     *          If the previous doesn't exist:
+     *          2. [php_file_dir] --> [project]/src/App/Test/TestBundle/Recipes/skeletons/original.file.php
+     *
      * @param string $twigDefaultPath
      * @param Definition $serviceDefinition
      * @param Definition $twigLoaderDefinition

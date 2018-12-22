@@ -18,11 +18,13 @@ class WebtownWorkflowBundle extends Bundle
 
     public function build(ContainerBuilder $container)
     {
+        // Register autoconfigurations
         $container->registerForAutoconfiguration(BaseRecipe::class)
             ->addTag(static::RECIPE_TAG);
         $container->registerForAutoconfiguration(WizardInterface::class)
             ->addTag(static::WIZARD_TAG);
 
+        // Register collect passes
         $container->addCompilerPass(new CollectRecipesPass());
         $container->addCompilerPass(new CollectWizardsPass());
     }

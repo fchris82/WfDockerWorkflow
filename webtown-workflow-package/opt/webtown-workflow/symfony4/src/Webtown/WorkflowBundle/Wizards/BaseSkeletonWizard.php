@@ -17,6 +17,7 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException;
 use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonManagerTrait;
@@ -27,7 +28,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Class BaseSkeleton.
  *
- * "Fájlmásolós" wizard. Egy skeleton alapján dekorlálja a létező projektet, vagy éppen létrehoz egy újat.
+ * Wizard, that has skeleton files that decorates an existing project with or create a new.
  */
 abstract class BaseSkeletonWizard extends BaseWizard
 {
@@ -60,7 +61,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     }
 
     /**
-     * Itt kérjük be az adatokat a felhasználótól, ami alapján létrehozzuk a végső fájlokat.
+     * Here you can ask data and variables from user or set them.
      */
     protected function readSkeletonVars(BuildWizardEvent $event)
     {
@@ -70,7 +71,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * @param BuildWizardEvent $event
      *
-     * @throws \App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
+     * @throws WizardHasAlreadyBuiltException
      * @throws \Exception
      */
     public function initBuild(BuildWizardEvent $event)

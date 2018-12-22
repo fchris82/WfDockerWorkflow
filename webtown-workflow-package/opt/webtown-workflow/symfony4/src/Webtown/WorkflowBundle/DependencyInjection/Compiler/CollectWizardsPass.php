@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Reference;
 class CollectWizardsPass extends AbstractTwigSkeletonPass
 {
     /**
-     * You can modify the container here before it is dumped to PHP code.
+     * Register all Wizard service.
      *
      * @throws InvalidArgumentException
      * @throws ServiceNotFoundException
