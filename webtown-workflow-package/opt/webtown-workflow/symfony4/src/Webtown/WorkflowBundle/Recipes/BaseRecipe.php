@@ -51,10 +51,9 @@ abstract class BaseRecipe
      */
     public function getConfig()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root($this->getName());
+        $treeBuilder = new TreeBuilder($this->getName());
 
-        return $rootNode;
+        return $treeBuilder->getRootNode();
     }
 
     /**

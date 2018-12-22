@@ -83,8 +83,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root(self::ROOT_NODE);
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->children()
@@ -320,8 +320,8 @@ class Configuration implements ConfigurationInterface
 
     protected function addRecipesNode()
     {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('recipes');
+        $treeBuilder = new TreeBuilder('recipes');
+        $node = $treeBuilder->getRootNode();
         $node
             ->info('<comment>The configs of recipes. If you want to disable one from import, set the false value!</comment>')
             ->beforeNormalization()
