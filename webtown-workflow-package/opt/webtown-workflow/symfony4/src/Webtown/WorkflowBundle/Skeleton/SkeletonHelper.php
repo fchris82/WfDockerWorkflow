@@ -11,7 +11,8 @@ namespace App\Webtown\WorkflowBundle\Skeleton;
 
 class SkeletonHelper
 {
-    const DIR = 'skeletons';
+    const SKELETONS_DIR = 'skeletons';
+    const TEMPLATES_DIR = 'template';
 
     public static function generateTwigNamespace(\ReflectionClass $class)
     {

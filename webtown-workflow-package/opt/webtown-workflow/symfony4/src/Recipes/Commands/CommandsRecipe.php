@@ -13,6 +13,10 @@ use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
+use App\Webtown\WorkflowBundle\Skeleton\SkeletonTwigFileInfo;
+use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
@@ -51,7 +55,7 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      *
-     * @return \App\Skeleton\FileType\SkeletonFile[]|array
+     * @return SkeletonFile[]|array
      */
     protected function buildSkeletonFiles($templateVars, $buildConfig = [])
     {
@@ -116,8 +120,13 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
     protected function getTempSkeletonFileInfo($tempFile)
     {
         $refClass = new \ReflectionClass($this);
-        $skeletonsPath = \dirname($refClass->getFileName()) . '/template';
-        $tmpFileInfo = new SplFileInfo($skeletonsPath . '/' . $tempFile, '', $tempFile);
+        $skeletonsPath = \dirname($refClass->getFileName()) . DIRECTORY_SEPARATOR . SkeletonHelper::TEMPLATES_DIR;
+        $tmpFileInfo = new TemplateTwigFileInfo(
+            $skeletonsPath . DIRECTORY_SEPARATOR . $tempFile,
+            '',
+            $tempFile,
+            SkeletonHelper::generateTwigNamespace(new \ReflectionClass($this))
+        );
 
         return $tmpFileInfo;
     }

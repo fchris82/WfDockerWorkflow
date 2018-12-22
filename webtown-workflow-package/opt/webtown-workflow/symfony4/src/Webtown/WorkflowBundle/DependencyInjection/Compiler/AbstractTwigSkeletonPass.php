@@ -16,15 +16,25 @@ abstract class AbstractTwigSkeletonPass implements CompilerPassInterface
 {
     const DEFAULT_TWIG_LOADER = 'twig.loader.native_filesystem';
 
-    protected function registerSkeletonService(Definition $serviceDefinition, Definition $twigLoaderDefinition)
+    /**
+     * @param string $twigDefaultPath
+     * @param Definition $serviceDefinition
+     * @param Definition $twigLoaderDefinition
+     * @throws \ReflectionException
+     */
+    protected function registerSkeletonService(string $twigDefaultPath, Definition $serviceDefinition, Definition $twigLoaderDefinition)
     {
         $refClass = new \ReflectionClass($serviceDefinition->getClass());
 
         $namespace = SkeletonHelper::generateTwigNamespace($refClass);
-        $path = dirname($refClass->getFileName()) . DIRECTORY_SEPARATOR . SkeletonHelper::DIR;
 
-        if (file_exists($path) && is_dir($path)) {
-            $twigLoaderDefinition->addMethodCall('addPath', [$path, $namespace]);
+        // Override
+        $overridePath = $twigDefaultPath . DIRECTORY_SEPARATOR . 'bundles' . DIRECTORY_SEPARATOR . $namespace;
+        if (is_dir($overridePath)) {
+            $twigLoaderDefinition->addMethodCall('addPath', [$overridePath, $namespace]);
         }
+
+        $path = dirname($refClass->getFileName());
+        $twigLoaderDefinition->addMethodCall('addPath', [$path, $namespace]);
     }
 }

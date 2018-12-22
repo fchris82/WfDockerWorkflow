@@ -12,6 +12,9 @@ use Symfony\Component\Finder\SplFileInfo;
 
 class SkeletonTwigFileInfo extends SplFileInfo
 {
+    /**
+     * @var string
+     */
     protected $twigNamespace;
 
     public function __construct(string $file, string $relativePath, string $relativePathname, string $twigNamespace)
@@ -33,8 +36,18 @@ class SkeletonTwigFileInfo extends SplFileInfo
         return $this->twigNamespace;
     }
 
+    protected function getDirectory()
+    {
+        return SkeletonHelper::SKELETONS_DIR;
+    }
+
     public function getTwigPath(): string
     {
-        return sprintf('@%s/%s', $this->twigNamespace, $this->getRelativePathname());
+        return sprintf(
+            '@%s/%s/%s',
+            $this->twigNamespace,
+            $this->getDirectory(),
+            $this->getRelativePathname()
+        );
     }
 }
