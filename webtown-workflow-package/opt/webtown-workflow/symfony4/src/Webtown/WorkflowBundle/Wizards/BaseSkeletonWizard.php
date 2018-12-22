@@ -28,7 +28,7 @@ use Symfony\Component\Filesystem\Filesystem;
 /**
  * Class BaseSkeleton.
  *
- * Wizard, that has skeleton files that decorates an existing project with or create a new.
+ * Wizard, that has skeleton files that it decorates an existing project with or creates a new.
  */
 abstract class BaseSkeletonWizard extends BaseWizard
 {
