@@ -1,4 +1,5 @@
-FROM php:alpine
+# @todo A 7.3-as verzióhoz még nincs normális xdebug, szóval a 7.2-t kell használni, amíg az kijön.
+FROM php:7.2-alpine
 
 LABEL workflow-base=true
 
