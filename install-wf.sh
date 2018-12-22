@@ -32,7 +32,7 @@ CLREOL=$'\x1B[K'
 #-- Vars
 RESTORE=$'\x1B[0m'
 
-BASE_IMAGE=${1:"fchris82/wf"}
+BASE_IMAGE=${1:-"fchris82/wf"}
 # Refresh
 if [ -f ~/.webtown-workflow/Dockerfile ]; then
     build
