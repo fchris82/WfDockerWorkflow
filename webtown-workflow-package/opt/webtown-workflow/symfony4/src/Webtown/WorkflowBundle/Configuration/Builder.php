@@ -8,6 +8,11 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
+use App\Recipes\_\Recipe;
+use App\Recipes\Base\BaseRecipe;
+use App\Recipes\Commands\CommandsRecipe;
+use App\Recipes\DockerComposeExtension\DockerComposeExtensionRecipe;
+use App\Recipes\PostBase\PostBaseRecipe;
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
 use App\Webtown\WorkflowBundle\Event\Configuration\FinishEvent;
 use App\Webtown\WorkflowBundle\Event\Configuration\VerboseInfoEvent;
@@ -16,7 +21,7 @@ use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as AncestorBaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
@@ -107,26 +112,26 @@ class Builder
         $config = $initEvent->getConfig();
 
         // BASE
-        $this->buildRecipe($projectPath, 'base', $config, $config);
+        $this->buildRecipe($projectPath, BaseRecipe::NAME, $config, $config);
         // PUBLIC RECIPES
         foreach ($config['recipes'] as $recipeName => $recipeConfig) {
             $this->buildRecipe($projectPath, $recipeName, $recipeConfig, $config);
         }
 
         // COMMANDS
-        $this->buildRecipe($projectPath, 'commands', [], $config);
+        $this->buildRecipe($projectPath, CommandsRecipe::NAME, [], $config);
         // INCLUDED FILES
         $this->includeExtraFiles($config);
         // DOCKER COMPOSE EXTENSION
-        $this->buildRecipe($projectPath, 'docker_compose_extension', [], $config);
+        $this->buildRecipe($projectPath, DockerComposeExtensionRecipe::NAME, [], $config);
         // POST BASE
-        $this->buildRecipe($projectPath, 'post_base', [], $config);
+        $this->buildRecipe($projectPath, PostBaseRecipe::NAME, [], $config);
 
         // Finish
         $finishEvent = new FinishEvent($this->fileSystem);
         $this->eventDispatcher->dispatch(ConfigurationEvents::FINISH, $finishEvent);
 
-        $this->buildRecipe($projectPath, '_', [], $config);
+        $this->buildRecipe($projectPath, Recipe::NAME, [], $config);
     }
 
     /**
@@ -247,7 +252,7 @@ class Builder
             $recipeName
         ));
 
-        /** @var BaseRecipe $recipe */
+        /** @var AncestorBaseRecipe $recipe */
         $recipe = $this->recipeManager->getRecipe($recipeName);
 
         if ($recipe instanceof RegisterEventListenersInterface) {
@@ -279,7 +284,7 @@ class Builder
         $this->verboseInfo(['config' => $recipeConfig]);
 
         try {
-            /** @var BaseRecipe $recipe */
+            /** @var AncestorBaseRecipe $recipe */
             $recipe = $this->recipeManager->getRecipe($recipeName);
 
             /** @var SkeletonFile[] $skeletonFiles */
@@ -295,10 +300,10 @@ class Builder
 
     /**
      * @param $projectPath
-     * @param BaseRecipe     $recipe
-     * @param SkeletonFile[] $skeletonFiles
+     * @param AncestorBaseRecipe $recipe
+     * @param SkeletonFile[]     $skeletonFiles
      */
-    protected function fixFilePath($projectPath, BaseRecipe $recipe, $skeletonFiles)
+    protected function fixFilePath($projectPath, AncestorBaseRecipe $recipe, $skeletonFiles)
     {
         foreach ($skeletonFiles as $skeletonFile) {
             $relativeTargetPath = sprintf(
