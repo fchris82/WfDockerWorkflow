@@ -71,7 +71,7 @@ case $1 in
     ;;
     --composer-install)
         shift
-        cd /opt/webtown-workflow/symfony4 && composer install ${@}
+        cd ${SYMFONY_PATH} && composer install ${@}
     ;;
     # Clean cache directory. You have to use after put a custom recipe!
     --reload|--clean-cache)
@@ -82,17 +82,17 @@ case $1 in
     ;;
     --dev-run)
         shift
-        cd /opt/webtown-workflow/symfony4 && ${@}
+        cd ${SYMFONY_PATH} && ${@}
     ;;
     --extensions)
         shift
-        php /opt/webtown-workflow/symfony4/bin/console app:extension \
+        php ${SYMFONY_CONSOLE} app:extension \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     --config-dump)
         shift
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@}"
-        php /opt/webtown-workflow/symfony4/bin/console app:config-dump ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
+        php ${SYMFONY_CONSOLE} app:config-dump ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     # You can call with symfony command verbose, like: wf reconfigure -v
     reconfigure)

@@ -16,6 +16,11 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
+# Build command
+function build {
+    docker build --no-cache -t ${USER}/wf ~/.webtown-workflow
+}
+
 # Colors
 RED=$'\x1B[00;31m'
 GREEN=$'\x1B[00;32m'
@@ -27,11 +32,14 @@ CLREOL=$'\x1B[K'
 #-- Vars
 RESTORE=$'\x1B[0m'
 
+BASE_IMAGE=${1:"fchris82/wf"}
 # Refresh
-if [ "${1}" != "--no-pull" ]; then
-    docker pull fchris82/wf
+if [ -f ~/.webtown-workflow/Dockerfile ]; then
+    build
+    IMAGE=${USER}/wf
 else
-    shift
+    docker pull ${BASE_IMAGE}
+    IMAGE=${BASE_IMAGE}
 fi
 
 # If we want to use the local and fresh files
@@ -43,7 +51,8 @@ elif [ -S /var/run/docker.sock ]; then
     docker run -i \
      -v ~/:${HOME} \
      -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} -e USER_GROUP=$(stat -c '%g' /var/run/docker.sock) \
-     fchris82/wf \
+     -e BASE_IMAGE=${BASE_IMAGE} \
+     ${IMAGE} \
      /opt/webtown-workflow/host/copy_binaries_to_host.sh
 fi
 
@@ -51,6 +60,11 @@ fi
 COMMAND_PATH=~/.webtown-workflow/bin/commands
 mkdir -p ~/bin
 ln -sf $COMMAND_PATH/* ~/bin
+
+# Build if we haven't done it yet.
+if [ "${BASE_IMAGE}" == "${IMAGE}" ]; then
+    build
+fi
 
 # Install autocomplete
 if [ -f ~/.zshrc ]; then
@@ -82,5 +96,14 @@ if [ ! -z $GITIGNORE_FILE ] && [ -f $GITIGNORE_FILE ]; then
 else
     echo -e "${YELLOW}You don't have installed the git or you don't have global ${GREEN}.gitignore${YELLOW} file! Nothing changed.${RESTORE}"
 fi
+
+# Clean / Old version upgrade
+[[ -f ~/.webtown-workflow/config/config ]] && rm -f ~/.webtown-workflow/config/config*
+[[ -d ~/.webtown-workflow/recipes ]] \
+    && rsync --remove-source-files -a -v ~/.webtown-workflow/recipes/* ~/.webtown-workflow/extensions/recipes \
+    && rm -rf ~/.webtown-workflow/recipes
+[[ -d ~/.webtown-workflow/wizards ]] \
+    && rsync --remove-source-files -a -v ~/.webtown-workflow/wizards/* ~/.webtown-workflow/extensions/wizards \
+    && rm -rf ~/.webtown-workflow/wizards
 
 echo -e "${GREEN}Install success${RESTORE}"

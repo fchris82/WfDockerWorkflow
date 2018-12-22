@@ -24,6 +24,15 @@ if [ "$1" == "--develop" ]; then
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
     WF_DEVELOP_PATH="$(realpath ${DIR}/../../../../..)"
     DOCKER_DEVELOP_PATH_VOLUME="-v ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow:/opt/webtown-workflow"
+
+    # Change docker image, if it needs. Maybe you should build first with make command:
+    #
+    #  $ make -s rebuild_wf build_docker
+    #
+    GIT_BRANCH=$(cd ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow && git rev-parse --abbrev-ref HEAD)
+    if [[ "$GIT_BRANCH" != "master" ]]; then
+        WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
+    fi
 fi
 
 # COMMAND
@@ -129,7 +138,7 @@ if [ "${CI}" == "0" ] && [ "${WF_TTY}" == "1" ]; then
 fi
 if [ "${CI}" == "0" ]; then
     # We use the shared cache only out of cache
-    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:/opt/webtown-workflow/symfony4/var/cache"
+    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:${SYMFONY_PATH}/var/cache"
     SHARED_WIZARD_CONFIGURATION="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/config/wizards.yml:/opt/webtown-workflow/host/config/wizards.yml"
 fi
 
@@ -142,29 +151,55 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
     ENV_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME}):${WORKDIR}/${WF_ENV_FILE_NAME}"
 fi
 
+if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
+    EXTENSIONS_SHARE=$(cat ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
+else
+    if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions ]; then
+        RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
+            while IFS= read -r -d $'\0' line; do
+                RECIPES_SOURCE=$line
+                if [ -L $RECIPES_SOURCE ]; then
+                    RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
+                fi
+                echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
+            done
+        )
+
+        WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
+            while IFS= read -r -d $'\0' line; do
+                WIZARDS_SOURCE=$line
+                if [ -L $WIZARDS_SOURCE ]; then
+                    WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
+                fi
+                echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
+            done
+        )
+        EXTENSIONS_SHARE="${RECIPES_SHARE}${WIZARDS_SHARE}"
+        echo -e "${EXTENSIONS_SHARE}\c" > ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes
+    fi
+fi
+
 # Insert custom recipes from your home, default: ~/.webtown-workflow/recipes.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
-    RECIPES_PATH=/opt/webtown-workflow/symfony4/src/Recipes
     RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             RECIPES_SOURCE=$line
             if [ -L $RECIPES_SOURCE ]; then
                 RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
             fi
-            echo "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) "
+            echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
         done
     )
 fi
 # Insert custom wizards from your home, default: ~/.webtown-workflow/wizards.
 if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
-    WIZARDS_PATH=/opt/webtown-workflow/symfony4/src/Wizards
     WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards -mindepth 1 -maxdepth 1 -type d -print0 |
         while IFS= read -r -d $'\0' line; do
             WIZARDS_SOURCE=$line
             if [ -L $WIZARDS_SOURCE ]; then
                 WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
             fi
-            echo "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) "
+            echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
         done
     )
 fi
@@ -178,10 +213,10 @@ docker run ${TTY} \
             ${CONFIG_FILE_SHARE} \
             ${ENV_FILE_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
-            ${RECIPES_SHARE} \
+            ${EXTENSIONS_SHARE} \
             ${SHARED_SF_CACHE} \
             ${SHARED_WIZARD_CONFIGURATION} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
-            fchris82/wf ${CMD} ${@}
+            ${WF_IMAGE:-${USER}/wf} ${CMD} ${@}

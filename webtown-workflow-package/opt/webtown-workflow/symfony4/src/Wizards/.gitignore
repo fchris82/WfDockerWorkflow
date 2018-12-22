@@ -1,7 +1,5 @@
 /*
 !.gitignore
-!BaseSkeletonWizard.php
-!BaseWizard.php
 
 !Deployer
 !Ez
@@ -10,6 +8,8 @@
 !PhpMd
 !Symfony
 !WfDevEnvironment
+!WfExtension
+!WfExtensionRecipe
+!WfExtensionWizard
 !WfPhpDevEnvironment
 !WfSymfonyEnvironment
-!WfWizard

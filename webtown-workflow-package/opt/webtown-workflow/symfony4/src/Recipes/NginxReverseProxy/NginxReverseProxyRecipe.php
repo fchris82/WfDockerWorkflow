@@ -8,12 +8,12 @@
 
 namespace App\Recipes\NginxReverseProxy;
 
-use App\Configuration\Environment;
-use App\Event\Configuration\BuildInitEvent;
-use App\Event\ConfigurationEvents;
-use App\Event\RegisterEventListenersInterface;
-use App\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use App\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Configuration\Environment;
+use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
+use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -139,7 +139,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         parent::eventBeforeBuildFiles($event);
 
         $recipeConfig = $event->getBuildConfig();
-        $templateVariables = $event->getTemplateVars();
+        $templateVariables = $event->getSkeletonVars();
 
         $defaultTld = trim(
             $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
@@ -167,7 +167,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         }
 
         $event->setBuildConfig($recipeConfig);
-        $event->setTemplateVars($templateVariables);
+        $event->setSkeletonVars($templateVariables);
     }
 
     /**

@@ -2,13 +2,13 @@
 
 namespace App\Recipes\GitlabCiWebtownRunner;
 
-use App\Exception\SkipSkeletonFileException;
-use App\Recipes\GitlabCi\GitlabCiRecipe as BaseRecipe;
-use App\Skeleton\FileType\SkeletonFile;
+use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
+use App\Recipes\GitlabCi\GitlabCiRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
-class GitlabCiWebtownRunnerRecipe extends BaseRecipe
+class GitlabCiWebtownRunnerRecipe extends GitlabCiRecipe
 {
     const NAME = 'gitlab_ci_webtown_runner';
 
@@ -19,7 +19,7 @@ class GitlabCiWebtownRunnerRecipe extends BaseRecipe
 
     public static function getSkeletonParents()
     {
-        return [BaseRecipe::class];
+        return [GitlabCiRecipe::class];
     }
 
     public function getConfig()

@@ -8,7 +8,7 @@
 
 namespace App\Wizards\WfPhpDevEnvironment;
 
-use App\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Wizards\WfDevEnvironment\WfDevEnvironmentWizard;
 use Symfony\Component\Console\Question\Question;
 
@@ -47,9 +47,9 @@ class WfPhpDevEnvironmentWizard extends WfDevEnvironmentWizard
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
-    protected function getSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event)
     {
-        $variables = parent::getSkeletonVars($event);
+        $variables = parent::readSkeletonVars($event);
 
         $phpVersionQuestion = new Question('Which PHP version do you want to use? [<info>7.2</info>]', '7.2');
         $variables['php_version'] = $this->ask($phpVersionQuestion);

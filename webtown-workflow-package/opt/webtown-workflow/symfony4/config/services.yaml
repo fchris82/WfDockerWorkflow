@@ -1,9 +1,5 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
-parameters:
-    wizard_base_dir: '%kernel.root_dir%/Wizards'
-    recipe_base_dir: '%kernel.root_dir%/Recipes'
-
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -13,44 +9,16 @@ services:
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
         bind:
-            $wizardBaseDir: '%wizard_base_dir%'
             $wizardUserConfigurationFile: '/opt/webtown-workflow/host/config/wizards.yml'
-            $hostConfigurationPath: '%env(HOME)%/.webtown-workflow'
-
-    _instanceof:
-        # Register installer interfaces
-        App\Extension\Installer\InstallerInterface:
-            tags: ['app.extension.installer']
+#            $hostConfigurationPath: '%env(HOME)%/.webtown-workflow'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{Recipes,Wizards,Entity,Migrations,Tests,Kernel.php}'
-
-    App\Recipes\:
-        resource: '%recipe_base_dir%/*'
-        exclude:  '%recipe_base_dir%/*/{skeletons,template}'
-        public: true
-
-    App\Wizards\:
-        resource: '%wizard_base_dir%/*'
-        exclude: '%wizard_base_dir%/*/{skeletons,template}'
-        public: true
+        exclude:
+            - '../src/{Entity,Migrations,Tests,Kernel.php}'
+            - '../src/{Recipes,Wizards}/*/{skeletons,template}'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    App\Configuration\RecipeManager:
-        arguments:
-            - '%recipe_base_dir%'
-        calls:
-            - method: setContainer
-              arguments:
-                - '@service_container'
-
-    App\Wizard\Manager:
-        calls:
-            - method: setContainer
-              arguments:
-                - '@service_container'

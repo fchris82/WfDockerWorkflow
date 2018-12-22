@@ -33,6 +33,7 @@ if [ -d /opt/webtown-workflow/symfony4/var ]; then
     chmod -R 777 /opt/webtown-workflow/symfony4/var/log
 fi
 
-# Create symlink
+# Create symlinks
 ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf
 ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard
+ln -sf /opt/webtown-workflow/lib/wf-composer-require.sh /usr/local/bin/wf-composer-require

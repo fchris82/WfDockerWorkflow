@@ -8,7 +8,7 @@
 
 namespace App\Recipes\Base;
 
-use App\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 
 /**
  * Class Recipe

@@ -8,16 +8,16 @@
 
 namespace App\Recipes\_;
 
-use App\Configuration\Environment;
-use App\Event\Configuration\BuildInitEvent;
-use App\Event\ConfigurationEvents;
-use App\Event\RegisterEventListenersInterface;
-use App\Event\SkeletonBuild\DumpFileEvent;
-use App\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use App\Event\SkeletonBuildBaseEvents;
-use App\Recipes\HiddenRecipe;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
-use App\Skeleton\FileType\MakefileSkeletonFile;
+use App\Webtown\WorkflowBundle\Configuration\Environment;
+use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
+use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
+use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class Recipe extends HiddenRecipe implements RegisterEventListenersInterface

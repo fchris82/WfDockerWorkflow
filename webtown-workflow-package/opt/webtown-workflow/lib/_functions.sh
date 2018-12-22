@@ -152,7 +152,7 @@ function create_makefile_from_config {
     local WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
-        php /opt/webtown-workflow/symfony4/bin/console app:config \
+        php ${SYMFONY_CONSOLE} app:config \
             --file ${PROJECT_CONFIG_FILE} \
             --target-directory ${WF_WORKING_DIRECTORY_NAME} \
             --config-hash ${CONFIG_HASH}.${WF_VERSION} \

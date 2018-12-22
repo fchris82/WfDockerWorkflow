@@ -21,15 +21,19 @@ echo "Install binaries..."
 mkdir -p ${HOME}/.webtown-workflow/bin
 mkdir -p ${HOME}/.webtown-workflow/config
 
-# COPY files, except config
-find ${DIR} -mindepth 1 -maxdepth 1 -type d ! -name config -exec cp -f -R {} ${HOME}/.webtown-workflow/ \;
-# COPY config directory
+# COPY files, except config (overwrite if exists/replace to the newest)
+find ${DIR} -mindepth 1 -maxdepth 1 -type d ! -name config -exec cp -f -R {} "${HOME}/.webtown-workflow/" \;
+# COPY config directory and Dockerfile (keeps existing files!)
 #   1. Create dist files
 for f in ${DIR}/config/*; do cp -f "$f" "${HOME}/.webtown-workflow/config/$(basename $f).dist"; done
+cp -f "${DIR}/Dockerfile" "${HOME}/.webtown-workflow/Dockerfile.dist"
 #   2. Copy if doesn't exist
-cp -an ${DIR}/config/. ${HOME}/.webtown-workflow/config/
+cp -an "${DIR}/config/." "${HOME}/.webtown-workflow/config/"
+cp -an "${DIR}/Dockerfile" "${HOME}/.webtown-workflow/Dockerfile"
+# Replace base image in Dockerfile
+sed -i -e "s|FROM fchris82/wf|FROM ${BASE_IMAGE:-fchris82/wf}|" "${HOME}/.webtown-workflow/Dockerfile"
 
 # Symfony cache directory
-mkdir -p ${HOME}/.webtown-workflow/cache
-rm -rf ${HOME}/.webtown-workflow/cache/*
-chmod 777 ${HOME}/.webtown-workflow/cache
+mkdir -p "${HOME}/.webtown-workflow/cache"
+rm -rf "${HOME}/.webtown-workflow/cache/*"
+chmod 777 "${HOME}/.webtown-workflow/cache"

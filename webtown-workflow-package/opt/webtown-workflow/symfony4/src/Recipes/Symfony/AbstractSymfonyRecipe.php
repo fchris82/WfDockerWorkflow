@@ -8,8 +8,8 @@
 
 namespace App\Recipes\Symfony;
 
-use App\Exception\SkipSkeletonFileException;
-use App\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**

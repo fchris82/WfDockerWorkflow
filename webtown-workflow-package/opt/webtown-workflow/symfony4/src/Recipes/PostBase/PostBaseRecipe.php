@@ -8,11 +8,11 @@
 
 namespace App\Recipes\PostBase;
 
-use App\Event\RegisterEventListenersInterface;
-use App\Event\SkeletonBuild\DumpFileEvent;
-use App\Event\SkeletonBuildBaseEvents;
-use App\Recipes\HiddenRecipe;
-use App\Skeleton\FileType\DockerComposeSkeletonFile;
+use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
+use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
