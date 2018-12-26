@@ -1,6 +1,20 @@
 Start developing and debug environments
 =======================================
 
+## Requirements
+
+- git
+- makefile
+- jq ( https://stedolan.github.io/jq/download/ )
+- docker, docker-compose
+
+```shell
+# Install on Ubuntu/Debian:
+$ sudo apt-get update && sudo apt-get install git makefile jq
+```
+
+## Install
+
 ```shell
 # Clone the project
 $ git clone git@gitlab.webtown.hu:webtown/webtown-workflow.git
