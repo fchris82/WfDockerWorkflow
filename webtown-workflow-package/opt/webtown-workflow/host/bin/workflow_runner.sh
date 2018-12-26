@@ -179,31 +179,6 @@ else
     fi
 fi
 
-# Insert custom recipes from your home, default: ~/.webtown-workflow/recipes.
-if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes ]; then
-    RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/recipes -mindepth 1 -maxdepth 1 -type d -print0 |
-        while IFS= read -r -d $'\0' line; do
-            RECIPES_SOURCE=$line
-            if [ -L $RECIPES_SOURCE ]; then
-                RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
-            fi
-            echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
-        done
-    )
-fi
-# Insert custom wizards from your home, default: ~/.webtown-workflow/wizards.
-if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards ]; then
-    WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/wizards -mindepth 1 -maxdepth 1 -type d -print0 |
-        while IFS= read -r -d $'\0' line; do
-            WIZARDS_SOURCE=$line
-            if [ -L $WIZARDS_SOURCE ]; then
-                WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
-            fi
-            echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
-        done
-    )
-fi
-
 # You should handle the `WF_DOCKER_HOST_CHAIN` as unique, because the quotes cause some problem if you want to use in an other variable!
 docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
