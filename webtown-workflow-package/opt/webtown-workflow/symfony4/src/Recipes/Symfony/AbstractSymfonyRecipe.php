@@ -17,7 +17,7 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * Symfony friendly environment
  */
-class AbstractSymfonyRecipe extends BaseRecipe
+abstract class AbstractSymfonyRecipe extends BaseRecipe
 {
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';

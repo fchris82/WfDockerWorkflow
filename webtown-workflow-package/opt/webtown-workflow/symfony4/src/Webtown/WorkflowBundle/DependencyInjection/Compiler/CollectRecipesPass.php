@@ -24,9 +24,12 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
         $twigFilesystemLoaderDefinition = $container->getDefinition(parent::DEFAULT_TWIG_LOADER);
 
         foreach ($container->findTaggedServiceIds(WebtownWorkflowBundle::RECIPE_TAG) as $serviceId => $taggedService) {
-            $definition->addMethodCall('addRecipe', [new Reference($serviceId)]);
-
             $serviceDefinition = $container->getDefinition($serviceId);
+            $refClass = new \ReflectionClass($serviceDefinition->getClass());
+            if (!$refClass->isAbstract()) {
+                $definition->addMethodCall('addRecipe', [new Reference($serviceId)]);
+            }
+
             $this->registerSkeletonService(
                 $container->getParameter('twig.default_path'),
                 $serviceDefinition,
