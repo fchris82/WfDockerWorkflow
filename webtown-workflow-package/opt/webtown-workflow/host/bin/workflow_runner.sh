@@ -151,6 +151,7 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
     ENV_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME}):${WORKDIR}/${WF_ENV_FILE_NAME}"
 fi
 
+# @todo (Chris) !!! Az új megoldást adoptálni: /extensions/recipes + /extensions/wizards
 if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
     EXTENSIONS_SHARE=$(cat ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
 else
