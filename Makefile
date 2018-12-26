@@ -52,11 +52,11 @@ __build_wf: __versionupgrade __build_rsync
 
 # Upgrade the version number. It needs a PACKAGE version!!!
 .PHONY: __versionupgrade
-__versionupgrade: GIT_BRANCH := $$(git rev-parse --abbrev-ref HEAD)
 __versionupgrade:
     # We automatically change in master and develop branch!
-    ifneq ("$(GIT_BRANCH)","master")
-        ifneq ("$(GIT_BRANCH)","develop")
+    # Don't use variable in ifeq! The $(shell) is only way!
+    ifneq ($(shell git rev-parse --abbrev-ref HEAD),master)
+        ifneq ($(shell git rev-parse --abbrev-ref HEAD),develop)
 			$(eval nochange = 1)
         endif
     endif
@@ -106,9 +106,11 @@ enter:
 	webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh /bin/bash
 
 .PHONY: __get_image_tag
-__get_image_tag: GIT_BRANCH := $$(git rev-parse --abbrev-ref HEAD)
+# Don't use this variable in ifeq!!!
+__get_image_tag: GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 __get_image_tag:
-    ifeq ("$(GIT_BRANCH)","master")
+    # Don't use variable in ifeq! The $(shell) is only way!
+    ifeq ($(shell git rev-parse --abbrev-ref HEAD),master)
 		$(eval IMAGE=fchris82/wf)
     else
 		$(eval IMAGE=$(shell echo "fchris82/wf:$$(basename $(GIT_BRANCH))"))
