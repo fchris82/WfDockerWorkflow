@@ -6,7 +6,7 @@
  * Time: 21:18
  */
 
-namespace App\Tests\Dummy;
+namespace App\Webtown\WorkflowBundle\Tests\Dummy;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem as BaseFilesystem;
@@ -149,6 +149,20 @@ class Filesystem extends BaseFilesystem
         }
 
         $this->contents = $newContents;
+    }
+
+    public function remove($files)
+    {
+        $files = is_array($files) ? $files : [$files];
+        foreach ($files as $file) {
+            $file = $this->aliasMask($file);
+            foreach ($this->contents as $path => $content) {
+                if ($path == $file || strpos($path, $file . DIRECTORY_SEPARATOR) === 0) {
+                    unset($this->contents[$path]);
+                    continue(2);
+                }
+            }
+        }
     }
 
     public function chmod($files, $mode, $umask = 0000, $recursive = false)

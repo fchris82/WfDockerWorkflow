@@ -54,6 +54,7 @@ class SymfonyEnvironmentParser
         $symfonyPackages = [
             'symfony/symfony',
             'symfony/config',
+            'symfony/framework-bundle',
         ];
         foreach ($symfonyPackages as $symfonyPackage) {
             $packageVersion = $this->composerParser->get($projectWorkDir, $symfonyPackage);
@@ -67,12 +68,12 @@ class SymfonyEnvironmentParser
 
     public function readSymfonyBinDir($projectWorkDir, $default = null)
     {
-        $byExtra = $this->composerParser->get($projectWorkDir, 'extra.symfony-bin-dir');
+        $byExtra = $this->composerParser->read($projectWorkDir, 'extra.symfony-bin-dir');
         if ($byExtra) {
             return $byExtra;
         }
 
-        $byConfig = $this->composerParser->get($projectWorkDir, 'config.bin-path');
+        $byConfig = $this->composerParser->read($projectWorkDir, 'config.bin-dir');
 
         return $byConfig ?: $default;
     }

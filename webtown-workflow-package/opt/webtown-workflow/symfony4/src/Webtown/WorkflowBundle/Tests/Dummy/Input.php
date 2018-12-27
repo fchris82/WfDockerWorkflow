@@ -6,7 +6,7 @@
  * Time: 21:37
  */
 
-namespace App\Tests\Dummy;
+namespace App\Webtown\WorkflowBundle\Tests\Dummy;
 
 use Symfony\Component\Console\Input\Input as BaseInput;
 

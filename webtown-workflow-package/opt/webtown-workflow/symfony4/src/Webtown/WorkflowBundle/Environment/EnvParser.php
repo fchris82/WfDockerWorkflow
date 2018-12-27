@@ -18,6 +18,8 @@ class EnvParser
      * @param null|string $default
      *
      * @return null|string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function get($name, $default = null)
     {

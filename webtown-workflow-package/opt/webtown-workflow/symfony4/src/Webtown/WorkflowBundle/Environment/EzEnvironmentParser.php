@@ -17,7 +17,7 @@ class EzEnvironmentParser extends SymfonyEnvironmentParser
     {
         $ezVersion = false;
         $kaliopVersion = false;
-        $ezYmlExists = file_exists($workingDirectory . '/.ez.yml');
+        $ezYmlExists = $this->composerParser->getFilesystem()->exists($workingDirectory . '/.ez.yml');
         try {
             $ezVersion = $this->composerParser->get(
                 $workingDirectory,
@@ -36,6 +36,13 @@ class EzEnvironmentParser extends SymfonyEnvironmentParser
         return $ezVersion || $kaliopVersion || $ezYmlExists;
     }
 
+    /**
+     * @param $projectWorkDir
+     *
+     * @return array
+     *
+     * @codeCoverageIgnore Simple extender
+     */
     public function getSymfonyEnvironmentVariables($projectWorkDir)
     {
         $variables = parent::getSymfonyEnvironmentVariables($projectWorkDir);

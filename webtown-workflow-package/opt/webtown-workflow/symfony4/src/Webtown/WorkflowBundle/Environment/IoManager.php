@@ -17,6 +17,11 @@ use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Console\Style\SymfonyStyle;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class IoManager
+ *
+ * @codeCoverageIgnore Simple getters and setters
+ */
 class IoManager implements EventSubscriberInterface
 {
     /**

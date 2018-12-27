@@ -21,7 +21,6 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
      *  1. Try to find in `composer.lock`
      *  2. Try to find in `composer.json` (require)
      *  3. Try to find in `composer.json` (require-dev)
-     *  4. [$allowNoExists == true]: Ask the user
      *
      * @param string $workingDirectory
      * @param string $packageName
@@ -66,6 +65,24 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
         return $default;
     }
 
+    public function read($workingDirectory, $infoPath, $default = false)
+    {
+        $keys = explode('.', $infoPath);
+        try {
+            $current = $this->getComposerLockConfig($workingDirectory);
+        } catch (FileNotFoundException $e) {
+            $current = [];
+        }
+        foreach ($keys as $key) {
+            if (!\is_array($current) || !array_key_exists($key, $current)) {
+                return parent::get($workingDirectory, $infoPath, $default);
+            }
+            $current = $current[$key];
+        }
+
+        return $current;
+    }
+
     /**
      * @param $workingDirectory
      *
@@ -84,9 +101,9 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
                 ));
             }
 
-            $this->composerJsonConfig[$workingDirectory] = json_decode(file_get_contents($composerJsonPath), true);
+            $this->composerLockConfig[$workingDirectory] = json_decode(file_get_contents($composerJsonPath), true);
         }
 
-        return $this->composerJsonConfig[$workingDirectory];
+        return $this->composerLockConfig[$workingDirectory];
     }
 }

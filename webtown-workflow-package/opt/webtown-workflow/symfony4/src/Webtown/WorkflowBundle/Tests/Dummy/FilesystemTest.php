@@ -6,9 +6,9 @@
  * Time: 20:07
  */
 
-namespace App\Tests\Dummy;
+namespace App\Webtown\WorkflowBundle\Tests\Dummy;
 
-use App\Tests\TestCase;
+use App\Webtown\WorkflowBundle\Tests\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class FilesystemTest extends TestCase

@@ -89,10 +89,20 @@ class ComposerJsonInformationParser implements MicroParserInterface
      */
     public function readComposerVersion($versionText)
     {
-        if (preg_match('{[\d\.]+}', $versionText, $matches)) {
+        if (preg_match('{[\d\.]*\d}', $versionText, $matches)) {
             return $matches[0];
         }
 
         throw new InvalidComposerVersionNumber($versionText);
+    }
+
+    /**
+     * @return Filesystem
+     *
+     * @codeCoverageIgnore Simple getter
+     */
+    public function getFilesystem()
+    {
+        return $this->fileSystem;
     }
 }

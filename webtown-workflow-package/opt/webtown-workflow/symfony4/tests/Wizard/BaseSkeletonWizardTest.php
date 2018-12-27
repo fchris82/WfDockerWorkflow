@@ -8,7 +8,7 @@
 
 namespace App\Tests\Wizard;
 
-use App\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
 use App\Tests\Tool\BaseSkeletonTestCase;
 use App\Wizards\BaseSkeletonWizard;
 use PHPUnit\Framework\SkippedTestError;

@@ -12,6 +12,11 @@ use Twig\Extension\AbstractExtension;
 
 class TextExtension extends AbstractExtension
 {
+    /**
+     * @return array|\Twig_Filter[]
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getFilters()
     {
         return [

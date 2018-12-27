@@ -10,9 +10,9 @@ namespace App\Tests\Tool;
 
 use App\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Wizard\WizardInterface;
-use App\Tests\Dummy\Command;
-use App\Tests\Dummy\Filesystem;
-use App\Tests\Dummy\Input;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Command;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
 use App\Tests\TestCase;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 

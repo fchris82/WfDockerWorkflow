@@ -16,6 +16,7 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Parser;
 
 class Configuration implements ConfigurationInterface
@@ -26,6 +27,11 @@ class Configuration implements ConfigurationInterface
      * @var RecipeManager
      */
     protected $recipeManager;
+
+    /**
+     * @var Filesystem
+     */
+    protected $filesystem;
 
     /**
      * @var Parser
@@ -41,10 +47,12 @@ class Configuration implements ConfigurationInterface
      * Configuration constructor.
      *
      * @param RecipeManager $recipeManager
+     * @param Filesystem    $filesystem
      */
-    public function __construct(RecipeManager $recipeManager)
+    public function __construct(RecipeManager $recipeManager, Filesystem $filesystem)
     {
         $this->recipeManager = $recipeManager;
+        $this->filesystem = $filesystem;
     }
 
     /**
@@ -62,7 +70,7 @@ class Configuration implements ConfigurationInterface
         if (null === $pwd) {
             $pwd = \dirname($configFile);
         }
-        $ymlFilePath = file_exists($configFile) && is_file($configFile)
+        $ymlFilePath = $this->filesystem->exists($configFile) && is_file($configFile)
             ? $configFile
             : $pwd . '/' . $configFile;
         $baseConfig = $this->readConfig($ymlFilePath);
@@ -261,9 +269,9 @@ class Configuration implements ConfigurationInterface
             // Ebbe gyűjtjük össze az import configokat.
             $fullImportConfig = [];
             foreach ($baseConfig['imports'] as $importYml) {
-                if (!file_exists($importYml) || !is_file($importYml)) {
+                if (!$this->filesystem->exists($importYml) || !is_file($importYml)) {
                     $importYmlAlt = $sourceDirectory . '/' . $importYml;
-                    if (!file_exists($importYmlAlt) || !is_file($importYmlAlt)) {
+                    if (!$this->filesystem->exists($importYmlAlt) || !is_file($importYmlAlt)) {
                         throw new InvalidConfigurationException(sprintf('The `%s` and `%s` configuration file doesn\'t exist either!', $importYml, $importYmlAlt));
                     }
 
