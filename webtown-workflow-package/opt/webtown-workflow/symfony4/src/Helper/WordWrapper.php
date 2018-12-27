@@ -6,7 +6,7 @@
  * Time: 15:46
  */
 
-namespace App\Webtown\WorkflowBundle\Helper;
+namespace App\Helper;
 
 class WordWrapper
 {

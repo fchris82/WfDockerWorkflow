@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Webtown\WorkflowBundle\Command;
+namespace App\Command;
 
 use App\Webtown\WorkflowBundle\Configuration\Builder;
 use App\Webtown\WorkflowBundle\Configuration\Configuration;

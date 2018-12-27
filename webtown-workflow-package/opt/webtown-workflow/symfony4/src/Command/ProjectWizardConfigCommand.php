@@ -6,7 +6,7 @@
  * Time: 16:15
  */
 
-namespace App\Webtown\WorkflowBundle\Command;
+namespace App\Command;
 
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Wizard\Configuration;
