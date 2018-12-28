@@ -18,7 +18,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Build command
 function build {
-    docker build --no-cache -t ${USER}/wf ~/.webtown-workflow
+    docker build --no-cache --pull -t ${USER}/wf ~/.webtown-workflow
 }
 
 # Colors
