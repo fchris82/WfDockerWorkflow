@@ -9,6 +9,7 @@
 namespace App\Recipes\Symfony;
 
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
+use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -17,7 +18,7 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * Symfony friendly environment
  */
-abstract class AbstractSymfonyRecipe extends BaseRecipe
+class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
 {
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';

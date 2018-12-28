@@ -3,8 +3,10 @@
 namespace App\Webtown\WorkflowBundle\DependencyInjection\Compiler;
 
 use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
+use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\WebtownWorkflowBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
@@ -25,8 +27,7 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
 
         foreach ($container->findTaggedServiceIds(WebtownWorkflowBundle::RECIPE_TAG) as $serviceId => $taggedService) {
             $serviceDefinition = $container->getDefinition($serviceId);
-            $refClass = new \ReflectionClass($serviceDefinition->getClass());
-            if (!$refClass->isAbstract()) {
+            if (!$this->isTheServiceAbstract($serviceDefinition)) {
                 $definition->addMethodCall('addRecipe', [new Reference($serviceId)]);
             }
 
@@ -36,5 +37,13 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
                 $twigFilesystemLoaderDefinition
             );
         }
+    }
+
+    protected function isTheServiceAbstract(Definition $serviceDefinition)
+    {
+        $refClass = new \ReflectionClass($serviceDefinition->getClass());
+
+        return \in_array(AbstractTemplateRecipe::class, $refClass->getInterfaceNames())
+            && !\in_array(AbstractTemplateRecipe::class, $refClass->getParentClass()->getInterfaceNames());
     }
 }
