@@ -14,7 +14,7 @@ class SkeletonHelper
     const SKELETONS_DIR = 'skeletons';
     const TEMPLATES_DIR = 'template';
 
-    public static function generateTwigNamespace(\ReflectionClass $class)
+    public static function generateTwigNamespace(\ReflectionClass $class): string
     {
         $className = $class->getName();
 

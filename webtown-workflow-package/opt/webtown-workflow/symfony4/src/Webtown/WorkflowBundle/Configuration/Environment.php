@@ -8,6 +8,11 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
+/**
+ * Class Environment
+ *
+ * @codeCoverageIgnore Simple getter
+ */
 class Environment
 {
     const CONFIG_PROGRAM_REPOSITORY = 'WF_PROGRAM_REPOSITORY';

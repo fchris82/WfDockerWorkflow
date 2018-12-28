@@ -35,6 +35,8 @@ class SkeletonTwigFileInfo extends SplFileInfo
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getTwigNamespace(): string
     {

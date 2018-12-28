@@ -106,6 +106,7 @@ class Configuration implements ConfigurationInterface
                     ->info('<comment>Which WF Makefile version do you want to use? You can combine it with the minimum WF version with the <info>@</info> symbol: <info>[base]@[wf_minimum_version]</info></comment>')
                     ->example('2.0.0@2.198')
                     ->addDefaultsIfNotSet()
+                    ->isRequired()
                     ->children()
                         ->scalarNode('base')
                             ->info('<comment>Which WF Makefile version do you want to use?</comment>')

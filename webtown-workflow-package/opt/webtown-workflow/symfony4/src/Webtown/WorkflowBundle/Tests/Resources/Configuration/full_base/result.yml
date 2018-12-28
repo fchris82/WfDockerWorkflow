@@ -1,0 +1,29 @@
+version:
+    base: "2.0.0"
+    wf_minimum_version: "2.1.1"
+name:    "test"
+# You can add extra commands.
+commands:
+    init:
+        - mkdir -p .wf/.data/mysql
+        - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
+        - 'if [ ! -f .wf.yml ]; then echo "imports: [.wf.yml.dist]" > .wf.yml; fi'
+        - echo "   - <comment>.wf.yml</comment>"
+
+    dep:
+        - wf php-exec bin/dep ${@}
+imports:
+    - '.wf.yml.dist'
+docker_data_dir: '%wf.target_directory%/.data'
+makefile:
+    - Makefile
+    - Makefile.dist
+docker_compose:
+    version: '3.4'
+    include:
+        - '~/global.docker-compose.yml'
+    extension:
+        services:
+            web:
+                environment:
+                    TEST: 'TEST'
