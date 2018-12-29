@@ -160,7 +160,7 @@ trait SkeletonManagerTrait
         }
 
         $refClass = new \ReflectionClass(static::class);
-        $skeletonPath = \dirname($refClass->getFileName()) . DIRECTORY_SEPARATOR . SkeletonHelper::SKELETONS_DIR;
+        $skeletonPath = \dirname($refClass->getFileName()) . \DIRECTORY_SEPARATOR . SkeletonHelper::SKELETONS_DIR;
         if (is_dir($skeletonPath)) {
             $skeletonPaths[SkeletonHelper::generateTwigNamespace($refClass)] = $skeletonPath;
         }

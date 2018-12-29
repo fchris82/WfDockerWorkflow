@@ -32,7 +32,7 @@ class RecipeManagerTest extends TestCase
     public function testAddRecipe(array $recipeNames, $result = null)
     {
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $recipeManager = new RecipeManager();
@@ -61,8 +61,8 @@ class RecipeManagerTest extends TestCase
     }
 
     /**
-     * @param array  $recipeNames
-     * @param string $getName
+     * @param array           $recipeNames
+     * @param string          $getName
      * @param null|\Exception $result
      *
      * @dataProvider getGets
@@ -70,7 +70,7 @@ class RecipeManagerTest extends TestCase
     public function testGetRecipe(array $recipeNames, string $getName, $result = null)
     {
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $recipeManager = new RecipeManager();

@@ -37,10 +37,10 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     /**
      * PreBuildSkeletonFileEvent constructor.
      *
-     * @param string|object $namespace
-     * @param SkeletonTwigFileInfo   $sourceFileInfo
-     * @param array         $skeletonVars
-     * @param array         $buildConfig
+     * @param string|object        $namespace
+     * @param SkeletonTwigFileInfo $sourceFileInfo
+     * @param array                $skeletonVars
+     * @param array                $buildConfig
      */
     public function __construct($namespace, SkeletonTwigFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {

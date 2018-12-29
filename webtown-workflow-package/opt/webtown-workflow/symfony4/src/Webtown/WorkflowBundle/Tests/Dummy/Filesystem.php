@@ -45,7 +45,7 @@ class Filesystem extends BaseFilesystem
 
     protected function aliasMask($path)
     {
-        if (!is_null($this->alias)) {
+        if (null !== $this->alias) {
             return str_replace($this->initDirectory, $this->alias, $path);
         }
 
@@ -59,19 +59,19 @@ class Filesystem extends BaseFilesystem
 
     public function exists($files)
     {
-        $files = is_array($files) ? $files : [$files];
+        $files = \is_array($files) ? $files : [$files];
         $hits = [];
         foreach ($files as $file) {
             $file = $this->aliasMask($file);
             foreach ($this->contents as $path => $content) {
-                if ($path == $file || strpos($path, $file . DIRECTORY_SEPARATOR) === 0) {
+                if ($path == $file || 0 === strpos($path, $file . \DIRECTORY_SEPARATOR)) {
                     $hits[] = $file;
-                    continue(2);
+                    continue 2;
                 }
             }
         }
 
-        return count($files) == count($hits);
+        return \count($files) == \count($hits);
     }
 
     public function dumpFile($filename, $content)
@@ -87,13 +87,13 @@ class Filesystem extends BaseFilesystem
 
     public function mkdir($dirs, $mode = 0777)
     {
-        # do nothing
+        // do nothing
         return;
     }
 
     public function touch($files, $time = null, $atime = null)
     {
-        $files = is_array($files) ? $files : [$files];
+        $files = \is_array($files) ? $files : [$files];
         foreach ($files as $file) {
             $targetFile = $this->aliasMask($file);
             if (!$this->exists($targetFile)) {
@@ -109,8 +109,8 @@ class Filesystem extends BaseFilesystem
 
         $copied = 0;
         foreach ($this->contents as $path => $content) {
-            if ($origin == $path || strpos($path, $origin . DIRECTORY_SEPARATOR) === 0) {
-                $copied++;
+            if ($origin == $path || 0 === strpos($path, $origin . \DIRECTORY_SEPARATOR)) {
+                ++$copied;
                 $newPath = str_replace($origin, $target, $path);
                 if (!$this->exists($newPath) || $overwriteNewerFiles) {
                     $this->contents[$newPath] = $content;
@@ -118,7 +118,7 @@ class Filesystem extends BaseFilesystem
             }
         }
 
-        if ($copied == 0) {
+        if (0 == $copied) {
             throw new FileNotFoundException();
         }
     }
@@ -131,8 +131,8 @@ class Filesystem extends BaseFilesystem
         $renamed = 0;
         $newContents = [];
         foreach ($this->contents as $path => $content) {
-            if ($origin == $path || strpos($path, $origin . DIRECTORY_SEPARATOR) === 0) {
-                $renamed++;
+            if ($origin == $path || 0 === strpos($path, $origin . \DIRECTORY_SEPARATOR)) {
+                ++$renamed;
                 $newPath = str_replace($origin, $target, $path);
                 if (!$this->exists($newPath) || $overwrite) {
                     $newContents[$newPath] = $content;
@@ -144,7 +144,7 @@ class Filesystem extends BaseFilesystem
             }
         }
 
-        if ($renamed == 0) {
+        if (0 == $renamed) {
             throw new FileNotFoundException();
         }
 
@@ -153,13 +153,13 @@ class Filesystem extends BaseFilesystem
 
     public function remove($files)
     {
-        $files = is_array($files) ? $files : [$files];
+        $files = \is_array($files) ? $files : [$files];
         foreach ($files as $file) {
             $file = $this->aliasMask($file);
             foreach ($this->contents as $path => $content) {
-                if ($path == $file || strpos($path, $file . DIRECTORY_SEPARATOR) === 0) {
+                if ($path == $file || 0 === strpos($path, $file . \DIRECTORY_SEPARATOR)) {
                     unset($this->contents[$path]);
-                    continue(2);
+                    continue 2;
                 }
             }
         }

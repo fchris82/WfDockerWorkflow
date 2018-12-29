@@ -33,9 +33,10 @@ abstract class AbstractTwigSkeletonPass implements CompilerPassInterface
      *          If the previous doesn't exist:
      *          2. [php_file_dir] --> [project]/src/App/Test/TestBundle/Recipes/skeletons/original.file.php
      *
-     * @param string $twigDefaultPath
+     * @param string     $twigDefaultPath
      * @param Definition $serviceDefinition
      * @param Definition $twigLoaderDefinition
+     *
      * @throws \ReflectionException
      */
     protected function registerSkeletonService(string $twigDefaultPath, Definition $serviceDefinition, Definition $twigLoaderDefinition)
@@ -45,12 +46,12 @@ abstract class AbstractTwigSkeletonPass implements CompilerPassInterface
         $namespace = SkeletonHelper::generateTwigNamespace($refClass);
 
         // Override
-        $overridePath = $twigDefaultPath . DIRECTORY_SEPARATOR . 'bundles' . DIRECTORY_SEPARATOR . $namespace;
+        $overridePath = $twigDefaultPath . \DIRECTORY_SEPARATOR . 'bundles' . \DIRECTORY_SEPARATOR . $namespace;
         if (is_dir($overridePath)) {
             $twigLoaderDefinition->addMethodCall('addPath', [$overridePath, $namespace]);
         }
 
-        $path = dirname($refClass->getFileName());
+        $path = \dirname($refClass->getFileName());
         $twigLoaderDefinition->addMethodCall('addPath', [$path, $namespace]);
     }
 }

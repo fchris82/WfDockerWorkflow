@@ -10,17 +10,17 @@ namespace App\Webtown\WorkflowBundle\Tests\Environment\MicroParser;
 
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerJsonInformationParser;
 use App\Webtown\WorkflowBundle\Exception\InvalidComposerVersionNumber;
-use PHPUnit\Framework\TestCase;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem as SfFilesystem;
 
 class ComposerJsonInformationParserTest extends TestCase
 {
     /**
-     * @param string $directory
-     * @param string $infoPath
-     * @param string|array|boolean|\Exception $result
+     * @param string                       $directory
+     * @param string                       $infoPath
+     * @param string|array|bool|\Exception $result
      *
      * @dataProvider getGets
      */
@@ -31,7 +31,7 @@ class ComposerJsonInformationParserTest extends TestCase
         $parser = new ComposerJsonInformationParser($filesystem);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $parser->get($workingDirectory, $infoPath);
@@ -49,13 +49,13 @@ class ComposerJsonInformationParserTest extends TestCase
             ['env_composer_no_sf', 'name', 'laravel/laravel'],
             ['env_composer_no_sf', 'require.php', '>=7.0.0'],
             ['env_composer_no_sf', 'require.laravel/framework', '5.5.*'],
-            ['env_composer_no_sf', 'scripts.post-create-project-cmd', ['@php artisan key:generate','@php artisan storage:link']],
+            ['env_composer_no_sf', 'scripts.post-create-project-cmd', ['@php artisan key:generate', '@php artisan storage:link']],
         ];
     }
 
     /**
-     * @param string $directory
-     * @param string $infoPath
+     * @param string           $directory
+     * @param string           $infoPath
      * @param mixed|\Exception $result
      *
      * @dataProvider getGets
@@ -67,12 +67,12 @@ class ComposerJsonInformationParserTest extends TestCase
         $parser = new ComposerJsonInformationParser($filesystem);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $parser->has($workingDirectory, $infoPath);
         if (!$result instanceof \Exception) {
-            $this->assertEquals($result !== false, $response);
+            $this->assertEquals(false !== $result, $response);
         }
     }
 
@@ -87,7 +87,7 @@ class ComposerJsonInformationParserTest extends TestCase
         $parser = new ComposerJsonInformationParser(new SfFilesystem());
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $parser->readComposerVersion($version);

@@ -15,7 +15,6 @@ use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
-use App\Webtown\WorkflowBundle\Skeleton\SkeletonTwigFileInfo;
 use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -120,9 +119,9 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
     protected function getTempSkeletonFileInfo($tempFile)
     {
         $refClass = new \ReflectionClass($this);
-        $skeletonsPath = \dirname($refClass->getFileName()) . DIRECTORY_SEPARATOR . SkeletonHelper::TEMPLATES_DIR;
+        $skeletonsPath = \dirname($refClass->getFileName()) . \DIRECTORY_SEPARATOR . SkeletonHelper::TEMPLATES_DIR;
         $tmpFileInfo = new TemplateTwigFileInfo(
-            $skeletonsPath . DIRECTORY_SEPARATOR . $tempFile,
+            $skeletonsPath . \DIRECTORY_SEPARATOR . $tempFile,
             '',
             $tempFile,
             SkeletonHelper::generateTwigNamespace(new \ReflectionClass($this))

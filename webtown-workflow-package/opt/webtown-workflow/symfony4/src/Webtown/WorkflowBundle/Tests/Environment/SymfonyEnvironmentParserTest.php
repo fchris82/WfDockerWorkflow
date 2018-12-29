@@ -45,7 +45,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         }
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $sfParser->getSymfonyVersion($workingDirectory);
@@ -73,7 +73,7 @@ class SymfonyEnvironmentParserTest extends TestCase
     }
 
     /**
-     * @param string $directory
+     * @param string           $directory
      * @param mixed|\Exception $result
      *
      * @dataProvider getBinDirs
@@ -87,7 +87,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         $sfParser = new SymfonyEnvironmentParser($ioManager, $composerParser);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $sfParser->readSymfonyBinDir($workingDirectory);
@@ -110,9 +110,9 @@ class SymfonyEnvironmentParserTest extends TestCase
     }
 
     /**
-     * @param string $directory
+     * @param string           $directory
      * @param array|\Exception $result
-     * @param null|int $selectedIndex
+     * @param null|int         $selectedIndex
      *
      * @dataProvider getVariables
      */
@@ -136,7 +136,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         $sfParser = new SymfonyEnvironmentParser($ioManager, $composerParser);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $sfParser->getSymfonyEnvironmentVariables($workingDirectory);
@@ -159,7 +159,7 @@ class SymfonyEnvironmentParserTest extends TestCase
             '3_1' => [
                 SymfonyEnvironmentParser::VARIABLE_VERSION       => 3,
                 SymfonyEnvironmentParser::VARIABLE_CONSOLE_CMD   => 'bin/console',
-                SymfonyEnvironmentParser::VARIABLE_BIN_DIR       => 'vendor/bin', # default
+                SymfonyEnvironmentParser::VARIABLE_BIN_DIR       => 'vendor/bin', // default
                 SymfonyEnvironmentParser::VARIABLE_SHARED_DIRS   => 'var',
                 SymfonyEnvironmentParser::VARIABLE_WEB_DIRECTORY => 'web',
                 SymfonyEnvironmentParser::VARIABLE_INDEX_FILE    => 'app.php',
@@ -167,7 +167,7 @@ class SymfonyEnvironmentParserTest extends TestCase
             '3_2' => [
                 SymfonyEnvironmentParser::VARIABLE_VERSION       => 3,
                 SymfonyEnvironmentParser::VARIABLE_CONSOLE_CMD   => 'bin/console',
-                SymfonyEnvironmentParser::VARIABLE_BIN_DIR       => 'bin', # It was read from composer.json
+                SymfonyEnvironmentParser::VARIABLE_BIN_DIR       => 'bin', // It was read from composer.json
                 SymfonyEnvironmentParser::VARIABLE_SHARED_DIRS   => 'var',
                 SymfonyEnvironmentParser::VARIABLE_WEB_DIRECTORY => 'web',
                 SymfonyEnvironmentParser::VARIABLE_INDEX_FILE    => 'app.php',

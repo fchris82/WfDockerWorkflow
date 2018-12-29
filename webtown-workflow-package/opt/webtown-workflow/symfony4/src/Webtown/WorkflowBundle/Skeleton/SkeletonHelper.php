@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Skeleton;
 
-
 class SkeletonHelper
 {
     const SKELETONS_DIR = 'skeletons';

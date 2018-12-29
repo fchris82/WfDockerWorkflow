@@ -33,7 +33,6 @@ class AppCache extends HttpCache
 
 EOS;
 
-
     /**
      * @param $directory
      * @param $file
@@ -43,10 +42,10 @@ EOS;
      */
     public function testExists($directory, $file, $result)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
@@ -74,10 +73,10 @@ EOS;
      */
     public function testDumpFile($directory, $file, $fileContent)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
@@ -105,10 +104,10 @@ EOS;
      */
     public function testAppendToFile($directory, $file, $append, $result)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
@@ -123,7 +122,7 @@ EOS;
         return [
             ['test1', '/.gitignore', '*.iml', '*.iml'],
             ['test1', '/var/.gitkeep', 'Teszt', 'Teszt'],
-            ['test1', '/app/AppCache.php', 'Teszt', $this->appCacheContent.'Teszt'],
+            ['test1', '/app/AppCache.php', 'Teszt', $this->appCacheContent . 'Teszt'],
         ];
     }
 
@@ -137,10 +136,10 @@ EOS;
      */
     public function testTouch($directory, $file, $testFile, $fileContent)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
@@ -152,18 +151,18 @@ EOS;
 
     public function getTouches()
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            ''
+            '',
         ]);
 
         return [
             ['test1', '/.gitignore', '/.gitignore', ''],
             ['test1', '/app/AppCache.php', '/app/AppCache.php', $this->appCacheContent],
             // Testing alias
-            ['test1', $path. 'test1/.gitignore', '/.gitignore', ''],
-            ['test1', $path. 'test1/app/AppCache.php', '/app/AppCache.php', $this->appCacheContent],
+            ['test1', $path . 'test1/.gitignore', '/.gitignore', ''],
+            ['test1', $path . 'test1/app/AppCache.php', '/app/AppCache.php', $this->appCacheContent],
         ];
     }
 
@@ -180,15 +179,15 @@ EOS;
      */
     public function testCopy($directory, $origin, $target, $overwrite, $checkOrigin, $checkTarget, $fileContent)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
         if ($fileContent instanceof \Exception) {
-            $this->expectException(get_class($fileContent));
+            $this->expectException(\get_class($fileContent));
         }
         $filesystem->copy($origin, $target, $overwrite);
         if (!$fileContent instanceof \Exception) {
@@ -205,10 +204,10 @@ EOS;
 
     public function getCopies()
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            ''
+            '',
         ]);
 
         return [
@@ -329,15 +328,15 @@ EOS;
      */
     public function testRename($directory, $origin, $target, $overwrite, $checkOrigin, $checkTarget, $fileContent)
     {
-        $path = implode(DIRECTORY_SEPARATOR, [
+        $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
             'Resources',
-            $directory
+            $directory,
         ]);
         $filesystem = new Filesystem($path, '');
 
         if ($fileContent instanceof \Exception) {
-            $this->expectException(get_class($fileContent));
+            $this->expectException(\get_class($fileContent));
         }
         $filesystem->rename($origin, $target, $overwrite);
         // Use alias

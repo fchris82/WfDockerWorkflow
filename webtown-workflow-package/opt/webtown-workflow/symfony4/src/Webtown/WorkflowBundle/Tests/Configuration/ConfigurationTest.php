@@ -57,49 +57,49 @@ class ConfigurationTest extends TestCase
 //            ],
 //        ];
         return [
-            # 0
+            // 0
             [
                 [],
                 [],
                 [],
             ],
-            # 1
-            [
-                ['test' => 1],
-                [],
-                ['test' => 1],
-            ],
-            # 2
-            [
-                [],
-                ['test' => 2],
-                ['test' => 2],
-            ],
-            # 3
+            // 1
             [
                 ['test' => 1],
+                [],
+                ['test' => 1],
+            ],
+            // 2
+            [
+                [],
                 ['test' => 2],
                 ['test' => 2],
             ],
-            # 4
+            // 3
+            [
+                ['test' => 1],
+                ['test' => 2],
+                ['test' => 2],
+            ],
+            // 4
             [
                 ['test' => 1],
                 ['test' => null],
                 ['test' => null],
             ],
-            # 5
+            // 5
             [
                 ['test' => ['subvalue' => 1]],
                 ['test' => null],
                 ['test' => null],
             ],
-            # 6
+            // 6
             [
                 ['test' => ['subvalue' => 1, 'other' => 2]],
                 ['test' => ['subvalue' => 2]],
                 ['test' => ['subvalue' => 2, 'other' => 2]],
             ],
-            # 7
+            // 7
             [
                 ['test1' => 1],
                 ['test2' => 2],
@@ -108,13 +108,13 @@ class ConfigurationTest extends TestCase
                     'test2' => 2,
                 ],
             ],
-            # 8
+            // 8
             [
                 ['test' => ['subvalue' => 1, 'other' => 2]],
                 ['test' => ['other2' => 2]],
                 ['test' => ['subvalue' => 1, 'other' => 2, 'other2' => 2]],
             ],
-            # 9
+            // 9
             [
                 ['test' => ['subvalue' => ['test1', 'test1', 'test1']]],
                 ['test' => ['subvalue' => ['test2']]],
@@ -124,9 +124,9 @@ class ConfigurationTest extends TestCase
     }
 
     /**
-     * @param string $directory
-     * @param string $file
-     * @param bool|\Exception   $exception
+     * @param string          $directory
+     * @param string          $file
+     * @param bool|\Exception $exception
      *
      * @throws \App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException
      * @throws \Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException
@@ -136,7 +136,7 @@ class ConfigurationTest extends TestCase
     public function testLoadConfig(string $directory, string $file = '.wf.yml', $exception = false)
     {
         if ($exception instanceof \Exception) {
-            $this->expectException(get_class($exception));
+            $this->expectException(\get_class($exception));
         }
 
         $workingDirectory = realpath(__DIR__ . '/../Resources/Configuration/' . $directory);
@@ -144,7 +144,7 @@ class ConfigurationTest extends TestCase
         $configuration = new Configuration($this->buildRecipeManager(), $filesystem);
 
         $fullConfig = $configuration->loadConfig(
-            $workingDirectory . DIRECTORY_SEPARATOR . $file,
+            $workingDirectory . \DIRECTORY_SEPARATOR . $file,
             null,
             '2.1.1'
         );

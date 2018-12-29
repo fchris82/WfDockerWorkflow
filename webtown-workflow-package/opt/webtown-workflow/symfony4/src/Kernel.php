@@ -2,8 +2,6 @@
 
 namespace App;
 
-use App\DependencyInjection\Compiler\CollectExtensionInstallersPass;
-use App\DependencyInjection\Compiler\TwigExtendingPass;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\Config\Resource\FileResource;

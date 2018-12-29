@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\Input as BaseInput;
 
 class Input extends BaseInput
 {
-
     /**
      * Processes command line arguments.
      */
@@ -37,8 +36,8 @@ class Input extends BaseInput
      * This method is to be used to introspect the input parameters
      * before they have been validated. It must be used carefully.
      *
-     * @param string|array $values The values to look for in the raw parameters (can be an array)
-     * @param bool $onlyParams Only check real parameters, skip those following an end of options (--) signal
+     * @param string|array $values     The values to look for in the raw parameters (can be an array)
+     * @param bool         $onlyParams Only check real parameters, skip those following an end of options (--) signal
      *
      * @return bool true if the value is contained in the raw parameters
      */
@@ -53,9 +52,9 @@ class Input extends BaseInput
      * This method is to be used to introspect the input parameters
      * before they have been validated. It must be used carefully.
      *
-     * @param string|array $values The value(s) to look for in the raw parameters (can be an array)
-     * @param mixed $default The default value to return if no result is found
-     * @param bool $onlyParams Only check real parameters, skip those following an end of options (--) signal
+     * @param string|array $values     The value(s) to look for in the raw parameters (can be an array)
+     * @param mixed        $default    The default value to return if no result is found
+     * @param bool         $onlyParams Only check real parameters, skip those following an end of options (--) signal
      *
      * @return mixed The option value
      */

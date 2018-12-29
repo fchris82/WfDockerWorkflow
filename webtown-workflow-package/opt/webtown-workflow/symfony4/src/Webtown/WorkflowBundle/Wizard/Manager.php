@@ -51,7 +51,7 @@ class Manager
      */
     public function addWizard(WizardInterface $wizard)
     {
-        $this->allWizards[get_class($wizard)] = $wizard;
+        $this->allWizards[\get_class($wizard)] = $wizard;
         if (!$wizard->isHidden()) {
             $this->publicWizards[$wizard->getDefaultName()] = $wizard;
         }
@@ -62,6 +62,7 @@ class Manager
         if (!array_key_exists($class, $this->allWizards)) {
             throw new \Exception(sprintf('Missing wizard: `%s`', $class));
         }
+
         return $this->allWizards[$class];
     }
 

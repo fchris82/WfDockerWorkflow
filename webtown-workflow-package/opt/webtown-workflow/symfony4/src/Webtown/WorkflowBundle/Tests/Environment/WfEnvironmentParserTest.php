@@ -18,9 +18,9 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 class WfEnvironmentParserTest extends TestCase
 {
     /**
-     * @param string $directory
+     * @param string          $directory
      * @param bool|\Exception $result
-     * @param array $removeFiles
+     * @param array           $removeFiles
      *
      * @dataProvider getInitTests
      */
@@ -36,7 +36,7 @@ class WfEnvironmentParserTest extends TestCase
         }
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $wfParser->wfIsInitialized($workingDirectory);
@@ -56,9 +56,9 @@ class WfEnvironmentParserTest extends TestCase
     }
 
     /**
-     * @param string $directory
+     * @param string          $directory
      * @param bool|\Exception $result
-     * @param array $removeFiles
+     * @param array           $removeFiles
      *
      * @dataProvider getConfigurations
      */
@@ -74,7 +74,7 @@ class WfEnvironmentParserTest extends TestCase
         }
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $wfParser->getWorkflowConfiguration($workingDirectory);
@@ -126,7 +126,7 @@ class WfEnvironmentParserTest extends TestCase
             ['env_empty', new \InvalidArgumentException()],
             ['env_wf', $config],
             ['env_wf', $config_dist, ['.wf.yml']],
-            ['env_wf', new InvalidConfigurationException(), ['.wf.yml.dist']], # Missing imported .dist file!
+            ['env_wf', new InvalidConfigurationException(), ['.wf.yml.dist']], // Missing imported .dist file!
         ];
     }
 }

@@ -17,7 +17,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class WebtownWorkflowBundleTest extends \PHPUnit\Framework\TestCase
 {
-
     public function testBuild()
     {
         $bundle = new WebtownWorkflowBundle();
@@ -27,11 +26,11 @@ class WebtownWorkflowBundleTest extends \PHPUnit\Framework\TestCase
         $autoConfiguredInstanceof = $containerBuilder->getAutoconfiguredInstanceof();
         $this->assertEquals([
             BaseRecipe::class,
-            WizardInterface::class
+            WizardInterface::class,
         ], array_keys($autoConfiguredInstanceof));
 
         $tags = [];
-        foreach($autoConfiguredInstanceof as $interface => $childDefinition) {
+        foreach ($autoConfiguredInstanceof as $interface => $childDefinition) {
             $tags = array_merge($tags, $childDefinition->getTags());
         }
         $this->assertEquals([
@@ -43,10 +42,10 @@ class WebtownWorkflowBundleTest extends \PHPUnit\Framework\TestCase
         $passes = $passConfig->getBeforeOptimizationPasses();
         $passClasses = [];
         foreach ($passes as $compilerPass) {
-            $passClasses[] = get_class($compilerPass);
+            $passClasses[] = \get_class($compilerPass);
         }
 
-        $this->assertTrue(in_array(CollectRecipesPass::class, $passClasses));
-        $this->assertTrue(in_array(CollectWizardsPass::class, $passClasses));
+        $this->assertTrue(\in_array(CollectRecipesPass::class, $passClasses));
+        $this->assertTrue(\in_array(CollectWizardsPass::class, $passClasses));
     }
 }

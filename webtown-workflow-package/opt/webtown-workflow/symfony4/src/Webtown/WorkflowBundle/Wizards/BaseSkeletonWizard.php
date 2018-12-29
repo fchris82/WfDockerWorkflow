@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Wizards;
 
-use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\TwigExtendingPass;
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;

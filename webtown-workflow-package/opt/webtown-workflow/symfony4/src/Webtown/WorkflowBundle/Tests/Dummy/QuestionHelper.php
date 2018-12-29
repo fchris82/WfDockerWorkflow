@@ -22,6 +22,7 @@ class QuestionHelper extends BaseQuestionHelper
 
     /**
      * QuestionHelper constructor.
+     *
      * @param array $responses
      */
     public function __construct(array $responses)

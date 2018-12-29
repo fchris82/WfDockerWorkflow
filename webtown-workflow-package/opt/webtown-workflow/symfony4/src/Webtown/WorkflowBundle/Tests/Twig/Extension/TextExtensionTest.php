@@ -14,8 +14,8 @@ use PHPUnit\Framework\TestCase;
 class TextExtensionTest extends TestCase
 {
     /**
-     * @param string $text
-     * @param string $result
+     * @param string      $text
+     * @param string      $result
      * @param null|string $lineChar
      *
      * @dataProvider getUnderlines

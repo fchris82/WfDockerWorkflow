@@ -16,8 +16,8 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 class ComposerInstalledVersionParserTest extends TestCase
 {
     /**
-     * @param string $directory
-     * @param string $packageName
+     * @param string            $directory
+     * @param string            $packageName
      * @param string|\Exception $result
      *
      * @dataProvider getGets
@@ -29,7 +29,7 @@ class ComposerInstalledVersionParserTest extends TestCase
         $parser = new ComposerInstalledVersionParser($filesystem);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $parser->get($workingDirectory, $packageName);
@@ -57,8 +57,8 @@ class ComposerInstalledVersionParserTest extends TestCase
     }
 
     /**
-     * @param string $directory
-     * @param string $infoPath
+     * @param string           $directory
+     * @param string           $infoPath
      * @param mixed|\Exception $result
      *
      * @dataProvider getReads
@@ -70,7 +70,7 @@ class ComposerInstalledVersionParserTest extends TestCase
         $parser = new ComposerInstalledVersionParser($filesystem);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $parser->read($workingDirectory, $infoPath);

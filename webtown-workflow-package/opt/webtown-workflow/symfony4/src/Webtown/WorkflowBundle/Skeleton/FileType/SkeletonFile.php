@@ -221,7 +221,7 @@ class SkeletonFile
     {
         $this->setFileName($newFilename);
         if ($this->fullTargetPathname) {
-            $pathItems = explode(DIRECTORY_SEPARATOR, $this->fullTargetPathname);
+            $pathItems = explode(\DIRECTORY_SEPARATOR, $this->fullTargetPathname);
             $currentFilename = array_pop($pathItems);
             $pathItems[] = $newFilename;
             $this->setFullTargetPathname(implode(\DIRECTORY_SEPARATOR, $pathItems));

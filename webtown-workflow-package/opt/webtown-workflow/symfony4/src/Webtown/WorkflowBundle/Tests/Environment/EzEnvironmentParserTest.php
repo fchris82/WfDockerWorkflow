@@ -18,7 +18,7 @@ use PHPUnit\Framework\TestCase;
 class EzEnvironmentParserTest extends TestCase
 {
     /**
-     * @param string $directory
+     * @param string          $directory
      * @param bool|\Exception $result
      *
      * @dataProvider getProjects
@@ -36,7 +36,7 @@ class EzEnvironmentParserTest extends TestCase
         }
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $response = $ezParser->isEzProject($workingDirectory);
@@ -62,7 +62,7 @@ class EzEnvironmentParserTest extends TestCase
         ];
     }
 
-// @todo
+    // @todo
 //    public function testGetSymfonyEnvironmentVariables()
 //    {
 //

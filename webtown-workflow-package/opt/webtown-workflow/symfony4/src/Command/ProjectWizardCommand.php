@@ -2,9 +2,9 @@
 
 namespace App\Command;
 
+use App\Helper\WordWrapper;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Helper\WordWrapper;
 use App\Webtown\WorkflowBundle\Wizard\Manager;
 use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;

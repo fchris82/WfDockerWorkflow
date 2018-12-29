@@ -2,8 +2,8 @@
 
 namespace App\Recipes\GitlabCiWebtownRunner;
 
-use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Recipes\GitlabCi\GitlabCiRecipe;
+use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
