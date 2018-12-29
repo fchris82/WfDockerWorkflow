@@ -81,6 +81,19 @@ wfdev wf --clean-cache
 wfdev --no-dev wf --clean-cache
 ```
 
+## Your image
+
+<!-- TODO -->
+
+You can reload your image:
+
+```bash
+$ wf --rebuild
+
+$ make rebuild_wf build_docker 
+$ wf --rebuild --no-pull
+``` 
+
 ## Debug environments
 
 You can call commands with `WF_DEBUG` environment. Example: you can set it in `.gitlab-ci.yml` `variables` section and

@@ -27,13 +27,16 @@ _wf() {
 
     case $state in
         command)
-            _arguments '1: :(-ps --docker-ps reconfigure --reload --clean-cache --config-dump --enter --dev-run --extensions)'
+            _arguments '1: :(-ps --docker-ps reconfigure --reload --clean-cache --config-dump --enter --dev-run --extensions --update --rebuild --version)'
             [[ -f $config_file ]] && [[ -d $wf_directory_name ]] && compadd $(echo ${list:-$(wf list)})
         ;;
         parameters)
             case $words[2] in
                 --config-dump)
                     _arguments '*: :(--only-recipes --no-ansi --recipe=)'
+                ;;
+                --rebuild)
+                    _arguments '*: :(--no-pull)'
                 ;;
             esac
             # Allow files from third parameter

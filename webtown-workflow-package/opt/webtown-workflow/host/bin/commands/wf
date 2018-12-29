@@ -36,6 +36,13 @@ case $1 in
         echo "Cleaning the cache..."
         ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache >/dev/null
     ;;
+    --rebuild)
+        PULL="--pull"
+        if [ ${2} == "--no-pull" ]; then
+            PULL=""
+        fi
+        docker build --no-cache ${PULL} -t ${USER}/wf ~/.webtown-workflow
+    ;;
     # !!! Don't extend here! Read above!
     *)
         ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf ${@}
