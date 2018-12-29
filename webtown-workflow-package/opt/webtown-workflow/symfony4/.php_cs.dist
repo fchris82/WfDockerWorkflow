@@ -1,7 +1,8 @@
 <?php
 $srcDir = __DIR__ . DIRECTORY_SEPARATOR . 'src';
+$testDir = __DIR__ . DIRECTORY_SEPARATOR . 'tests';
 $finder = PhpCsFixer\Finder::create()
-    ->in($srcDir)
+    ->in([$srcDir, $testDir])
     ->exclude('skeletons')
     ->exclude('template')
 ;
