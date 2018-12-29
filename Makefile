@@ -39,7 +39,7 @@ export DEV_SH_FILE_CONTENT
 init-developing:
 	mkdir -p ~/bin
 	@echo "$$DEV_SH_FILE_CONTENT" > ~/bin/wfdev && chmod +x ~/bin/wfdev
-	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --composer-install
+	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install
 
 .PHONY: rebuild_wf
 rebuild_wf: __build_wf __build_cleanup
@@ -134,6 +134,14 @@ push_docker: __get_image_tag
 		docker login; \
 	fi
 	docker push $(IMAGE)
+
+.PHONY: phpunit
+phpunit:
+	~/bin/wfdev wf --dev-run bin/phpunit
+
+.PHONY: phpcsfix
+phpcsfix:
+	~/bin/wfdev wf --dev-run vendor/bin/php-cs-fixer fix
 
 # @todo
 .PHONY: tests
