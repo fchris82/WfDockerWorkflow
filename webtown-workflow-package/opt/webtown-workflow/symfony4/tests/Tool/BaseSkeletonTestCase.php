@@ -8,19 +8,18 @@
 
 namespace App\Tests\Tool;
 
-use App\DependencyInjection\Compiler\TwigExtendingPass;
-use App\Wizard\WizardInterface;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Command;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
-use App\Tests\TestCase;
+use App\Webtown\WorkflowBundle\Tests\TestCase;
+use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 
 class BaseSkeletonTestCase extends TestCase
 {
     protected function initSkeleton(WizardInterface $skeleton, array $responses = [])
     {
-        $command = new Command(get_class($skeleton));
+        $command = new Command(\get_class($skeleton));
         $command->setQuetionResponses($responses);
         $skeleton
             ->setCommand($command)
@@ -50,7 +49,7 @@ class BaseSkeletonTestCase extends TestCase
 
     protected function getTwig($path = null)
     {
-        if (is_null($path)) {
+        if (null === $path) {
             $path = $this->getBaseDir();
         }
 

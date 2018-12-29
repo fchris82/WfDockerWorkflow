@@ -8,17 +8,18 @@
 
 namespace App\Tests;
 
-use App\Configuration\Environment;
-use App\Tests\TestCase;
-use Mockery as m;
 use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
+use App\Webtown\WorkflowBundle\Configuration\Environment;
+use App\Webtown\WorkflowBundle\Tests\TestCase;
+use Mockery as m;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class NginxReverseProxyTest extends TestCase
 {
     /**
-     * @param array $recipeConfig
+     * @param array  $recipeConfig
      * @param string $defaultHost
-     * @param array $result
+     * @param array  $result
      *
      * @dataProvider getHosts
      */
@@ -26,7 +27,7 @@ class NginxReverseProxyTest extends TestCase
     {
         $twig = m::mock(\Twig_Environment::class);
         $environment = new Environment();
-        $recipe = new NginxReverseProxyRecipe($twig, $environment);
+        $recipe = new NginxReverseProxyRecipe($twig, new EventDispatcher(), $environment);
 
         $response = $this->executeProtectedMethod($recipe, 'defaultHostIsSet', [$recipeConfig, $defaultHost]);
         $this->assertEquals($result, $response);
@@ -35,7 +36,7 @@ class NginxReverseProxyTest extends TestCase
     public function getHosts()
     {
         return [
-            [ ['settings' => []], 'test.loc', false ],
+            [['settings' => []], 'test.loc', false],
             [
                 [
                     'settings' => [
@@ -112,7 +113,7 @@ class NginxReverseProxyTest extends TestCase
         $environment = m::mock(Environment::class, [
             'getConfigValue' => '.loc',
         ]);
-        $recipe = new NginxReverseProxyRecipe($twig, $environment);
+        $recipe = new NginxReverseProxyRecipe($twig, new EventDispatcher(), $environment);
 
         $response = $this->executeProtectedMethod($recipe, 'setTheDefaultHostIfNotSet', ['', $recipeConfig, $globalConfig]);
         $this->assertEquals($result, $response);
