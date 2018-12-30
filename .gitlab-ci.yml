@@ -10,7 +10,8 @@ build:
     stage: build
     <<: *all_jobs
     script:
-        - echo "Only build 'install-wf.sh' to downlaod."
+        - make init-developing
+        - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
         paths:
@@ -30,8 +31,20 @@ test:deb:
         - rm -rf /tmp/original
         - if [[ ! -z ${DIFF} ]]; then echo $DIFF; echo "You didn't refresh the deb package! Run the 'make rebuild_wf' command and commit the new deb package too!"; exit 1; fi
 
-test:tests:
+test:sh:
     stage: test
     <<: *all_jobs
     script:
-        - make -f test/tests.mk gitlab
+        - make -f test/tests.mk functions
+
+test:phpunit:
+    stage: test
+    <<: *all_jobs
+    script:
+        - make -f test/tests.mk phpunit
+
+test:phpcsfix:
+    stage: test
+    <<: *all_jobs
+    script:
+        - make -f test/tests.mk phpcsfix
