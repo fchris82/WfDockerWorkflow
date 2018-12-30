@@ -30,9 +30,14 @@ if [ "$1" == "--develop" ]; then
     #  $ make -s rebuild_wf build_docker
     #
     GIT_BRANCH=$(cd ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow && git rev-parse --abbrev-ref HEAD)
-    if [[ "$GIT_BRANCH" != "master" ]]; then
-        WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
-    fi
+    case $GIT_BRANCH in
+        master|HEAD)
+            # Do nothing
+        ;;
+        *)
+            WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
+        ;;
+    esac
 fi
 
 # COMMAND
