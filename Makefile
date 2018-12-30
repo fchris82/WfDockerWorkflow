@@ -137,11 +137,11 @@ push_docker: __get_image_tag
 
 .PHONY: phpunit
 phpunit:
-	~/bin/wfdev wf --dev-run bin/phpunit
+	~/bin/wfdev wf --sf-run bin/phpunit
 
 .PHONY: phpcsfix
 phpcsfix:
-	~/bin/wfdev wf --dev-run vendor/bin/php-cs-fixer fix
+	~/bin/wfdev wf --sf-run vendor/bin/php-cs-fixer fix
 
 # @todo
 .PHONY: tests

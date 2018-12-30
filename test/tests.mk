@@ -5,8 +5,8 @@ functions:
 
 .PHONY: phpunit
 phpunit:
-	~/bin/wfdev wf --dev-run bin/phpunit
+	~/bin/wfdev wf --sf-run bin/phpunit
 
 .PHONY: phpcsfix
 phpcsfix:
-	~/bin/wfdev wf --dev-run vendor/bin/php-cs-fixer fix --dry-run
+	~/bin/wfdev wf --sf-run vendor/bin/php-cs-fixer fix --dry-run

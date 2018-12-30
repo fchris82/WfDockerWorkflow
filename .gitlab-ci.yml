@@ -10,7 +10,7 @@ build:
     stage: build
     <<: *all_jobs
     script:
-        - make init-developing
+        - wf --run make init-developing
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -41,10 +41,10 @@ test:phpunit:
     stage: test
     <<: *all_jobs
     script:
-        - ~/bin/wfdev wf --dev-run bin/phpunit
+        - ~/bin/wfdev wf --sf-run bin/phpunit
 
 test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
-        - ~/bin/wfdev wf --dev-run vendor/bin/php-cs-fixer fix --dry-run
+        - ~/bin/wfdev wf --sf-run vendor/bin/php-cs-fixer fix --dry-run

@@ -80,7 +80,11 @@ case $1 in
     --enter)
         /bin/bash
     ;;
-    --dev-run)
+    --run)
+        shift
+        ${@}
+    ;;
+    --sf-run)
         shift
         cd ${SYMFONY_PATH} && ${@}
     ;;

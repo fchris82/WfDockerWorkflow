@@ -56,17 +56,21 @@ If you use the `--develop` attribute, the program create a docker volume to over
 > There are two useful arguments:
 >
 >  - `--enter` : you can "enter" the `wf` container
->  - `--dev-run` : you can run a command directly in the `wf` container
+>  - `--run`: you can run dommand in `wf` container (in current directory)
+>  - `--sf-run` : you can run a command directly in the Symfony directory of `wf` container (`$SYMFONY_PATH` env)
 >
 > ```shell
+> # Run make command without locally installed makefile:
+> $ cd ~/dev/webtown-workflow && wf --run make enter
+>
 > # Composer update
-> $ wfdev wf --dev-run composer update
+> $ wfdev wf --sf-run composer update
 >
 > # Run PHP CS fixer
-> $ wfdev wf --dev-run vendor/bin/php-cs-fixer fix --dry-run --config=.php_cs.dist
+> $ wfdev wf --sf-run vendor/bin/php-cs-fixer fix --dry-run --config=.php_cs.dist
 >
 > # Run PHPUnit
-> $ wfdev wf --dev-run bin/phpunit /opt/webtown-workflow/symfony4/tests/Tool
+> $ wfdev wf --sf-run bin/phpunit /opt/webtown-workflow/symfony4/tests/Tool
 > ```
 
 ## Cache !!!
