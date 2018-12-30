@@ -35,16 +35,16 @@ test:sh:
     stage: test
     <<: *all_jobs
     script:
-        - make -f test/tests.mk functions
+        - ./test/functions.sh
 
 test:phpunit:
     stage: test
     <<: *all_jobs
     script:
-        - make -f test/tests.mk phpunit
+        - ~/bin/wfdev wf --dev-run bin/phpunit
 
 test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
-        - make -f test/tests.mk phpcsfix
+        - ~/bin/wfdev wf --dev-run vendor/bin/php-cs-fixer fix --dry-run
