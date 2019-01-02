@@ -17,11 +17,6 @@ variables:
     before_script:
         - ls -al
         - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4
-    # Change cache policy to make faster the CI pipeline
-    cache:
-        key: ${CI_PIPELINE_ID}
-        untracked: true
-        policy: pull
 
 build:
     stage: build
@@ -38,10 +33,6 @@ build:
         name: "$CI_JOB_NAME"
         paths:
             - install-wf.sh
-    # Change cache policy to make faster the CI pipeline
-    cache:
-        key: ${CI_PIPELINE_ID}
-        untracked: true
 
 test:deb:
     stage: test
@@ -56,24 +47,44 @@ test:deb:
         - rm -rf /tmp/deb
         - rm -rf /tmp/original
         - if [[ ! -z ${DIFF} ]]; then echo $DIFF; echo "You didn't refresh the deb package! Run the 'make rebuild_wf' command and commit the new deb package too!"; exit 1; fi
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 test:sh:
     stage: test
     <<: *all_jobs
     script:
         - ./test/functions.sh
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 test:phpunit:
     stage: test
     <<: *all_jobs
     script:
         - ${SF_RUN} bin/phpunit
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
         - ${SF_RUN} vendor/bin/php-cs-fixer fix --dry-run
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 cleanup:
     stage: cleanup
