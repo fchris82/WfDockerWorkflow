@@ -16,6 +16,7 @@
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.13",
         "mockery/mockery": "^1.1",
+        "phpunit/phpunit": "^6.5",
         "symfony/dotenv": "^4.0",
         "symfony/phpunit-bridge": "^4.0",
         "symfony/test-pack": "^1.0"
