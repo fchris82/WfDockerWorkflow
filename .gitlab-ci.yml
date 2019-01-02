@@ -16,6 +16,8 @@ build:
     <<: *all_jobs
     script:
         - docker build --no-cache -t ${WF_IMAGE} .
+        - ${SF_RUN} env
+        - ${SF_RUN} composer install
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -59,3 +61,4 @@ cleanup:
     <<: *all_jobs
     script:
         - docker rmi ${WF_IMAGE}
+    when: always
