@@ -8,7 +8,7 @@ cache:
     untracked: true
 
 variables:
-    SF_RUN: webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
+    SF_RUN: ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
     WF_IMAGE: gitlab-runner/test-wf:${CI_PIPELINE_ID}
 
 .all_jobs: &all_jobs
