@@ -16,7 +16,7 @@ variables:
 
 .all_jobs: &all_jobs
     tags:
-        - project3
+        - wf
     before_script:
         - ls -al
         - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4
