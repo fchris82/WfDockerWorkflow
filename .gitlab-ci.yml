@@ -25,7 +25,10 @@ build:
     <<: *all_jobs
     script:
         - docker build --no-cache -t ${WF_IMAGE} .
-        - ${SF_RUN} env
+        - ls -al
+        - ls -al webtown-workflow-package
+        - ls -al webtown-workflow-package/opt/webtown-workflow
+        - ls -al webtown-workflow-package/opt/webtown-workflow/host/bin
         - ${SF_RUN} composer install
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
