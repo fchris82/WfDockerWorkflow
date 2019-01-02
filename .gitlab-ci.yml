@@ -35,7 +35,7 @@ build:
         - ls -al webtown-workflow-package/opt/webtown-workflow/host/bin
         - wf reconfigure
         - wf debug-docker-config
-        - wf composer install -d webtown-workflow-package/opt/webtown-workflow/symfony4
+        - wf run composer install -d webtown-workflow-package/opt/webtown-workflow/symfony4
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
