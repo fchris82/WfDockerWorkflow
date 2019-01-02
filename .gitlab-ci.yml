@@ -11,8 +11,7 @@ cache:
         - webtown-workflow-package/opt/webtown-workflow/symfony4/var
 
 variables:
-    WF_DEBUG: 3
-    SF_RUN: ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
+#    WF_DEBUG: 3
     WF_IMAGE: gitlab-runner/test-wf:${CI_PIPELINE_ID}
 
 .all_jobs: &all_jobs
@@ -31,7 +30,7 @@ build:
         - ls -al webtown-workflow-package
         - ls -al webtown-workflow-package/opt/webtown-workflow
         - ls -al webtown-workflow-package/opt/webtown-workflow/host/bin
-        - ${SF_RUN} composer install
+        - ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run composer install
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -72,7 +71,7 @@ test:phpunit:
     stage: test
     <<: *all_jobs
     script:
-        - ${SF_RUN} bin/phpunit
+        - ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run bin/phpunit
     # Change cache policy to make faster the CI pipeline
     cache:
         key: ${CI_PIPELINE_ID}
@@ -83,7 +82,7 @@ test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
-        - ${SF_RUN} vendor/bin/php-cs-fixer fix --dry-run
+        - ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run vendor/bin/php-cs-fixer fix --dry-run
     # Change cache policy to make faster the CI pipeline
     cache:
         key: ${CI_PIPELINE_ID}
