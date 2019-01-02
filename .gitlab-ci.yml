@@ -2,6 +2,9 @@ stages:
     - build
     - test
 
+variables:
+    SF_RUN: webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
+
 .all_jobs: &all_jobs
     tags:
         - project3
@@ -10,8 +13,6 @@ build:
     stage: build
     <<: *all_jobs
     script:
-        - wf --run make init-developing
-        - wf --rebuild
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -42,10 +43,10 @@ test:phpunit:
     stage: test
     <<: *all_jobs
     script:
-        - ~/bin/wfdev wf --sf-run bin/phpunit
+        - ${SF_RUN} bin/phpunit
 
 test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
-        - ~/bin/wfdev wf --sf-run vendor/bin/php-cs-fixer fix --dry-run
+        - ${SF_RUN} vendor/bin/php-cs-fixer fix --dry-run
