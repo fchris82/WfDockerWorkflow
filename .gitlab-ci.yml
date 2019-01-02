@@ -34,6 +34,8 @@ build:
         - ls -al webtown-workflow-package/opt/webtown-workflow
         - ls -al webtown-workflow-package/opt/webtown-workflow/host/bin
         - ls -al /usr/local/bin/
+        - ls -al /home
+        - env
         - which wf
         - wf reconfigure
         - wf debug-docker-config
