@@ -3,6 +3,10 @@ stages:
     - test
     - cleanup
 
+cache:
+    key: ${CI_PIPELINE_ID}
+    untracked: true
+
 variables:
     SF_RUN: webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
     WF_IMAGE: gitlab-runner/test-wf:${CI_PIPELINE_ID}
@@ -10,6 +14,11 @@ variables:
 .all_jobs: &all_jobs
     tags:
         - project3
+    # Change cache policy to make faster the CI pipeline
+    cache:
+        key: ${CI_PIPELINE_ID}
+        untracked: true
+        policy: pull
 
 build:
     stage: build
