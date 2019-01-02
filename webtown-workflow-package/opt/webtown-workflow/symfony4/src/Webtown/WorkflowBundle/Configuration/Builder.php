@@ -101,8 +101,10 @@ class Builder
 
         // INIT
         $this->initEventListeners($projectPath);
-        foreach ($config['recipes'] as $recipeName => $recipeConfig) {
-            $this->addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $config);
+        if (array_key_exists('recipes', $config)) {
+            foreach ($config['recipes'] as $recipeName => $recipeConfig) {
+                $this->addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $config);
+            }
         }
         $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectory, $configHash);
         $this->eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $initEvent);
@@ -114,8 +116,10 @@ class Builder
         // BASE
         $this->buildRecipe($projectPath, BaseRecipe::NAME, $config, $config);
         // PUBLIC RECIPES
-        foreach ($config['recipes'] as $recipeName => $recipeConfig) {
-            $this->buildRecipe($projectPath, $recipeName, $recipeConfig, $config);
+        if (array_key_exists('recipes', $config)) {
+            foreach ($config['recipes'] as $recipeName => $recipeConfig) {
+                $this->buildRecipe($projectPath, $recipeName, $recipeConfig, $config);
+            }
         }
 
         // COMMANDS

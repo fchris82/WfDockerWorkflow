@@ -341,7 +341,7 @@ class Configuration implements ConfigurationInterface
                         }
                     }
 
-                    return $v;
+                    return $v ?: [];
                 })
             ->end()
         ;
