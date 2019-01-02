@@ -1,9 +1,11 @@
 stages:
     - build
     - test
+    - cleanup
 
 variables:
     SF_RUN: webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
+    WF_IMAGE: gitlab-runner/test-wf:${CI_PIPELINE_ID}
 
 .all_jobs: &all_jobs
     tags:
@@ -13,6 +15,7 @@ build:
     stage: build
     <<: *all_jobs
     script:
+        - docker build --no-cache -t ${WF_IMAGE} .
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -50,3 +53,9 @@ test:phpcsfix:
     <<: *all_jobs
     script:
         - ${SF_RUN} vendor/bin/php-cs-fixer fix --dry-run
+
+cleanup:
+    stage: cleanup
+    <<: *all_jobs
+    script:
+        - docker rmi ${WF_IMAGE}
