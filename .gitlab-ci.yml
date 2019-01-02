@@ -6,6 +6,9 @@ stages:
 cache:
     key: ${CI_PIPELINE_ID}
     untracked: true
+    paths:
+        - webtown-workflow-package/opt/webtown-workflow/symfony4/vendor
+        - webtown-workflow-package/opt/webtown-workflow/symfony4/var
 
 variables:
     SF_RUN: ./webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --sf-run
