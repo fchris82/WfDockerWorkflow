@@ -11,35 +11,23 @@ cache:
         - webtown-workflow-package/opt/webtown-workflow/symfony4/var
 
 variables:
-    WF_DEBUG: 2
+#    WF_DEBUG: 2
     TEST_IMAGE: gitlab-runner/test-wf:${CI_PIPELINE_ID}
 
 .all_jobs: &all_jobs
     tags:
         - wf
-    before_script:
-        - ls -al
-        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4
 
 build:
     stage: build
     <<: *all_jobs
     script:
-        - docker build --no-cache -t ${TEST_IMAGE} .
+#        - docker build --no-cache -t ${TEST_IMAGE} .
         - cp .wf.gitlab-ci.yml .wf.yml
-        - 'sed -e "s|image: fchris82/wf|image: ${TEST_IMAGE}|" -i .wf.yml'
+#        - 'sed -e "s|image: fchris82/wf|image: ${TEST_IMAGE}|" -i .wf.yml'
         - cat .wf.yml
-#        - ls -al
-#        - ls -al webtown-workflow-package
-#        - ls -al webtown-workflow-package/opt/webtown-workflow
-#        - ls -al webtown-workflow-package/opt/webtown-workflow/host/bin
-#        - ls -al /usr/local/bin/
-#        - ls -al /home
-#        - env
-#        - which wf
         - wf reconfigure
         - wf debug-docker-config
-#        - wf run engine ls -al /usr/local/bin/
         - wf sfcmd composer install
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
@@ -53,7 +41,7 @@ test:deb:
     script:
         - rm -rf tmp/deb
         - rm -rf tmp/original
-        - wf run engine dpkg-deb -R webtown-workflow.deb tmp/deb
+        - wf cmd dpkg-deb -R webtown-workflow.deb tmp/deb
         - git -C webtown-workflow-package ls-files --exclude-standard -oi --directory > .git/ignores.tmp
         - rsync -r --delete --delete-excluded --delete-before --force --exclude=.git --exclude-from="$(echo .git/ignores.tmp)" webtown-workflow-package/* tmp/original
         - DIFF=$(diff -qr tmp/original tmp/deb)
@@ -106,5 +94,5 @@ cleanup:
         # @todo Nem tudjuk törölni az aktuálisat, mert éppen használjuk. Vagy legalábbis vmi ilyen hibaüzenetet dob:
         #   $ docker rmi ${TEST_IMAGE}
         #   Error response from daemon: conflict: unable to remove repository reference "gitlab-runner/test-wf:5877" (must force) - container 283cbc94d3d9 is using its referenced image 9147dac2a6ff
-        - docker rmi -f ${TEST_IMAGE}
+#        - docker rmi -f ${TEST_IMAGE}
     when: always
