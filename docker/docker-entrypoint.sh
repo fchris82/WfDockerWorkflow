@@ -18,9 +18,10 @@ fi
 
 # USER
 USER_ID=${LOCAL_USER_ID:-9001}
+CURRENT_USER=$(id -u)
 # default docker group name
 DOCKER_GROUP_NAME='docker'
-if [ $USER_ID != 0 ]; then
+if [ $USER_ID != 0 ] && [ "$USER_ID" != "$CURRENT_USER" ]; then
     # If the sock exist, we try to find the correct user group to can use docker
     if [ -S /var/run/docker.sock ]; then
         # docker group ID from docker.sock file
@@ -40,7 +41,11 @@ if [ $USER_ID != 0 ]; then
 fi
 export HOME=${LOCAL_USER_HOME}
 
-[[ -f /opt/webtown-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/.env
-[[ -f /opt/webtown-workflow/symfony4/var ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/var
+if [ "$USER_ID" != "$CURRENT_USER" ]; then
+    [[ -f /opt/webtown-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/.env
+    [[ -f /opt/webtown-workflow/symfony4/var ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/var
 
-su-exec ${LOCAL_USER_NAME} "$@"
+    su-exec ${LOCAL_USER_NAME} "$@"
+else
+    $@
+fi

@@ -1,22 +1,3 @@
-# Available configuration parameters
-# ==================================
-#
-# List all:
-#   wf --config-dump
-#
-# List only names:
-#   wf --config-dump --only-recipes
-#
-# List only a recipe:
-#   wf --config-dump --recipe=symfony3
-#
-# Save to a file to edit:
-#    wf --config-dump --no-ansi > .wf.yml
-#
-# Add new recipe:
-#    wf --config-dump --recipe=php --no-ansi >> .wf.yml
-#
-# ----------------------------------------------------------------------------------------------------------------------
 version: "2.0.0"
 name: gitlab_wf
 
@@ -28,28 +9,13 @@ docker_compose:
                 image: fchris82/wf
                 environment:
                     SYMFONY_DEPRECATIONS_HELPER: disabled
-                    # It is important to deploy
-                    DEPLOY_DIR: ${DEPLOY_DIR}
-                    DEPLOY_DOMAIN: ${DEPLOY_DOMAIN}
-                    DEPLOY_NAME: ${DEPLOY_NAME}
                     CI_COMMIT_REF_NAME: ${CI_COMMIT_REF_NAME}
+                    APP_ENV: test
 
-## The configs of recipes
-#recipes:
-#    # symfony4 recipe
-#    symfony4:
-#        # Symfony environment.
-#        env:     dev
-#        share_base_user_configs: false
-#        server:
-#            # You can switch on and off the xdebug.
-#            xdebug:         false
-#            # You can switch on and off debug mode. IMPORTANT! The debug mode makes lot of logs!
-#            nginx_debug:    false
-#
-#    git_flow: false
-#    # You can enable the nginx-reverse-proxy.
-#    nginx_reverse_proxy: false
-#    # Here you can fix the container user ID and group ID, for example if you want to share some files, and you'd love
-#    # the correct file permissions.
-#    user_fix: false
+commands:
+    cmd:
+        - ${@}
+
+    sfcmd:
+        - cd webtown-workflow-package/opt/webtown-workflow/symfony4
+        - ${@}

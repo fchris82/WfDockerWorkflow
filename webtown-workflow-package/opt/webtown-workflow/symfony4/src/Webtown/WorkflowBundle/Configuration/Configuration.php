@@ -8,6 +8,7 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
+use App\Recipes\Commands\CommandsRecipe;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
@@ -193,7 +194,7 @@ class Configuration implements ConfigurationInterface
                         ->end()
                     ->end()
                 ->end()
-                ->arrayNode('commands')
+                ->arrayNode(CommandsRecipe::NAME)
                     ->info('<comment>You can add extra <info>commands</info>.</comment>')
                     ->useAttributeAsKey('command')
                     ->variablePrototype()->end()

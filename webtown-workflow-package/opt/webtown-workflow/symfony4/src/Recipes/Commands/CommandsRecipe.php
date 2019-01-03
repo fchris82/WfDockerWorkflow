@@ -67,7 +67,7 @@ class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInter
         $makefileTargets = [];
         foreach ($this->globalConfig[static::NAME] as $commandName => $commands) {
             $commandTemplateVars = $templateVars;
-            $commandTemplateVars['commands'] = $commands;
+            $commandTemplateVars[static::NAME] = $commands;
             $skeletonFile = $this->createSkeletonFile($tmpSkeletonFileInfo, $commandName, $commandTemplateVars);
             $skeletonFiles[] = $skeletonFile;
             $makefileTargets[$commandName] = $skeletonFile->getRelativePathname();
