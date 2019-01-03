@@ -1,7 +1,7 @@
 stages:
     - build
     - test
-    - cleanup
+#    - cleanup
 
 cache:
     key: ${CI_PIPELINE_ID}
@@ -87,12 +87,12 @@ test:phpcsfix:
         untracked: true
         policy: pull
 
-cleanup:
-    stage: cleanup
-    <<: *all_jobs
-    script:
-        # @todo Nem tudjuk törölni az aktuálisat, mert éppen használjuk. Vagy legalábbis vmi ilyen hibaüzenetet dob:
-        #   $ docker rmi ${TEST_IMAGE}
-        #   Error response from daemon: conflict: unable to remove repository reference "gitlab-runner/test-wf:5877" (must force) - container 283cbc94d3d9 is using its referenced image 9147dac2a6ff
-#        - docker rmi -f ${TEST_IMAGE}
-    when: always
+#cleanup:
+#    stage: cleanup
+#    <<: *all_jobs
+#    script:
+#        # @todo Nem tudjuk törölni az aktuálisat, mert éppen használjuk. Vagy legalábbis vmi ilyen hibaüzenetet dob:
+#        #   $ docker rmi ${TEST_IMAGE}
+#        #   Error response from daemon: conflict: unable to remove repository reference "gitlab-runner/test-wf:5877" (must force) - container 283cbc94d3d9 is using its referenced image 9147dac2a6ff
+##        - docker rmi -f ${TEST_IMAGE}
+#    when: always
