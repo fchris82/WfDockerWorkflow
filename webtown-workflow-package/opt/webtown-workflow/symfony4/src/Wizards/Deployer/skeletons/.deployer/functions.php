@@ -8,7 +8,7 @@ function sf($cmd, $options = '', $runOptions = [])
 
 function buildSfCommand($cmd, $options = '')
 {
-    return sprintf('{{ "{{bin/php}}" }} {{ "{{bin/console}}" }} %s {{ "{{console_options}}" }} %s', $cmd, $options);
+    return sprintf('{{ "{{bin/console}}" }} %s {{ "{{console_options}}" }} %s', $cmd, $options);
 }
 
 /**

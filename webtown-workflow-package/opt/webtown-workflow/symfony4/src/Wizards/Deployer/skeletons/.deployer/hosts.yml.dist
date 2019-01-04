@@ -8,6 +8,7 @@ prod:
     symfony_env:      prod
     'bin/php':        '/usr/local/php/php5.6/bin/php'
     'bin/composer':   '/usr/local/php/php5.6/bin/php /usr/local/bin/composer'
+    roles:            [default, fixtures]
     sshOptions:
         # A docker-ben a ~/.ssh könyvtár írásvédett, ő meg alapból oda szeretné menteni a fájlt
         ControlPath:            /tmp/multiplexing.data

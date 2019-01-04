@@ -124,7 +124,6 @@ class DeployerWizard extends BaseSkeletonWizard
         $targetProjectDirectory = $event->getWorkingDirectory();
 
         $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
-        $variables['is_ez'] = $this->ezEnvironmentParser->isEzProject($targetProjectDirectory);
         $variables['project_directory'] = basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory));
 
         try {

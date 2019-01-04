@@ -6,7 +6,7 @@ const ROLE_WORKFLOW = 'workflow';
 const ROLE_BUILD = 'build';
 const ROLE_FIXTURE_RELOAD = 'fixtures';
 
-require 'vendor/deployer/deployer/recipe/symfony.php';
+require 'vendor/deployer/deployer/recipe/symfony{% if sf_version > 2 %}{{ sf_version }}{% endif %}.php';
 require '.deployer/functions.php';
 require '.deployer/DistFile.php';
 require '.deployer/wf.php';
@@ -48,6 +48,14 @@ add('writable_dirs', [
 
 // You can set '--full' eg --> wf install --full
 set('wf_install_param', '');
+{# Missing, but used options in symfony4.php recipe #}
+{% if sf_version == 4 %}
+// Symfony console opts
+set('console_options', function () {
+    $options = '--no-interaction --env={{symfony_env}}';
+    return get('symfony_env') !== 'prod' ? $options : sprintf('%s --no-debug', $options);
+});
+{% endif %}
 
 loadEnvironments();
 inventory(__DIR__ . '/.deployer/hosts.yml');
@@ -94,37 +102,63 @@ task('deploy:wf', function () {
 after('deploy:shared', 'deploy:wf');
 
 // ============================== D E F A U L T ================================
-// Migrate database before symlink new release.
-task('database:build', function () {
-    sf('doctrine:database:create','--if-not-exists');
+    // Drop/clean database
+    task('database:fixture:drop-database', function () {
+        sf('doctrine:database:drop', '--force --if-exists');
+    })
+        ->desc('Drop the database')
+        ->onRoles([ROLE_DEFAULT, ROLE_FIXTURE_RELOAD]);
+    // Migrate database before symlink new release.
+    task('database:migrate', function () {
+        sf('doctrine:database:create','--if-not-exists');
 {% if is_ez %}
-    // Csak akkor futtatjuk az ezplatform:install-t ha még nem létezik az adatbázis.
-    run (sprintf(
-        '%s || %s',
-        buildSfCommand('doctrine:schema:validate', '--skip-mapping'),
-        buildSfCommand('ezplatform:install', 'app')
-    ));
+        // Csak akkor futtatjuk az ezplatform:install-t ha még nem létezik az adatbázis.
+        run (sprintf(
+            '%s || %s',
+            buildSfCommand('doctrine:schema:validate', '--skip-mapping'),
+            buildSfCommand('ezplatform:install', 'app')
+        ));
 {% endif %}
-    sf('doctrine:migrations:migrate','--allow-no-migration');
+        sf('doctrine:migrations:migrate','--allow-no-migration');
 {% if is_ez %}
-    // A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
-    sf('kaliop:migration:migrate','-u --default-language=hun-HU');
+        // A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
+        sf('kaliop:migration:migrate','-u --default-language=hun-HU');
 {% endif %}
-    //sf('doctrine:fixtures:load');
-})
-    ->desc('Build database.')
-    ->onRoles(ROLE_DEFAULT)
-;
-before('deploy:symlink', 'database:build');
+    })
+        ->desc('Build database.')
+        ->onRoles(ROLE_DEFAULT);
+    task('database:fixtures:load', function () {
+        sf('doctrine:fixtures:load');
+    })
+        ->desc('Load fixtures.')
+        ->onRoles([ROLE_DEFAULT, ROLE_FIXTURE_RELOAD]);
+task('database:update', [
+    'database:fixture:drop-database',
+    'database:migrate',
+    'database:fixtures:load'
+])
+    ->desc('Update the database')
+    ->onRoles([ROLE_DEFAULT]);
+before('deploy:symlink', 'database:update');
 
-task('database:reload', function() {
+task('database:fixtures', function () {
+    sf('doctrine:database:drop', '--force');
+    sf('doctrine:database:create');
+    sf('doctrine:migrations:migrate','--allow-no-migration');
+    sf('doctrine:fixtures:load');
+})
+    ->desc('Load fixtures.')
+    ->onRoles([ROLE_DEFAULT])
+;
+
+task('database:reload:wf', function() {
     cd('{{ "{{release_path}}" }}');
     run('{{ "{{wf}}" }} dbreload --full');
 })
     ->desc('Load the fixtures')
-    ->onRoles(ROLE_FIXTURE_RELOAD)
+    ->onRoles([ROLE_WORKFLOW, ROLE_FIXTURE_RELOAD])
 ;
-after('deploy:wf', 'database:reload');
+after('deploy:wf', 'database:reload:wf');
 
 // Only SF
 $onlyDefaultTasks = [
