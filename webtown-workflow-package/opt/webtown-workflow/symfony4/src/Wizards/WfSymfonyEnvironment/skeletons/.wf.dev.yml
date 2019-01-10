@@ -10,7 +10,7 @@ docker_compose:
                     dockerfile: Dockerfile
                 volumes:
                     - '%wf.project_path%:/usr/src/app'
-                # Ez csak azért kell, hogy ne induljon el hibaüzenettel a wf up
+                # A package.json fájl, "scripts" részéből kell kiválasztanod a megfelelő kulcsot
                 command: yarn run watch
                 user: ${DOCKER_USER}
 

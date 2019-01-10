@@ -35,6 +35,7 @@ add('shared_files', [
 //add('copy_dirs', [
 //    '.docker/engine/Dockerfile',
 //]);
+{% if sf_version < 4 %}
 add('shared_dirs', [
     'web/var',
     '.wf/.data',
@@ -45,6 +46,21 @@ add('shared_dirs', [
 add('writable_dirs', [
     'web/var'
 ]);
+{% else %}
+add('shared_dirs', [
+    'public/media',
+    'public/uploads',
+    '.wf/.data',
+    'node_modules',
+]);
+
+// Writable dirs by web server
+add('writable_dirs', [
+    'var',
+    'public/media',
+    'public/uploads',
+]);
+{% endif %}
 
 // You can set '--full' eg --> wf install --full
 set('wf_install_param', '');
@@ -162,10 +178,12 @@ after('deploy:wf', 'database:reload:wf');
 
 // Only SF
 $onlyDefaultTasks = [
+{% if sf_version < 4 %}
     'deploy:assets',
-    'deploy:vendors',
     'deploy:assets:install',
     'deploy:assetic:dump',
+{% endif %}
+    'deploy:vendors',
     'deploy:cache:clear',
     'deploy:cache:warmup',
     'database:migrate',
@@ -260,3 +278,12 @@ after('cleanup', 'deploy:build');
 // ============================== O T H E R ================================
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
+
+task('deploy:yarn', function() {
+    cd('{{release_path}}');
+    run('yarn -s');
+    run('yarn run build');
+})
+    ->desc('Run yarn commands, build')
+    ->onRoles(ROLE_DEFAULT);
+after('deploy:vendors', 'deploy:yarn');
