@@ -38,11 +38,6 @@ class DeployerWizard extends BaseSkeletonWizard
     protected $wfEnvironmentParser;
 
     /**
-     * @var EzEnvironmentParser
-     */
-    protected $ezEnvironmentParser;
-
-    /**
      * @var EnvParser
      */
     protected $envParser;
@@ -50,7 +45,6 @@ class DeployerWizard extends BaseSkeletonWizard
     public function __construct(
         ComposerInstalledVersionParser $composerInstalledVersionParser,
         WfEnvironmentParser $wfEnvironmentParser,
-        EzEnvironmentParser $ezEnvironmentParser,
         EnvParser $envParser,
         IoManager $ioManager,
         Commander $commander,
@@ -61,13 +55,12 @@ class DeployerWizard extends BaseSkeletonWizard
         parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);
         $this->composerInstalledVersionParser = $composerInstalledVersionParser;
         $this->wfEnvironmentParser = $wfEnvironmentParser;
-        $this->ezEnvironmentParser = $ezEnvironmentParser;
         $this->envParser = $envParser;
     }
 
     public function getDefaultName()
     {
-        return 'Deployer';
+        return 'Deployer (base)';
     }
 
     public function getInfo()
@@ -123,7 +116,6 @@ class DeployerWizard extends BaseSkeletonWizard
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
 
-        $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
         $variables['project_directory'] = basename($this->envParser->get('ORIGINAL_PWD', $targetProjectDirectory));
 
         try {

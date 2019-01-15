@@ -2,6 +2,8 @@
 !.gitignore
 
 !Deployer
+!DeployerSfLe3
+!DeployerSfGe4
 !Ez
 !GitlabCIProject
 !PhpCsFixer

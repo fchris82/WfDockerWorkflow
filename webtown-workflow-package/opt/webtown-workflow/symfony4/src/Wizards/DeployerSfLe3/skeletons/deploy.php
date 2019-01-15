@@ -6,7 +6,7 @@ const ROLE_WORKFLOW = 'workflow';
 const ROLE_BUILD = 'build';
 const ROLE_FIXTURE_RELOAD = 'fixtures';
 
-require 'vendor/deployer/deployer/recipe/common.php';
+require 'vendor/deployer/deployer/recipe/symfony{% if sf_version > 2 %}{{ sf_version }}{% endif %}.php';
 require '.deployer/functions.php';
 require '.deployer/DistFile.php';
 require '.deployer/wf.php';
@@ -35,9 +35,20 @@ add('shared_files', [
 //add('copy_dirs', [
 //    '.docker/engine/Dockerfile',
 //]);
+add('shared_dirs', [
+    'web/var',
+    '.wf/.data',
+#    'node_modules',
+]);
+
+// Writable dirs by web server
+add('writable_dirs', [
+    'web/var'
+]);
 
 // You can set '--full' eg --> wf install --full
 set('wf_install_param', '');
+{# Missing, but used options in symfony4.php recipe #}
 
 loadEnvironments();
 inventory(__DIR__ . '/.deployer/hosts.yml');
@@ -83,6 +94,56 @@ task('deploy:wf', function () {
 })->onRoles(ROLE_WORKFLOW);
 after('deploy:shared', 'deploy:wf');
 
+// ============================== D E F A U L T ================================
+    // Drop/clean database
+    task('database:fixture:drop-database', function () {
+        sf('doctrine:database:drop', '--force --if-exists');
+    })
+        ->desc('Drop the database')
+        ->onRoles([ROLE_DEFAULT, ROLE_FIXTURE_RELOAD]);
+    // Migrate database before symlink new release.
+    task('database:migrate', function () {
+        sf('doctrine:database:create','--if-not-exists');
+{% if is_ez %}
+        // Csak akkor futtatjuk az ezplatform:install-t ha még nem létezik az adatbázis.
+        run (sprintf(
+            '%s || %s',
+            buildSfCommand('doctrine:schema:validate', '--skip-mapping'),
+            buildSfCommand('ezplatform:install', 'app')
+        ));
+{% endif %}
+        sf('doctrine:migrations:migrate','--allow-no-migration');
+{% if is_ez %}
+        // A -u azért kell, hogy ne transaction-ben fusson, különben nem működnek a references dolgok
+        sf('kaliop:migration:migrate','-u --default-language=hun-HU');
+{% endif %}
+    })
+        ->desc('Build database.')
+        ->onRoles(ROLE_DEFAULT);
+    task('database:fixtures:load', function () {
+        sf('doctrine:fixtures:load');
+    })
+        ->desc('Load fixtures.')
+        ->onRoles([ROLE_DEFAULT, ROLE_FIXTURE_RELOAD]);
+task('database:update', [
+    'database:fixture:drop-database',
+    'database:migrate',
+    'database:fixtures:load'
+])
+    ->desc('Update the database')
+    ->onRoles([ROLE_DEFAULT]);
+before('deploy:symlink', 'database:update');
+
+task('database:fixtures', function () {
+    sf('doctrine:database:drop', '--force');
+    sf('doctrine:database:create');
+    sf('doctrine:migrations:migrate','--allow-no-migration');
+    sf('doctrine:fixtures:load');
+})
+    ->desc('Load fixtures.')
+    ->onRoles([ROLE_DEFAULT])
+;
+
 task('database:reload:wf', function() {
     cd('{{ "{{release_path}}" }}');
     run('{{ "{{wf}}" }} dbreload --full');
@@ -91,6 +152,20 @@ task('database:reload:wf', function() {
     ->onRoles([ROLE_WORKFLOW, ROLE_FIXTURE_RELOAD])
 ;
 after('deploy:wf', 'database:reload:wf');
+
+// Only SF
+$onlyDefaultTasks = [
+    'deploy:assets',
+    'deploy:assets:install',
+    'deploy:assetic:dump',
+    'deploy:vendors',
+    'deploy:cache:clear',
+    'deploy:cache:warmup',
+    'database:migrate',
+];
+foreach ($onlyDefaultTasks as $task) {
+    task($task)->onRoles(ROLE_DEFAULT);
+}
 
 // ============================== B U I L D ================================
 task('deploy:build:files-clean', function() {
@@ -112,6 +187,9 @@ task('deploy:build:files-clean', function() {
     foreach ($gitignoreFiles as $file) {
         run(sprintf('rm -rf %s', $file));
     }
+
+    // A paramters.yml ürítése
+    run('echo "" > app/config/parameters.yml');
 })
     ->desc('Törli a shared és writable fájlokat és könyvtárakat, amiket nem szeretnénk bezippelni.')
     ->setPrivate()
@@ -124,6 +202,22 @@ task('deploy:build:add-composer', function() {
     upload($tmpFilePath, '{{ "{{current_path}}" }}/composer.phar');
     unlink($tmpFilePath);
 });
+
+task('deploy:build:update-version-number', function() {
+    cd('{{ "{{current_path}}" }}');
+    set('git_version_tag', function() {
+        return runLocally('git describe --tags --always');
+    });
+    $yml = <<<EOS
+parameters:
+    app.version: {{ "{{git_version_tag}}" }}
+EOS;
+    set('version_yml_content', $yml);
+    run('echo "{{ "{{version_yml_content}}" }}" > app/config/version_info.yml');
+})
+    ->desc('Frissíti a verzió számot.')
+    ->setPrivate()
+    ->onRoles(ROLE_BUILD);
 
 task('deploy:build:create-zip', function() {
     cd('{{ "{{current_path}}" }}');
@@ -159,3 +253,12 @@ after('cleanup', 'deploy:build');
 // ============================== O T H E R ================================
 // [Optional] if deploy fails automatically unlock.
 after('deploy:failed', 'deploy:unlock');
+
+task('deploy:yarn', function() {
+    cd('{{release_path}}');
+    run('yarn -s');
+    run('yarn run build');
+})
+    ->desc('Run yarn commands, build')
+    ->onRoles(ROLE_DEFAULT);
+after('deploy:vendors', 'deploy:yarn');
