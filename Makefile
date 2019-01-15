@@ -39,7 +39,7 @@ export DEV_SH_FILE_CONTENT
 init-developing:
 	mkdir -p ~/bin
 	@echo "$$DEV_SH_FILE_CONTENT" > ~/bin/wfdev && chmod +x ~/bin/wfdev
-	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install
+	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
 
 .PHONY: rebuild_wf
 rebuild_wf: __build_wf __build_cleanup
