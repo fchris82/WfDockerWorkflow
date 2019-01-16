@@ -35,6 +35,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array                $skeletonVars
      * @param array                $buildConfig
      * @param SkeletonFile[]|array $skeletonFiles
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($namespace, $skeletonFiles, array $skeletonVars, array $buildConfig)
     {
@@ -46,6 +48,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return SkeletonFile[]|array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonFiles()
     {
@@ -56,6 +60,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      * @param SkeletonFile[]|array $skeletonFiles
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonFiles($skeletonFiles)
     {
@@ -66,6 +72,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonVars(): array
     {
@@ -76,6 +84,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array $skeletonVars
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonVars(array $skeletonVars)
     {
@@ -86,6 +96,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getBuildConfig(): array
     {
@@ -96,6 +108,8 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array $buildConfig
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setBuildConfig(array $buildConfig)
     {

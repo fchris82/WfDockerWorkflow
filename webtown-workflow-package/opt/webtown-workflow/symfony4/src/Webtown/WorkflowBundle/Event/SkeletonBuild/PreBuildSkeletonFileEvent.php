@@ -41,6 +41,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * @param SkeletonTwigFileInfo $sourceFileInfo
      * @param array                $skeletonVars
      * @param array                $buildConfig
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($namespace, SkeletonTwigFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {
@@ -52,6 +54,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
 
     /**
      * @return SkeletonTwigFileInfo
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSourceFileInfo(): SkeletonTwigFileInfo
     {
@@ -62,6 +66,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * @param SkeletonTwigFileInfo $sourceFileInfo
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSourceFileInfo(SkeletonTwigFileInfo $sourceFileInfo)
     {
@@ -72,6 +78,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonVars(): array
     {
@@ -82,6 +90,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * @param array $skeletonVars
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonVars(array $skeletonVars)
     {
@@ -90,6 +100,14 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param null   $default
+     *
+     * @return mixed|null
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getSkeletonVar(string $key, $default = null)
     {
         if (!array_key_exists($key, $this->skeletonVars)) {
@@ -101,6 +119,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getBuildConfig(): array
     {
@@ -111,6 +131,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * @param array $buildConfig
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setBuildConfig(array $buildConfig)
     {
@@ -121,6 +143,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
 
     /**
      * @return SkeletonFile|null
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonFile(): ?SkeletonFile
     {
@@ -131,6 +155,8 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      * @param SkeletonFile $skeletonFile
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonFile(SkeletonFile $skeletonFile)
     {

@@ -55,6 +55,8 @@ class BuildInitEvent extends Event
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getConfig()
     {
@@ -65,6 +67,8 @@ class BuildInitEvent extends Event
      * @param array $config
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setConfig($config)
     {
@@ -75,6 +79,8 @@ class BuildInitEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getProjectPath()
     {
@@ -83,6 +89,8 @@ class BuildInitEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getTargetDirectory()
     {
@@ -91,6 +99,8 @@ class BuildInitEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getConfigHash()
     {
@@ -126,6 +136,8 @@ class BuildInitEvent extends Event
      * @param $value
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setParameter($name, $value)
     {

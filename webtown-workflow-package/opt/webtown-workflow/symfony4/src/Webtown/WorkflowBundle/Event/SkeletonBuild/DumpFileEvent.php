@@ -30,6 +30,8 @@ class DumpFileEvent extends NamespacedEvent
      * @param string|object $namespace
      * @param SkeletonFile  $skeletonFile
      * @param Filesystem    $fileSystem
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($namespace, SkeletonFile $skeletonFile, Filesystem $fileSystem)
     {
@@ -40,6 +42,8 @@ class DumpFileEvent extends NamespacedEvent
 
     /**
      * @return SkeletonFile
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonFile(): SkeletonFile
     {

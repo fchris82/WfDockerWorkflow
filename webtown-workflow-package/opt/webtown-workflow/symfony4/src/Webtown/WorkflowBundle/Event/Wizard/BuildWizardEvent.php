@@ -31,6 +31,8 @@ class BuildWizardEvent extends Event
      * BuildWizardEvent constructor.
      *
      * @param string $workingDirectory
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct(string $workingDirectory)
     {
@@ -39,6 +41,8 @@ class BuildWizardEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getWorkingDirectory(): string
     {
@@ -49,6 +53,8 @@ class BuildWizardEvent extends Event
      * @param string $workingDirectory
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setWorkingDirectory(string $workingDirectory)
     {
@@ -59,12 +65,22 @@ class BuildWizardEvent extends Event
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function getSkeletonVars(): array
     {
         return $this->skeletonVars;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
+     */
     public function addSkeletonVar($key, $value)
     {
         $this->skeletonVars[$key] = $value;
@@ -72,6 +88,14 @@ class BuildWizardEvent extends Event
         return $this;
     }
 
+    /**
+     * @param string $key
+     * @param null   $default
+     *
+     * @return mixed|null
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getSkeletonVar(string $key, $default = null)
     {
         if (!array_key_exists($key, $this->skeletonVars)) {
@@ -85,6 +109,8 @@ class BuildWizardEvent extends Event
      * @param array $skeletonVars
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonVars(array $skeletonVars)
     {
@@ -95,12 +121,22 @@ class BuildWizardEvent extends Event
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getParameters(): array
     {
         return $this->parameters;
     }
 
+    /**
+     * @param $key
+     * @param $value
+     *
+     * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
+     */
     public function addParameter($key, $value)
     {
         $this->parameters[$key] = $value;
@@ -108,6 +144,14 @@ class BuildWizardEvent extends Event
         return $this;
     }
 
+    /**
+     * @param      $key
+     * @param null $defaultValue
+     *
+     * @return mixed|null
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getParameter($key, $defaultValue = null)
     {
         if (array_key_exists($key, $this->parameters)) {
@@ -121,6 +165,8 @@ class BuildWizardEvent extends Event
      * @param array $parameters
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setParameters(array $parameters)
     {

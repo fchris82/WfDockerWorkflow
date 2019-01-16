@@ -12,18 +12,28 @@ use Symfony\Component\EventDispatcher\Event;
 
 class VerboseInfoEvent extends Event
 {
+    /**
+     * @var string
+     */
     protected $info;
 
     /**
      * VerboseInfoEvent constructor.
      *
-     * @param $info
+     * @param string $info
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($info)
     {
         $this->info = $info;
     }
 
+    /**
+     * @return string
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getInfo()
     {
         return $this->info;

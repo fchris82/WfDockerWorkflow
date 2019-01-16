@@ -21,6 +21,8 @@ class PostBuildSkeletonFileEvent extends PreBuildSkeletonFileEvent
      * @param SplFileInfo   $sourceFileInfo
      * @param array         $skeletonVars
      * @param array         $buildConfig
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($namespace, SkeletonFile $skeletonFile, SplFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {

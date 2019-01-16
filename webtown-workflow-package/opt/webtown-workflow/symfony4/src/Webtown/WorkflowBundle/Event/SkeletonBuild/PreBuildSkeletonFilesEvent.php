@@ -33,6 +33,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @param array $skeletonVars
      * @param array $buildConfig
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct($namespace, array $skeletonVars, array $buildConfig)
     {
@@ -43,6 +45,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonVars(): array
     {
@@ -53,6 +57,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array $skeletonVars
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonVars(array $skeletonVars)
     {
@@ -63,6 +69,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getBuildConfig(): array
     {
@@ -73,6 +81,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array $buildConfig
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setBuildConfig(array $buildConfig)
     {
@@ -81,6 +91,11 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
         return $this;
     }
 
+    /**
+     * @param SkeletonTwigFileInfo $fileInfo
+     *
+     * @codeCoverageIgnore Simple setter
+     */
     public function addSkeletonFileInfo(SkeletonTwigFileInfo $fileInfo)
     {
         $this->skeletonFileInfos[] = $fileInfo;
@@ -88,6 +103,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
 
     /**
      * @return array|SkeletonTwigFileInfo[]
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getSkeletonFileInfos()
     {
@@ -98,6 +115,8 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      * @param array|SkeletonTwigFileInfo[] $skeletonFileInfos
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setSkeletonFileInfos($skeletonFileInfos)
     {

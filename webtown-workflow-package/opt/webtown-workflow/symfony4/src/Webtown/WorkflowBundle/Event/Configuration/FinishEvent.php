@@ -22,6 +22,8 @@ class FinishEvent extends Event
      * FinishEvent constructor.
      *
      * @param Filesystem $fileSystem
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function __construct(Filesystem $fileSystem)
     {
@@ -30,6 +32,8 @@ class FinishEvent extends Event
 
     /**
      * @return Filesystem
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getFileSystem()
     {
