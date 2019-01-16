@@ -54,6 +54,8 @@ class ConfigurationItem
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function getName(): string
     {
@@ -62,6 +64,8 @@ class ConfigurationItem
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function getClass(): string
     {
@@ -70,6 +74,8 @@ class ConfigurationItem
 
     /**
      * @return bool
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function isEnabled(): bool
     {
@@ -78,6 +84,8 @@ class ConfigurationItem
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function getGroup(): string
     {
@@ -86,6 +94,8 @@ class ConfigurationItem
 
     /**
      * @return int
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function getPriority(): int
     {
@@ -96,6 +106,8 @@ class ConfigurationItem
      * @param string $name
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function setName(string $name)
     {
@@ -108,6 +120,8 @@ class ConfigurationItem
      * @param bool $enabled
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function setEnabled(bool $enabled)
     {
@@ -120,6 +134,8 @@ class ConfigurationItem
      * @param string $group
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function setGroup(string $group)
     {
@@ -132,6 +148,8 @@ class ConfigurationItem
      * @param int $priority
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple getters and setters
      */
     public function setPriority(int $priority)
     {

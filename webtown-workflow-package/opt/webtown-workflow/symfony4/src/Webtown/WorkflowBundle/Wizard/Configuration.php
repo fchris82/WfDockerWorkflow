@@ -277,16 +277,23 @@ class Configuration implements ConfigurationInterface
         }
 
         // Groups are difference, if something is empty it will be "later".
+        // @codeCoverageIgnoreStart
         switch ('') {
             case $a->getGroup():
                 return 1;
             case $b->getGroup():
                 return -1;
         }
+        // @codeCoverageIgnoreEnd
 
         return strnatcmp($a->getGroup(), $b->getGroup());
     }
 
+    /**
+     * @return string
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getConfigurationFilePath()
     {
         return $this->configurationFilePath;
