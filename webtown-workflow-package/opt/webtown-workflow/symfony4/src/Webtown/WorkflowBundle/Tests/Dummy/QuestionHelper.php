@@ -18,16 +18,35 @@ class QuestionHelper extends BaseQuestionHelper
     /**
      * @var array
      */
-    protected $responses = [];
+    protected $responses;
 
     /**
      * QuestionHelper constructor.
      *
      * @param array $responses
      */
-    public function __construct(array $responses)
+    public function __construct(array $responses = [])
     {
         $this->responses = $responses;
+    }
+
+    /**
+     * @return array
+     */
+    public function getResponses(): array
+    {
+        return $this->responses;
+    }
+
+    /**
+     * @param array $responses
+     *
+     * @return $this
+     */
+    public function setResponses(array $responses)
+    {
+        $this->responses = $responses;
+        return $this;
     }
 
     public function ask(InputInterface $input, OutputInterface $output, Question $question)

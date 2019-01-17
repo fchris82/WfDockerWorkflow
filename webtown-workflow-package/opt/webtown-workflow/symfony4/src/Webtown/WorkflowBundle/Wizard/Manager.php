@@ -19,12 +19,14 @@ class Manager
     /**
      * @var WizardInterface[]
      */
-    protected $allWizards;
+    protected $allWizards = [];
 
     /**
      * @var WizardInterface[]
+     *
+     * @todo (Chris) Ha 2020-01-01-ig nem volt erre szükség, akkor törölhető
      */
-    protected $publicWizards;
+    protected $publicWizards = [];
 
     /**
      * @var Configuration
@@ -55,6 +57,7 @@ class Manager
         if (!$wizard->isHidden()) {
             $this->publicWizards[$wizard->getDefaultName()] = $wizard;
         }
+        $this->configurationIsSynced = false;
     }
 
     public function getWizard($class)
@@ -107,6 +110,8 @@ class Manager
 
     /**
      * @return array|ConfigurationItem[]
+     *
+     * @codeCoverageIgnore Alias
      */
     public function getAllAvailableWizardItems()
     {
@@ -115,6 +120,11 @@ class Manager
         return $this->configuration->getConfigurationList();
     }
 
+    /**
+     * @return Configuration
+     *
+     * @codeCoverageIgnore Simple getter
+     */
     public function getConfiguration()
     {
         return $this->configuration;
@@ -122,6 +132,8 @@ class Manager
 
     /**
      * @return array|ConfigurationItem[]
+     *
+     * @codeCoverageIgnore Alias
      */
     public function getAllEnabledWizardItems()
     {
@@ -130,28 +142,64 @@ class Manager
         return $this->configuration->getAllEnabled();
     }
 
+    /**
+     * @param null $changeType
+     *
+     * @return ConfigurationItem[]|array
+     *
+     * @codeCoverageIgnore Alias
+     */
     public function getConfigurationUnsavedChanges($changeType = null)
     {
         return $this->configuration->getChanges($changeType);
     }
 
+    /**
+     * @param $wizardOrClass
+     *
+     * @return bool
+     *
+     * @codeCoverageIgnore Alias
+     */
     public function wizardIsNew($wizardOrClass)
     {
         return $this->wizardIs(Configuration::CHANGES_ADDED, $wizardOrClass);
     }
 
+    /**
+     * @param $wizardOrClass
+     *
+     * @return bool
+     *
+     * @codeCoverageIgnore Alias
+     */
     public function wizardIsUpdated($wizardOrClass)
     {
         return $this->wizardIs(Configuration::CHANGES_UPDATED, $wizardOrClass);
     }
 
+    /**
+     * @param $wizardOrClass
+     *
+     * @return bool
+     *
+     * @codeCoverageIgnore Alias
+     */
     public function wizardIsRemoved($wizardOrClass)
     {
         return $this->wizardIs(Configuration::CHANGES_REMOVED, $wizardOrClass);
     }
 
+    /**
+     * @param $changeType
+     * @param $wizardOrClass
+     *
+     * @return bool
+     */
     protected function wizardIs($changeType, $wizardOrClass)
     {
+        $this->syncConfiguration();
+
         $class = $wizardOrClass;
         if (\is_object($wizardOrClass)) {
             if ($wizardOrClass instanceof ConfigurationItem) {
