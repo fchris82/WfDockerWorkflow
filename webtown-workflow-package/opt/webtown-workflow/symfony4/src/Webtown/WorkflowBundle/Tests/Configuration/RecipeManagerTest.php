@@ -63,7 +63,7 @@ class RecipeManagerTest extends TestCase
     /**
      * @param array           $recipeNames
      * @param string          $getName
-     * @param null|\Exception $result
+     * @param \Exception|null $result
      *
      * @dataProvider getGets
      */

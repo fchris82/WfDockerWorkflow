@@ -6,12 +6,12 @@
  * Time: 16:55
  */
 
-namespace App\Recipes\Commands;
+namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands;
 
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
-use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
@@ -20,7 +20,7 @@ use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
-class CommandsRecipe extends HiddenRecipe implements RegisterEventListenersInterface
+class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'commands';
 

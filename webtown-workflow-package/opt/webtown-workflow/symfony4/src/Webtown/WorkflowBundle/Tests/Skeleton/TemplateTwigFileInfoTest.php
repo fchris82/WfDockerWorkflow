@@ -18,7 +18,7 @@ class TemplateTwigFileInfoTest extends TestCase
      * @param string      $filePath
      * @param string      $relativePath
      * @param string      $twigNamespace
-     * @param null|string $directory
+     * @param string|null $directory
      * @param string      $result
      *
      * @dataProvider getPaths

@@ -8,7 +8,7 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
-use App\Recipes\Commands\CommandsRecipe;
+use App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
@@ -87,6 +87,8 @@ class Configuration implements ConfigurationInterface
 
     /**
      * Generates the configuration tree builder.
+     *
+     * @todo (Chris) A system-eknek a konfigurációját ne ide tegyük, hanem legyen saját!
      *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */

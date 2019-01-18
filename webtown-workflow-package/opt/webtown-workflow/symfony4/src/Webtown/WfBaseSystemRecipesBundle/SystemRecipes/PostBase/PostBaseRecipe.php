@@ -6,12 +6,12 @@
  * Time: 21:55
  */
 
-namespace App\Recipes\PostBase;
+namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase;
 
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -21,7 +21,7 @@ use Symfony\Component\Yaml\Yaml;
  *
  * After the all
  */
-class PostBaseRecipe extends HiddenRecipe implements RegisterEventListenersInterface
+class PostBaseRecipe extends SystemRecipe implements RegisterEventListenersInterface
 {
     const NAME = 'post_base';
 

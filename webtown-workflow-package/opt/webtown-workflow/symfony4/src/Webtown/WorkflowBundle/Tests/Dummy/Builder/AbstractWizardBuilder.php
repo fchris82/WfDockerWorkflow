@@ -15,7 +15,6 @@ use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
 use App\Webtown\WorkflowBundle\Tests\Dummy\QuestionHelper;
 use App\Webtown\WorkflowBundle\Twig\Extension\TextExtension;
-use App\Wizards\Deployer\DeployerWizard;
 use Mockery as m;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
@@ -28,8 +27,6 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  * Class AbstractWizardBuilder
  *
  * It can help to create wizards
- *
- * @package App\Webtown\WorkflowBundle\Tests\Dummy\Builder
  */
 abstract class AbstractWizardBuilder
 {
@@ -84,7 +81,7 @@ abstract class AbstractWizardBuilder
     public function __construct()
     {
         $this->initIo();
-        $this->fileSystem = new Filesystem("test");
+        $this->fileSystem = new Filesystem('test');
         $this->questionHelper = new QuestionHelper();
         $this->wfEnvironmentParser = m::mock(WfEnvironmentParser::class);
         $this->initIoManager();
@@ -140,6 +137,7 @@ abstract class AbstractWizardBuilder
     }
 
     // ---------------------------------------------------- GET-SET ----------------------------------------------------
+
     /**
      * @return IoManager
      */
@@ -156,6 +154,7 @@ abstract class AbstractWizardBuilder
     public function setIoManager(IoManager $ioManager)
     {
         $this->ioManager = $ioManager;
+
         return $this;
     }
 
@@ -175,6 +174,7 @@ abstract class AbstractWizardBuilder
     public function setCommander(Commander $commander)
     {
         $this->commander = $commander;
+
         return $this;
     }
 
@@ -194,6 +194,7 @@ abstract class AbstractWizardBuilder
     public function setEventDispatcher(EventDispatcher $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+
         return $this;
     }
 
@@ -213,6 +214,7 @@ abstract class AbstractWizardBuilder
     public function setTwig(\Twig_Environment $twig)
     {
         $this->twig = $twig;
+
         return $this;
     }
 
@@ -232,6 +234,7 @@ abstract class AbstractWizardBuilder
     public function setFileSystem(Filesystem $fileSystem)
     {
         $this->fileSystem = $fileSystem;
+
         return $this;
     }
 
@@ -251,6 +254,7 @@ abstract class AbstractWizardBuilder
     public function setInput(InputInterface $input)
     {
         $this->input = $input;
+
         return $this;
     }
 
@@ -270,6 +274,7 @@ abstract class AbstractWizardBuilder
     public function setOutput(OutputInterface $output)
     {
         $this->output = $output;
+
         return $this;
     }
 
@@ -289,6 +294,7 @@ abstract class AbstractWizardBuilder
     public function setWfEnvironmentParser(WfEnvironmentParser $wfEnvironmentParser)
     {
         $this->wfEnvironmentParser = $wfEnvironmentParser;
+
         return $this;
     }
 }

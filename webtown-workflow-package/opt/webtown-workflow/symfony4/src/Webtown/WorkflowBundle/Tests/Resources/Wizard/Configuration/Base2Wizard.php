@@ -22,7 +22,7 @@ class Base2Wizard extends BaseWizard
 
     public function getDefaultName()
     {
-        return "Base 1 Wizard";
+        return 'Base 1 Wizard';
     }
 
     protected function build(BuildWizardEvent $event)

@@ -8,13 +8,8 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
-use App\Recipes\_\Recipe;
-use App\Recipes\Base\BaseRecipe;
-use App\Recipes\Commands\CommandsRecipe;
-use App\Recipes\DockerComposeExtension\DockerComposeExtensionRecipe;
-use App\Recipes\PostBase\PostBaseRecipe;
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use App\Webtown\WorkflowBundle\Event\Configuration\FinishEvent;
+use App\Webtown\WorkflowBundle\Event\Configuration\RegisterEvent;
 use App\Webtown\WorkflowBundle\Event\Configuration\VerboseInfoEvent;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
@@ -22,6 +17,7 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as AncestorBaseRecipe;
+use App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
@@ -113,8 +109,13 @@ class Builder
         $this->initDirectoryStructure($initEvent);
         $config = $initEvent->getConfig();
 
-        // BASE
-        $this->buildRecipe($projectPath, BaseRecipe::NAME, $config, $config);
+        // PRE recipes
+        $registerEventPre = new RegisterEvent($projectPath, $config);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::REGISTER_EVENT_PREBUILD, $registerEventPre);
+        foreach ($registerEventPre->getRecipes() as $recipe) {
+            $this->buildRecipe($projectPath, $recipe->getName(), $config, $config);
+        }
+
         // PUBLIC RECIPES
         if (array_key_exists('recipes', $config)) {
             foreach ($config['recipes'] as $recipeName => $recipeConfig) {
@@ -122,20 +123,15 @@ class Builder
             }
         }
 
-        // COMMANDS
-        $this->buildRecipe($projectPath, CommandsRecipe::NAME, [], $config);
+        // POST recipes
+        $registerEventPost = new RegisterEvent($projectPath, $config);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::REGISTER_EVENT_POSTBUILD, $registerEventPost);
+        foreach ($registerEventPost->getRecipes() as $recipe) {
+            $this->buildRecipe($projectPath, $recipe->getName(), $config, $config);
+        }
+
         // INCLUDED FILES
         $this->includeExtraFiles($config);
-        // DOCKER COMPOSE EXTENSION
-        $this->buildRecipe($projectPath, DockerComposeExtensionRecipe::NAME, [], $config);
-        // POST BASE
-        $this->buildRecipe($projectPath, PostBaseRecipe::NAME, [], $config);
-
-        // Finish
-        $finishEvent = new FinishEvent($this->fileSystem);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::FINISH, $finishEvent);
-
-        $this->buildRecipe($projectPath, Recipe::NAME, [], $config);
     }
 
     /**
@@ -325,6 +321,8 @@ class Builder
      * Handle the extra configuration files. Like additional `makefile` or `docker-compose.yml` file.
      *
      * @param $config
+     *
+     * @todo (Chris) Ezt mint ha nem használnánk, szóval lehet, hogy törölhető VAGY lehet, hogy kell írni egy receptet, ami ezt kezeli.
      */
     protected function includeExtraFiles($config)
     {

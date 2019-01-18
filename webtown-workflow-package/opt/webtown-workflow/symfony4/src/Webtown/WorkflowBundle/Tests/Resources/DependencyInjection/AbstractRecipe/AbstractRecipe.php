@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Resources\DependencyInjection\AbstractRecipe;
 
-
 use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 

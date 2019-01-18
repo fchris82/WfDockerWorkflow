@@ -16,7 +16,7 @@ class TextExtensionTest extends TestCase
     /**
      * @param string      $text
      * @param string      $result
-     * @param null|string $lineChar
+     * @param string|null $lineChar
      *
      * @dataProvider getUnderlines
      */

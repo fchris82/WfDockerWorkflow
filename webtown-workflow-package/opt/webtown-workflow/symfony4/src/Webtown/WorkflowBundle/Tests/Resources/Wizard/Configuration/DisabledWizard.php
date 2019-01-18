@@ -22,7 +22,7 @@ class DisabledWizard extends BaseWizard
 
     public function getDefaultName()
     {
-        return "Disabled Wizard";
+        return 'Disabled Wizard';
     }
 
     protected function build(BuildWizardEvent $event)

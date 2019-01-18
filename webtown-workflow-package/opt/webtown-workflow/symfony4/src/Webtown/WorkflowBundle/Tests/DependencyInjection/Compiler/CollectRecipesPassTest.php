@@ -69,7 +69,7 @@ class CollectRecipesPassTest extends TestCase
                 [['addPath', [
                     realpath(__DIR__ . '/../../Resources/DependencyInjection/SimpleRecipe'),
                     'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionSimpleRecipeSimpleRecipe',
-                ]]]
+                ]]],
             ],
             // Abstract recipe, no registered to manager!
             [
@@ -78,7 +78,7 @@ class CollectRecipesPassTest extends TestCase
                 [['addPath', [
                     realpath(__DIR__ . '/../../Resources/DependencyInjection/AbstractRecipe'),
                     'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionAbstractRecipeAbstractRecipe',
-                ]]]
+                ]]],
             ],
             // Overridden skeletons recipe. There should be 2 twig add path
             [
@@ -93,7 +93,7 @@ class CollectRecipesPassTest extends TestCase
                         realpath(__DIR__ . '/../../Resources/DependencyInjection/OverriddenRecipe'),
                         'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionOverriddenRecipeOverriddenSkeletonsRecipe',
                     ]],
-                ]
+                ],
             ],
         ];
     }

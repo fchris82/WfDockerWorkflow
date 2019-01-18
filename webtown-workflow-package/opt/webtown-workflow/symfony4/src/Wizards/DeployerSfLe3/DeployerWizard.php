@@ -8,21 +8,16 @@
 
 namespace App\Wizards\DeployerSfLe3;
 
-use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use App\Wizards\Deployer\DeployerWizard as BaseDeployerWizard;
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\EnvParser;
 use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Exception\CommanderRunException;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\Console\Question\Question;
+use App\Wizards\Deployer\DeployerWizard as BaseDeployerWizard;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 

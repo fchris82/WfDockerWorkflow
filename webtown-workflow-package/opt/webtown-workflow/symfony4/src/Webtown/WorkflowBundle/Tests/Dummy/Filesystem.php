@@ -15,12 +15,12 @@ use Symfony\Component\Finder\Finder;
 class Filesystem extends BaseFilesystem
 {
     /**
-     * @var null|string
+     * @var string|null
      */
     protected $initDirectory;
 
     /**
-     * @var null|string
+     * @var string|null
      */
     protected $alias;
 

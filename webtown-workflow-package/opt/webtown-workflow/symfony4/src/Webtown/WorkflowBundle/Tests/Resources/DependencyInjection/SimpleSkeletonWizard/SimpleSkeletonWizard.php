@@ -8,13 +8,11 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Resources\DependencyInjection\SimpleSkeletonWizard;
 
-
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 
 class SimpleSkeletonWizard extends BaseSkeletonWizard
 {
-
     public function getDefaultName()
     {
         return 'Simple skeleton wizard';

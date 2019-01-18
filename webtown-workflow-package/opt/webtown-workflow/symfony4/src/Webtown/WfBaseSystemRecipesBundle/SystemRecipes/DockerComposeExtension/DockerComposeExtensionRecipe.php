@@ -6,10 +6,11 @@
  * Time: 11:31
  */
 
-namespace App\Recipes\DockerComposeExtension;
+namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension;
 
+use App\Webtown\WorkflowBundle\Configuration\Builder;
 use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
-use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -26,7 +27,7 @@ use Symfony\Component\Yaml\Yaml;
  *                      TEST: test
  * <code>
  */
-class DockerComposeExtensionRecipe extends HiddenRecipe
+class DockerComposeExtensionRecipe extends SystemRecipe
 {
     const NAME = 'docker_compose_extension';
 
@@ -44,7 +45,7 @@ class DockerComposeExtensionRecipe extends HiddenRecipe
      *
      * @return array
      *
-     * @see \App\Configuration\Builder::build()
+     * @see Builder::build()
      */
     public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
     {

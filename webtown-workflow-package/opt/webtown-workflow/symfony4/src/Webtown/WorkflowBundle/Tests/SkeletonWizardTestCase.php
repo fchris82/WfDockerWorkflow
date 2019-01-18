@@ -8,13 +8,9 @@
 
 namespace App\Webtown\WorkflowBundle\Tests;
 
-
-use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Builder\AbstractWizardBuilder;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class SkeletonWizardTestCase extends TestCase
 {

@@ -46,6 +46,7 @@ class QuestionHelper extends BaseQuestionHelper
     public function setResponses(array $responses)
     {
         $this->responses = $responses;
+
         return $this;
     }
 

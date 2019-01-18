@@ -22,7 +22,7 @@ class MissingWizard extends BaseWizard
 
     public function getDefaultName()
     {
-        return "Missing Wizard";
+        return 'Missing Wizard';
     }
 
     protected function build(BuildWizardEvent $event)

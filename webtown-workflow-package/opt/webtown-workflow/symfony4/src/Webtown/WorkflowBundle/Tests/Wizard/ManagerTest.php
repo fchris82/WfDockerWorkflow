@@ -38,11 +38,11 @@ class ManagerTest extends TestCase
         }
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
         $wizards = $manager->getWizard($class);
         if (!$result instanceof \Exception) {
-            $this->assertEquals($result, get_class($wizards));
+            $this->assertEquals($result, \get_class($wizards));
         }
     }
 
@@ -65,10 +65,10 @@ class ManagerTest extends TestCase
     }
 
     /**
-     * @param string $baseConfigFile
+     * @param string                  $baseConfigFile
      * @param WizardInterface[]|array $availableWizards
-     * @param string[]|array $unsavedChanges
-     * @param array $result
+     * @param string[]|array          $unsavedChanges
+     * @param array                   $result
      *
      * @dataProvider dpSyncConfiguration
      */
@@ -108,7 +108,7 @@ class ManagerTest extends TestCase
                 'empty.yml',
                 [$base1Wizard],
                 [Configuration::CHANGES_ADDED => [$base1ConfigurationItem1]],
-                [Base1Wizard::class]
+                [Base1Wizard::class],
             ],
             ['base.yml', [], [Configuration::CHANGES_REMOVED => [
                 $base1ConfigurationItem2,
@@ -125,15 +125,15 @@ class ManagerTest extends TestCase
                         $base2ConfigurationItem,
                     ],
                 ],
-                [DisabledWizard::class, MissingWizard::class]
+                [DisabledWizard::class, MissingWizard::class],
             ],
         ];
     }
 
     /**
-     * @param string $baseConfigFile
+     * @param string                  $baseConfigFile
      * @param array|WizardInterface[] $availableWizards
-     * @param array|string[] $statuses
+     * @param array|string[]          $statuses
      *
      * @dataProvider dpWizardIs
      */
@@ -147,7 +147,7 @@ class ManagerTest extends TestCase
         }
 
         foreach ($statuses as $class => $status) {
-            if (is_array($status)) {
+            if (\is_array($status)) {
                 $class = $status['object'];
                 $status = $status['status'];
             }
@@ -181,7 +181,7 @@ class ManagerTest extends TestCase
                 // Test with Wizard object
                 Base1Wizard::class => [
                     'object' => $base1Wizard,
-                    'status' => Configuration::CHANGES_REMOVED
+                    'status' => Configuration::CHANGES_REMOVED,
                 ],
                 // Test with ConfigurationItem object
                 Base2Wizard::class => [

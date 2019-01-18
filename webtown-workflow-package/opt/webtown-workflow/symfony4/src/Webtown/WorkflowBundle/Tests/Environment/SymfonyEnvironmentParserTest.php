@@ -112,7 +112,7 @@ class SymfonyEnvironmentParserTest extends TestCase
     /**
      * @param string           $directory
      * @param array|\Exception $result
-     * @param null|int         $selectedIndex
+     * @param int|null         $selectedIndex
      *
      * @dataProvider getVariables
      */

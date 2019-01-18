@@ -69,7 +69,7 @@ class CollectWizardsPassTest extends TestCase
                 [['addPath', [
                     realpath(__DIR__ . '/../../Resources/DependencyInjection/SimpleWizard'),
                     'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionSimpleWizardSimpleWizard',
-                ]]]
+                ]]],
             ],
             // Simple wizard with skeleton, no overridden
             [
@@ -78,7 +78,7 @@ class CollectWizardsPassTest extends TestCase
                 [['addPath', [
                     realpath(__DIR__ . '/../../Resources/DependencyInjection/SimpleSkeletonWizard'),
                     'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionSimpleSkeletonWizardSimpleSkeletonWizard',
-                ]]]
+                ]]],
             ],
             // Overridden skeletons wizard. There should be 2 twig add path
             [
@@ -93,7 +93,7 @@ class CollectWizardsPassTest extends TestCase
                         realpath(__DIR__ . '/../../Resources/DependencyInjection/OverriddenSkeletonWizard'),
                         'AppWebtownWorkflowBundleTestsResourcesDependencyInjectionOverriddenSkeletonWizardOverriddenSkeletonWizard',
                     ]],
-                ]
+                ],
             ],
         ];
     }

@@ -8,8 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Resources\DependencyInjection\SimpleRecipe;
 
-
 class SimpleRecipe
 {
-
 }

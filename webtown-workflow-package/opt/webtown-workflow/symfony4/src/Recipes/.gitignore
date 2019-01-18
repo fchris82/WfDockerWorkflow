@@ -3,10 +3,10 @@
 !BaseRecipe.php
 !HiddenRecipe.php
 
-!_
-!Base
-!Commands
-!DockerComposeExtension
+!../Webtown/WorkflowBundle/Recipes/_
+!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/Base
+!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/Commands
+!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/DockerComposeExtension
 !GitFlow
 !GitlabCi
 !GitlabCiWebtownRunner
@@ -17,7 +17,7 @@
 !NginxReverseProxy
 !Php
 !PhpDeployerEnvironment
-!PostBase
+!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/PostBase
 !Symfony
 !Symfony2
 !Symfony3

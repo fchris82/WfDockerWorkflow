@@ -6,16 +6,16 @@
  * Time: 21:55
  */
 
-namespace App\Recipes\Base;
+namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base;
 
-use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 
 /**
  * Class Recipe
  *
  * The BASE.
  */
-class BaseRecipe extends HiddenRecipe
+class BaseRecipe extends SystemRecipe
 {
     const NAME = 'base';
 

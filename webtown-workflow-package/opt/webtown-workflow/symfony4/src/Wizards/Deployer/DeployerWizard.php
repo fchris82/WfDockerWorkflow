@@ -10,7 +10,6 @@ namespace App\Wizards\Deployer;
 
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\EnvParser;
-use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;

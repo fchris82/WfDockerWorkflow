@@ -23,3 +23,28 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
+
+    # ------------------------------------------------------------------------------------------------------------------
+    # Here you can change the pre and post system recipes and change behaviours.
+    # ------------------------------------------------------------------------------------------------------------------
+    # PREbuild
+    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base\BaseRecipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.prebuild', priority: 999 }
+
+    # POSTbuild
+    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 999 }
+
+    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension\DockerComposeExtensionRecipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 900 }
+
+    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase\PostBaseRecipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 0 }
+
+    App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: -999 }

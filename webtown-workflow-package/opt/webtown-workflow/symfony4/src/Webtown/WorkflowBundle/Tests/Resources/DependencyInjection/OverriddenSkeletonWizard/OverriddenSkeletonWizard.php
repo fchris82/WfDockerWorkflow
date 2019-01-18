@@ -13,7 +13,6 @@ use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 
 class OverriddenSkeletonWizard extends BaseSkeletonWizard
 {
-
     public function getDefaultName()
     {
         return 'Overridden skeleton wizard';

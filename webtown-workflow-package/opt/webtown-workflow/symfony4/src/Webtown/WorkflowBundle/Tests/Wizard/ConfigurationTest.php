@@ -25,7 +25,7 @@ class ConfigurationTest extends TestCase
 
     /**
      * @param string $file
-     * @param array $orderedClasses
+     * @param array  $orderedClasses
      *
      * @dataProvider getGetAllEnabled
      */
@@ -52,7 +52,7 @@ class ConfigurationTest extends TestCase
 
     /**
      * @param string $file
-     * @param array $orderedClasses
+     * @param array  $orderedClasses
      *
      * @dataProvider dpGetConfigurationList
      */
@@ -82,7 +82,7 @@ class ConfigurationTest extends TestCase
      * @param array       $set
      * @param array       $add
      * @param array       $remove
-     * @param null|string $changeType
+     * @param string|null $changeType
      * @param array       $result
      * @param string      $resultFile
      *
@@ -111,7 +111,7 @@ class ConfigurationTest extends TestCase
         foreach ($remove as $removeItem) {
             $configuration->remove($removeItem);
         }
-        $this->assertEquals(count($result) > 0, $configuration->hasChanges($changeType));
+        $this->assertEquals(\count($result) > 0, $configuration->hasChanges($changeType));
 
         $changes = $configuration->getChanges($changeType);
         $this->assertEquals($result, $changes);
@@ -133,6 +133,7 @@ class ConfigurationTest extends TestCase
         $base1Wizard = new Base1Wizard();
         $base1Item = new ConfigurationItem($base1Wizard, $base1Wizard->getDefaultName(), !$base1Wizard->isHidden(), 'Builder');
         $missingItem = new ConfigurationItem(MissingWizard::class, 'Missing class');
+
         return [
             [ // 0
                 'empty.yml',        // initFile
@@ -141,7 +142,7 @@ class ConfigurationTest extends TestCase
                 [],                 // remove
                 null,               // changeType
                 [],                 // result
-                'result_empty.yml'  // resultFile
+                'result_empty.yml',  // resultFile
             ],
             [ // 1
                 'empty.yml',                    // initFile
@@ -150,7 +151,7 @@ class ConfigurationTest extends TestCase
                 [],                             // remove
                 Configuration::CHANGES_ADDED,   // changeType
                 [],                             // result
-                'result_empty.yml'              // resultFile
+                'result_empty.yml',              // resultFile
             ],
             [ // 2
                 'empty.yml',                    // initFile
@@ -177,7 +178,7 @@ class ConfigurationTest extends TestCase
                 [],                             // remove
                 null,                           // changeType
                 [                               // result
-                    Configuration::CHANGES_ADDED => [$missingItem]
+                    Configuration::CHANGES_ADDED => [$missingItem],
                 ],
                 'result_only_missing.yml',      // resultFile
             ],
@@ -291,7 +292,7 @@ class ConfigurationTest extends TestCase
         $configuration = new Configuration(__DIR__ . static::RESOURCE_PATH . $file);
 
         if ($response instanceof \Exception) {
-            $this->expectException(get_clasS($response));
+            $this->expectException(\get_class($response));
             $this->assertFalse($configuration->has($class));
             $configuration->get($class);
         } else {
@@ -304,6 +305,7 @@ class ConfigurationTest extends TestCase
     public function dpGet()
     {
         $base1Wizard = new Base1Wizard();
+
         return [
             ['empty.yml', null, new ConfigurationItemNotFoundException('none')],
             ['empty.yml', Base1Wizard::class, new ConfigurationItemNotFoundException('none')],

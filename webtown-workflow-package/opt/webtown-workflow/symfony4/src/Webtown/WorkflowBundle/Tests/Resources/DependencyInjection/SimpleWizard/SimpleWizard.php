@@ -8,13 +8,11 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Resources\DependencyInjection\SimpleWizard;
 
-
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 
 class SimpleWizard extends BaseWizard
 {
-
     public function getDefaultName()
     {
         return 'Simple wizard';

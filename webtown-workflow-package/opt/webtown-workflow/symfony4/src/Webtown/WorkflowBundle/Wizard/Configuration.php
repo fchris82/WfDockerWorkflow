@@ -112,7 +112,7 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigurationList()
     {
-        if (is_null($this->configurationList)) {
+        if (null === $this->configurationList) {
             $baseConfig = file_exists($this->configurationFilePath) ? Yaml::parseFile($this->configurationFilePath) : [];
             $processor = new Processor();
             // The double self::CONFIG_ROOT_MASK is "normal". It is required to configuration, the root can't be array node, so we need an array node under the root too. We use the same name.

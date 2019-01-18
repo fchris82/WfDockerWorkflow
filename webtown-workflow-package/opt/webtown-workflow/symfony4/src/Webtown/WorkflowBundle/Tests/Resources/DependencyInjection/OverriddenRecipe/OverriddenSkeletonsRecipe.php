@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Resources\DependencyInjection\OverriddenRecipe;
 
-
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class OverriddenSkeletonsRecipe extends BaseRecipe

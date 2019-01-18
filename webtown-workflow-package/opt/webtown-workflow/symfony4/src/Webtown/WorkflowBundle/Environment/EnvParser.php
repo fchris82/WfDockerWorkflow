@@ -15,9 +15,9 @@ class EnvParser
      * kellhetnek majd generálásoknál. Pl ORIGINAL_PWD .
      *
      * @param string      $name
-     * @param null|string $default
+     * @param string|null $default
      *
-     * @return null|string
+     * @return string|null
      *
      * @codeCoverageIgnore Simple getter
      */

@@ -148,7 +148,7 @@ class SkeletonFile
     }
 
     /**
-     * @return null|string
+     * @return string|null
      */
     public function getFullTargetPathname(): ?string
     {
@@ -156,7 +156,7 @@ class SkeletonFile
     }
 
     /**
-     * @param null|string $fullTargetPathname
+     * @param string|null $fullTargetPathname
      *
      * @return $this
      *

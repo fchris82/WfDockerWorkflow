@@ -12,12 +12,9 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Hidden\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Simple\SimpleRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkeletonParent\SimpleSkeletonParent;
-use Mockery as m;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Yaml\Yaml;
@@ -112,7 +109,7 @@ class BaseRecipeTest extends TestCase
 
         $files = [];
         foreach ($response as $skeletonFile) {
-            $files[$skeletonFile->getRelativePathname()] = get_class($skeletonFile);
+            $files[$skeletonFile->getRelativePathname()] = \get_class($skeletonFile);
         }
 
         ksort($result);
@@ -169,7 +166,7 @@ class BaseRecipeTest extends TestCase
                 "include 1.mk \\\n" .
                 "        2.mk \\\n" .
                 "        3.mk \\\n" .
-                "        4.mk"
+                '        4.mk',
             ],
             [
                 'FOO := %s',
@@ -177,7 +174,7 @@ class BaseRecipeTest extends TestCase
                 // Backslash + \n!!
                 "FOO := value1 \\\n" .
                 "       value2 \\\n" .
-                "       value3"
+                '       value3',
             ],
         ];
     }

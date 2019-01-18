@@ -6,8 +6,9 @@
  * Time: 13:56
  */
 
-namespace App\Recipes\_;
+namespace App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe;
 
+use App\Webtown\WorkflowBundle\Configuration\Builder;
 use App\Webtown\WorkflowBundle\Configuration\Environment;
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
@@ -15,12 +16,12 @@ use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
+class Recipe extends SystemRecipe implements RegisterEventListenersInterface
 {
     const NAME = '_';
 
@@ -68,7 +69,7 @@ class Recipe extends HiddenRecipe implements RegisterEventListenersInterface
      *
      * @return array
      *
-     * @see \App\Configuration\Builder::build()
+     * @see Builder::build()
      */
     public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
     {
