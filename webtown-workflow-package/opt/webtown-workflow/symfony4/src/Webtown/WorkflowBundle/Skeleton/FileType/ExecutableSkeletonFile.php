@@ -27,6 +27,8 @@ class ExecutableSkeletonFile extends SkeletonFile
      * @param int $permission
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setPermission($permission)
     {

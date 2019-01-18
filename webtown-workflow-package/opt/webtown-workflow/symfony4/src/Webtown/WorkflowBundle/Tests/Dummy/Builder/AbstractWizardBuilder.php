@@ -24,6 +24,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 
+/**
+ * Class AbstractWizardBuilder
+ *
+ * It can help to create wizards
+ *
+ * @package App\Webtown\WorkflowBundle\Tests\Dummy\Builder
+ */
 abstract class AbstractWizardBuilder
 {
     /**

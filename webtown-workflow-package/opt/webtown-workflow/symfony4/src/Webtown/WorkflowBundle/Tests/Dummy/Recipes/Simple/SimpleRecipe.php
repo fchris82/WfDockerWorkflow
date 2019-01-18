@@ -12,8 +12,36 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class SimpleRecipe extends BaseRecipe
 {
+    /**
+     * Parent class names
+     *
+     * @var array|string[]
+     */
+    protected static $skeletonParents = [];
+
     public function getName()
     {
         return 'simple';
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public static function getSkeletonParents()
+    {
+        return array_merge(parent::getSkeletonParents(), self::$skeletonParents);
+    }
+
+    /**
+     * @param array|string[] $skeletonParents
+     */
+    public static function setSkeletonParents($skeletonParents)
+    {
+        self::$skeletonParents = $skeletonParents;
+    }
+
+    public function makefileFormat(string $pattern, array $items)
+    {
+        return $this->makefileMultilineFormatter($pattern, $items);
     }
 }
