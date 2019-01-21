@@ -92,8 +92,6 @@ class Configuration implements ConfigurationInterface
     /**
      * Generates the configuration tree builder.
      *
-     * @todo (Chris) A system-eknek a konfigurációját ne ide tegyük, hanem legyen saját!
-     *
      * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
      */
     public function getConfigTreeBuilder()
@@ -313,7 +311,7 @@ class Configuration implements ConfigurationInterface
     /**
      * Register recipes under the `recipes` node.
      *
-     * @return ArrayNodeDefinitionű
+     * @return ArrayNodeDefinition
      */
     protected function addRecipesNode()
     {
