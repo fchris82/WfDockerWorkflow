@@ -9,8 +9,13 @@
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension;
 
 use App\Webtown\WorkflowBundle\Configuration\Builder;
+use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -19,6 +24,11 @@ use Symfony\Component\Yaml\Yaml;
  * You can insert Docker Compose configuration in the project config file:
  * <code>
  *  docker_compose:
+ *      include:
+ *          # Project file
+ *          - mongo.docker-compose.yml
+ *          # User file
+ *          - /home/user/.wf/elasticsearch.docker-compose.yml
  *      extension:
  *          # Here start the 'docker-compose.yml'. The `version` will be automated there, you mustn't use it!
  *          services:
@@ -29,11 +39,60 @@ use Symfony\Component\Yaml\Yaml;
  */
 class DockerComposeExtensionRecipe extends SystemRecipe
 {
-    const NAME = 'docker_compose_extension';
+    const NAME = 'docker_compose';
+
+    const DEFAULT_VERSION = '3.4';
 
     public function getName()
     {
         return static::NAME;
+    }
+
+    public function getConfig()
+    {
+        $rootNode = BaseRecipe::getConfig();
+
+        $rootNode
+            ->info('<comment>Config the docker compose data.</comment>')
+            ->addDefaultsIfNotSet()
+            ->children()
+                ->scalarNode('version')
+                    ->info('<comment>You can change the docker compose file version.</comment>')
+                    ->cannotBeEmpty()
+                    ->defaultValue(static::DEFAULT_VERSION)
+                ->end()
+                ->arrayNode('include')
+                    ->info('<comment>You can add extra <info>docker-compose.yml files</info>.</comment>')
+                    ->example('/home/user/dev.docker-compose.yml')
+                    ->scalarPrototype()->end()
+                    ->defaultValue([])
+                ->end()
+                ->variableNode('extension')
+                    ->info('<comment>Docker Compose yaml configuration. You mustn\'t use the <info>version</info> parameter, it will be automatically.</comment>')
+                    ->example([
+                        'services' => [
+                            'web' => [
+                                'volumes' => ['~/dev/nginx.conf:/etc/nginx/conf.d/custom.conf'],
+                                'environment' => ['TEST' => '1'],
+                            ],
+                        ],
+                    ])
+                    ->beforeNormalization()
+                        ->ifNull()
+                        ->thenEmptyArray()
+                    ->end()
+                    ->validate()
+                        ->ifTrue(function ($v) {
+                            return !\is_array($v);
+                        })
+                        ->thenInvalid('You have to set array value!')
+                    ->end()
+                    ->defaultValue([])
+                ->end()
+            ->end()
+        ;
+
+        return $rootNode;
     }
 
     /**
@@ -62,5 +121,27 @@ class DockerComposeExtensionRecipe extends SystemRecipe
         );
 
         return parent::getSkeletonVars($targetPath, $recipeConfig, $globalConfig);
+    }
+
+    /**
+     * Handle the docker_compose.include parameter. Register the extra config files.
+     *
+     * @param PostBuildSkeletonFilesEvent $event
+     */
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    {
+        $buildConfig = $event->getBuildConfig();
+
+        foreach ($buildConfig[static::NAME]['include'] as $n => $dockerComposeFilePath) {
+            $filename = sprintf('%d.docker-compose.yml', $n);
+            $fileInfo = new SplFileInfo($filename, '', $filename);
+
+            $config = Yaml::parse(file_get_contents($dockerComposeFilePath));
+            // Version fix
+            $config['version'] = (string) $buildConfig[static::NAME]['version'];
+            $skeletonFile = new DockerComposeSkeletonFile($fileInfo);
+            $skeletonFile->setContents(Yaml::dump($config, 4));
+            $event->addSkeletonFile($skeletonFile);
+        }
     }
 }

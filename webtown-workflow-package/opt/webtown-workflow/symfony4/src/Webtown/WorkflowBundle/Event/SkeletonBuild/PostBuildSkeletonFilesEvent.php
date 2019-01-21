@@ -56,6 +56,13 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
         return $this->skeletonFiles;
     }
 
+    public function addSkeletonFile(SkeletonFile $skeletonFile)
+    {
+        $this->skeletonFiles[] = $skeletonFile;
+
+        return $this;
+    }
+
     /**
      * @param SkeletonFile[]|array $skeletonFiles
      *

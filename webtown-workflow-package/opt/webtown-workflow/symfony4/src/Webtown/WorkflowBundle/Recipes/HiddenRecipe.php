@@ -8,10 +8,12 @@
 
 namespace App\Webtown\WorkflowBundle\Recipes;
 
+use App\Webtown\WorkflowBundle\Exception\RecipeHasNotConfigurationException;
+
 abstract class HiddenRecipe extends BaseRecipe
 {
     public function getConfig()
     {
-        throw new \Exception('The hidden recipes don\'t have and don\'t need config!');
+        throw new RecipeHasNotConfigurationException('The hidden recipes don\'t have and don\'t need config!');
     }
 }

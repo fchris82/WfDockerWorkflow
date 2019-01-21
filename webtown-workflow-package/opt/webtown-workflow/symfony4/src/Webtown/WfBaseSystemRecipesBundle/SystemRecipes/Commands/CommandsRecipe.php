@@ -11,6 +11,7 @@ namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands;
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
@@ -32,6 +33,19 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
     public function getName()
     {
         return static::NAME;
+    }
+
+    public function getConfig()
+    {
+        $rootNode = BaseRecipe::getConfig();
+
+        $rootNode
+            ->info('<comment>You can add extra <info>commands</info>.</comment>')
+            ->useAttributeAsKey('command')
+            ->variablePrototype()->end()
+        ;
+
+        return $rootNode;
     }
 
     public function registerEventListeners(EventDispatcherInterface $eventDispatcher)

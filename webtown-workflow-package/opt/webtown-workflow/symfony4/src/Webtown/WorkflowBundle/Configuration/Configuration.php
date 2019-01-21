@@ -10,8 +10,12 @@ namespace App\Webtown\WorkflowBundle\Configuration;
 
 use App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
+use App\Webtown\WorkflowBundle\Exception\RecipeHasNotConfigurationException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
+use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -95,6 +99,7 @@ class Configuration implements ConfigurationInterface
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
+        /** @var ArrayNodeDefinition $rootNode */
         $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
@@ -152,58 +157,13 @@ class Configuration implements ConfigurationInterface
                     ->cannotBeEmpty()
                     ->defaultValue('%wf.target_directory%/.data')
                 ->end()
-                ->arrayNode('makefile')
-                    ->info('<comment>You can add extra <info>makefile files</info>. You have to set absolute path, and you can use the <info>%wf.project_path%</info> placeholder or <info>~</info> (your home directory). You can use only these two path!</comment>')
-                    ->example('~/dev.mk')
-                    ->scalarPrototype()->end()
-                ->end()
-                ->arrayNode('docker_compose')
-                    ->info('<comment>Config the docker compose data.</comment>')
-                    ->addDefaultsIfNotSet()
-                    ->children()
-                        ->scalarNode('version')
-                            ->info('<comment>You can change the docker compose file version.</comment>')
-                            ->cannotBeEmpty()
-                            ->defaultValue('3.4')
-                        ->end()
-                        ->arrayNode('include')
-                            ->info('<comment>You can add extra <info>docker-compose.yml files</info>.</comment>')
-                            ->example('/home/user/dev.docker-compose.yml')
-                            ->scalarPrototype()->end()
-                            ->defaultValue([])
-                        ->end()
-                        ->variableNode('extension')
-                            ->info('<comment>Docker Compose yaml configuration. You mustn\'t use the <info>version</info> parameter, it will be automatically.</comment>')
-                            ->example([
-                                'services' => [
-                                    'web' => [
-                                        'volumes' => ['~/dev/nginx.conf:/etc/nginx/conf.d/custom.conf'],
-                                        'environment' => ['TEST' => '1'],
-                                    ],
-                                ],
-                            ])
-                            ->beforeNormalization()
-                                ->ifNull()
-                                ->thenEmptyArray()
-                            ->end()
-                            ->validate()
-                                ->ifTrue(function ($v) {
-                                    return !\is_array($v);
-                                })
-                                ->thenInvalid('You have to set array value!')
-                            ->end()
-                            ->defaultValue([])
-                        ->end()
-                    ->end()
-                ->end()
-                ->arrayNode(CommandsRecipe::NAME)
-                    ->info('<comment>You can add extra <info>commands</info>.</comment>')
-                    ->useAttributeAsKey('command')
-                    ->variablePrototype()->end()
-                ->end()
-                ->append($this->addRecipesNode())
             ->end()
         ;
+
+        // Add system recipes nodes
+        $this->addSystemRecipeNodes($rootNode);
+        // Add recipe nodes
+        $rootNode->append($this->addRecipesNode());
 
         return $treeBuilder;
     }
@@ -237,6 +197,8 @@ class Configuration implements ConfigurationInterface
      *
      * @param array  $config
      * @param string $wfVersion
+     *
+     * @return bool|void
      *
      * @throws InvalidWfVersionException
      */
@@ -330,9 +292,33 @@ class Configuration implements ConfigurationInterface
         return false;
     }
 
+    /**
+     * Register system recipes to root node.
+     *
+     * @param ArrayNodeDefinition $rootNode
+     */
+    protected function addSystemRecipeNodes(ArrayNodeDefinition $rootNode)
+    {
+        foreach ($this->recipeManager->getRecipes() as $recipe) {
+            if ($recipe instanceof SystemRecipe) {
+                try {
+                    $rootNode->append($recipe->getConfig());
+                } catch (RecipeHasNotConfigurationException $e) {
+                    // do nothing
+                }
+            }
+        }
+    }
+
+    /**
+     * Register recipes under the `recipes` node.
+     *
+     * @return ArrayNodeDefinitionű
+     */
     protected function addRecipesNode()
     {
         $treeBuilder = new TreeBuilder('recipes');
+        /** @var ArrayNodeDefinition $node */
         $node = $treeBuilder->getRootNode();
         $node
             ->info('<comment>The configs of recipes. If you want to disable one from import, set the false value!</comment>')

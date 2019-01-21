@@ -41,6 +41,10 @@ services:
         tags:
             - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 900 }
 
+    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension\MakefileExtensionRecipe:
+        tags:
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 900 }
+
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase\PostBaseRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 0 }
