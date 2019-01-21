@@ -39,10 +39,6 @@ class Builder
      */
     protected $targetDirectory;
 
-    protected $makefiles = [];
-
-    protected $dockerComposeFiles = [];
-
     /**
      * Builder constructor.
      *
@@ -129,9 +125,6 @@ class Builder
         foreach ($registerEventPost->getRecipes() as $recipe) {
             $this->buildRecipe($projectPath, $recipe->getName(), $config, $config);
         }
-
-        // INCLUDED FILES
-        $this->includeExtraFiles($config);
     }
 
     /**
@@ -315,22 +308,6 @@ class Builder
             $skeletonFile->setRelativePath($relativeTargetPath);
             $skeletonFile->move($projectPath);
         }
-    }
-
-    /**
-     * Handle the extra configuration files. Like additional `makefile` or `docker-compose.yml` file.
-     *
-     * @param $config
-     *
-     * @todo (Chris) Ezt mint ha nem használnánk, szóval lehet, hogy törölhető VAGY lehet, hogy kell írni egy receptet, ami ezt kezeli.
-     */
-    protected function includeExtraFiles($config)
-    {
-        $this->dockerComposeFiles = array_merge(
-            $this->dockerComposeFiles,
-            $config['docker_compose']['include']
-        );
-        $this->makefiles = array_merge($this->makefiles, $config['makefile']);
     }
 
     /**
