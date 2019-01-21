@@ -22,13 +22,6 @@ class Manager
     protected $allWizards = [];
 
     /**
-     * @var WizardInterface[]
-     *
-     * @todo (Chris) Ha 2020-01-01-ig nem volt erre szükség, akkor törölhető
-     */
-    protected $publicWizards = [];
-
-    /**
      * @var Configuration
      */
     protected $configuration;
@@ -54,9 +47,6 @@ class Manager
     public function addWizard(WizardInterface $wizard)
     {
         $this->allWizards[\get_class($wizard)] = $wizard;
-        if (!$wizard->isHidden()) {
-            $this->publicWizards[$wizard->getDefaultName()] = $wizard;
-        }
         $this->configurationIsSynced = false;
     }
 
