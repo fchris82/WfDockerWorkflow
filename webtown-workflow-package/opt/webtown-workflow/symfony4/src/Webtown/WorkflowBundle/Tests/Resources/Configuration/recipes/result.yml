@@ -4,12 +4,6 @@ version:
 name:    "recipe_test"
 imports: []
 docker_data_dir: "%wf.target_directory%/.data"
-makefile: []
-docker_compose:
-    version: "3.4"
-    include: []
-    extension: []
-commands: []
 recipes:
     simple: []
     configurable:

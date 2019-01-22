@@ -1,17 +1,17 @@
 version: "2.0.0"
 name:    "test"
 
-# You can add extra commands.
-commands:
-    init:
-        - mkdir -p .wf/.data/mysql
-        - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
-        - 'if [ ! -f .wf.yml ]; then echo "imports: [.wf.yml.dist]" > .wf.yml; fi'
-        - echo "   - <comment>.wf.yml</comment>"
-
-    dep:
-        - wf php-exec bin/dep ${@}
-
+## You can add extra commands.
+#commands:
+#    init:
+#        - mkdir -p .wf/.data/mysql
+#        - echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"
+#        - 'if [ ! -f .wf.yml ]; then echo "imports: [.wf.yml.dist]" > .wf.yml; fi'
+#        - echo "   - <comment>.wf.yml</comment>"
+#
+#    dep:
+#        - wf php-exec bin/dep ${@}
+#
 ## The configs of recipes
 #recipes:
 #    # Symfony 3 recipe

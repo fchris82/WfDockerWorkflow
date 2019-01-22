@@ -76,11 +76,13 @@ class Filesystem extends BaseFilesystem
 
     public function dumpFile($filename, $content)
     {
+        $filename = $this->aliasMask($filename);
         $this->contents[$filename] = $content;
     }
 
     public function appendToFile($filename, $content)
     {
+        $filename = $this->aliasMask($filename);
         $base = isset($this->contents[$filename]) ? $this->contents[$filename] : '';
         $this->contents[$filename] = $base . $content;
     }
@@ -153,7 +155,7 @@ class Filesystem extends BaseFilesystem
 
     public function remove($files)
     {
-        $files = \is_array($files) ? $files : [$files];
+        $files = \is_array($files) || $files instanceof \IteratorAggregate ? $files : [$files];
         foreach ($files as $file) {
             $file = $this->aliasMask($file);
             foreach ($this->contents as $path => $content) {

@@ -111,7 +111,7 @@ class ReconfigureCommand extends Command
 
             try {
                 $this->builder
-                    ->setTargetDirectory($input->getOption('target-directory'))
+                    ->setTargetDirectoryName($input->getOption('target-directory'))
                     ->build($config, $baseDirectory, $input->getOption('config-hash'))
                 ;
 

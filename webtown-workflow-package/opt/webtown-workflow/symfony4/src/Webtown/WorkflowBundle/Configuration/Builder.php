@@ -35,9 +35,11 @@ class Builder
     protected $recipeManager;
 
     /**
+     * The directory name/relative path, where we generate the files
+     *
      * @var string
      */
-    protected $targetDirectory;
+    protected $targetDirectoryName;
 
     /**
      * Builder constructor.
@@ -56,19 +58,19 @@ class Builder
     /**
      * @return string
      */
-    public function getTargetDirectory()
+    public function getTargetDirectoryName()
     {
-        return $this->targetDirectory;
+        return $this->targetDirectoryName;
     }
 
     /**
-     * @param string $targetDirectory
+     * @param string $targetDirectoryName
      *
      * @return $this
      */
-    public function setTargetDirectory($targetDirectory)
+    public function setTargetDirectoryName($targetDirectoryName)
     {
-        $this->targetDirectory = $targetDirectory;
+        $this->targetDirectoryName = $targetDirectoryName;
 
         return $this;
     }
@@ -87,8 +89,8 @@ class Builder
      */
     public function build($config, $projectPath, $configHash)
     {
-        if (!$this->targetDirectory) {
-            throw new \InvalidArgumentException('You have to call first the `setCachePath` function!');
+        if (!$this->targetDirectoryName) {
+            throw new \InvalidArgumentException('You have to call first the `setTargetDirectoryName` function!');
         }
 
         // INIT
@@ -98,7 +100,7 @@ class Builder
                 $this->addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $config);
             }
         }
-        $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectory, $configHash);
+        $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectoryName, $configHash);
         $this->eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $initEvent);
         $initEvent->setConfig($this->configReplaceParameters($initEvent->getConfig(), $initEvent->getParameters()));
         // Init the directory structure
@@ -301,7 +303,7 @@ class Builder
         foreach ($skeletonFiles as $skeletonFile) {
             $relativeTargetPath = sprintf(
                 implode(\DIRECTORY_SEPARATOR, ['%s', '%s', '%s']),
-                $this->targetDirectory,
+                $this->targetDirectoryName,
                 $recipe->getDirectoryName(),
                 $skeletonFile->getRelativePath()
             );

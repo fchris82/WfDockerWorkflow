@@ -96,23 +96,6 @@ class WfEnvironmentParserTest extends TestCase
                 '.wf.yml.dist',
             ],
             'docker_data_dir' => '%wf.target_directory%/.data',
-            'makefile' => [],
-            'docker_compose' => [
-                'version' => '3.4',
-                'include' => [],
-                'extension' => [],
-            ],
-            'commands' => [
-                'init' => [
-                    'mkdir -p .wf/.data/mysql',
-                    'echo "<info>✔ Edit the new files before run the <fg=blue;options=bold>install</> command:</info>"',
-                    'if [ ! -f .wf.yml ]; then echo "imports: [.wf.yml.dist]" > .wf.yml; fi',
-                    'echo "   - <comment>.wf.yml</comment>"',
-                ],
-                'dep' => [
-                    'wf php-exec bin/dep ${@}',
-                ],
-            ],
         ];
         // Only dist
         $config_dist = $config;

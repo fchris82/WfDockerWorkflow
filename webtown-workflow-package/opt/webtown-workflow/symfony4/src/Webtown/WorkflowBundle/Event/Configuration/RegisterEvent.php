@@ -80,4 +80,16 @@ class RegisterEvent extends Event
 
         return $this;
     }
+
+    /**
+     * @param BaseRecipe[]|array $recipes
+     *
+     * @return $this
+     */
+    public function setRecipes($recipes)
+    {
+        $this->recipes = $recipes;
+
+        return $this;
+    }
 }
