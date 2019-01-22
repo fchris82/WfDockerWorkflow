@@ -4,8 +4,7 @@ DOCKER_BASENAME				:=	$${LOCAL_USER_NAME:-base}p{{ config.name | default('$${PWD
 DOCKER_DATA_DIR				:=	{{ config.docker_data_dir }}
 DOCKER_ENVIRONMENTS	:=
 DOCKER_CLI_NAME		:=	engine
-# @todo (Chris) Commitok fordítása
-# Az aktuális projekt gazdája
+# The owner of the project
 WWW_DATA_UID		:=	$$(stat -c '%u' .)
 # Az Docker group
 WWW_DATA_GID		:=	$$(stat -c '%g' /var/run/docker.sock)
@@ -15,8 +14,7 @@ DOCKER_USER			:=	$(WWW_DATA_UID):$(WWW_DATA_GID)
 DOCKER_SHELL		:=	/bin/bash
 SHARED_DIRS			:=
 
-# A Gitlab CI miatt kell definiálni.
-SUDO              := sudo
+# Because of the Gitlab CI eg.
 DOCKER_PSEUDO_TTY := $$(if [ "$$WF_TTY" == "0" ]; then  echo '-T'; fi)
 # Load `.wf.env` config file. You have to use \ before # sign!
 #   - grep -v '^ *#'      Get everything except the comment lines
@@ -110,15 +108,7 @@ BASE_MAKEFILE   := $(firstword $(MAKEFILE_LIST))
 BASE_DIRECTORY  := $$(realpath $$(dirname $(abspath $(BASE_MAKEFILE)))/..)
 CMD_MAKE        := $(MAKE) $(MAKE_EXTRA_PARAMS) -C $(BASE_DIRECTORY) -f $(BASE_MAKEFILE) $(MAKEOVERRIDES)
 
-# Docker commands
-# Ha szeretnéd az nginx-et debug módban futtatni, akkor írd át:
-#    [...]
-#    DOCKER_CONFIG_NGINX_DEBUG=debug \
-#    DOCKER_NGINX_COMMAND=nginx-debug
-#
-# Azért használunk `define`-t, mert így meg tudjuk oldani, hogy bizonyos target-ek előtt átírjunk bizonyos változókat.
-# Ilyen változó lehet pl a `SYMFONY_DEPRECATIONS_HELPER`, amit pl a fast-test előtt átállítunk. Ha változókat használnánk,
-# akkor annak a módosítása ott már nem hatna, tehát nem tudnánk hatással lenni a futásra.
+# We are using `define` because we can override or extend them before make targets.
 define CMD_DOCKER_ENV
     $(DOCKER_ENVIRONMENTS) \
     BASE_DIRECTORY=$(BASE_DIRECTORY) \

@@ -20,8 +20,7 @@ REFERENCE="/opt/webtown-workflow/wizard.sh"
 
 # @todo (Chris) Ezt kívülről kellene megkapni.
 USER=$(ls -ld ${REFERENCE} | cut -d\  -f3)
-# @todo (Chris) Ezt kívülről kellene megkapni.
-GROUP="docker"
+GROUP=$(stat -c '%g' /var/run/docker.sock)
 
 # Install
 APP_ENV=prod WF_SYMFONY_ENV=prod /opt/webtown-workflow/workflow.sh --composer-install --no-dev
