@@ -13,6 +13,9 @@ use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Configurable\ConfigurableRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleEventListener\SimpleEventListenerRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkip\SimpleSkipRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkipFile\SimpleSkipFileRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemRecipe\SystemRecipe;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
@@ -102,6 +105,20 @@ class BuilderTest extends TestCase
             'imports' => [],
             'docker_data_dir' => '%wf.target_directory%/.data',
         ];
+        $simpleConfigWithRecipes = [
+            'version' => [
+                'base' => '2.0.0',
+                'wf_minimum_version' => '2.1.1',
+            ],
+            'name' => 'testproject',
+            'imports' => [],
+            'docker_data_dir' => '%wf.target_directory%/.data',
+            'recipes' => [
+                'simple_event_listener' => [],
+                'simple_skip' => [],
+                'simple_skip_file' => [],
+            ],
+        ];
         $testConfig = [
             'version' => [
                 'base' => '2.0.0',
@@ -120,8 +137,13 @@ class BuilderTest extends TestCase
         $preDefinition = new ArrayNodeDefinition('pre');
         $postDefinition = new ArrayNodeDefinition('post');
 
-        $twigEnv = m::mock(\Twig_Environment::class);
+        $twigEnv = m::mock(\Twig_Environment::class, [
+            'render' => '',
+        ]);
         $eventDispatcher = new EventDispatcher();
+        $simpleEventListenerRecipe = new SimpleEventListenerRecipe($twigEnv, $eventDispatcher);
+        $simpleSkipRecipe = new SimpleSkipRecipe($twigEnv, $eventDispatcher);
+        $simpleSkipFileRecipe = new SimpleSkipFileRecipe($twigEnv, $eventDispatcher);
 
         return [
             [
@@ -133,6 +155,22 @@ class BuilderTest extends TestCase
                 'testHash',             // $configHash
                 [                       // $result
                     'alias/.gitkeep' => '',
+                ]
+            ],
+            [
+                $baseDir . 'empty',     // $targetDirectory
+                [],                     // $preSystemRecipes
+                [                       // $recipes
+                    $simpleEventListenerRecipe,
+                    $simpleSkipRecipe,
+                    $simpleSkipFileRecipe,
+                ],
+                [],                     // $postSystemRecipes
+                $simpleConfigWithRecipes,// $config
+                'testHash',             // $configHash
+                [                       // $result
+                    'alias/.gitkeep' => '',
+                    'alias/.wf/simple_skip_file/keep.txt' => '',
                 ]
             ],
             [

@@ -15,8 +15,12 @@ use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Configurable\ConfigurableRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Hidden\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Simple\SimpleRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkip\SimpleSkipRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemRecipe\SystemRecipe;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemWithoutConfigurationRecipe\SystemWithoutConfigurationRecipe;
 use App\Webtown\WorkflowBundle\Tests\TestCase;
 use Mockery as m;
+use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -36,7 +40,7 @@ class ConfigurationTest extends TestCase
      *
      * @throws \ReflectionException
      *
-     * @dataProvider getConfigurations
+     * @dataProvider dpConfigurations
      */
     public function testConfigDeepMerge($base, $new, $result)
     {
@@ -46,7 +50,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($result, $response);
     }
 
-    public function getConfigurations()
+    public function dpConfigurations()
     {
 //        return [
 //            # 6
@@ -131,7 +135,7 @@ class ConfigurationTest extends TestCase
      * @throws \App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException
      * @throws \Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException
      *
-     * @dataProvider getLoads
+     * @dataProvider dpLoadConfig
      */
     public function testLoadConfig(string $directory, string $file = '.wf.yml', $exception = false)
     {
@@ -154,7 +158,7 @@ class ConfigurationTest extends TestCase
         }
     }
 
-    public function getLoads()
+    public function dpLoadConfig()
     {
         return [
             ['full_base'],
@@ -167,6 +171,7 @@ class ConfigurationTest extends TestCase
             ['invalid', '.wf.missing_import_file.yml', new InvalidConfigurationException()],
             ['invalid', '.wf.circular_reference_import.v1.yml', new FileLoaderImportCircularReferenceException(['.wf.circular_reference_import.v1.yml'])],
             ['recipes', '.wf.mixed.yml'],
+            ['recipes', '.wf.set_not_existed_configuration.yml', new InvalidConfigurationException()],
             ['recipes', '.wf.missing_required.yml', new InvalidConfigurationException()],
             ['recipes', '.wf.unknown_recipe.yml', new InvalidConfigurationException()],
         ];
@@ -177,8 +182,11 @@ class ConfigurationTest extends TestCase
         $twigEnv = m::mock(\Twig_Environment::class);
         $eventDispatcher = m::mock(EventDispatcherInterface::class);
         $manager = new RecipeManager();
+        $manager->addRecipe(new SystemRecipe('system', new ArrayNodeDefinition('system'), $twigEnv, $eventDispatcher));
+        $manager->addRecipe(new SystemWithoutConfigurationRecipe($twigEnv, $eventDispatcher));
         $manager->addRecipe(new HiddenRecipe($twigEnv, $eventDispatcher));
         $manager->addRecipe(new SimpleRecipe($twigEnv, $eventDispatcher));
+        $manager->addRecipe(new SimpleSkipRecipe($twigEnv, $eventDispatcher));
         $manager->addRecipe(new ConfigurableRecipe($twigEnv, $eventDispatcher));
 
         return $manager;

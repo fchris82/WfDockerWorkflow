@@ -57,6 +57,8 @@ class Builder
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getTargetDirectoryName()
     {
