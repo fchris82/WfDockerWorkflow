@@ -6,7 +6,7 @@
  * Time: 21:18
  */
 
-namespace App\Webtown\WorkflowBundle\Tests\Dummy;
+namespace App\Webtown\WorkflowBundle\Test\Dummy;
 
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem as BaseFilesystem;

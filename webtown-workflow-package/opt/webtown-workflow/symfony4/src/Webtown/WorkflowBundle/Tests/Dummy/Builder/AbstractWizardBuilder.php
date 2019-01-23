@@ -11,7 +11,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Dummy\Builder;
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
 use App\Webtown\WorkflowBundle\Tests\Dummy\QuestionHelper;
 use App\Webtown\WorkflowBundle\Twig\Extension\TextExtension;

@@ -10,7 +10,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Environment\MicroParser;
 
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerJsonInformationParser;
 use App\Webtown\WorkflowBundle\Exception\InvalidComposerVersionNumber;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 use Symfony\Component\Filesystem\Filesystem as SfFilesystem;

@@ -11,7 +11,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Configuration;
 use App\Webtown\WorkflowBundle\Configuration\Configuration;
 use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Configurable\ConfigurableRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Hidden\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Simple\SimpleRecipe;

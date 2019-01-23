@@ -12,7 +12,7 @@ use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
 use App\Webtown\WorkflowBundle\Environment\SymfonyEnvironmentParser;
 use App\Webtown\WorkflowBundle\Exception\InvalidComposerVersionNumber;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Question\ChoiceQuestion;

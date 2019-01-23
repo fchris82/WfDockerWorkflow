@@ -11,7 +11,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Environment;
 use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 

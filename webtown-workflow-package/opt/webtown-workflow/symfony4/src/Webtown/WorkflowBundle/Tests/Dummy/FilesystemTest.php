@@ -8,6 +8,7 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy;
 
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\TestCase;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 

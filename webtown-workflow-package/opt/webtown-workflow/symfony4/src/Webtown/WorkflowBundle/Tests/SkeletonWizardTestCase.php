@@ -8,9 +8,7 @@
 
 namespace App\Webtown\WorkflowBundle\Tests;
 
-use App\Webtown\WorkflowBundle\Tests\Dummy\Builder\AbstractWizardBuilder;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
-use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 
 class SkeletonWizardTestCase extends TestCase
 {

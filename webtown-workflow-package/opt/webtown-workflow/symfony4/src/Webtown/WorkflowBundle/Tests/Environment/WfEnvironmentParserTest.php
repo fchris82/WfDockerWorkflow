@@ -11,7 +11,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Environment;
 use App\Webtown\WorkflowBundle\Configuration\Configuration;
 use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
