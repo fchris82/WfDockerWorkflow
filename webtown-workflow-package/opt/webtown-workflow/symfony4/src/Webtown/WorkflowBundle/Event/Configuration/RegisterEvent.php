@@ -47,6 +47,8 @@ class RegisterEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getProjectPath(): string
     {
@@ -55,6 +57,8 @@ class RegisterEvent extends Event
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getConfig(): array
     {
@@ -63,6 +67,8 @@ class RegisterEvent extends Event
 
     /**
      * @return BaseRecipe[]|array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getRecipes(): array
     {
@@ -85,6 +91,8 @@ class RegisterEvent extends Event
      * @param BaseRecipe[]|array $recipes
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setRecipes($recipes)
     {

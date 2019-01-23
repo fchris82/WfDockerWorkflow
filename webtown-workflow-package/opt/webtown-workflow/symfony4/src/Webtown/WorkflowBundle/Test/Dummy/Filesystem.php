@@ -14,6 +14,8 @@ use Symfony\Component\Finder\Finder;
 
 class Filesystem extends BaseFilesystem
 {
+    const DIRECTORY_ID = '-- DIRECTORY --';
+
     /**
      * @var string|null
      */
@@ -54,12 +56,13 @@ class Filesystem extends BaseFilesystem
 
     public function getContents()
     {
+        ksort($this->contents);
         return $this->contents;
     }
 
     public function exists($files)
     {
-        $files = \is_array($files) ? $files : [$files];
+        $files = $this->pathsToArray($files);
         $hits = [];
         foreach ($files as $file) {
             $file = $this->aliasMask($file);
@@ -87,15 +90,30 @@ class Filesystem extends BaseFilesystem
         $this->contents[$filename] = $base . $content;
     }
 
+    /**
+     * !!! Limitation !!!
+     *
+     * Can't exists same filename and dirname at the same time!
+     *
+     * @param iterable|string $dirs
+     * @param int             $mode
+     */
     public function mkdir($dirs, $mode = 0777)
     {
-        // do nothing
+        $dirs = $this->pathsToArray($dirs);
+        foreach ($dirs as $dir) {
+            $targetDir = $this->aliasMask($dir);
+            if (!$this->exists($targetDir)) {
+                $this->dumpFile($targetDir, static::DIRECTORY_ID);
+            }
+        }
+
         return;
     }
 
     public function touch($files, $time = null, $atime = null)
     {
-        $files = \is_array($files) ? $files : [$files];
+        $files = $this->pathsToArray($files);
         foreach ($files as $file) {
             $targetFile = $this->aliasMask($file);
             if (!$this->exists($targetFile)) {
@@ -155,7 +173,7 @@ class Filesystem extends BaseFilesystem
 
     public function remove($files)
     {
-        $files = \is_array($files) || $files instanceof \IteratorAggregate ? $files : [$files];
+        $files = $this->pathsToArray($files);
         foreach ($files as $file) {
             $file = $this->aliasMask($file);
             foreach ($this->contents as $path => $content) {
@@ -170,5 +188,12 @@ class Filesystem extends BaseFilesystem
     public function chmod($files, $mode, $umask = 0000, $recursive = false)
     {
         // @todo (Chris)
+    }
+
+    protected function pathsToArray($paths)
+    {
+        return \is_array($paths) || $paths instanceof \IteratorAggregate
+            ? $paths
+            : [$paths];
     }
 }

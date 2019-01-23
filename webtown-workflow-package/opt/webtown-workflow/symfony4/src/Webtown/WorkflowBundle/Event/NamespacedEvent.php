@@ -32,6 +32,8 @@ class NamespacedEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getNamespace(): string
     {
@@ -42,6 +44,8 @@ class NamespacedEvent extends Event
      * @param string|object $namespace
      *
      * @return bool
+     *
+     * @codeCoverageIgnore Simple compare
      */
     public function isNamespace($namespace)
     {

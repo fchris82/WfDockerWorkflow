@@ -39,7 +39,7 @@ EOS;
      * @param $file
      * @param $result
      *
-     * @dataProvider getExists
+     * @dataProvider dpExists
      */
     public function testExists($directory, $file, $result)
     {
@@ -54,7 +54,7 @@ EOS;
         $this->assertEquals($result, $response);
     }
 
-    public function getExists()
+    public function dpExists()
     {
         return [
             ['test1', '/composer.json', true],
@@ -70,7 +70,7 @@ EOS;
      * @param $file
      * @param $fileContent
      *
-     * @dataProvider getDumpFiles
+     * @dataProvider dpDumpFiles
      */
     public function testDumpFile($directory, $file, $fileContent)
     {
@@ -87,7 +87,7 @@ EOS;
         $this->assertEquals($fileContent, $contents[$file]);
     }
 
-    public function getDumpFiles()
+    public function dpDumpFiles()
     {
         return [
             ['test1', '/composer.json', ''],
@@ -101,7 +101,7 @@ EOS;
      * @param $append
      * @param $result
      *
-     * @dataProvider getAppendToFiles
+     * @dataProvider dpAppendToFiles
      */
     public function testAppendToFile($directory, $file, $append, $result)
     {
@@ -118,7 +118,7 @@ EOS;
         $this->assertEquals($result, $contents[$file]);
     }
 
-    public function getAppendToFiles()
+    public function dpAppendToFiles()
     {
         return [
             ['test1', '/.gitignore', '*.iml', '*.iml'],
@@ -133,7 +133,7 @@ EOS;
      * @param $testFile
      * @param $fileContent
      *
-     * @dataProvider getTouches
+     * @dataProvider dpTouches
      */
     public function testTouch($directory, $file, $testFile, $fileContent)
     {
@@ -150,7 +150,7 @@ EOS;
         $this->assertEquals($fileContent, $contents[$testFile]);
     }
 
-    public function getTouches()
+    public function dpTouches()
     {
         $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
@@ -176,7 +176,7 @@ EOS;
      * @param $checkTarget
      * @param $fileContent
      *
-     * @dataProvider getCopies
+     * @dataProvider dpCopies
      */
     public function testCopy($directory, $origin, $target, $overwrite, $checkOrigin, $checkTarget, $fileContent)
     {
@@ -203,7 +203,7 @@ EOS;
         }
     }
 
-    public function getCopies()
+    public function dpCopies()
     {
         $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
@@ -325,7 +325,7 @@ EOS;
      * @param $checkTarget
      * @param $fileContent
      *
-     * @dataProvider getCopies
+     * @dataProvider dpCopies
      */
     public function testRename($directory, $origin, $target, $overwrite, $checkOrigin, $checkTarget, $fileContent)
     {
@@ -350,5 +350,41 @@ EOS;
             $contents = $filesystem->getContents();
             $this->assertEquals($fileContent, $contents[$checkTarget ?: $target]);
         }
+    }
+
+    /**
+     * @param string  $directory
+     * @param string  $newDirName
+     * @param boolean $existed
+     *
+     * @dataProvider dpMkdir
+     */
+    public function testMkdir($directory, $newDirName, $existed)
+    {
+        $path = implode(\DIRECTORY_SEPARATOR, [
+            __DIR__,
+            'Resources',
+            $directory,
+        ]);
+        $filesystem = new Filesystem($path, '');
+
+        $filesystem->mkdir($newDirName);
+        $this->assertTrue($filesystem->exists($newDirName));
+        $contents = $filesystem->getContents();
+        if ($existed) {
+            $this->assertArrayNotHasKey($newDirName, $contents);
+        } else {
+            $this->assertEquals(Filesystem::DIRECTORY_ID, $contents[$newDirName]);
+        }
+    }
+
+    public function dpMkdir()
+    {
+        return [
+            ['test1', '/app', true],
+            ['test1', '/app/config', true],
+            ['test1', '/test', false],
+            ['test1', '/app/test', false],
+        ];
     }
 }

@@ -68,6 +68,8 @@ class SkeletonFile
      * @param SplFileInfo $baseFileInfo
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setBaseFileInfo($baseFileInfo)
     {

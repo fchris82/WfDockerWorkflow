@@ -37,7 +37,6 @@ class SkeletonBuildBaseEvents
     /**
      * @see DumpFileEvent
      */
-    const BEFORE_DUMPS = 'app.skeleton.before_dump';
     const BEFORE_DUMP_FILE = 'app.skeleton.before_dump_skeleton_file';
     const BEFORE_DUMP_TARGET_EXISTS = 'app.skeleton.before_dump_target_exists';
     const AFTER_DUMP_FILE = 'app.skeleton.after_dump_skeleton_file';

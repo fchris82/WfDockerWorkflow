@@ -55,7 +55,7 @@ trait BuilderTrait
 
                 $skeletonFile = $event->getSkeletonFile();
                 if ($skeletonFile instanceof SkeletonDirectory) {
-                    $this->fileSystem->mkdir($skeletonFile->getRelativePathname());
+                    $this->fileSystem->mkdir($skeletonFile->getFullTargetPathname());
                 } elseif (SkeletonFile::HANDLE_EXISTING_APPEND == $skeletonFile->getHandleExisting()) {
                     $this->fileSystem->appendToFile(
                         $skeletonFile->getFullTargetPathname(),
