@@ -13,6 +13,7 @@ use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use App\Webtown\WorkflowBundle\Exception\CommanderRunException;
 use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
 use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Question\ChoiceQuestion;
@@ -64,7 +65,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
     /**
      * @param BuildWizardEvent $event
      *
-     * @throws \App\Exception\CommanderRunException
+     * @throws CommanderRunException
      */
     public function build(BuildWizardEvent $event)
     {
@@ -105,7 +106,10 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         $this->commander->run(sprintf('mkdir -p %s', $targetProjectDirectory));
         $this->commander->cd($targetProjectDirectory);
         $this->runCmdInContainer(sprintf('composer create-project %s .', $package));
-        $this->commander->run('git init && git add . && git commit -m "Init"');
+        if (!file_exists($targetProjectDirectory . '/.git')) {
+            $this->commander->run('git init');
+        }
+        $this->commander->run('git add . && git commit -m "Init"');
 
         if ('ezsystems/ezplatform' != $package) {
             $this->createAuthJson($targetProjectDirectory);
@@ -113,7 +117,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
 
         if (\count($composerRequired) > 0) {
             $this->runCmdInContainer(sprintf('composer require %s', implode(' ', $composerRequired)));
-            $this->commander->run('git init && git add . && git commit -m "Add some composer package"');
+            $this->commander->run('git add . && git commit -m "Add some composer package"');
         }
 
         if ($requireKaliopMigration) {
@@ -150,8 +154,7 @@ EOL;
     public function isBuilt($targetProjectDirectory)
     {
         return $this->ezEnvironmentParser->isEzProject($targetProjectDirectory)
-            || $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)
-            || file_exists($targetProjectDirectory . '/.git');
+            || $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
     /**

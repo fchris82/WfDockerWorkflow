@@ -97,6 +97,9 @@ recipes:
     # Symfony {{ sf_version }} recipe
     # List all available options: `wf --config-dump --recipe=symfony{{ sf_version }}`
     symfony{{ sf_version }}:
+{% if is_ez %}
+        version: ez{{ sf_version >= 3 ? '2' : '1' }}
+{% endif %}
         # Symfony environment.
         env:     dev
         server:
