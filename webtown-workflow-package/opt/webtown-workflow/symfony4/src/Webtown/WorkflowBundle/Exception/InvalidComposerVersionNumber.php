@@ -26,6 +26,8 @@ class InvalidComposerVersionNumber extends \InvalidArgumentException
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getVersion(): string
     {

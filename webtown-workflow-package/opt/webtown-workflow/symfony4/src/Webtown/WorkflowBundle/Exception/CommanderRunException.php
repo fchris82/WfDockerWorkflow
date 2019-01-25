@@ -31,6 +31,8 @@ class CommanderRunException extends \Exception
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getCommand(): string
     {
@@ -39,6 +41,8 @@ class CommanderRunException extends \Exception
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getOutput(): string
     {

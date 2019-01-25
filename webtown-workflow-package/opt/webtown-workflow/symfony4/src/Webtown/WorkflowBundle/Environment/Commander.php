@@ -28,6 +28,13 @@ class Commander
     protected $runCommandsWorkdir;
 
     /**
+     * It is important because of tests!
+     *
+     * @var bool
+     */
+    protected $liveEcho = true;
+
+    /**
      * Commander constructor.
      *
      * @param IoManager           $ioManager
@@ -126,9 +133,35 @@ class Commander
         );
     }
 
+    /**
+     * @return bool
+     *
+     * @codeCoverageIgnore Simple getter
+     */
+    public function isLiveEcho(): bool
+    {
+        return $this->liveEcho;
+    }
+
+    /**
+     * @param bool $liveEcho
+     *
+     * @return $this
+     */
+    public function setLiveEcho(bool $liveEcho)
+    {
+        $this->liveEcho = $liveEcho;
+
+        return $this;
+    }
+
     protected function liveExecuteCommand($cmd)
     {
-        while (@ob_end_flush()); // end all output buffers if any
+        if ($this->liveEcho) {
+            // @codeCoverageIgnoreStart
+            while (@ob_end_flush()); // end all output buffers if any
+            // @codeCoverageIgnoreEnd
+        }
 
         $proc = popen("$cmd 2>&1 ; echo Exit status : $?", 'r');
 
@@ -138,8 +171,13 @@ class Commander
         while (!feof($proc)) {
             $live_output     = fread($proc, 4096);
             $complete_output = $complete_output . $live_output;
-            echo "$live_output";
-            @flush();
+
+            if ($this->liveEcho) {
+                // @codeCoverageIgnoreStart
+                echo "$live_output";
+                @flush();
+                // @codeCoverageIgnoreEnd
+            }
         }
 
         pclose($proc);
