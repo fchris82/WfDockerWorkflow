@@ -21,13 +21,27 @@ class Environment
     const CONFIG_CONFIGURATION_FILE = 'WF_CONFIGURATION_FILE_NAME';
     const CONFIG_ENV_FILE           = 'WF_ENV_FILE_NAME';
 
+    /**
+     * @var null|array
+     */
+    protected $env;
+
     public function getConfigValue($name, $default = null)
     {
-        $config = $_ENV;
+        $config = $this->getEnv();
         if (!array_key_exists($name, $config)) {
             return $default;
         }
 
         return $config[$name];
+    }
+
+    protected function getEnv()
+    {
+        if (null === $this->env) {
+            $this->env = $_ENV;
+        }
+
+        return $this->env;
     }
 }
