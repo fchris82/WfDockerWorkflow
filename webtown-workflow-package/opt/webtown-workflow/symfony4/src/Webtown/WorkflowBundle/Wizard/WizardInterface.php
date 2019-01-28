@@ -10,6 +10,9 @@ namespace App\Webtown\WorkflowBundle\Wizard;
 
 interface WizardInterface
 {
+    /**
+     * @return string
+     */
     public function getDefaultName();
 
     public function getDefaultGroup();

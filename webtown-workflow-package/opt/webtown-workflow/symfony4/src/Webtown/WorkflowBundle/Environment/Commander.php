@@ -46,17 +46,31 @@ class Commander
         $this->wfEnvironmentParser = $wfEnvironmentParser;
     }
 
+    /**
+     * @param $workdir
+     */
     public function cd($workdir)
     {
         $this->runCommandsWorkdir = $workdir;
     }
 
-    protected function getCmdWorkDir()
+    /**
+     * @return string
+     */
+    protected function getCmdWorkDir(): string
     {
         return $this->runCommandsWorkdir ?: $_SERVER['PWD'];
     }
 
-    public function run($cmd, $workdir = null)
+    /**
+     * @param string      $cmd
+     * @param string|null $workdir
+     *
+     * @return string
+     *
+     * @throws CommanderRunException
+     */
+    public function run(string $cmd, string $workdir = null): string
     {
         $workdir = $workdir ?: $this->getCmdWorkDir();
         $cmd = sprintf('cd %s && %s', $workdir, $cmd);
@@ -85,7 +99,17 @@ class Commander
         throw new CommanderRunException($cmd, $output, '', $return);
     }
 
-    public function runCmdInContainer($cmd, $image, $extraParameters = '', $workdir = null)
+    /**
+     * @param string      $cmd
+     * @param string      $image
+     * @param string      $extraParameters
+     * @param string|null $workdir
+     *
+     * @return string
+     *
+     * @throws CommanderRunException
+     */
+    public function runCmdInContainer(string $cmd, string $image, string $extraParameters = '', string $workdir = null): string
     {
         $workdir = $workdir ?: $this->getCmdWorkDir();
         if ($this->wfEnvironmentParser->wfIsInitialized($workdir)) {
@@ -155,7 +179,12 @@ class Commander
         return $this;
     }
 
-    protected function liveExecuteCommand($cmd)
+    /**
+     * @param string $cmd
+     *
+     * @return array
+     */
+    protected function liveExecuteCommand(string $cmd): array
     {
         if ($this->liveEcho) {
             // @codeCoverageIgnoreStart

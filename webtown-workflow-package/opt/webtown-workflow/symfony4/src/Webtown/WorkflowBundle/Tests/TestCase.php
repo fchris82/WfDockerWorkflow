@@ -22,6 +22,14 @@ class TestCase extends BaseTestCase
         return $this->getMethod(\get_class($object), $method)->invokeArgs($object, $args);
     }
 
+    protected function getProtectedProperty($object, $propertyName)
+    {
+        $class = new \ReflectionClass(\get_class($object));
+        $property = $class->getProperty($propertyName);
+        $property->setAccessible(true);
+        return $property->getValue($object);
+    }
+
     /**
      * @param string $class
      * @param string $methodName

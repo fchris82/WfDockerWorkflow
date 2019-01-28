@@ -131,7 +131,7 @@ abstract class BaseWizard implements WizardInterface
                 }
             }
         } catch (WizardSomethingIsRequiredException $e) {
-            $this->ioManager->getOutput()->writeln($e->getMessage());
+            $this->ioManager->writeln($e->getMessage());
         }
     }
 
