@@ -8,9 +8,15 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Environment;
 
+use Symfony\Component\Console\Output\BufferedOutput;
 
 class IoManager extends \App\Webtown\WorkflowBundle\Environment\IoManager
 {
+    public function __construct()
+    {
+        $this->output = new BufferedOutput();
+    }
+
     /**
      * @var array
      */

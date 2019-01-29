@@ -3,7 +3,7 @@
  * Created by IntelliJ IDEA.
  * User: chris
  * Date: 2019.01.28.
- * Time: 10:29
+ * Time: 14:07
  */
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Wizards;
@@ -11,7 +11,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Dummy\Wizards;
 
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 
-class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
+class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard
 {
     /**
      * @var BuildWizardEvent
@@ -26,7 +26,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
     /**
      * @var boolean
      */
-    private $isBuilt;
+    private $builtCheckFile;
 
     /**
      * @var boolean|\Exception
@@ -38,9 +38,14 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      */
     private $buildCall;
 
+    /**
+     * @var array
+     */
+    private $readVariables;
+
     public function getDefaultName()
     {
-        return static::class;
+        return '';
     }
 
     protected function init(BuildWizardEvent $event)
@@ -101,15 +106,20 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
     }
 
     /**
-     * @param bool $isBuilt
+     * @param string $builtCheckFile
      *
      * @return $this
      */
-    public function setIsBuilt(bool $isBuilt)
+    public function setBuiltCheckFile(string $builtCheckFile)
     {
-        $this->isBuilt = $isBuilt;
+        $this->builtCheckFile = $builtCheckFile;
 
         return $this;
+    }
+
+    protected function getBuiltCheckFile()
+    {
+        return $this->builtCheckFile;
     }
 
     /**
@@ -124,18 +134,23 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
         return $this;
     }
 
+    /**
+     * @param array $readVariables
+     *
+     * @return $this
+     */
+    public function setReadVariables(array $readVariables)
+    {
+        $this->readVariables = $readVariables;
+
+        return $this;
+    }
+
     public function isHidden()
     {
         return null === $this->isHidden
             ? parent::isHidden()
             : $this->isHidden;
-    }
-
-    public function isBuilt($targetProjectDirectory)
-    {
-        return null === $this->isBuilt
-            ? parent::isBuilt($targetProjectDirectory)
-            : $this->isBuilt;
     }
 
     public function checkRequires($targetProjectDirectory)
@@ -147,5 +162,12 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
         return null === $this->checkRequires
             ? parent::checkRequires($targetProjectDirectory)
             : $this->checkRequires;
+    }
+
+    protected function readSkeletonVars(BuildWizardEvent $event)
+    {
+        return null === $this->readVariables
+            ? parent::readSkeletonVars($event)
+            : $this->readVariables;
     }
 }

@@ -34,7 +34,7 @@ class BaseWizardTest extends TestCase
         );
         $targetProjectDirectory = __DIR__;
 
-        $this->assertEquals('', $baseWizard->getDefaultName());
+        $this->assertEquals('App\Webtown\WorkflowBundle\Tests\Dummy\Wizards\BaseWizard', $baseWizard->getDefaultName());
         $this->assertEquals('', $baseWizard->getDefaultGroup());
         $this->assertEquals('', $baseWizard->getInfo());
         $this->assertFalse($baseWizard->isHidden());

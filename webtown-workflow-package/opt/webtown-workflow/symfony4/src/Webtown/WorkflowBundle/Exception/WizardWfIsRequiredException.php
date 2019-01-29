@@ -12,12 +12,40 @@ use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 
 class WizardWfIsRequiredException extends WizardSomethingIsRequiredException
 {
-    public function __construct(BaseWizard $wizard, $targetProjectPath, string $message = '', int $code = 0, \Throwable $previous = null)
+    /**
+     * @var BaseWizard
+     */
+    protected $wizard;
+
+    /**
+     * @var string
+     */
+    protected $targetProjectPath;
+
+    public function __construct(BaseWizard $wizard, string $targetProjectPath, string $message = '', int $code = 0, \Throwable $previous = null)
     {
+        $this->wizard = $wizard;
+        $this->targetProjectPath = $targetProjectPath;
         if (!$message) {
             $message = sprintf('The `%s` wizard needs initialized and configured WF! (Target path: `%s`)', $wizard->getDefaultName(), $targetProjectPath);
         }
 
         parent::__construct($message, $code, $previous);
+    }
+
+    /**
+     * @return BaseWizard
+     */
+    public function getWizard(): BaseWizard
+    {
+        return $this->wizard;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTargetProjectPath(): string
+    {
+        return $this->targetProjectPath;
     }
 }

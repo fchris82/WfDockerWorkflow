@@ -73,7 +73,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
      * @throws WizardHasAlreadyBuiltException
      * @throws \Exception
      */
-    public function initBuild(BuildWizardEvent $event)
+    protected function initBuild(BuildWizardEvent $event)
     {
         parent::initBuild($event);
 
