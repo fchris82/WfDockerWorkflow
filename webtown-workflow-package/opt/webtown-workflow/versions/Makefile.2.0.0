@@ -18,13 +18,19 @@ Docker
 About log
 ---------
 
-    If you want to truncate the log directory, you need \033[37msudo\033[0m on host!
+    You can use the \033[33mwf logs\033[0m that exactly a \033[33mdocker-compose log\033[0m alias:
 
-    # find the container ID by name (yes, you have to use 2 different commands)
-    \033[33mwf ps --services\033[0m
-    \033[33mwf ps -q\033[0m
-    # truncate the log file
-    \033[37msudo\033[33m sh -c "truncate -s 0 /var/lib/docker/containers/\033[32m[ID]\033[33m/\033[32m[ID]\033[33m-json.log"\033[0m
+    # List full log of container
+    \033[33mwf logs \033[0m<name>
+    # List last 5 rows
+    \033[33mwf logs --tail 5 \033[0m<name>
+    # List last 5 rows with timestamp information
+    \033[33mwf logs -t --tail 5 \033[0m<name>
+    # List last 5 rows with timestamp into file:
+    \033[33mwf logs -t --no-color --tail 5 \033[0m<name> \033[33m>\033[0m log.txt
+
+    You can use the \033[33mdocker logs\033[0m command with \033[33m--since\033[0m and \033[33m--until\033[0m options:
+    \033[33mdocker logs --since \033[37m20m\033[33m --until \033[37m10m\033[0m xxxxxxxxxxxxx_engine_1
 endef
 export PROJECT_INFO
 
