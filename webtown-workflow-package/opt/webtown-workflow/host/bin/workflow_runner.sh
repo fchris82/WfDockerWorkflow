@@ -12,6 +12,9 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
+# If user defined docker image doesn't exist, we have to build it first of all. It can miss after a docker prune command.
+[ -z "$(docker images -q ${USER}/wf-user)" ] && docker build --no-cache --pull -t ${USER}/wf-user ~/.webtown-workflow
+
 # You can use the `--develop` to enable it without edit config
 if [ "$1" == "--develop" ]; then
     shift
@@ -200,4 +203,4 @@ docker run ${TTY} \
             -v /var/run/docker.sock:/var/run/docker.sock \
             ${DOCKER_DEVELOP_PATH_VOLUME} \
             ${WORKFLOW_CONFIG} \
-            ${WF_IMAGE:-${USER}/wf} ${CMD} ${@}
+            ${WF_IMAGE:-${USER}/wf-user} ${CMD} ${@}

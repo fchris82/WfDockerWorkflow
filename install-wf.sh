@@ -18,7 +18,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Build command
 function build {
-    docker build --no-cache --pull -t ${USER}/wf ~/.webtown-workflow
+    docker build --no-cache --pull -t ${USER}/wf-user ~/.webtown-workflow
 }
 
 # Colors
@@ -36,7 +36,7 @@ BASE_IMAGE=${1:-"fchris82/wf"}
 # Refresh
 if [ -f ~/.webtown-workflow/Dockerfile ]; then
     build
-    IMAGE=${USER}/wf
+    IMAGE=${USER}/wf-user
 else
     docker pull ${BASE_IMAGE}
     IMAGE=${BASE_IMAGE}
