@@ -70,7 +70,7 @@ test:phpunit:
     stage: test
     <<: *all_jobs
     script:
-        - wf sfcmd bin/phpunit
+        - wf sfcmd vendor/bin/phpunit
     # Change cache policy to make faster the CI pipeline
     cache:
         key: ${CI_PIPELINE_ID}

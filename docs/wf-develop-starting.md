@@ -70,7 +70,7 @@ If you use the `--develop` attribute, the program create a docker volume to over
 > $ wfdev wf --sf-run vendor/bin/php-cs-fixer fix --dry-run --config=.php_cs.dist
 >
 > # Run PHPUnit
-> $ wfdev wf --sf-run bin/phpunit /opt/webtown-workflow/symfony4/tests/Tool
+> $ wfdev wf --sf-run vendor/bin/phpunit
 > ```
 
 ## Cache !!!
