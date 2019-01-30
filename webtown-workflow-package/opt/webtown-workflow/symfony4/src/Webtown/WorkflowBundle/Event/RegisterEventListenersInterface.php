@@ -15,8 +15,6 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  *
  * We want to register some recipes, but only that what we are using. So the EventSubscriberInterface isn't good for us
  * for this situations. The solution is this interface.
- *
- * @package App\Webtown\WorkflowBundle\Event
  */
 interface RegisterEventListenersInterface
 {

@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemWithoutConfigurationRecipe;
 
-
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 
 class SystemWithoutConfigurationRecipe extends SystemRecipe

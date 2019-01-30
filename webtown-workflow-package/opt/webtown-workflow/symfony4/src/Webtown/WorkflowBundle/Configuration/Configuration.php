@@ -8,14 +8,12 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
-use App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
 use App\Webtown\WorkflowBundle\Exception\RecipeHasNotConfigurationException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
@@ -196,9 +194,9 @@ class Configuration implements ConfigurationInterface
      * @param array  $config
      * @param string $wfVersion
      *
-     * @return bool|void
-     *
      * @throws InvalidWfVersionException
+     *
+     * @return bool|void
      */
     protected function validateWfVersion($config, $wfVersion)
     {

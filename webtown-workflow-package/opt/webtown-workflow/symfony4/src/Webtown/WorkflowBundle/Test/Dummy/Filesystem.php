@@ -57,6 +57,7 @@ class Filesystem extends BaseFilesystem
     public function getContents()
     {
         ksort($this->contents);
+
         return $this->contents;
     }
 

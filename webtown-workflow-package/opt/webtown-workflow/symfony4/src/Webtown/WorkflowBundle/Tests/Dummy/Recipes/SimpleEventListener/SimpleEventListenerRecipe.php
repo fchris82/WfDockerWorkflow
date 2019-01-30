@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleEventListener;
 
-
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
@@ -91,7 +90,7 @@ class SimpleEventListenerRecipe extends BaseRecipe implements RegisterEventListe
 
     public function skipFile(DumpFileEvent $event)
     {
-        if ($event->getSkeletonFile()->getFileName() == 'skip.txt') {
+        if ('skip.txt' == $event->getSkeletonFile()->getFileName()) {
             throw new SkipSkeletonFileException();
         }
     }

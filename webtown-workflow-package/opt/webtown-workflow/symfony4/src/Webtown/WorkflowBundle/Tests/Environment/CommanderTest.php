@@ -10,12 +10,12 @@ namespace App\Webtown\WorkflowBundle\Tests\Environment;
 
 use App\Webtown\WorkflowBundle\Configuration\Configuration;
 use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
 use App\Webtown\WorkflowBundle\Exception\CommanderRunException;
-use Symfony\Component\Filesystem\Filesystem;
-use PHPUnit\Framework\TestCase;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Environment\IoManager;
 use Mockery as m;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 
 class CommanderTest extends TestCase
 {
@@ -47,7 +47,7 @@ class CommanderTest extends TestCase
         $commander->setLiveEcho(false);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         $commander->cd($workdir);
@@ -66,7 +66,7 @@ class CommanderTest extends TestCase
         return [
             [__DIR__, 'ls', [
                 '[exec] <comment>cd ' . __DIR__ . ' <question>&&</question> ls</comment>',
-                '[<info>OK</info>] cd ' . __DIR__ . ' <question>&&</question> ls'
+                '[<info>OK</info>] cd ' . __DIR__ . ' <question>&&</question> ls',
             ], "CommanderTest.php\nEzEnvironmentParserTest.php\nMicroParser\nSymfonyEnvironmentParserTest.php\nWfEnvironmentParserTest.php"],
             [__DIR__, 'ls -e', [
                 '[exec] <comment>cd ' . __DIR__ . ' <question>&&</question> ls -e</comment>',
@@ -95,7 +95,7 @@ class CommanderTest extends TestCase
         $commander->setLiveEcho(false);
 
         if ($result instanceof \Exception) {
-            $this->expectException(get_class($result));
+            $this->expectException(\get_class($result));
         }
 
         try {
@@ -129,7 +129,7 @@ class CommanderTest extends TestCase
         return [
             ['${HOME}', 'ls', [
                 '[exec] <comment>cd ${HOME} <question>&&</question> ls</comment>',
-                '[<info>OK</info>] cd ${HOME} <question>&&</question> ls'
+                '[<info>OK</info>] cd ${HOME} <question>&&</question> ls',
             ], ''],
             ['${HOME}', 'ls -e', [
                 '[exec] <comment>cd ${HOME} <question>&&</question> ls -e</comment>',

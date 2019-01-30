@@ -14,7 +14,6 @@ use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 

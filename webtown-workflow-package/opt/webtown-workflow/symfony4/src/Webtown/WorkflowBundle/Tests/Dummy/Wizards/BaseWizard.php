@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Wizards;
 
-
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 
 class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
@@ -19,17 +18,17 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
     private $event;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isHidden;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isBuilt;
 
     /**
-     * @var boolean|\Exception
+     * @var bool|\Exception
      */
     private $checkRequires;
 
@@ -52,8 +51,8 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
     protected function build(BuildWizardEvent $event)
     {
         $this->registerCall($event, __METHOD__);
-        if (is_callable($this->buildCall)) {
-            call_user_func($this->buildCall, $event);
+        if (\is_callable($this->buildCall)) {
+            \call_user_func($this->buildCall, $event);
         }
     }
 

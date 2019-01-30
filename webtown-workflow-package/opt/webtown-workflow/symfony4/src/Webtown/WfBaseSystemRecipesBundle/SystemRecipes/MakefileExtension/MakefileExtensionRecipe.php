@@ -8,16 +8,11 @@
 
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension;
 
-use App\Webtown\WorkflowBundle\Configuration\Builder;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class Recipe

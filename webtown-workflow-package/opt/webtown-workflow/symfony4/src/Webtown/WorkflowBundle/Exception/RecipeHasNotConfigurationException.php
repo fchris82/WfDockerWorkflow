@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Exception;
 
-
 class RecipeHasNotConfigurationException extends \Exception
 {
 }

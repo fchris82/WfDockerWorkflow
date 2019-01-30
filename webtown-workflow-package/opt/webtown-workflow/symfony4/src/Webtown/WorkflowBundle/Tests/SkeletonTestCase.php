@@ -18,16 +18,17 @@ class SkeletonTestCase extends TestCase
     /**
      * @param array $classes
      *
-     * @return \Twig_Environment
      * @throws \ReflectionException
      * @throws \Twig_Error_Loader
+     *
+     * @return \Twig_Environment
      */
     protected function buildTwig(array $classes = [])
     {
         $twigLoader = new \Twig_Loader_Filesystem();
         foreach ($classes as $class) {
             $reflClass = new \ReflectionClass($class);
-            $path = dirname($reflClass->getFileName());
+            $path = \dirname($reflClass->getFileName());
             $namespace = SkeletonHelper::generateTwigNamespace($reflClass);
             $twigLoader->addPath($path, $namespace);
         }
@@ -56,12 +57,13 @@ class SkeletonTestCase extends TestCase
      *
      * @return array
      */
-    protected function convertSkeletonFilesToArray(array $skeletonFiles) {
+    protected function convertSkeletonFilesToArray(array $skeletonFiles)
+    {
         $array = [];
         foreach ($skeletonFiles as $skeletonFile) {
             $contents = sprintf(
                 "# Class: %s\n# HandleExisting: %s\n%s",
-                get_class($skeletonFile),
+                \get_class($skeletonFile),
                 $skeletonFile->getHandleExisting(),
                 $skeletonFile->getContents()
             );
@@ -73,7 +75,8 @@ class SkeletonTestCase extends TestCase
         return $array;
     }
 
-    protected function convertDirectoryToArray($directory) {
+    protected function convertDirectoryToArray($directory)
+    {
         $files = Finder::create()
             ->files()
             ->in($directory)
@@ -96,7 +99,7 @@ class SkeletonTestCase extends TestCase
 
     protected function buildSkeletonFile($skeletonClass, $relativePathname, $content)
     {
-        $fileinfo = new SplFileInfo($relativePathname, dirname($relativePathname), $relativePathname);
+        $fileinfo = new SplFileInfo($relativePathname, \dirname($relativePathname), $relativePathname);
         /** @var SkeletonFile $skeletonFile */
         $skeletonFile = new $skeletonClass($fileinfo);
         $skeletonFile->setContents($content);

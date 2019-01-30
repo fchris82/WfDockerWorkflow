@@ -27,6 +27,7 @@ class TestCase extends BaseTestCase
         $class = new \ReflectionClass(\get_class($object));
         $property = $class->getProperty($propertyName);
         $property->setAccessible(true);
+
         return $property->getValue($object);
     }
 

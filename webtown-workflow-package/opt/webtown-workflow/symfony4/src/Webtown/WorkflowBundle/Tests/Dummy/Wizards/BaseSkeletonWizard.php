@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Wizards;
 
-
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 
 class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard
@@ -19,17 +18,17 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
     private $event;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $isHidden;
 
     /**
-     * @var boolean
+     * @var bool
      */
     private $builtCheckFile;
 
     /**
-     * @var boolean|\Exception
+     * @var bool|\Exception
      */
     private $checkRequires;
 
@@ -57,8 +56,8 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
     protected function build(BuildWizardEvent $event)
     {
         $this->registerCall($event, __METHOD__);
-        if (is_callable($this->buildCall)) {
-            call_user_func($this->buildCall, $event);
+        if (\is_callable($this->buildCall)) {
+            \call_user_func($this->buildCall, $event);
         }
     }
 

@@ -10,8 +10,8 @@ namespace App\Webtown\WorkflowBundle\Tests\Wizards;
 
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Environment\IoManager as IoManagerDummy;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use App\Webtown\WorkflowBundle\Tests\Dummy\Environment\IoManager as IoManagerDummy;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Wizards\BaseWizard;
 use App\Webtown\WorkflowBundle\Tests\TestCase;
 use Mockery as m;

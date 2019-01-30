@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Configuration;
 
-
 class Environment extends \App\Webtown\WorkflowBundle\Configuration\Environment
 {
     public function setEnv($env)

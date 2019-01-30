@@ -11,8 +11,6 @@ namespace App\Webtown\WorkflowBundle\Tests\Configuration;
 use App\Webtown\WorkflowBundle\Configuration\Builder;
 use App\Webtown\WorkflowBundle\Configuration\RecipeManager;
 use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Configurable\ConfigurableRecipe;
@@ -21,10 +19,10 @@ use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleEventListener\SimpleEve
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkip\SimpleSkipRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkipFile\SimpleSkipFileRecipe;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemRecipe\SystemRecipe;
+use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Mockery as m;
 
 class BuilderTest extends TestCase
 {
@@ -46,12 +44,12 @@ class BuilderTest extends TestCase
     }
 
     /**
-     * @param                 $projectPath
-     * @param array           $preSystemRecipes
-     * @param array           $recipeClasses
-     * @param array           $postSystemRecipes
-     * @param array           $config
-     * @param array           $result
+     * @param       $projectPath
+     * @param array $preSystemRecipes
+     * @param array $recipeClasses
+     * @param array $postSystemRecipes
+     * @param array $config
+     * @param array $result
      *
      * @throws \App\Webtown\WorkflowBundle\Exception\MissingRecipeException
      * @throws \Exception
@@ -96,7 +94,7 @@ class BuilderTest extends TestCase
         }
 
         foreach ($recipeClasses as $recipeClass) {
-            switch($recipeClass) {
+            switch ($recipeClass) {
                 case ConflictWithSimpleEventListenerRecipe::class:
                     $recipe = new $recipeClass($filesystem, $twig, $eventDispatcher);
                     break;
@@ -181,7 +179,7 @@ class BuilderTest extends TestCase
                     'alias/.gitkeep'    => '',
                     'alias/.wf'         => Filesystem::DIRECTORY_ID,
                     'alias/.wf/.data'   => Filesystem::DIRECTORY_ID,
-                ]
+                ],
             ],
             [ // Simple test with recipes, starting with empty directory
                 $baseDir . 'empty',         // $targetDirectory
@@ -205,7 +203,7 @@ class BuilderTest extends TestCase
                     'alias/.wf/simple_skip_file/examples'                   => Filesystem::DIRECTORY_ID,
                     'alias/.wf/simple_skip_file/templates/README.md'        => "This is a README.md\n",
                     'alias/.wf/simple_skip_file/templates/test.sh'          => '',
-                ]
+                ],
             ],
             [ // Simple test with recipes, starting with empty directory + testing the SkeletonBuildBaseEvents::BEFORE_DUMP_TARGET_EXISTS event
                 $baseDir . 'empty',         // $targetDirectory
@@ -234,7 +232,7 @@ class BuilderTest extends TestCase
                     'alias/.wf/simple_skip_file/examples'                               => Filesystem::DIRECTORY_ID,
                     'alias/.wf/simple_skip_file/templates/README.md'                    => "This is a README.md\n",
                     'alias/.wf/simple_skip_file/templates/test.sh'                      => '',
-                ]
+                ],
             ],
             [ // Simple test with pre, post and a configurable recipe. Starting with empty directory.
                 $baseDir . 'empty',         // $targetDirectory
@@ -242,7 +240,7 @@ class BuilderTest extends TestCase
                 [                           // $recipeClasses
                     ConfigurableRecipe::class,
                 ],
-                ['post' => $postDefinition],// $postSystemRecipes
+                ['post' => $postDefinition], // $postSystemRecipes
                 $testConfig,                // $config
                 [                           // $result
                     'alias/.gitkeep'            => '',
@@ -250,7 +248,7 @@ class BuilderTest extends TestCase
                     'alias/.wf/post/.gitkeep'   => "testproject\n",
                     'alias/.wf'                                     => Filesystem::DIRECTORY_ID,
                     'alias/.wf/.data'                               => Filesystem::DIRECTORY_ID,
-                ]
+                ],
             ],
             [ // Simple test without recipes, starting with existing directory. It should be delete all non hidden files and directories!
                 $baseDir . 'existing',      // $targetDirectory
@@ -261,7 +259,7 @@ class BuilderTest extends TestCase
                 [                           // $result
                     'alias/.gitkeep' => '',
                     'alias/.wf/.data/data.file' => '',
-                ]
+                ],
             ],
             [ // Simple test with pre, post and a configurable recipe. Starting with an existing directory.
                 $baseDir . 'existing',      // $targetDirectory
@@ -269,14 +267,14 @@ class BuilderTest extends TestCase
                 [                           // $recipeClasses
                     ConfigurableRecipe::class,
                 ],
-                ['post' => $postDefinition],// $postSystemRecipes
+                ['post' => $postDefinition], // $postSystemRecipes
                 $testConfig,                // $config
                 [                           // $result
                     'alias/.gitkeep'            => '',
                     'alias/.wf/pre/.gitkeep'    => "testproject\n",
                     'alias/.wf/post/.gitkeep'   => "testproject\n",
                     'alias/.wf/.data/data.file' => '',
-                ]
+                ],
             ],
         ];
     }

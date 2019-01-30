@@ -66,9 +66,9 @@ class Commander
      * @param string      $cmd
      * @param string|null $workdir
      *
-     * @return string
-     *
      * @throws CommanderRunException
+     *
+     * @return string
      */
     public function run(string $cmd, string $workdir = null): string
     {
@@ -105,9 +105,9 @@ class Commander
      * @param string      $extraParameters
      * @param string|null $workdir
      *
-     * @return string
-     *
      * @throws CommanderRunException
+     *
+     * @return string
      */
     public function runCmdInContainer(string $cmd, string $image, string $extraParameters = '', string $workdir = null): string
     {

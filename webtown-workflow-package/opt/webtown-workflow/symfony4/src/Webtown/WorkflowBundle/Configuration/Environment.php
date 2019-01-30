@@ -22,7 +22,7 @@ class Environment
     const CONFIG_ENV_FILE           = 'WF_ENV_FILE_NAME';
 
     /**
-     * @var null|array
+     * @var array|null
      */
     protected $env;
 

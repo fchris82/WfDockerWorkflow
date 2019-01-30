@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemRecipe;
 
-
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 

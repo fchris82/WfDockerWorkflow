@@ -353,9 +353,9 @@ EOS;
     }
 
     /**
-     * @param string  $directory
-     * @param string  $newDirName
-     * @param boolean $existed
+     * @param string $directory
+     * @param string $newDirName
+     * @param bool   $existed
      *
      * @dataProvider dpMkdir
      */

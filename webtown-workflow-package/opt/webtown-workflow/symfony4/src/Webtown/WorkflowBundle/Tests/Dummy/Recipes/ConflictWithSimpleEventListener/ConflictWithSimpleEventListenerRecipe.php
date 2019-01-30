@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\ConflictWithSimpleEventListener;
 
-
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;

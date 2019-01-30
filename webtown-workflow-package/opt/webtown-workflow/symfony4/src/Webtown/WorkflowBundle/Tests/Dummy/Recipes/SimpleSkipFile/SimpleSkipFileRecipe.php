@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SimpleSkipFile;
 
-use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Finder\SplFileInfo;
@@ -22,7 +21,7 @@ class SimpleSkipFileRecipe extends BaseRecipe
 
     public function buildSkeletonFile(SplFileInfo $fileInfo, $config)
     {
-        if ($fileInfo->getFilename() == 'skip.txt') {
+        if ('skip.txt' == $fileInfo->getFilename()) {
             throw new SkipSkeletonFileException();
         }
 
