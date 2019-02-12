@@ -24,7 +24,7 @@
 {{ range $host, $containers := groupByMulti $ "Env.VIRTUAL_HOST" "," }}
 {{/* Get the VIRTUAL_PROTO defined by containers w/ the same vhost, falling back to "http" */}}
 {{ $proto := trim (or (first (groupByKeys $containers "Env.VIRTUAL_PROTO")) "http") }}
-            <li><a href="{{ trim $proto }}://{{ trim $host}}">{{ trim $proto }}://{{ trim $host}}</a></li>
+            <li><a href="{{ trim $proto }}://{{ trim $host }}">{{ trim $proto }}://{{ trim $host }}</a></li>
 {{ else }}
             <li><mark>There are not any available services!</mark></li>
 {{ end }}
