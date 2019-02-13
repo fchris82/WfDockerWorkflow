@@ -1,4 +1,4 @@
-DOCKER_CLI_NAME		:= engine
+DOCKER_CLI_NAME		:= {{ names.engine }}
 DOCKER_DOC_ROOT		:= /var/www
 
 XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}

@@ -1,7 +1,7 @@
 version: "{{ config.docker_compose.version }}"
 
 services:
-    engine:
+    {{ names.engine }}:
         environment:
             SYMFONY_ENV:                  {{ env }}
             SYMFONY_DEBUG:                ~

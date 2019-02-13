@@ -11,6 +11,7 @@ namespace App\Recipes\Symfony;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -83,6 +84,48 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                 ->booleanNode('share_base_user_configs')
                     ->info('<comment>Here you can switch off or on to use user\'s .gitconfig, .ssh and .composer configs. Maybe you should switch off on CI.</comment>')
                     ->defaultTrue()
+                ->end()
+                ->arrayNode('names')
+                    ->info('<comment>You can change the service names</comment>')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('engine')
+                            ->info('<comment>The name of engine/default cli service</comment>')
+                            ->cannotBeEmpty()
+                            ->defaultValue('engine')
+                            ->validate()
+                                ->always(function($v) {
+                                    $v = trim($v);
+                                    if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
+                                        throw new InvalidConfigurationException(sprintf(
+                                            'The `%s` service name is invalid! You have to use only `[a-zA-Z0-9_.-]` characters.',
+                                            $v
+                                        ));
+                                    }
+
+                                    return $v;
+                                })
+                            ->end()
+                        ->end()
+                        ->scalarNode('web')
+                            ->info('<comment>The name of web service</comment>')
+                            ->cannotBeEmpty()
+                            ->defaultValue('web')
+                            ->validate()
+                                ->always(function($v) {
+                                    $v = trim($v);
+                                    if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
+                                        throw new InvalidConfigurationException(sprintf(
+                                            'The `%s` service name is invalid! You have to use only `[a-zA-Z0-9_.-]` characters.',
+                                            $v
+                                        ));
+                                    }
+
+                                    return $v;
+                                })
+                            ->end()
+                        ->end()
+                    ->end()
                 ->end()
                 ->arrayNode('server')
                     ->info('<comment>Server configuration</comment>')
