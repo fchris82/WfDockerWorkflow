@@ -1,12 +1,13 @@
 version: "{{ config.docker_compose.version }}"
 
+{% set pd = (project_dir != '.' ? project_dir : '') %}
 services:
     {{ names.web }}:
         image: nginx:latest
         links:
             - {{ names.engine }}:php
         volumes:
-            - "${BASE_DIRECTORY}/{{ project_dir|default('.') != '.' ? project_dir : '${PROJECT_DIR_NAME}' }}:${DOCKER_DOC_ROOT}/{{ project_dir|default('.') != '.' ? project_dir : '${PROJECT_DIR_NAME}' }}"
+            - "${BASE_DIRECTORY}/{{ pd|default('${PROJECT_DIR_NAME}') }}:${DOCKER_DOC_ROOT}/{{ pd|default('${PROJECT_DIR_NAME}') }}"
             - "{{ recipe_path }}/etc/vhost.conf:/etc/nginx/conf.d/default.conf:ro"
             - "{{ recipe_path }}/etc/.htpasswd:/etc/nginx/.htpasswd:ro"
         command: {{ server.nginx_debug ? 'nginx-debug' : 'nginx' }} -g 'daemon off;'
@@ -39,6 +40,6 @@ services:
             ERROR_LOG_ENABLED: {{ server.error_log ? '1' : '0' }}
         volumes:
             # Full project files
-            - "${BASE_DIRECTORY}{{ project_dir|default('.') != '.' ? '/' ~ project_dir : '' }}:${DOCKER_DOC_ROOT}{{ project_dir|default('.') != '.' ? '/' ~ project_dir : '' }}"
+            - "${BASE_DIRECTORY}{{ pd ? '/' ~ pd : '' }}:${DOCKER_DOC_ROOT}{{ pd ? '/' ~ pd : '' }}"
         # It is important to avoid "Exit 0"
         tty: true

@@ -172,6 +172,7 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                         ->end()
                     ->end()
                 ->end()
+                // @todo (Chris) Itt validálni kellene, hogy a könyvtár létezik-e
                 ->scalarNode('project_dir')
                     ->info('<comment>You have to set a subdirectory</comment>')
                     ->cannotBeEmpty()

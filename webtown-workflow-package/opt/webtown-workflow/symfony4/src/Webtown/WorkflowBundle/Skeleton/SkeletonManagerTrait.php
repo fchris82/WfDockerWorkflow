@@ -126,6 +126,7 @@ trait SkeletonManagerTrait
         }
 
         $skeletonFiles = [];
+        // We don't handle the overridden files here, just later. You can use the original or the new file in an event handler.
         foreach ($pathsWithTwigNamespace as $twigNamespace => $path) {
             $skeletonFinder = Finder::create()
                 ->files()

@@ -98,10 +98,10 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
 
         switch (true) {
             case $skeletonFile instanceof MakefileSkeletonFile:
-                $this->makefiles[] = $skeletonFile->getRelativePathname();
+                $this->makefiles[$skeletonFile->getRelativePathname()] = $skeletonFile->getRelativePathname();
                 break;
             case $skeletonFile instanceof DockerComposeSkeletonFile:
-                $this->dockerComposeFiles[] = $skeletonFile->getRelativePathname();
+                $this->dockerComposeFiles[$skeletonFile->getRelativePathname()] = $skeletonFile->getRelativePathname();
                 break;
         }
     }
