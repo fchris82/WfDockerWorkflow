@@ -1,12 +1,6 @@
 /*
 !.gitignore
-!BaseRecipe.php
-!HiddenRecipe.php
 
-!../Webtown/WorkflowBundle/Recipes/_
-!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/Base
-!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/Commands
-!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/DockerComposeExtension
 !GitFlow
 !GitlabCi
 !GitlabCiWebtownRunner
@@ -17,7 +11,6 @@
 !NginxReverseProxy
 !Php
 !PhpDeployerEnvironment
-!../Webtown/WfBaseSystemRecipesBundle/SystemRecipes/PostBase
 !Symfony
 !Symfony2
 !Symfony3
@@ -25,3 +18,4 @@
 !SymfonyEz1
 !SymfonyEz2
 !UserFix
+!WebtownSymfonyEz2Extension

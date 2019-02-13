@@ -172,6 +172,11 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                         ->end()
                     ->end()
                 ->end()
+                ->scalarNode('project_dir')
+                    ->info('<comment>You have to set a subdirectory</comment>')
+                    ->cannotBeEmpty()
+                    ->defaultValue('.')
+                ->end()
             ->end()
         ;
 
