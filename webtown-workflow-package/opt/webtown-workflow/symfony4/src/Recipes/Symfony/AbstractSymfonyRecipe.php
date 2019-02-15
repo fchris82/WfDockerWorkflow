@@ -8,10 +8,13 @@
 
 namespace App\Recipes\Symfony;
 
+use App\Webtown\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -19,12 +22,17 @@ use Symfony\Component\Finder\SplFileInfo;
  *
  * Symfony friendly environment
  */
-class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
+class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe, EventSubscriberInterface
 {
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
     const DEFAULT_VERSION = 'php7.2';
+
+    /**
+     * @var string
+     */
+    protected $projectPath;
 
     public function getName()
     {
@@ -40,6 +48,36 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
             ],
             parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
         );
+    }
+
+    /**
+     * Returns an array of event names this subscriber wants to listen to.
+     *
+     * The array keys are event names and the value can be:
+     *
+     *  * The method name to call (priority defaults to 0)
+     *  * An array composed of the method name to call and the priority
+     *  * An array of arrays composed of the method names to call and respective
+     *    priorities, or 0 if unset
+     *
+     * For instance:
+     *
+     *  * array('eventName' => 'methodName')
+     *  * array('eventName' => array('methodName', $priority))
+     *  * array('eventName' => array(array('methodName1', $priority), array('methodName2')))
+     *
+     * @return array The event names to listen to
+     */
+    public static function getSubscribedEvents()
+    {
+        return [
+            ConfigurationEvents::PRE_PROCESS_CONFIGURATION => 'preProcessConfiguration',
+        ];
+    }
+
+    public function preProcessConfiguration(PreProcessConfigurationEvent $event)
+    {
+        $this->projectPath = $event->getProjectPath();
     }
 
     public function getConfig()
@@ -172,11 +210,27 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                         ->end()
                     ->end()
                 ->end()
-                // @todo (Chris) Itt validálni kellene, hogy a könyvtár létezik-e
                 ->scalarNode('project_dir')
-                    ->info('<comment>You have to set a subdirectory</comment>')
+                    ->info('<comment>You can set a subdirectory where the doc root is.</comment>')
                     ->cannotBeEmpty()
                     ->defaultValue('.')
+                    ->validate()
+                        ->always(function($v) {
+                            $v = trim($v);
+                            $path = $v[0] == DIRECTORY_SEPARATOR
+                                ? $v
+                                : rtrim($this->projectPath, '\\/') . DIRECTORY_SEPARATOR . $v;
+                            if (!file_exists($path)) {
+                                throw new InvalidConfigurationException(sprintf(
+                                    'The `%s` project dir is invalid, because it doesn\'t exist! (Full path where we tried to find: `%s`)',
+                                    $v,
+                                    $path
+                                ));
+                            }
+
+                            return $v;
+                        })
+                    ->end()
                 ->end()
             ->end()
         ;

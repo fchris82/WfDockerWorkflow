@@ -8,6 +8,8 @@
 
 namespace App\Webtown\WorkflowBundle\Configuration;
 
+use App\Webtown\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
+use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
 use App\Webtown\WorkflowBundle\Exception\RecipeHasNotConfigurationException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
@@ -19,6 +21,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Parser;
 
@@ -37,6 +41,11 @@ class Configuration implements ConfigurationInterface
     protected $filesystem;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @var Parser
      */
     protected $ymlParser;
@@ -49,13 +58,15 @@ class Configuration implements ConfigurationInterface
     /**
      * Configuration constructor.
      *
-     * @param RecipeManager $recipeManager
-     * @param Filesystem    $filesystem
+     * @param RecipeManager            $recipeManager
+     * @param Filesystem               $filesystem
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(RecipeManager $recipeManager, Filesystem $filesystem)
+    public function __construct(RecipeManager $recipeManager, Filesystem $filesystem, EventDispatcherInterface $eventDispatcher)
     {
         $this->recipeManager = $recipeManager;
         $this->filesystem = $filesystem;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -78,8 +89,11 @@ class Configuration implements ConfigurationInterface
             : $pwd . '/' . $configFile;
         $baseConfig = $this->readConfig($ymlFilePath);
 
+        $event = new PreProcessConfigurationEvent($baseConfig, $pwd, $wfVersion);
+        $this->eventDispatcher->dispatch(ConfigurationEvents::PRE_PROCESS_CONFIGURATION, $event);
+
         $processor = new Processor();
-        $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $baseConfig]);
+        $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $event->getConfig()]);
 
         // Check the WF version is correct!
         $this->validateWfVersion($fullConfig, $wfVersion);

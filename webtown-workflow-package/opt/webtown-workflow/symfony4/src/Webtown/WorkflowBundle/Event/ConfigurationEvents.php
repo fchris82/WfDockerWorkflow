@@ -9,11 +9,17 @@
 namespace App\Webtown\WorkflowBundle\Event;
 
 use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use App\Webtown\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
 use App\Webtown\WorkflowBundle\Event\Configuration\RegisterEvent;
 use App\Webtown\WorkflowBundle\Event\Configuration\VerboseInfoEvent;
 
 class ConfigurationEvents
 {
+    /**
+     * @see PreProcessConfigurationEvent
+     */
+    const PRE_PROCESS_CONFIGURATION = 'app.configuration.event.pre_process_configuration';
+
     /**
      * @see BuildInitEvent
      */
