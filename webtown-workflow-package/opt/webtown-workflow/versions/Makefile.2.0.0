@@ -129,8 +129,9 @@ __docker_debug_enter: up
 
 .PHONY: __docker_rebuild
 __docker_rebuild: DOCKER_USER_CONFIG_FILES := $(DOCKER_BUILD_CONFIG_FILES)
+__docker_rebuild: CONTAINER := $(if $(ARGS),$(ARGS),$(DOCKER_CLI_NAME))
 __docker_rebuild: down
-	$(CMD_DOCKER_BASE) build --no-cache --pull $(DOCKER_CLI_NAME)
+	$(CMD_DOCKER_BASE) build --no-cache --pull $(CONTAINER)
 
 .PHONY: __docker_ps
 __docker_ps:
