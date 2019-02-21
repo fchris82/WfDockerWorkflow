@@ -39,14 +39,18 @@
     editor.setOptions({
         enableBasicAutocompletion: true,
         enableSnippets: true,
-        enableLiveAutocompletion: false
+        enableLiveAutocompletion: true
     });
     var compConfig = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'full_config.json') ?>;
     function getLineDepth(lines, row) {
-        return lines[row][0].value.split(' ').length - 1;
+        return $.isArray(lines[row]) && lines[row].length > 0
+            ? lines[row][0].value.split(' ').length - 1
+            : 0;
     }
     function getLineKey(lines, row) {
-        return lines[row][0].type === 'meta.tag' ? lines[row][0].value.trim() : null;
+        return $.isArray(lines[row]) && lines[row].length > 0 && lines[row][0].type === 'meta.tag'
+            ? lines[row][0].value.trim()
+            : null;
     }
     function getConfigWords(target) {
         var current = compConfig, key;
@@ -69,18 +73,27 @@
         getCompletions: function(editor, session, pos, prefix, callback) {
             var wordList = [];
             var lines = session.bgTokenizer.lines;
-            var depth, key, chain = [], usedWords = [], currentDepth = getLineDepth(lines, pos.row), currentKey = getLineKey(lines, pos.row);
+            var depth, key, chain = [], usedWords = [],
+                currentDepth = getLineDepth(lines, pos.row) ? getLineDepth(lines, pos.row) : pos.column - prefix.length,
+                currentKey = getLineKey(lines, pos.row);
+            // We go backwards to find the "breadcrumbs"
             for (var i=pos.row;i>=0;i--) {
-                if (typeof lines[i] === 'object') {
+                // The current line is the `lines[i]`. If the line is object (Array) && the line isn't empty...
+                if ($.isArray(lines[i]) && lines[i].length > 0) {
+                    // If the first "tag"/"word" is a `meta.tag`
                     if (lines[i][0].type === 'meta.tag') {
                         key = getLineKey(lines, i);
                         depth = getLineDepth(lines, i);
+                        // If the key isn't null
                         if (typeof key === 'string') {
+                            // If the current key is a parent (the first is the real parent)
                             if (depth < currentDepth && !chain.hasOwnProperty(depth)) {
                                 chain[depth] = key;
-                            } else if (depth === currentDepth) {
+                            // Collecting the used words. Same depth and below the first parent
+                            } else if (depth === currentDepth && chain.length === 0) {
                                 usedWords.push(key);
                             }
+                            // If we found the top parent
                             if (depth === 0) {
                                 break;
                             }
