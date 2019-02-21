@@ -213,14 +213,12 @@ class ReconfigureCommand extends Command
         switch ($ext) {
             case 'css':
                 $commentPattern = "/* %s */\n\n";
-                break;
-            case 'md':
-            case 'sh':
-                // We skip these
-                return;
+            case '':
+            case 'yaml':
+            case 'yml':
+            case 'zsh':
+                $newContents = sprintf($commentPattern, $warning) . $skeletonFile->getContents();
+                $skeletonFile->setContents($newContents);
         }
-
-        $newContents = sprintf($commentPattern, $warning) . $skeletonFile->getContents();
-        $skeletonFile->setContents($newContents);
     }
 }
