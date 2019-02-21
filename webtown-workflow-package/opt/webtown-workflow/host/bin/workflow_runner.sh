@@ -38,7 +38,8 @@ if [ "$1" == "--develop" ]; then
             # Do nothing
         ;;
         *)
-            WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
+             # @todo Ez egyelőre nem működik helyesen
+#            WF_IMAGE="fchris82/wf:`basename ${GIT_BRANCH}`"
         ;;
     esac
 fi
