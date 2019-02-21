@@ -8,7 +8,7 @@
             overflow: hidden;
         }
 
-        #editor {
+        #container {
             margin: 0;
             position: absolute;
             top: 0;
@@ -16,11 +16,31 @@
             left: 0;
             right: 0;
         }
+
+        #sidebar {
+            margin: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 80%;
+        }
+
+        #editor {
+            margin: 0;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 20%;
+            right: 0;
+        }
     </style>
 </head>
 <body>
-
-<pre id="editor"><?php echo file_get_contents(sprintf('%s/%s', $projectPath, $baseConfigFile)) ?></pre>
+<div id="container">
+    <div id="sidebar">Sidebar</div>
+    <pre id="editor"><?php echo file_get_contents(sprintf('%s/%s', $projectPath, $baseConfigFile)) ?></pre>
+</div>
 
 <script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/jquery-ui-1.12.1.custom.zip"></script>
