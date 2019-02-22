@@ -10,6 +10,7 @@ namespace App\Webtown\WfConfigEditorBundle\DefinitionDumper;
 
 
 use Symfony\Component\Config\Definition\ArrayNode;
+use Symfony\Component\Config\Definition\BaseNode;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\EnumNode;
 use Symfony\Component\Config\Definition\NodeInterface;
@@ -25,19 +26,19 @@ class ArrayDumper
 
     public function dumpNode(NodeInterface $node)
     {
+        $base = [
+            'name' => $node->getName(),
+            'info' => $node instanceof BaseNode ? $node->getInfo() : null,
+            'required' => $node->isRequired(),
+        ];
         $children = null;
         if ($node instanceof ArrayNode) {
             $children = $node->getChildren();
 
             if ($node instanceof PrototypedArrayNode) {
                 $children = $this->getPrototypeChildren($node);
+                $base['prototype'] = array_keys($children);
             }
-
-            if (!$children) {
-                $default = $node->hasDefaultValue() ? $node->getDefaultValue() : '';
-            }
-        } else {
-            $default = $node->hasDefaultValue() ? $node->getDefaultValue() : '';
         }
 
         if ($children) {
@@ -47,10 +48,12 @@ class ArrayDumper
                 $value[$name] = $this->dumpNode($childNode);
             }
 
-            return $value;
+            $base['children'] = $value;
+            return $base;
         }
 
-        return $default;
+        $base['default'] = $node->hasDefaultValue() ? $node->getDefaultValue() : '';
+        return $base;
     }
 
     private function getPrototypeChildren(PrototypedArrayNode $node): array
@@ -85,6 +88,6 @@ class ArrayDumper
         }
         $keyNode->setInfo($info);
 
-        return array($key => $keyNode);
+        return array(sprintf('*%s', $key) => $keyNode);
     }
 }

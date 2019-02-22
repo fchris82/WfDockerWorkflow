@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Config editor</title>
+    <title><?php echo $projectPath ?> | Config editor</title>
+    <link rel="stylesheet" href="/js/jquery-ui-1.12.1.custom/jquery-ui.css" />
     <style type="text/css" media="screen">
         body {
             overflow: hidden;
@@ -43,7 +44,7 @@
 </div>
 
 <script src="/js/jquery-3.3.1.min.js"></script>
-<script src="/js/jquery-ui-1.12.1.custom.zip"></script>
+<script src="/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
 <script src="/js/jquery.toastmessage.js"></script>
 <!-- load ace -->
 <script src="/js/ace-noconflict/ace.js"></script>
@@ -72,26 +73,57 @@
             ? lines[row][0].value.trim()
             : null;
     }
-    function getConfigWords(target) {
+    function getCurrentNode(target) {
         var current = compConfig, key;
         for (var i=0;i<target.length;i++) {
             key = target[i];
-            if (typeof current === 'object' && current.hasOwnProperty(key)) {
-                current = current[key];
+            // Base option: current.children.[...] exists
+            if (typeof current === 'object' && current.hasOwnProperty('children') && current.children.hasOwnProperty(key)) {
+                current = current.children[key];
+            // If it is a prototype
+            } else if (typeof current === 'object' && current.hasOwnProperty('prototype') && current.prototype.length === 1) {
+                key = current.prototype[0];
+                current = current.children[key];
             } else {
-                return [];
+                return null;
             }
         }
 
-        if (typeof current === 'object') {
-            return $.isArray(current) ? current : Object.keys(current);
+        return current;
+    }
+    function getConfigEnvironment(target) {
+        var current = getCurrentNode(target);
+
+        if (typeof current === 'object' && current.hasOwnProperty('children') && !current.hasOwnProperty('prototype')) {
+            return current.children;
         }
 
-        return [];
+        return null;
+    }
+    function getConfigWords(env, usedWords) {
+        if (env === null) {
+            return [];
+        }
+
+        var words = [];
+        $.each(env, function (key, value) {
+            if (usedWords.indexOf(key) === -1) {
+                words.push({
+                    name: key,
+                    value: value.hasOwnProperty('default')
+                        ? key + ': ' + JSON.stringify(value.default)
+                        : key + ":\n",
+                    score: value.required ? 300 : 200,
+                    meta: value.required ? "require" : "optional"
+                });
+            }
+        });
+
+        return words;
     }
     var configCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
-            var wordList = [];
+            var wordList = [], configEnv;
             var lines = session.bgTokenizer.lines;
             var depth, key, chain = [], usedWords = [],
                 currentDepth = getLineDepth(lines, pos.row) ? getLineDepth(lines, pos.row) : pos.column - prefix.length,
@@ -125,12 +157,9 @@
             if (typeof currentKey === 'string') {
                 chain.push(currentKey);
             }
-            wordList = getConfigWords(chain).filter(function (v) {
-                return usedWords.indexOf(v) === -1;
-            });
-            callback(null, wordList.map(function(word) {
-                return {name: word, value: word, score: 300, meta: "config"}
-            }));
+            configEnv = getConfigEnvironment(chain);
+            wordList = getConfigWords(configEnv, usedWords);
+            callback(null, wordList);
         }
     };
     langTools.setCompleters([configCompleter]);

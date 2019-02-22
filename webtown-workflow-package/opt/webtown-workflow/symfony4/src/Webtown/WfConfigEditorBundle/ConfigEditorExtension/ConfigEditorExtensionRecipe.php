@@ -69,6 +69,6 @@ class ConfigEditorExtensionRecipe extends SystemRecipe
             $configs[$name] = $this->arrayDumper->dumpNode($node);
         }
 
-        return $configs;
+        return ['children' => $configs];
     }
 }
