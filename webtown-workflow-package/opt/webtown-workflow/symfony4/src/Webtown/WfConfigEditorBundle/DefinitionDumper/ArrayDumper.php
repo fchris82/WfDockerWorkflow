@@ -12,13 +12,24 @@ namespace App\Webtown\WfConfigEditorBundle\DefinitionDumper;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\BaseNode;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Symfony\Component\Config\Definition\EnumNode;
+use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\Config\Definition\NodeInterface;
 use Symfony\Component\Config\Definition\PrototypedArrayNode;
 use Symfony\Component\Config\Definition\ScalarNode;
+use Symfony\Component\Yaml\Yaml;
 
 class ArrayDumper
 {
+    /**
+     * @var YamlReferenceDumper
+     */
+    protected $yamlReferenceDumper;
+
+    public function __construct()
+    {
+        $this->yamlReferenceDumper = new YamlReferenceDumper();
+    }
+
     public function dump(ConfigurationInterface $configuration)
     {
         return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree());
@@ -26,10 +37,16 @@ class ArrayDumper
 
     public function dumpNode(NodeInterface $node)
     {
+        // Sometimes the $this->yamlReferenceDumper->dumpNode() command gets a Notice.
+        error_reporting(E_WARNING);
         $base = [
             'name' => $node->getName(),
-            'info' => $node instanceof BaseNode ? $node->getInfo() : null,
             'required' => $node->isRequired(),
+            'info' => $node instanceof BaseNode ? $node->getInfo() : null,
+            'example' => $node instanceof BaseNode ? $node->getExample() : null,
+            'yaml_example' => $node instanceof BaseNode ? Yaml::dump($node->getExample()) : null,
+            'path' => $node->getPath(),
+            'reference' => $this->yamlReferenceDumper->dumpNode($node)
         ];
         $children = null;
         if ($node instanceof ArrayNode) {
@@ -52,7 +69,9 @@ class ArrayDumper
             return $base;
         }
 
-        $base['default'] = $node->hasDefaultValue() ? $node->getDefaultValue() : '';
+        $base['default'] = $node->hasDefaultValue()
+            ? $node->getDefaultValue()
+            : ($node instanceof ArrayNode ? '~' : '');
         return $base;
     }
 
