@@ -1,0 +1,53 @@
+body {
+    overflow: hidden;
+}
+
+#container {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+#sidebar {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 80%;
+}
+
+#editor {
+    margin: 0;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 20%;
+    right: 0;
+}
+
+#help {
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    padding: 10px;
+    display: none;
+    background: #fff;
+    opacity: 0.6;
+}
+
+#help .comment {
+    color: darkorange;
+}
+
+#help .info {
+    color: green;
+}
+
+#help .key {
+    color: #548dbf;
+    font-weight: bold;
+}

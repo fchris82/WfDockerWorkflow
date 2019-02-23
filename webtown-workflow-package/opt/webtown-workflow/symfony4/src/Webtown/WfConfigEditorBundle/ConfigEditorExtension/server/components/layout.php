@@ -4,61 +4,8 @@
     <meta charset="UTF-8">
     <title><?php echo $projectPath ?> | Config editor</title>
     <link rel="stylesheet" href="/js/jquery-ui-1.12.1.custom/jquery-ui.css" />
-    <style type="text/css" media="screen">
-        body {
-            overflow: hidden;
-        }
-
-        #container {
-            margin: 0;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 0;
-        }
-
-        #sidebar {
-            margin: 0;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 0;
-            right: 80%;
-        }
-
-        #editor {
-            margin: 0;
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            left: 20%;
-            right: 0;
-        }
-
-        #help {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            padding: 10px;
-            display: none;
-            background: #fff;
-            opacity: 0.6;
-        }
-
-        #help .comment {
-            color: darkorange;
-        }
-
-        #help .info {
-            color: green;
-        }
-
-        #help .key {
-            color: #548dbf;
-            font-weight: bold;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/jquery.toastmessage.css" />
+    <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
 <div id="container">
