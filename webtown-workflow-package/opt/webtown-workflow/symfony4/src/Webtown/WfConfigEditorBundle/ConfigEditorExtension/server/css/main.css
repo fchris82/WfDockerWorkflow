@@ -54,6 +54,10 @@ body {
     font-weight: bold;
 }
 
+#help .prototype {
+    color: #d400d4;
+}
+
 UL.jqueryFileTree LI.file.wf {
     background: url('/images/wf-yaml.png') left top no-repeat;
 }
