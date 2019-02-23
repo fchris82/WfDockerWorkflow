@@ -5,11 +5,12 @@
     <title><?php echo $projectPath ?> | Config editor</title>
     <link rel="stylesheet" href="/js/jquery-ui-1.12.1.custom/jquery-ui.css" />
     <link rel="stylesheet" href="/css/jquery.toastmessage.css" />
+    <link rel="stylesheet" href="/js/jqueryfiletree/jQueryFileTree.min.css" />
     <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
 <div id="container">
-    <div id="sidebar">Sidebar</div>
+    <div id="sidebar"></div>
     <pre id="editor"><?php echo file_get_contents(sprintf('%s/%s', $projectPath, $baseConfigFile)) ?></pre>
     <div id="help">
         <pre class="reference"></pre>
@@ -19,6 +20,7 @@
 <script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
 <script src="/js/jquery.toastmessage.js"></script>
+<script src="/js/jqueryfiletree/jQueryFileTree.min.js"></script>
 <!-- load ace -->
 <script src="/js/ace-noconflict/ace.js"></script>
 <!-- load ace language tools -->
@@ -340,6 +342,12 @@
     };
     // We don't use the addComplementer, because we want to remove the default 'local' complementer. We don't need for it.
     langTools.setCompleters([configCompleter]);
+
+    $(document).ready( function() {
+        $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
+            alert(file);
+        });
+    });
 </script>
 
 </body>
