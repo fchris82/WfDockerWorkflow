@@ -53,3 +53,10 @@ body {
     color: #548dbf;
     font-weight: bold;
 }
+
+UL.jqueryFileTree LI.file.wf {
+    background: url('/images/wf-yaml.png') left top no-repeat;
+}
+UL.jqueryFileTree LI.file.wf a {
+    color: rgb(6, 150, 14);
+}

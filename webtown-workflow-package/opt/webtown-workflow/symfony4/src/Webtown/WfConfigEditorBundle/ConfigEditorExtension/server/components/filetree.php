@@ -36,6 +36,14 @@ $checkbox = ( isset($_POST['multiSelect']) && $_POST['multiSelect'] == 'true' ) 
 $onlyFolders = ( isset($_POST['onlyFolders']) && $_POST['onlyFolders'] == 'true' ) ? true : false;
 $onlyFiles = ( isset($_POST['onlyFiles']) && $_POST['onlyFiles'] == 'true' ) ? true : false;
 
+$excludeDirs = [
+    '.',
+    '..',
+    '.git',
+    '.idea',
+    '.wf',
+];
+
 if( file_exists($postDir) ) {
 
     $all		= scandir($postDir);
@@ -61,11 +69,15 @@ if( file_exists($postDir) ) {
             $htmlName	= htmlentities($file);
             $ext		= preg_replace('/^.*\./', '', $file);
 
-            if( file_exists($postDir . $file) && $file != '.' && $file != '..' ) {
-                if( is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders) )
+            if( file_exists($postDir . $file) && !in_array($file, $excludeDirs) ) {
+                if( is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders) ) {
                     echo "<li class='directory collapsed'>{$checkbox}<a rel='" .$htmlRel. "/'>" . $htmlName . "</a></li>";
-                else if (!$onlyFolders || $onlyFiles)
-                    echo "<li class='file ext_{$ext}'>{$checkbox}<a rel='" . $htmlRel . "'>" . $htmlName . "</a></li>";
+                } elseif (!$onlyFolders || $onlyFiles) {
+                    $wfClass = (strpos($file, '.wf') === 0 && strpos($file, 'yml') !== false)
+                        ? 'wf'
+                        : '';
+                    echo "<li class='file ext_{$ext} $wfClass'>{$checkbox}<a rel='" . $htmlRel . "'>" . $htmlName . "</a></li>";
+                }
             }
         }
 
