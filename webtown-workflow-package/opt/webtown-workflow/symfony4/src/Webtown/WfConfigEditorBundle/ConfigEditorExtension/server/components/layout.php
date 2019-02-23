@@ -11,7 +11,8 @@
 <body>
 <div id="container">
     <div id="sidebar"></div>
-    <pre id="editor"><?php echo file_get_contents(sprintf('%s/%s', $projectPath, $baseConfigFile)) ?></pre>
+    <div id="tabs"></div>
+    <div id="editors"></div>
     <div id="help">
         <pre class="reference"></pre>
     </div>
@@ -25,28 +26,53 @@
 <script src="/js/ace-noconflict/ace.js"></script>
 <!-- load ace language tools -->
 <script src="/js/ace-noconflict/ext-language_tools.js"></script>
+<!-- load ace modelist extension -->
+<script src="/js/ace-noconflict/ext-modelist.js"></script>
 <script>
     // trigger extension
-    var langTools = ace.require("ace/ext/language_tools");
-    var editor = ace.edit("editor");
-    editor.session.setMode("ace/mode/yaml");
-    editor.setTheme("ace/theme/cobalt");
-    // enable autocompletion and snippets
-    editor.setOptions({
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: false
-    });
-    // Register helper
-    editor.selection.on("changeCursor", function (event, selection) {
-        if (selection.$isEmpty) {
-            showHelp();
-        } else {
-            hideHelp();
-        }
-    });
+    var langTools = ace.require("ace/ext/language_tools"),
+        modelist = ace.require("ace/ext/modelist");
     // Insert the config json
     var compConfig = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'full_config.json') ?>;
+
+    function openFile(filePath, content) {
+        var editor = ace.edit(),
+            theme = typeof sessionStorage.getItem('wf-theme') !== 'string'
+                ? 'ace/theme/cobalt'
+                : sessionStorage.getItem('wf-theme'),
+            mode = filePath.indexOf('.yml') > 0
+                ? 'ace/mode/yaml'
+                : modelist.getModeForPath(filePath).mode
+        ;
+        // enable autocompletion and snippets
+        editor.setOptions({
+            theme: theme,
+            mode: mode,
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: false
+        });
+        editor.session.setValue(content);
+        document.getElementById('editors').appendChild(editor.container);
+        window.editor = editor;
+        if (mode === 'ace/mode/yaml') {
+            // Register helper
+            editor.selection.on("changeCursor", function (event, selection) {
+                if (selection.$isEmpty) {
+                    showHelp();
+                } else {
+                    hideHelp();
+                }
+            });
+        }
+    }
+
+    function loadFile(filePath) {
+        $.get('/components/filecontents.php?file=' + filePath, function(content) {
+            openFile(filePath, content);
+        });
+    }
+
     // Parse all of the file. Collect "meta.tag"-s and "bracket"-s.
     function parseTree() {
         var s = editor.session,
@@ -331,13 +357,15 @@
     }
     var configCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
-            var tree, wordList, currentPositionPath, configEnv, usedWords;
-            tree = parseTree();
-            // Info: the pos.column is the current cursor position. We need the "start of the word", so we decrease it with length of prefix.
-            currentPositionPath = getParentMetaTagPath(tree, pos.row, pos.column - prefix.length);
-            configEnv = getConfigEnvironment(currentPositionPath);
-            usedWords = getUsedWords(tree, currentPositionPath);
-            wordList = getConfigWords(configEnv, usedWords);
+            var tree, wordList = [], currentPositionPath, configEnv, usedWords;
+            if (editor.session.getMode().$id === 'ace/mode/yaml') {
+                tree = parseTree();
+                // Info: the pos.column is the current cursor position. We need the "start of the word", so we decrease it with length of prefix.
+                currentPositionPath = getParentMetaTagPath(tree, pos.row, pos.column - prefix.length);
+                configEnv = getConfigEnvironment(currentPositionPath);
+                usedWords = getUsedWords(tree, currentPositionPath);
+                wordList = getConfigWords(configEnv, usedWords);
+            }
             callback(null, wordList);
         }
     };
@@ -346,8 +374,9 @@
 
     $(document).ready( function() {
         $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
-            alert(file);
+            loadFile(file);
         });
+        loadFile('/<?php echo $baseConfigFile ?>');
     });
 </script>
 
