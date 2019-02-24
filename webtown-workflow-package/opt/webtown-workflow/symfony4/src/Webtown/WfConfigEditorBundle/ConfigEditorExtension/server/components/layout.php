@@ -11,8 +11,9 @@
 <body>
 <div id="container">
     <div id="sidebar"></div>
-    <div id="tabs"></div>
-    <div id="editors"></div>
+    <div id="editors">
+        <ul></ul>
+    </div>
     <div id="help">
         <pre class="reference"></pre>
     </div>
@@ -36,7 +37,20 @@
         $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
             loadFile(file);
         });
+        tabs = $( "#editors" ).tabs();
+        openHelpReference();
+        // Load base file
         loadFile('/<?php echo $baseConfigFile ?>');
+        // Init tabs
+        // Close icon: removing the tab on click
+        tabs.on( "click", "span.ui-icon-close", function() {
+            var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
+            $( "#" + panelId ).remove();
+            reset();
+        });
+        tabs.on("tabsactivate", function() {
+            reset();
+        });
     });
 </script>
 

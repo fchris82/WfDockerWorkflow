@@ -2,6 +2,46 @@
 var langTools = ace.require("ace/ext/language_tools"),
     modelist = ace.require("ace/ext/modelist");
 
+/**
+ * Create "Help" tab.
+ */
+function openHelpReference() {
+    var editor = ace.edit(),
+        theme = typeof sessionStorage.getItem('wf-theme') !== 'string'
+            ? 'ace/theme/cobalt'
+            : sessionStorage.getItem('wf-theme'),
+        mode = 'ace/mode/yaml',
+        hashId = btoa('help').replace(/=+$/, ''),
+        panel,
+        index = getTabIndex('help')
+    ;
+    if (index === -1) {
+        // enable autocompletion and snippets
+        editor.setOptions({
+            theme: theme,
+            mode: mode
+        });
+        // @todo (Chris) Add folde all
+        // Register help content
+        var ymlHelpContent = '';
+        $.each(compConfig.children, function (key, value) {
+            ymlHelpContent += value.hasOwnProperty('reference') ? value.reference : '';
+        });
+        editor.session.setValue(ymlHelpContent.trim().replace(/<\/?(comment|info)>/mg, ''));
+
+        panel = document.createElement('div');
+        panel.setAttribute('id', hashId);
+        panel.appendChild(editor.container);
+        document.getElementById('editors').appendChild(panel);
+        $('#editors ul').prepend('<li><a href="#' + hashId + '">Help</a></li>');
+    }
+}
+
+/**
+ *
+ * @param filePath
+ * @param content
+ */
 function openFile(filePath, content) {
     var editor = ace.edit(),
         theme = typeof sessionStorage.getItem('wf-theme') !== 'string'
@@ -9,30 +49,45 @@ function openFile(filePath, content) {
             : sessionStorage.getItem('wf-theme'),
         mode = filePath.indexOf('.yml') > 0
             ? 'ace/mode/yaml'
-            : modelist.getModeForPath(filePath).mode
+            : modelist.getModeForPath(filePath).mode,
+        // base64 encoded filepath without '='
+        hashId = btoa(filePath).replace(/=+$/, ''),
+        panel,
+        index = getTabIndex(filePath)
     ;
-    // enable autocompletion and snippets
-    editor.setOptions({
-        theme: theme,
-        mode: mode,
-        enableBasicAutocompletion: true,
-        enableSnippets: true,
-        enableLiveAutocompletion: false
-    });
-    editor.session.setValue(content);
-    document.getElementById('editors').appendChild(editor.container);
-    window.editor = editor;
-    if (mode === 'ace/mode/yaml') {
-        // Register helper
-        editor.selection.on("changeCursor", function (event, selection) {
-            if (selection.$isEmpty) {
-                showHelp();
-            } else {
-                hideHelp();
-            }
+    // We open it if it hasn't opened yet.
+    if (index === -1) {
+        // enable autocompletion and snippets
+        editor.setOptions({
+            theme: theme,
+            mode: mode,
+            enableBasicAutocompletion: true,
+            enableSnippets: true,
+            enableLiveAutocompletion: false
         });
+        editor.session.setValue(content);
+
+        panel = document.createElement('div');
+        panel.setAttribute('id', hashId);
+        panel.appendChild(editor.container);
+        document.getElementById('editors').appendChild(panel);
+        // @todo (Chris) Menteni kellene az editorokat, hogy tabváltásnál lecserélődjön az aktívra
+        window.editor = editor;
+        if (mode === 'ace/mode/yaml') {
+            // Register helper
+            editor.selection.on("changeCursor", function (event, selection) {
+                if (selection.$isEmpty) {
+                    showHelp();
+                } else {
+                    hideHelp();
+                }
+            });
+        }
+        $('#editors ul').append('<li><a href="#' + hashId + '">' + filePath + ' <span class="ui-icon ui-icon-close" role="presentation">Remove Tab</span></a></li>');
+        index = getTabIndex(filePath);
     }
     reset();
+    tabs.tabs({ active: index });
 }
 
 function loadFile(filePath) {
@@ -41,8 +96,21 @@ function loadFile(filePath) {
     });
 }
 
+function getTabIndex(filePath) {
+    return tabs.find('a[href="#' + btoa(filePath).replace(/=+$/, '') + '"]').parent().index();
+}
+
 function reset() {
     hideHelp();
+    tabs.tabs( "refresh" );
+    // If there isn't active tab
+    if (tabs.children('ul').find('.ui-state-active').length === 0) {
+        var index = tabs.children('ul').find('li').length - 1;
+        // Activate last open tab
+        if (index > 0) {
+            tabs.tabs({ active: index });
+        }
+    }
 }
 
 // Parse all of the file. Collect "meta.tag"-s and "bracket"-s.
@@ -293,6 +361,17 @@ function getConfigWords(env, usedWords) {
     return words;
 }
 
+function formatReference(reference) {
+    return reference
+        .trim()
+        .replace(/(# Prototype.*\n)([\w_-]+):/mg, '$1<span class="key"><span class="prototype">[$2]</span>:</span>')
+        .replace(/<comment>/g, '<span class="comment">')
+        .replace(/<\/comment>/g, '</span>')
+        .replace(/<info>/g, '<span class="info">')
+        .replace(/<\/info>/g, '</span>')
+        .replace(/^( *)(\w+):/mg, '$1<span class="key">$2:</span>')
+    ;
+}
 /**
  * Show the help if there is help content. Now we use only the `reference`, but there are other options:
  *  - reference
@@ -311,15 +390,7 @@ function showHelp() {
     if (node === null || node.path === 'project.recipes' || !node.hasOwnProperty('reference')) {
         helpContainer.hide();
     } else {
-        var content = node.reference
-            .trim()
-            .replace(/(# Prototype.*\n)([\w_-]+):/mg, '$1<span class="key"><span class="prototype">[$2]</span>:</span>')
-            .replace(/<comment>/g, '<span class="comment">')
-            .replace(/<\/comment>/g, '</span>')
-            .replace(/<info>/g, '<span class="info">')
-            .replace(/<\/info>/g, '</span>')
-            .replace(/^( *)(\w+):/mg, '$1<span class="key">$2:</span>')
-        ;
+        var content = formatReference(node.reference);
         helpContainer.find('.reference').html(content);
         helpContainer.show();
     }
