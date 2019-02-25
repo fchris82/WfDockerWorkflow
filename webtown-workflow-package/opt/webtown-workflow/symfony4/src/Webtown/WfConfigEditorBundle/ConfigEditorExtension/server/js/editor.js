@@ -71,13 +71,11 @@ function openFile(filePath, content) {
         panel.setAttribute('id', hashId);
         panel.appendChild(editor.container);
         document.getElementById('editors').appendChild(panel);
-        // @todo (Chris) Menteni kellene az editorokat, hogy tabváltásnál lecserélődjön az aktívra
-        window.editor = editor;
         if (mode === 'ace/mode/yaml') {
             // Register helper
             editor.selection.on("changeCursor", function (event, selection) {
                 if (selection.$isEmpty) {
-                    showHelp();
+                    showHelp(editor);
                 } else {
                     hideHelp();
                 }
@@ -114,7 +112,7 @@ function reset() {
 }
 
 // Parse all of the file. Collect "meta.tag"-s and "bracket"-s.
-function parseTree() {
+function parseTree(editor) {
     var s = editor.session,
         lines = s.bgTokenizer.lines,
         currentPath = [],
@@ -189,7 +187,7 @@ function parseTree() {
  *
  * So we have to use different ways that depend on brackets.
  */
-function getCurrentPositionDepth(tree, row, column) {
+function getCurrentPositionDepth(editor, tree, row, column) {
     var s = editor.session,
         last,
         bracketDepth = 0;
@@ -218,14 +216,15 @@ function getCurrentPositionDepth(tree, row, column) {
 /**
  * Finds the "parent node" from cursor position. We use it to find autocomplete and used words.
  *
+ * @param editor
  * @param tree      Array
  * @param row       Int
  * @param column    Int
  * @returns {Array}
  */
-function getParentMetaTagPath(tree, row, column) {
+function getParentMetaTagPath(editor, tree, row, column) {
     var s = editor.session,
-        currentDepth = getCurrentPositionDepth(tree, row, column),
+        currentDepth = getCurrentPositionDepth(editor, tree, row, column),
         last = [];
     // Find parent
     for (var i=0;i<tree.length;i++) {
@@ -243,12 +242,13 @@ function getParentMetaTagPath(tree, row, column) {
 /**
  * Gets the last meta.tag/key path from cursor position. We use it to find and show help context.
  *
+ * @param editor
  * @param tree
  * @param row
  * @param column
  * @returns {Array}
  */
-function getLastMetaTagPath(tree, row, column) {
+function getLastMetaTagPath(editor, tree, row, column) {
     var s = editor.session,
         last = [];
     // Find parent
@@ -379,11 +379,11 @@ function formatReference(reference) {
  *  - example
  *  - yaml_example
  */
-function showHelp() {
+function showHelp(editor) {
     var pos = editor.getCursorPosition();
     var tree, currentPositionPath, node, helpContainer = $('#help');
-    tree = parseTree();
-    currentPositionPath = getLastMetaTagPath(tree, pos.row, pos.column);
+    tree = parseTree(editor);
+    currentPositionPath = getLastMetaTagPath(editor, tree, pos.row, pos.column);
     node = getConfigNode(currentPositionPath);
 
     // Hide help if there isn't information or it is the recipes root node.
@@ -401,10 +401,10 @@ function hideHelp() {
 var configCompleter = {
     getCompletions: function(editor, session, pos, prefix, callback) {
         var tree, wordList = [], currentPositionPath, configEnv, usedWords;
-        if (editor.session.getMode().$id === 'ace/mode/yaml') {
-            tree = parseTree();
+        if (session.getMode().$id === 'ace/mode/yaml') {
+            tree = parseTree(editor);
             // Info: the pos.column is the current cursor position. We need the "start of the word", so we decrease it with length of prefix.
-            currentPositionPath = getParentMetaTagPath(tree, pos.row, pos.column - prefix.length);
+            currentPositionPath = getParentMetaTagPath(editor, tree, pos.row, pos.column - prefix.length);
             configEnv = getConfigEnvironment(currentPositionPath);
             usedWords = getUsedWords(tree, currentPositionPath);
             wordList = getConfigWords(configEnv, usedWords);
