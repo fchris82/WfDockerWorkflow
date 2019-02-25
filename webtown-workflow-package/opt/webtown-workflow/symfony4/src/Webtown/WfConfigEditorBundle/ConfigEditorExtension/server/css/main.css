@@ -44,11 +44,28 @@ body {
 #help {
     position: absolute;
     right: 20px;
-    top: 20px;
+    top: 56px;
+    bottom: 10px;
     padding: 10px;
     display: none;
     background: #fff;
     opacity: 0.6;
+    max-width: 40%;
+    overflow: auto;
+}
+
+#help:hover {
+    opacity: 1;
+    max-width: none;
+}
+
+#help pre {
+    margin: 0;
+    white-space: pre-wrap;
+}
+
+#help:hover pre {
+    white-space: pre;
 }
 
 #help .comment {

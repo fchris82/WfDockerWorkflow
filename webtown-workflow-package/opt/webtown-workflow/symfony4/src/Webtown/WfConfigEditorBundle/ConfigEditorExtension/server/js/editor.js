@@ -364,7 +364,7 @@ function getConfigWords(env, usedWords) {
 function formatReference(reference) {
     return reference
         .trim()
-        .replace(/(# Prototype.*\n)([\w_-]+):/mg, '$1<span class="key"><span class="prototype">[$2]</span>:</span>')
+        .replace(/(# Prototype.*\n *)([\w_-]+):/mg, '$1<span class="key"><span class="prototype">[$2]</span>:</span>')
         .replace(/<comment>/g, '<span class="comment">')
         .replace(/<\/comment>/g, '</span>')
         .replace(/<info>/g, '<span class="info">')
