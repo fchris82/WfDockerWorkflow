@@ -282,6 +282,21 @@ function getUsedWords(tree, pathArray) {
     return usedWords;
 }
 
+function isUnusedPosition(editor, row, column) {
+    var tokens = editor.session.getTokens(row),
+        currentColumn = 0,
+        lastTokenType = null;
+    for (var i=0;i<tokens.length;i++) {
+        lastTokenType = tokens[i].type;
+        currentColumn += tokens[i].value.length;
+        if (currentColumn >= column) {
+            break;
+        }
+    }
+
+    return tokens.length === 0 || lastTokenType === 'comment';
+}
+
 /**
  * Tries to find the config node with the pathArray.
  *
@@ -382,17 +397,21 @@ function formatReference(reference) {
 function showHelp(editor) {
     var pos = editor.getCursorPosition();
     var tree, currentPositionPath, node, helpContainer = $('#help');
-    tree = parseTree(editor);
-    currentPositionPath = getLastMetaTagPath(editor, tree, pos.row, pos.column);
-    node = getConfigNode(currentPositionPath);
+    if (!isUnusedPosition(editor, pos.row, pos.column)) {
+        tree = parseTree(editor);
+        currentPositionPath = getLastMetaTagPath(editor, tree, pos.row, pos.column);
+        node = getConfigNode(currentPositionPath);
 
-    // Hide help if there isn't information or it is the recipes root node.
-    if (node === null || node.path === 'project.recipes' || !node.hasOwnProperty('reference')) {
-        helpContainer.hide();
+        // Hide help if there isn't information or it is the recipes root node.
+        if (node === null || node.path === 'project.recipes' || !node.hasOwnProperty('reference')) {
+            helpContainer.hide();
+        } else {
+            var content = formatReference(node.reference);
+            helpContainer.find('.reference').html(content);
+            helpContainer.show();
+        }
     } else {
-        var content = formatReference(node.reference);
-        helpContainer.find('.reference').html(content);
-        helpContainer.show();
+        helpContainer.hide();
     }
 }
 function hideHelp() {
