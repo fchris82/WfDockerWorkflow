@@ -72,6 +72,7 @@ Now you can open a browser and load the http://172.17.0.4:8000 . The program wil
 - !: you can use it only locally
 - !: you can use it only an existing project
 - !: you can't create new file
+- It isn't nice: The "docker-compose services" autocomplete words can't work "on-the-fly". Maybe you have to run sometimes the `wf reconfigure` command to regenerate autocomplete source files and reload the page.
 - It isn't nice: the program will show an error message after you press `CTRL-C`, but just ignore it
 - There is a constant `Help` tab where you can see the all of available option with comments
 - you can save the file with save button or `CTRL-S` hotkey

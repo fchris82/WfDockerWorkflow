@@ -52,7 +52,7 @@ services:
 
     App\Webtown\WfConfigEditorBundle\ConfigEditorExtension\ConfigEditorExtensionRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 0 }
+            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: -99 }
 
     App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
         tags:

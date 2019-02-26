@@ -40,6 +40,8 @@
 <script>
     // Insert the config json
     var compConfig = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'full_config.json') ?>;
+    var availableParameters = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'placeholders.json') ?>;
+    var availableDockerComposeServices = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'services.json') ?>;
     $(document).ready( function() {
         $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
             loadFile(file);

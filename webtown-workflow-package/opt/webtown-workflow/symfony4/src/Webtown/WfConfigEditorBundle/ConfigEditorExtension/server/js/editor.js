@@ -29,7 +29,6 @@ function openHelpReference() {
         index = getTabIndex('help')
     ;
     if (index === -1) {
-        // enable autocompletion and snippets
         editor.setOptions({
             theme: theme,
             mode: mode
@@ -470,35 +469,52 @@ function getConfigEnvironment(pathArray) {
  * @param usedWords
  * @returns {Array}
  *
- * @todo (Chris) Hozzá kellene adni az `Available placeholders`-t is a `docs/wf-basic-commands.md` doksi alapján
  * @todo (Chris) Import esetén beletehetnénk az elérhető fájlokat
  */
 function getConfigWords(env, usedWords) {
+    var words = [], suffix;
     if (env === null) {
-        return [];
+        // Maybe we are in string, it can't be "array key".
+        $.each(availableParameters, function (key, value) {
+            words.push({
+                name: value,
+                value: value,
+                score: 150,
+                meta: "placeholder"
+            })
+        });
+    } else {
+        $.each(env, function (key, value) {
+            if (usedWords.indexOf(key) === -1) {
+                // Base suffix
+                suffix = ":\n";
+                // Overridden suffix
+                if (value.hasOwnProperty('default')) {
+                    // Changes default to simple ~ if it needs.
+                    if (value.default === '~') {
+                        suffix = ": ~\n";
+                    } else {
+                        suffix = ": " + JSON.stringify(value.default);
+                    }
+                }
+                words.push({
+                    name: key,
+                    value: key + suffix,
+                    score: value.required ? 300 : 200,
+                    meta: value.required ? "required" : "optional"
+                });
+            }
+        });
     }
 
-    var words = [], suffix;
-    $.each(env, function (key, value) {
-        if (usedWords.indexOf(key) === -1) {
-            // Base suffix
-            suffix = ":\n";
-            // Overridden suffix
-            if (value.hasOwnProperty('default')) {
-                // Changes default to simple ~ if it needs.
-                if (value.default === '~') {
-                    suffix = ": ~\n";
-                } else {
-                    suffix = ": " + JSON.stringify(value.default);
-                }
-            }
-            words.push({
-                name: key,
-                value: key + suffix,
-                score: value.required ? 300 : 200,
-                meta: value.required ? "required" : "optional"
-            });
-        }
+    // Register the docker-compose services. It can be "array key", so it is a little bit different like placeholders
+    $.each(availableDockerComposeServices, function (key, value) {
+        words.push({
+            name: value,
+            value: value,
+            score: 100,
+            meta: "docker-compose service"
+        })
     });
 
     return words;
