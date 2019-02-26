@@ -116,7 +116,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         $baseConfig = parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
         return array_merge([
-            'doc_root' => __DIR__ . DIRECTORY_SEPARATOR . 'server',
+            'doc_root' => __DIR__ . \DIRECTORY_SEPARATOR . 'server',
             'full_config_array' => $this->getConfigurationArray(),
             'available_placeholders' => array_keys($this->availableParameters),
             'docker_compose_services' => $this->getDockerComposeServices(),

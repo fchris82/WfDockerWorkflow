@@ -1,5 +1,8 @@
 <?php
-if( !array_key_exists('HTTP_REFERER', $_SERVER) ) exit('No direct script access allowed');
+
+if (!array_key_exists('HTTP_REFERER', $_SERVER)) {
+    exit('No direct script access allowed');
+}
 
 /**
  * jQuery File Tree PHP Connector
@@ -27,14 +30,16 @@ if( !array_key_exists('HTTP_REFERER', $_SERVER) ) exit('No direct script access 
  */
 //$root = null;
 $root = $_ENV['PWD'];
-if( !$root ) exit("ERROR: Root filesystem directory not set in jqueryFileTree.php");
+if (!$root) {
+    exit('ERROR: Root filesystem directory not set in jqueryFileTree.php');
+}
 
-$postDir = rawurldecode($root.(isset($_POST['dir']) ? $_POST['dir'] : null ));
+$postDir = rawurldecode($root . (isset($_POST['dir']) ? $_POST['dir'] : null));
 
 // set checkbox if multiSelect set to true
-$checkbox = ( isset($_POST['multiSelect']) && $_POST['multiSelect'] == 'true' ) ? "<input type='checkbox' />" : null;
-$onlyFolders = ( isset($_POST['onlyFolders']) && $_POST['onlyFolders'] == 'true' ) ? true : false;
-$onlyFiles = ( isset($_POST['onlyFiles']) && $_POST['onlyFiles'] == 'true' ) ? true : false;
+$checkbox = (isset($_POST['multiSelect']) && 'true' == $_POST['multiSelect']) ? "<input type='checkbox' />" : null;
+$onlyFolders = (isset($_POST['onlyFolders']) && 'true' == $_POST['onlyFolders']) ? true : false;
+$onlyFiles = (isset($_POST['onlyFiles']) && 'true' == $_POST['onlyFiles']) ? true : false;
 
 $excludeDirs = [
     '.',
@@ -44,8 +49,7 @@ $excludeDirs = [
     '.wf',
 ];
 
-if( file_exists($postDir) ) {
-
+if (file_exists($postDir)) {
     $all		= scandir($postDir);
     $returnDir	= substr($postDir, strlen($root));
 
@@ -60,27 +64,26 @@ if( file_exists($postDir) ) {
 
     $all = array_merge($dirs, $files);
 
-    if( count($all) > 2 ) { // The 2 accounts for . and ..
-
+    if (count($all) > 2) { // The 2 accounts for . and ..
         echo "<ul class='jqueryFileTree'>";
 
-        foreach($all as $file ) {
-            $htmlRel	= htmlentities($returnDir . $file,ENT_QUOTES);
+        foreach ($all as $file) {
+            $htmlRel	= htmlentities($returnDir . $file, ENT_QUOTES);
             $htmlName	= htmlentities($file);
             $ext		= preg_replace('/^.*\./', '', $file);
 
-            if( file_exists($postDir . $file) && !in_array($file, $excludeDirs) ) {
-                if( is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders) ) {
-                    echo "<li class='directory collapsed'>{$checkbox}<a rel='" .$htmlRel. "/'>" . $htmlName . "</a></li>";
+            if (file_exists($postDir . $file) && !in_array($file, $excludeDirs)) {
+                if (is_dir($postDir . $file) && (!$onlyFiles || $onlyFolders)) {
+                    echo "<li class='directory collapsed'>{$checkbox}<a rel='" . $htmlRel . "/'>" . $htmlName . '</a></li>';
                 } elseif (!$onlyFolders || $onlyFiles) {
-                    $wfClass = (strpos($file, '.wf') === 0 && strpos($file, 'yml') !== false)
+                    $wfClass = (0 === strpos($file, '.wf') && false !== strpos($file, 'yml'))
                         ? 'wf'
                         : '';
-                    echo "<li class='file ext_{$ext} $wfClass'>{$checkbox}<a rel='" . $htmlRel . "'>" . $htmlName . "</a></li>";
+                    echo "<li class='file ext_{$ext} $wfClass'>{$checkbox}<a rel='" . $htmlRel . "'>" . $htmlName . '</a></li>';
                 }
             }
         }
 
-        echo "</ul>";
+        echo '</ul>';
     }
 }

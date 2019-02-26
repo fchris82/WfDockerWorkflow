@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title><?php echo $projectPath ?> | Config editor</title>
+    <title><?php echo $projectPath; ?> | Config editor</title>
     <link rel="stylesheet" href="/css/jquery.toastmessage.css" />
     <link rel="stylesheet" href="/js/jqueryfiletree/jQueryFileTree.min.css" />
     <link rel="stylesheet" href="/js/bootstrap-4.3.1-dist/css/bootstrap.css" />
@@ -39,16 +39,16 @@
 <script src="/js/editor.js"></script>
 <script>
     // Insert the config json
-    var compConfig = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'full_config.json') ?>;
-    var availableParameters = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'placeholders.json') ?>;
-    var availableDockerComposeServices = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'services.json') ?>;
+    var compConfig = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'full_config.json'); ?>;
+    var availableParameters = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'placeholders.json'); ?>;
+    var availableDockerComposeServices = <?php include sprintf('%s/%s/%s/%s', $projectPath, $wfConfigDir, 'config_editor', 'services.json'); ?>;
     $(document).ready( function() {
         $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
             loadFile(file);
         });
         openHelpReference();
         // Load base file
-        loadFile('/<?php echo $baseConfigFile ?>');
+        loadFile('/<?php echo $baseConfigFile; ?>');
         // Init tabs
         // Close icon: removing the tab on click
         $(document).on("click", ".closeTab", function () {

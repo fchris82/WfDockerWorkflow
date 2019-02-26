@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WfConfigEditorBundle\DefinitionDumper;
 
-
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\BaseNode;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -46,7 +45,7 @@ class ArrayDumper
             'example' => $node instanceof BaseNode ? $node->getExample() : null,
             'yaml_example' => $node instanceof BaseNode ? Yaml::dump($node->getExample()) : null,
             'path' => $node->getPath(),
-            'reference' => $this->yamlReferenceDumper->dumpNode($node)
+            'reference' => $this->yamlReferenceDumper->dumpNode($node),
         ];
         $children = null;
         if ($node instanceof ArrayNode) {
@@ -66,12 +65,14 @@ class ArrayDumper
             }
 
             $base['children'] = $value;
+
             return $base;
         }
 
         $base['default'] = $node->hasDefaultValue()
             ? $node->getDefaultValue()
             : ($node instanceof ArrayNode ? '~' : '');
+
         return $base;
     }
 
@@ -103,10 +104,10 @@ class ArrayDumper
 
         $info = 'Prototype';
         if (null !== $prototype->getInfo()) {
-            $info .= ': '.$prototype->getInfo();
+            $info .= ': ' . $prototype->getInfo();
         }
         $keyNode->setInfo($info);
 
-        return array(sprintf('*%s', $key) => $keyNode);
+        return [sprintf('*%s', $key) => $keyNode];
     }
 }

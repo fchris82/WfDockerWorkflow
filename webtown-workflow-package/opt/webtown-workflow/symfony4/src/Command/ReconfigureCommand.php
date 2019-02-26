@@ -213,6 +213,7 @@ class ReconfigureCommand extends Command
         switch ($ext) {
             case 'css':
                 $commentPattern = "/* %s */\n\n";
+                // no break
             case '':
             case 'yaml':
             case 'yml':

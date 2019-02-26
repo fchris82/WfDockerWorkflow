@@ -132,7 +132,7 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                             ->cannotBeEmpty()
                             ->defaultValue('engine')
                             ->validate()
-                                ->always(function($v) {
+                                ->always(function ($v) {
                                     $v = trim($v);
                                     if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
                                         throw new InvalidConfigurationException(sprintf(
@@ -150,7 +150,7 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                             ->cannotBeEmpty()
                             ->defaultValue('web')
                             ->validate()
-                                ->always(function($v) {
+                                ->always(function ($v) {
                                     $v = trim($v);
                                     if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
                                         throw new InvalidConfigurationException(sprintf(
@@ -215,11 +215,11 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                     ->cannotBeEmpty()
                     ->defaultValue('.')
                     ->validate()
-                        ->always(function($v) {
+                        ->always(function ($v) {
                             $v = trim($v);
-                            $path = $v[0] == DIRECTORY_SEPARATOR
+                            $path = \DIRECTORY_SEPARATOR == $v[0]
                                 ? $v
-                                : rtrim($this->projectPath, '\\/') . DIRECTORY_SEPARATOR . $v;
+                                : rtrim($this->projectPath, '\\/') . \DIRECTORY_SEPARATOR . $v;
                             if (!file_exists($path)) {
                                 throw new InvalidConfigurationException(sprintf(
                                     'The `%s` project dir is invalid, because it doesn\'t exist! (Full path where we tried to find: `%s`)',

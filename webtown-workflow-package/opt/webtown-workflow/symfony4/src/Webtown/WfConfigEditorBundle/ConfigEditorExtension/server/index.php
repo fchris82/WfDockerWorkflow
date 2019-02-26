@@ -1,4 +1,5 @@
 <?php
+
 $projectPath = $_ENV['PWD'];
 $baseConfigFile = $_ENV['WF_CONFIGURATION_FILE_NAME'];
 $wfConfigDir = $_ENV['WF_WORKING_DIRECTORY_NAME'];

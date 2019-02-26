@@ -73,7 +73,7 @@ class PhpRecipe extends BaseRecipe
                             ->cannotBeEmpty()
                             ->defaultValue('engine')
                             ->validate()
-                                ->always(function($v) {
+                                ->always(function ($v) {
                                     $v = trim($v);
                                     if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
                                         throw new InvalidConfigurationException(sprintf(
@@ -91,7 +91,7 @@ class PhpRecipe extends BaseRecipe
                             ->cannotBeEmpty()
                             ->defaultValue('web')
                             ->validate()
-                                ->always(function($v) {
+                                ->always(function ($v) {
                                     $v = trim($v);
                                     if (!preg_match('/^[a-zA-Z0-9_.-]+$/', $v)) {
                                         throw new InvalidConfigurationException(sprintf(
