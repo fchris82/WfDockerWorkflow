@@ -469,6 +469,9 @@ function getConfigEnvironment(pathArray) {
  * @param env
  * @param usedWords
  * @returns {Array}
+ *
+ * @todo (Chris) Hozzá kellene adni az `Available placeholders`-t is a `docs/wf-basic-commands.md` doksi alapján
+ * @todo (Chris) Import esetén beletehetnénk az elérhető fájlokat
  */
 function getConfigWords(env, usedWords) {
     if (env === null) {

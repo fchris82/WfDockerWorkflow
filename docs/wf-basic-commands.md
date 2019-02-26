@@ -51,6 +51,32 @@ $ wf --no-ansi --config-dump --recipe=mysql > .wf.mysql-recipe.yml
 
 ## Basic (project) configuration
 
+### Open a web browser editor \[BETA\]
+
+There are lot of keys so we try to help and have already added an autocomplete editor:
+
+```bash
+# It will start a local webserver:
+$ wf edit-config
+
+  Editor URL: http://172.17.0.4:8000 ↤ click on the URL to open in browser
+
+PHP 7.2.14 Development Server started at Tue Feb 26 12:46:37 2019
+Listening on http://172.17.0.4:8000
+Document root is /opt/webtown-workflow/symfony4/src/Webtown/WfConfigEditorBundle/ConfigEditorExtension/server
+Press Ctrl-C to quit.
+```
+
+Now you can open a browser and load the http://172.17.0.4:8000 . The program will show an ACE editor and filesystem, with help and autocomplete functions. There are some limitations:
+
+- !: you can use it only locally
+- !: you can use it only an existing project
+- !: you can't create new file
+- It isn't nice: the program will show an error message after you press `CTRL-C`, but just ignore it
+- There is a constant `Help` tab where you can see the all of available option with comments
+- you can save the file with save button or `CTRL-S` hotkey
+- you can show the autocomplete with `CTRL-Space` hotkey
+
 ### Summary
 
 ```yml
