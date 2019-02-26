@@ -6,12 +6,19 @@
     <link rel="stylesheet" href="/js/jquery-ui-1.12.1.custom/jquery-ui.css" />
     <link rel="stylesheet" href="/css/jquery.toastmessage.css" />
     <link rel="stylesheet" href="/js/jqueryfiletree/jQueryFileTree.min.css" />
+    <link rel="stylesheet" href="/js/bootstrap-4.3.1-dist/css/bootstrap.css" />
     <link rel="stylesheet" href="/css/main.css" />
 </head>
 <body>
 <div id="container">
     <div id="sidebar"></div>
     <div id="editors">
+        <div id="buttons" class="btn-group btn-group-sm float-right" role="group">
+            <button class="save btn btn-secondary disabled">Save</button>
+            <button class="save-all btn btn-secondary disabled">Save all</button>
+            <button class="fold-all btn btn-secondary">Fold all</button>
+            <button class="unfold-all btn btn-secondary">Unfold all</button>
+        </div>
         <ul></ul>
     </div>
     <div id="help">
@@ -21,6 +28,7 @@
 
 <script src="/js/jquery-3.3.1.min.js"></script>
 <script src="/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
+<script src="/js/bootstrap-4.3.1-dist/js/bootstrap.js"></script>
 <script src="/js/jquery.toastmessage.js"></script>
 <script src="/js/jqueryfiletree/jQueryFileTree.min.js"></script>
 <!-- load ace -->
@@ -50,6 +58,25 @@
         });
         tabs.on("tabsactivate", function() {
             reset();
+            refreshUnsavedTabs();
+        });
+        $('#buttons .save').on('click', function() {
+            if (!$(this).hasClass('disabled')) {
+                $(this).addClass('disabled');
+                saveActiveTab();
+            }
+        });
+        $('#buttons .save-all').on('click', function() {
+            if (!$(this).hasClass('disabled')) {
+                $(this).addClass('disabled');
+                saveAll();
+            }
+        });
+        $('#buttons .fold-all').on('click', function() {
+            getActiveEditor().getSession().foldAll();
+        });
+        $('#buttons .unfold-all').on('click', function() {
+            getActiveEditor().getSession().unfold();
         });
     });
 </script>

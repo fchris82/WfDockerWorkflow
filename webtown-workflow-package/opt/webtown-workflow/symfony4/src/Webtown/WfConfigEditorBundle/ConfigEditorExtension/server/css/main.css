@@ -41,6 +41,14 @@ body {
     right: 0;
 }
 
+#buttons {
+    margin: 6px;
+}
+
+#buttons button.disabled {
+    opacity: 0.3;
+}
+
 #help {
     position: absolute;
     right: 20px;
@@ -83,6 +91,11 @@ body {
 
 #help .prototype {
     color: #d400d4;
+}
+
+.ui-tabs-nav li.unsaved span.file:after {
+    content: ' *';
+    font-weight: bold;
 }
 
 UL.jqueryFileTree A {

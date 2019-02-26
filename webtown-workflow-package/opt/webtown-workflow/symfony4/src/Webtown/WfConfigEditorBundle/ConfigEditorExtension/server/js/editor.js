@@ -1,6 +1,19 @@
 // trigger extension
 var langTools = ace.require("ace/ext/language_tools"),
-    modelist = ace.require("ace/ext/modelist");
+    modelist = ace.require("ace/ext/modelist"),
+    editors = [],
+    lastSavedText = []
+;
+
+function getActiveId() {
+    return $('#editors div[aria-hidden="false"]').first().attr('id');
+}
+
+function getActiveEditor() {
+    var id = getActiveId();
+
+    return editors[id];
+}
 
 /**
  * Create "Help" tab.
@@ -21,7 +34,6 @@ function openHelpReference() {
             theme: theme,
             mode: mode
         });
-        // @todo (Chris) Add folde all
         // Register help content
         var ymlHelpContent = '';
         $.each(compConfig.children, function (key, value) {
@@ -34,6 +46,7 @@ function openHelpReference() {
         panel.appendChild(editor.container);
         document.getElementById('editors').appendChild(panel);
         $('#editors ul').prepend('<li><a href="#' + hashId + '">Help</a></li>');
+        editors[hashId] = editor;
     }
 }
 
@@ -66,10 +79,13 @@ function openFile(filePath, content) {
             enableLiveAutocompletion: false
         });
         editor.session.setValue(content);
+        // We save the loaded content to detect base file changes on the disk.
+        lastSavedText[hashId] = content;
 
         panel = document.createElement('div');
         panel.setAttribute('id', hashId);
         panel.appendChild(editor.container);
+
         document.getElementById('editors').appendChild(panel);
         if (mode === 'ace/mode/yaml') {
             // Register helper
@@ -81,11 +97,15 @@ function openFile(filePath, content) {
                 }
             });
         }
-        $('#editors ul').append('<li><a href="#' + hashId + '">' + filePath + ' <span class="ui-icon ui-icon-close" role="presentation">Remove Tab</span></a></li>');
+        editor.session.on("change", function() {
+            refreshUnsavedTabs();
+        });
+        $('#editors ul').append('<li><a href="#' + hashId + '"><span class="file">' + filePath + '</span> <span class="ui-icon ui-icon-close" role="presentation">Remove Tab</span></a></li>');
         index = getTabIndex(filePath);
     }
     reset();
     tabs.tabs({ active: index });
+    editors[hashId] = editor;
 }
 
 function loadFile(filePath) {
@@ -94,8 +114,85 @@ function loadFile(filePath) {
     });
 }
 
+function save(hashId) {
+    var filePath = atob(hashId),
+        newContent = editors[hashId].session.getValue(),
+        tab = getTabById(hashId);
+    $.get('/components/filecontents.php?file=' + filePath, function(originalContent) {
+        if (originalContent.trim() === lastSavedText[hashId].trim() || confirm('The original file has been changed since you opened, do you really want to override it?')) {
+            $.post('/components/save.php', {file: filePath, content: newContent}, function (data) {
+                if (newContent === data) {
+                    // @todo (Chris) Ide kellene vmi visszajelzés státuszbáron.
+                    lastSavedText[hashId] = data;
+                    refreshUnsavedTabs();
+                } else {
+                    window.alert('Something went wrong! The content isn\'t saved!');
+                }
+            });
+        }
+    });
+}
+
+function saveActiveTab() {
+    var hashId = getActiveId();
+    save(hashId);
+}
+
+function saveAll() {
+    var hashId, originalContent, tab, currentContent;
+    for (hashId in lastSavedText) {
+        originalContent = lastSavedText[hashId];
+        tab = getTabById(hashId);
+        if (tab.length === 1 && editors.hasOwnProperty(hashId)) {
+            currentContent = editors[hashId].session.getValue();
+            if (originalContent !== currentContent) {
+                save(hashId);
+            }
+        }
+    }
+}
+
+function refreshUnsavedTabs() {
+    var hashId, originalContent, tab, currentContent, isUnsaved=false, currentIsUnsaved=false, activeHashId=getActiveId();
+    for (hashId in lastSavedText) {
+        originalContent = lastSavedText[hashId];
+        tab = getTabById(hashId);
+        if (tab.length === 1 && editors.hasOwnProperty(hashId)) {
+            currentContent = editors[hashId].session.getValue();
+            if (originalContent !== currentContent) {
+                tab.addClass('unsaved');
+                isUnsaved = true;
+                if (hashId === activeHashId) {
+                    currentIsUnsaved = true;
+                }
+            } else {
+                tab.removeClass('unsaved');
+            }
+        }
+    }
+
+    if (currentIsUnsaved) {
+        $('#buttons .save').removeClass('disabled');
+    } else {
+        $('#buttons .save').addClass('disabled');
+    }
+    if (isUnsaved) {
+        $('#buttons .save-all').removeClass('disabled');
+    } else {
+        $('#buttons .save-all').addClass('disabled');
+    }
+}
+
 function getTabIndex(filePath) {
-    return tabs.find('a[href="#' + btoa(filePath).replace(/=+$/, '') + '"]').parent().index();
+    return getTabIndexById(btoa(filePath).replace(/=+$/, ''));
+}
+
+function getTabIndexById(hashId) {
+    return getTabById(hashId).index();
+}
+
+function getTabById(hashId) {
+    return tabs.find('a[href="#' + hashId + '"]').parent();
 }
 
 function reset() {
