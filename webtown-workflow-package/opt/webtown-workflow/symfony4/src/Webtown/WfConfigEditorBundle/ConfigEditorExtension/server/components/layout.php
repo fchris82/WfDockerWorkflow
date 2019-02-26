@@ -79,6 +79,9 @@
         $('#buttons .unfold-all').on('click', function() {
             getActiveEditor().getSession().unfold();
         });
+        $(window).on('beforeunload', function() {
+            return hasUnsavedContent() && confirm("There is/are unsaved content(s)! Are you sure you want to leave?");
+        });
     });
 </script>
 

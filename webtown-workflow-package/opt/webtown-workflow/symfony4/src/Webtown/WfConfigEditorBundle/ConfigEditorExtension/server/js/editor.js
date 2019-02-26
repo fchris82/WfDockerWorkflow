@@ -34,6 +34,11 @@ function openHelpReference() {
             theme: theme,
             mode: mode
         });
+        editor.commands.addCommand({
+            name: "save",
+            exec: function() {/* do nothing, this is the help tab */},
+            bindKey: { win: "ctrl-s", mac: "cmd-s" }
+        });
         // Register help content
         var ymlHelpContent = '';
         $.each(compConfig.children, function (key, value) {
@@ -79,6 +84,11 @@ function openFile(filePath, content) {
             enableBasicAutocompletion: true,
             enableSnippets: true,
             enableLiveAutocompletion: false
+        });
+        editor.commands.addCommand({
+            name: "save",
+            exec: saveActiveTab,
+            bindKey: { win: "ctrl-s", mac: "cmd-s" }
         });
         editor.session.setValue(content);
         // We save the loaded content to detect base file changes on the disk.
@@ -185,6 +195,22 @@ function refreshUnsavedTabs() {
     } else {
         $('#buttons .save-all').addClass('disabled');
     }
+}
+
+function hasUnsavedContent() {
+    var hashId, originalContent, tab, currentContent, isUnsaved=false, currentIsUnsaved=false, activeHashId=getActiveId();
+    for (hashId in lastSavedText) {
+        originalContent = lastSavedText[hashId];
+        tab = getTabById(hashId);
+        if (tab.length === 1 && editors.hasOwnProperty(hashId)) {
+            currentContent = editors[hashId].session.getValue();
+            if (originalContent !== currentContent) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
 function getTabIndex(filePath) {

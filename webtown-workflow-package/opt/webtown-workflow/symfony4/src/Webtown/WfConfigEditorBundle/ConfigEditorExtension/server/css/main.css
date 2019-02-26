@@ -35,14 +35,14 @@ body {
 .ace_editor {
     margin: 0;
     position: absolute;
-    top: 46px;
+    top: 40px;
     bottom: 0;
     left: 0;
     right: 0;
 }
 
 #buttons {
-    margin: 6px;
+    margin: 5px;
 }
 
 #buttons button.disabled {
