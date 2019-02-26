@@ -6,7 +6,7 @@ var langTools = ace.require("ace/ext/language_tools"),
 ;
 
 function getActiveId() {
-    return $('#editors div[aria-hidden="false"]').first().attr('id');
+    return $('#editors .tab-content .active').first().attr('id');
 }
 
 function getActiveEditor() {
@@ -43,9 +43,11 @@ function openHelpReference() {
 
         panel = document.createElement('div');
         panel.setAttribute('id', hashId);
+        panel.setAttribute('class', 'tab-pane');
+        panel.setAttribute('role', 'tabpanel');
         panel.appendChild(editor.container);
-        document.getElementById('editors').appendChild(panel);
-        $('#editors ul').prepend('<li><a href="#' + hashId + '">Help</a></li>');
+        document.getElementById('editors').getElementsByClassName('tab-content')[0].appendChild(panel);
+        $('#editors ul').prepend('<li class="nav-item"><a href="#' + hashId + '" class="nav-link" data-toggle="tab" role="tab" aria-controls="' + hashId + '">Help</a></li>');
         editors[hashId] = editor;
     }
 }
@@ -84,9 +86,11 @@ function openFile(filePath, content) {
 
         panel = document.createElement('div');
         panel.setAttribute('id', hashId);
+        panel.setAttribute('class', 'tab-pane');
+        panel.setAttribute('role', 'tabpanel');
         panel.appendChild(editor.container);
 
-        document.getElementById('editors').appendChild(panel);
+        document.getElementById('editors').getElementsByClassName('tab-content')[0].appendChild(panel);
         if (mode === 'ace/mode/yaml') {
             // Register helper
             editor.selection.on("changeCursor", function (event, selection) {
@@ -100,11 +104,12 @@ function openFile(filePath, content) {
         editor.session.on("change", function() {
             refreshUnsavedTabs();
         });
-        $('#editors ul').append('<li><a href="#' + hashId + '"><span class="file">' + filePath + '</span> <span class="ui-icon ui-icon-close" role="presentation">Remove Tab</span></a></li>');
+        $('#editors ul').append('<li class="nav-item"><a href="#' + hashId + '" class="nav-link" data-toggle="tab" role="tab" aria-controls="' + hashId
+            + '"><button class="close closeTab" type="button" >×</button><span class="file">' + filePath + '</span></a></li>');
         index = getTabIndex(filePath);
     }
     reset();
-    tabs.tabs({ active: index });
+    $('#editors > ul > li:last-child a').tab('show');
     editors[hashId] = editor;
 }
 
@@ -116,8 +121,7 @@ function loadFile(filePath) {
 
 function save(hashId) {
     var filePath = atob(hashId),
-        newContent = editors[hashId].session.getValue(),
-        tab = getTabById(hashId);
+        newContent = editors[hashId].session.getValue();
     $.get('/components/filecontents.php?file=' + filePath, function(originalContent) {
         if (originalContent.trim() === lastSavedText[hashId].trim() || confirm('The original file has been changed since you opened, do you really want to override it?')) {
             $.post('/components/save.php', {file: filePath, content: newContent}, function (data) {
@@ -192,19 +196,17 @@ function getTabIndexById(hashId) {
 }
 
 function getTabById(hashId) {
-    return tabs.find('a[href="#' + hashId + '"]').parent();
+    return $('#editors > ul').find('a[href="#' + hashId + '"]').parent();
 }
 
 function reset() {
     hideHelp();
-    tabs.tabs( "refresh" );
     // If there isn't active tab
-    if (tabs.children('ul').find('.ui-state-active').length === 0) {
-        var index = tabs.children('ul').find('li').length - 1;
-        // Activate last open tab
-        if (index > 0) {
-            tabs.tabs({ active: index });
-        }
+    if ($('#editors ul').find('.active').length === 0) {
+        $('#editors > ul > li:last-child a').tab('show');
+    }
+    if (typeof getActiveEditor() !== 'undefined') {
+        getActiveEditor().focus();
     }
 }
 

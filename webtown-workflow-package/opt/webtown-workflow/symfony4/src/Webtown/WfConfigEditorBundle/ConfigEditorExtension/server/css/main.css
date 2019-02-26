@@ -93,9 +93,22 @@ body {
     color: #d400d4;
 }
 
-.ui-tabs-nav li.unsaved span.file:after {
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+.nav-tabs li.unsaved span.file:after {
     content: ' *';
     font-weight: bold;
+}
+
+.nav-tabs > li .close {
+    margin: -2px 0 0 10px;
+    font-size: 18px;
 }
 
 UL.jqueryFileTree A {

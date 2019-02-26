@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title><?php echo $projectPath ?> | Config editor</title>
-    <link rel="stylesheet" href="/js/jquery-ui-1.12.1.custom/jquery-ui.css" />
     <link rel="stylesheet" href="/css/jquery.toastmessage.css" />
     <link rel="stylesheet" href="/js/jqueryfiletree/jQueryFileTree.min.css" />
     <link rel="stylesheet" href="/js/bootstrap-4.3.1-dist/css/bootstrap.css" />
@@ -19,7 +18,8 @@
             <button class="fold-all btn btn-secondary">Fold all</button>
             <button class="unfold-all btn btn-secondary">Unfold all</button>
         </div>
-        <ul></ul>
+        <ul class="nav nav-tabs" role="tablist"></ul>
+        <div class="tab-content"></div>
     </div>
     <div id="help">
         <pre class="reference"></pre>
@@ -27,7 +27,6 @@
 </div>
 
 <script src="/js/jquery-3.3.1.min.js"></script>
-<script src="/js/jquery-ui-1.12.1.custom/jquery-ui.js"></script>
 <script src="/js/bootstrap-4.3.1-dist/js/bootstrap.js"></script>
 <script src="/js/jquery.toastmessage.js"></script>
 <script src="/js/jqueryfiletree/jQueryFileTree.min.js"></script>
@@ -45,18 +44,20 @@
         $('#sidebar').fileTree({ root: '/', script: 'components/filetree.php'}, function(file) {
             loadFile(file);
         });
-        tabs = $( "#editors" ).tabs();
         openHelpReference();
         // Load base file
         loadFile('/<?php echo $baseConfigFile ?>');
         // Init tabs
         // Close icon: removing the tab on click
-        tabs.on( "click", "span.ui-icon-close", function() {
-            var panelId = $( this ).closest( "li" ).remove().attr( "aria-controls" );
-            $( "#" + panelId ).remove();
+        $(document).on("click", ".closeTab", function () {
+            //there are multiple elements which has .closeTab icon so close the tab whose close icon is clicked
+            var tabContentId = $(this).parent().attr("href");
+            $(this).parent().parent().remove(); //remove li of tab
+            // $('#myTab a:last').tab('show'); // Select first tab
+            $(tabContentId).remove(); //remove respective tab content
             reset();
         });
-        tabs.on("tabsactivate", function() {
+        $(document).on("shown.bs.tab", '#editors a[data-toggle="tab"]', function() {
             reset();
             refreshUnsavedTabs();
         });
