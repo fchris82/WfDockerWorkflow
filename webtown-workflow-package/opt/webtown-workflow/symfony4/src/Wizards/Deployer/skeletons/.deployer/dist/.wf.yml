@@ -16,7 +16,8 @@ imports:
 # The configs of recipes
 recipes:
     # Switch on deployer env
-    php_deployer_environment: ~
+    php_deployer_environment:
+        share: ['engine', 'web']
     # Switch on mail
     mail: ~
 
