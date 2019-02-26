@@ -14,6 +14,7 @@ use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
 use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class WfEnvironmentParserTest extends TestCase
 {
@@ -28,7 +29,7 @@ class WfEnvironmentParserTest extends TestCase
     {
         $workingDirectory = __DIR__ . '/../Resources/Environment/' . $directory;
         $filesystem = new Filesystem($workingDirectory);
-        $configuration = new Configuration(new RecipeManager(), $filesystem);
+        $configuration = new Configuration(new RecipeManager(), $filesystem, new EventDispatcher());
         $wfParser = new WfEnvironmentParser($configuration, $filesystem);
 
         foreach ($removeFiles as $file) {
@@ -66,7 +67,7 @@ class WfEnvironmentParserTest extends TestCase
     {
         $workingDirectory = __DIR__ . '/../Resources/Environment/' . $directory;
         $filesystem = new Filesystem($workingDirectory);
-        $configuration = new Configuration(new RecipeManager(), $filesystem);
+        $configuration = new Configuration(new RecipeManager(), $filesystem, new EventDispatcher());
         $wfParser = new WfEnvironmentParser($configuration, $filesystem);
 
         foreach ($removeFiles as $file) {

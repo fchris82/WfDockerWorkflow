@@ -23,6 +23,7 @@ use Mockery as m;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
 
@@ -44,7 +45,7 @@ class ConfigurationTest extends TestCase
      */
     public function testConfigDeepMerge($base, $new, $result)
     {
-        $configuration = new Configuration(new RecipeManager(), m::mock(Filesystem::class));
+        $configuration = new Configuration(new RecipeManager(), m::mock(Filesystem::class), new EventDispatcher());
         $response = $this->getMethod($configuration, 'configDeepMerge')->invokeArgs($configuration, [$base, $new]);
 
         $this->assertEquals($result, $response);
@@ -145,7 +146,7 @@ class ConfigurationTest extends TestCase
 
         $workingDirectory = realpath(__DIR__ . '/../Resources/Configuration/' . $directory);
         $filesystem = new Filesystem($workingDirectory);
-        $configuration = new Configuration($this->buildRecipeManager(), $filesystem);
+        $configuration = new Configuration($this->buildRecipeManager(), $filesystem, new EventDispatcher());
 
         $fullConfig = $configuration->loadConfig(
             $workingDirectory . \DIRECTORY_SEPARATOR . $file,

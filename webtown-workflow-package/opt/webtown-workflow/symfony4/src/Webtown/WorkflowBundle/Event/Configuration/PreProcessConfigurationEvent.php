@@ -23,7 +23,7 @@ class PreProcessConfigurationEvent extends Event
     protected $projectPath;
 
     /**
-     * @var string
+     * @var string|null
      */
     protected $wfVersion;
 
@@ -32,9 +32,9 @@ class PreProcessConfigurationEvent extends Event
      *
      * @param array  $config
      * @param string $projectPath
-     * @param string $wfVersion
+     * @param string|null $wfVersion
      */
-    public function __construct(array $config, string $projectPath, string $wfVersion)
+    public function __construct(array $config, string $projectPath, ?string $wfVersion)
     {
         $this->config = $config;
         $this->projectPath = $projectPath;
@@ -82,9 +82,9 @@ class PreProcessConfigurationEvent extends Event
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getWfVersion(): string
+    public function getWfVersion(): ?string
     {
         return $this->wfVersion;
     }
