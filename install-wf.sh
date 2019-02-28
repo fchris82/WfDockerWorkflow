@@ -80,7 +80,7 @@ done
 IFS=$OLDIFS
 if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash_history" ] \
     && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/bash.extension.sh" | wc -l) == 0 ]; then
-        echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/bash.extension.sh" >> $BASH_PROFILE_FILE
+        echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/bash.extension.sh\n" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
         [[ $(basename "$SHELL") == "bash" ]] && source $BASH_PROFILE_FILE
         echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
@@ -92,7 +92,7 @@ if [ -f ~/.zshrc ]; then
     ln -sf ~/.webtown-workflow/bin/zsh/zsh_autocomplete.sh ~/.zsh/completion/_wf
     if [ $(echo $fpath | egrep ~/.zsh/completion | wc -l) == 0 ] \
         && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.webtown-workflow/bin/zsh/zsh.extension.sh" | wc -l) == 0 ]; then
-            echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/zsh.extension.sh" >> ~/.zshrc
+            echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/zsh.extension.sh\n" >> ~/.zshrc
             # Reload the shell if it needs
             [[ $(basename "$SHELL") == "zsh" ]] && source ~/.zshrc
             echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
@@ -125,5 +125,6 @@ fi
     && rsync --remove-source-files -a -v ~/.webtown-workflow/wizards/* ~/.webtown-workflow/extensions/wizards \
     && rm -rf ~/.webtown-workflow/wizards
 [[ -f ~/.webtown-workflow/bin/zsh_autocomplete.sh ]] && rm -f ~/.webtown-workflow/bin/zsh_autocomplete.sh
+# todo Remove autocomplete from ~/.zshrc file
 
 echo -e "${GREEN}Install success${RESTORE}"
