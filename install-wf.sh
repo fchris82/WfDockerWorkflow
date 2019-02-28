@@ -82,7 +82,7 @@ if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash
     && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/bash.extension.sh" | wc -l) == 0 ]; then
         echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/bash.extension.sh\n" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
-        [[ $(basename "$SHELL") == "bash" ]] && source $BASH_PROFILE_FILE
+        [[ "$(basename "$SHELL")" == "bash" ]] && source $BASH_PROFILE_FILE
         echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
 fi
 
@@ -94,7 +94,7 @@ if [ -f ~/.zshrc ]; then
         && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.webtown-workflow/bin/zsh/zsh.extension.sh" | wc -l) == 0 ]; then
             echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/zsh.extension.sh\n" >> ~/.zshrc
             # Reload the shell if it needs
-            [[ $(basename "$SHELL") == "zsh" ]] && source ~/.zshrc
+            [[ "$(basename "$SHELL")" == "zsh" ]] && source ~/.zshrc
             echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
     fi
 else
