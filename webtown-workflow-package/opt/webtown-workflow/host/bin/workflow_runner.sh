@@ -44,7 +44,7 @@ if [ "$1" == "--develop" ]; then
     esac
 fi
 
-# COMMAND
+# COMMAND: [wf|wizard]
 CMD=${1}
 shift
 
@@ -154,10 +154,12 @@ fi
 # If the .wf.yml is a symlink, we put it into directly. It happens forexample if you are using deployer on a server, and
 # share this file among different versions.
 if [ -L ${WORKDIR}/${WF_CONFIGURATION_FILE_NAME} ]; then
-    CONFIG_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_CONFIGURATION_FILE_NAME}):${WORKDIR}/${WF_CONFIGURATION_FILE_NAME}"
+    config_link=$(readlink -f ${WORKDIR}/${WF_CONFIGURATION_FILE_NAME})
+    CONFIG_FILE_SHARE="-v ${config_link}:${config_link}"
 fi
 if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
-    ENV_FILE_SHARE="-v $(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME}):${WORKDIR}/${WF_ENV_FILE_NAME}"
+    env_link=$(readlink -f ${WORKDIR}/${WF_ENV_FILE_NAME})
+    ENV_FILE_SHARE="-v ${env_link}:${env_link}"
 fi
 
 # @todo (Chris) !!! Az új megoldást adoptálni: /extensions/recipes + /extensions/wizards
