@@ -74,10 +74,11 @@ IFS=$'\n'
 for file in $BASH_FILE_TRACES; do
     if [ -f "$file" ]; then
         BASH_PROFILE_FILE="$file"
+        break
     fi
 done
 IFS=$OLDIFS
-if [ -f "$BASH_PROFILE_FILE" ] \
+if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash_history" ] \
     && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/bash.extension.sh" | wc -l) == 0 ]; then
         echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/bash.extension.sh" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
