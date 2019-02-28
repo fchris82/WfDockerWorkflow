@@ -1,7 +1,72 @@
-<!-- TODO -->
+# Alias recipes
+
+Sometimes we need a program without any configuration, e.g. we want to create the project with this.
+
+We collect here some alises
+
+## Composer
+
+```bash
+alias composer='COMPOSER_HOME=$HOME/.config/composer \
+                COMPOSER_CACHE_DIR=$HOME/.cache/composer \
+                    docker run --rm --interactive --tty \
+                    --volume $PWD:/app \
+                    --env COMPOSER_HOME \
+                    --env COMPOSER_CACHE_DIR \
+                    --volume $COMPOSER_HOME:$COMPOSER_HOME \
+                    --volume $COMPOSER_CACHE_DIR:$COMPOSER_CACHE_DIR \
+                    --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                    --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                    --user $(id -u):$(id -g) \
+                    composer'
 ```
-docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w /home/chris/www/ez -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v /home/chris/www/ez:/home/chris/www/ez -e LOCAL_USER_ID=${LOCAL_USER_ID} -e LOCAL_USER_NAME=${LOCAL_USER_NAME} -e LOCAL_USER_HOME=${LOCAL_USER_HOME} -e WF_HOST_TIMEZONE=${WF_HOST_TIMEZONE} -e WF_HOST_LOCALE=${WF_HOST_LOCALE} -e WF_DOCKER_HOST_CHAIN="${WF_DOCKER_HOST_CHAIN}$(hostname) " -e COMPOSER_HOME=${COMPOSER_HOME} -e COMPOSER_MEMORY_LIMIT=-1 -e USER_GROUP=${USER_GROUP} -e APP_ENV=dev -e XDEBUG_ENABLED=0 -e WF_DEBUG=0 -e CI=0 -e DOCKER_RUN=1 -e WF_TTY=1  fchris82/symfony:ez2 composer create-project ezsystems/ezplatform .
 
-docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w /home/chris/www/ez -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v /home/chris/www/ez:/home/chris/www/ez -e LOCAL_USER_ID=${LOCAL_USER_ID} -e LOCAL_USER_NAME=${LOCAL_USER_NAME} -e LOCAL_USER_HOME=${LOCAL_USER_HOME} -e WF_HOST_TIMEZONE=${WF_HOST_TIMEZONE} -e WF_HOST_LOCALE=${WF_HOST_LOCALE} -e WF_DOCKER_HOST_CHAIN="${WF_DOCKER_HOST_CHAIN}$(hostname) " -e COMPOSER_HOME=${COMPOSER_HOME} -e COMPOSER_MEMORY_LIMIT=-1 -e USER_GROUP=${USER_GROUP} -e APP_ENV=dev -e XDEBUG_ENABLED=0 -e WF_DEBUG=0 -e CI=0 -e DOCKER_RUN=1 -e WF_TTY=1  fchris82/symfony:ez2 composer require kaliop/ezmigrationbundle
+## PHP
 
+```bash
+alias php='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume $PWD:/app \
+                --volume $HOME:$HOME \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:7.3-cli php'
+alias php73='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume $PWD:/app \
+                --volume $HOME:$HOME \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:7.3-cli php'
+alias php72='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume $PWD:/app \
+                --volume $HOME:$HOME \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:7.2-cli php'
+alias php71='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume $PWD:/app \
+                --volume $HOME:$HOME \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:7.1-cli php'
+alias php5='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume $PWD:/app \
+                --volume $HOME:$HOME \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:5-cli php'
 ```
