@@ -66,17 +66,35 @@ if [ "${BASE_IMAGE}" == "${IMAGE}" ]; then
     build
 fi
 
-# Install autocomplete
+# Install BASH init script
+# @todo On mac: dtruss instead of strace
+BASH_FILE_TRACES=$(echo exit | strace bash -li |& less | grep "^open.*\"$HOME" | cut -d'"' -f2);
+OLDIFS=$IFS
+IFS=$'\n'
+for file in $BASH_FILE_TRACES; do
+    if [ -f "$file" ]; then
+        BASH_PROFILE_FILE="$file"
+    fi
+done
+IFS=$OLDIFS
+if [ -f "$BASH_PROFILE_FILE" ] \
+    && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/bash.extension.sh" | wc -l) == 0 ]; then
+        echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/bash.extension.sh" >> $BASH_PROFILE_FILE
+        # Reload the shell if it needs
+        [[ $(basename "$SHELL") == "bash" ]] && source $BASH_PROFILE_FILE
+        echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
+fi
+
+# Install ZSH init script and autocomplete
 if [ -f ~/.zshrc ]; then
     mkdir -p ~/.zsh/completion
-    ln -sf ~/.webtown-workflow/bin/zsh_autocomplete.sh ~/.zsh/completion/_wf
-    if [ $(cat ~/.zshrc| egrep "^[^#]*fpath[^#]*/.zsh/completion" | wc -l) == 0 ]; then
-        echo -e "${YELLOW}You have to edit the ${GREEN}~/.zshrc${YELLOW} file and add this row:${RESTORE}"
-        echo -e "fpath=(~/.zsh/completion \$fpath)"
-    fi
-    if [ $(cat ~/.zshrc| egrep "^[^#]*compinit" | wc -l) == 0 ]; then
-        echo -e "${YELLOW}You have to edit the ${GREEN}~/.zshrc${YELLOW} file and add this row AFTER the fpath!${RESTORE}"
-        echo -e "autoload -Uz compinit && compinit -i"
+    ln -sf ~/.webtown-workflow/bin/zsh/zsh_autocomplete.sh ~/.zsh/completion/_wf
+    if [ $(echo $fpath | egrep ~/.zsh/completion | wc -l) == 0 ] \
+        && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.webtown-workflow/bin/zsh/zsh.extension.sh" | wc -l) == 0 ]; then
+            echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/zsh.extension.sh" >> ~/.zshrc
+            # Reload the shell if it needs
+            [[ $(basename "$SHELL") == "zsh" ]] && source ~/.zshrc
+            echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
     fi
 else
     echo -e "You don't have installed the zsh! Nothing changed."
@@ -90,7 +108,7 @@ if [ ! -z $GITIGNORE_FILE ] && [ -f $GITIGNORE_FILE ]; then
     do
         if ! grep -q ^${ignore}$ $GITIGNORE_FILE; then
             echo $ignore >> $GITIGNORE_FILE
-            echo ${GREEN}Add the ${YELLOW}${ignore}${GREEN} path to ${YELLOW}${GITIGNORE_FILE}${GREEN} file${RESTORE}
+            echo ${GREEN}We added the ${YELLOW}${ignore}${GREEN} path to ${YELLOW}${GITIGNORE_FILE}${GREEN} file${RESTORE}
         fi
     done
 else
@@ -105,5 +123,6 @@ fi
 [[ -d ~/.webtown-workflow/wizards ]] \
     && rsync --remove-source-files -a -v ~/.webtown-workflow/wizards/* ~/.webtown-workflow/extensions/wizards \
     && rm -rf ~/.webtown-workflow/wizards
+[[ -f ~/.webtown-workflow/bin/zsh_autocomplete.sh ]] && rm -f ~/.webtown-workflow/bin/zsh_autocomplete.sh
 
 echo -e "${GREEN}Install success${RESTORE}"
