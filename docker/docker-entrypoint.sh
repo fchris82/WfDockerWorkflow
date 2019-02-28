@@ -29,7 +29,7 @@ if [ $USER_ID != 0 ] && [ "$USER_ID" != "$CURRENT_USER" ]; then
         # try to find an existing group name by GID
         gname=$(getent group $dockergid | cut -d: -f1)
         # if there isn't existing group by GID then we set it for the docker group
-        if [ -z gname ]; then
+        if [ -z $gname ]; then
             groupmod -g $dockergid $DOCKER_GROUP_NAME
         # if there is an existing group then we set that
         else
