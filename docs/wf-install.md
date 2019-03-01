@@ -87,7 +87,7 @@ You can register the autocomplete function:
 
 ```shell
 $ mkdir -p ~/.zsh/completion
-$ ln -sf ~/.webtown-workflow/bin/zsh_autocomplete.sh ~/.zsh/completion/_wf
+$ ln -sf ~/.webtown-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
 ```
 
 Edit the `~/.zshrc` file:

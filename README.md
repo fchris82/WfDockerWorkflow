@@ -37,7 +37,7 @@ You can create unit test and run.
 
 If you want to extend the ZSH autocomplete you should read it before: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org It is a short, but fully description about bases.
 
-As you can see in the `webtown-workflow-package/opt/webtown-workflow/host/bin/zsh_autocomplete.sh` file, the script include the outer
+As you can see in the `webtown-workflow-package/opt/webtown-workflow/host/bin/zsh/autocomplete.sh` file, the script include the outer
 autcomplete files:
 
 ```sh
@@ -57,7 +57,7 @@ The program find and include all of the `autocomplete.zsh` called file.
 
 You can learn from the existing `autocomplete.zsh` files!
 
-> If you want to test it while you are developing, you must to edit the installed file directly in the `~/.webtown-workflow/bin/zsh_autocomplete.sh` file.
+> If you want to test it while you are developing, you must to edit the installed file directly in the `~/.webtown-workflow/bin/zsh/autocomplete.sh` file.
 >
 > Reload the edited file: `unfunction _wf && autoload -U _wf`
 
