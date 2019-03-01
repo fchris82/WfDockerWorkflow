@@ -101,19 +101,30 @@ else
     echo -e "You don't have installed the zsh! Nothing changed."
 fi
 
+GLOBAL_IGNORE=(/.wf /.wf.yml /.docker.env)
 # Install gitignore
-GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
-if [ ! -z $GITIGNORE_FILE ] && [ -f $GITIGNORE_FILE ]; then
-    GITIGNORE=(/.wf /.wf.yml /.docker.env)
-    for ignore in "${GITIGNORE[@]}"
-    do
-        if ! grep -q ^${ignore}$ $GITIGNORE_FILE; then
-            echo $ignore >> $GITIGNORE_FILE
-            echo ${GREEN}We added the ${YELLOW}${ignore}${GREEN} path to ${YELLOW}${GITIGNORE_FILE}${GREEN} file${RESTORE}
-        fi
-    done
+git --version 2>&1 >/dev/null # improvement by tripleee
+GIT_IS_AVAILABLE=$?
+if [ $GIT_IS_AVAILABLE -eq 0 ]; then
+    GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
+    # if it doesn't exist, create global gitignore file
+    if [ -z $GITIGNORE_FILE ]; then
+        git config --global core.excludesfile '~/.gitignore'
+        GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
+    fi
+    if [ ! -z $GITIGNORE_FILE ] && [ -f $GITIGNORE_FILE ]; then
+        for ignore in "${GLOBAL_IGNORE[@]}"
+        do
+            if ! grep -q ^${ignore}$ $GITIGNORE_FILE; then
+                echo $ignore >> $GITIGNORE_FILE
+                echo -e "${GREEN}We added the ${YELLOW}${ignore}${GREEN} path to ${YELLOW}${GITIGNORE_FILE}${GREEN} file${RESTORE}"
+            fi
+        done
+    else
+        echo -e "${YELLOW}You don't have global ${GREEN}.gitignore${YELLOW} file! Nothing changed.${RESTORE}"
+    fi
 else
-    echo -e "${YELLOW}You don't have installed the git or you don't have global ${GREEN}.gitignore${YELLOW} file! Nothing changed.${RESTORE}"
+    echo -e "INFO: You don't have installed the git."
 fi
 
 # Clean / Old version upgrade
