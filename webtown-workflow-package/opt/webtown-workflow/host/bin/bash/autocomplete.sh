@@ -8,6 +8,11 @@
 _wf() {
     # Get config file
     local config_file=${HOME}/.webtown-workflow/config/env
+    # We have to reset the words variable
+    local words=''
+    local cur="${COMP_WORDS[COMP_CWORD]}"
+    local first="${COMP_WORDS[1]}"
+    local prev="${COMP_WORDS[COMP_CWORD-1]}"
     if [ -f $config_file ]; then
         local wf_directory_name=$(awk '/^'WF_WORKING_DIRECTORY_NAME'/{split($1,a,"="); print a[2]}' "${config_file}")
 
@@ -27,7 +32,7 @@ _wf() {
             [[ -f $config_file ]] && [[ -d $wf_directory_name ]] && words+=$(echo ${list:-$(wf list)})
         ;;
         2)
-            case ${COMP_WORDS[1]} in
+            case ${prev} in
                 --config-dump)
                     words='--only-recipes --no-ansi --recipe='
                 ;;
@@ -36,13 +41,7 @@ _wf() {
                 ;;
             esac
         ;;
-        *)
-            # Allow files from third parameter
-            compopt -o nospace
-            [[ $COMP_CWORD -ge 3 ]] && words=($(compgen -f "${COMP_WORDS[${COMP_CWORD}]}"))
-        ;;
     esac
-    COMPREPLY=($(compgen -W "${words}" "${COMP_WORDS[${COMP_CWORD}]}"))
 
     # Here we try to find recipes autocompletes.
     if [ -f $config_file ] && [ -d $wf_directory_name ]; then
@@ -52,6 +51,15 @@ _wf() {
             find -L ${wf_directory_name} -mindepth 2 -maxdepth 2 -type f -name 'autocomplete.bash' -printf "source %p\n" > $recipe_autocompletes_file
         fi
         source $recipe_autocompletes_file
+    fi
+
+    # Default autoconfig is the directories and files
+    if [ -z "$words" ]; then
+        compopt -o nospace
+        compopt -o filenames
+        COMPREPLY=($(compgen -f -- ${cur}))
+    else
+        COMPREPLY=($(compgen -W "${words}" -- ${cur}))
     fi
 }
 
