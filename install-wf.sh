@@ -109,6 +109,7 @@ if [ $GIT_IS_AVAILABLE -eq 0 ]; then
     GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
     # if it doesn't exist, create global gitignore file
     if [ -z $GITIGNORE_FILE ]; then
+        touch ~/.gitignore
         git config --global core.excludesfile '~/.gitignore'
         GITIGNORE_FILE=$(bash -c "echo $(git config --get core.excludesfile)")
     fi
