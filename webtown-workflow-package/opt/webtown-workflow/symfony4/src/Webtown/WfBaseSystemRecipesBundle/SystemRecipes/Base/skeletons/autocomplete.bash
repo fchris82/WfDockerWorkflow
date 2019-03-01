@@ -14,7 +14,7 @@ case $COMP_CWORD in
             connect | enter | debug-enter | logs)
                 _base_init
                 # Only the second argument
-                [[ $COMP_CWORD == 2 ]] && words+=' ${services:-$(wf docker-compose config --services)}'
+                [[ $COMP_CWORD == 2 ]] && words+=" ${services:-$(wf docker-compose config --services)}"
             ;;
             exec | run | sudo-run | docker-compose)
                 _base_init
