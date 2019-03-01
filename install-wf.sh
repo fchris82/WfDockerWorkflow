@@ -82,8 +82,12 @@ if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash
     && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/extension.sh" | wc -l) == 0 ]; then
         echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/extension.sh\nsource ~/.webtown-workflow/bin/bash/autocomplete.sh\n" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
-        [[ "$(basename "$SHELL")" == "bash" ]] && source $BASH_PROFILE_FILE
-        echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
+        if [ "$(basename "$SHELL")" == "bash" ]; then
+            echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
+            echo -e "${GREEN}You have to run to reload shell: ${WHITE}${BOLD}source ${BASH_PROFILE_FILE}${RESTORE}"
+        else
+            echo "INFO: We register the the BASH autoload extension in the ${BASH_PROFILE_FILE} file!"
+        fi
 fi
 
 # Install ZSH init script and autocomplete
@@ -93,12 +97,12 @@ if [ -f ~/.zshrc ]; then
     if [ $(echo $fpath | egrep ~/.zsh/completion | wc -l) == 0 ] \
         && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.webtown-workflow/bin/zsh/extension.sh" | wc -l) == 0 ]; then
             echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/extension.sh\n" >> ~/.zshrc
-            # Reload the shell if it needs
-            [[ "$(basename "$SHELL")" == "zsh" ]] && source ~/.zshrc
             echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
+            # Reload the shell if it needs
+            [[ "$(basename "$SHELL")" == "zsh" ]] && echo -e "${GREEN}You have to run to reload shell: ${WHITE}${BOLD}source ~/.zshrc${RESTORE}"
     fi
 else
-    echo -e "You don't have installed the zsh! Nothing changed."
+    echo "INFO: You don't have installed the zsh! Nothing changed."
 fi
 
 GLOBAL_IGNORE=(/.wf /.wf.yml /.docker.env)
