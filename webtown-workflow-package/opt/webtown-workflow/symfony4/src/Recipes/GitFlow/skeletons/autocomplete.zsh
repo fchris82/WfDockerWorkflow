@@ -1,8 +1,11 @@
-case $state in
-    parameters)
-        case $words[2] in
+case $COMP_CWORD in
+    1)
+        # do nothing
+    ;;
+    *)
+        case ${COMP_WORDS[1]} in
             feature | hotfix)
-                _arguments '*: :(--from-this --disable-db --reload-d)'
+                words+=" --from-this --disable-db --reload-d"
             ;;
         esac
     ;;

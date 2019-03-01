@@ -1,13 +1,11 @@
-#compdef wf
+#!/usr/bin/env bash
 
-# Here we created an autocomplete zsh extension. There are defaults and you can use additional recipe autocompletes.
+# Here we created an autocomplete bash extension. There are defaults and you can use additional recipe autocompletes.
 # If you want to test it while you are developing, you must to edit the installed file directly in the
-# `~/.webtown-workflow/bin/zsh/zsh_autocomplete.sh` file.
-# Reload to test: `unfunction _wf && autoload -U _wf`
+# `~/.webtown-workflow/bash/autocomplete.sh` file.
+# Reload to test: `source ~/.webtown-workflow/bin/bash/autocomplete.sh`
 
 _wf() {
-    local state
-
     # Get config file
     local config_file=${HOME}/.webtown-workflow/config/env
     if [ -f $config_file ]; then
@@ -21,38 +19,40 @@ _wf() {
         fi
     fi
 
-    _arguments \
-        '1: :->command'\
-        '*: :->parameters'
-
-    case $state in
-        command)
-            _arguments '1: :(--help --version --docker-ps --composer-install --reload --clean-cache --enter --run --sf-run --extensions --config-dump reconfigure --update --rebuild)'
-            [[ -f $config_file ]] && [[ -d $wf_directory_name ]] && compadd $(echo ${list:-$(wf list)})
+    case $COMP_CWORD in
+        1)
+            words='--help --version --docker-ps --composer-install --reload --clean-cache --enter --run --sf-run --extensions --config-dump reconfigure --update --rebuild'
+            # Last character must be 'space'
+            words+=' '
+            [[ -f $config_file ]] && [[ -d $wf_directory_name ]] && words+=$(echo ${list:-$(wf list)})
         ;;
-        parameters)
-            case $words[2] in
+        2)
+            case ${COMP_WORDS[1]} in
                 --config-dump)
-                    _arguments '*: :(--only-recipes --no-ansi --recipe=)'
+                    words='--only-recipes --no-ansi --recipe='
                 ;;
                 --rebuild)
-                    _arguments '*: :(--no-pull)'
+                    words='--no-pull'
                 ;;
             esac
+        ;;
+        *)
             # Allow files from third parameter
-            [[ ! -z $words[3] ]] && _alternative 'files:filename:_files'
+            compopt -o nospace
+            [[ $COMP_CWORD -ge 3 ]] && words=($(compgen -f "${COMP_WORDS[${COMP_CWORD}]}"))
         ;;
     esac
+    COMPREPLY=($(compgen -W "${words}" "${COMP_WORDS[${COMP_CWORD}]}"))
 
     # Here we try to find recipes autocompletes.
     if [ -f $config_file ] && [ -d $wf_directory_name ]; then
         local recipe_autocompletes_file=${wf_directory_name}/autocomplete.recipes
         if [ ! -f $recipe_autocompletes_file ]; then
             # find all autocomplete.zsh file in recipes!
-            find -L ${wf_directory_name} -mindepth 2 -maxdepth 2 -type f -name 'autocomplete.zsh' -printf "source %p\n" > $recipe_autocompletes_file
+            find -L ${wf_directory_name} -mindepth 2 -maxdepth 2 -type f -name 'autocomplete.bash' -printf "source %p\n" > $recipe_autocompletes_file
         fi
         source $recipe_autocompletes_file
     fi
 }
 
-_wf "$@"
+complete -o filenames -F _wf wf

@@ -218,6 +218,7 @@ class ReconfigureCommand extends Command
             case 'yaml':
             case 'yml':
             case 'zsh':
+            case 'bash':
                 $newContents = sprintf($commentPattern, $warning) . $skeletonFile->getContents();
                 $skeletonFile->setContents($newContents);
         }
