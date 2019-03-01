@@ -10,7 +10,7 @@ The **wf** is exactly a docker image: `fchris82/wf` , https://hub.docker.com/r/f
 
 **Programs**
 
-- `Docker` and `Docker Compose`
+- `Docker`
 <!-- TODO A mercurial még nincs! -->
 - `GIT` or `Mercurial` version controller
 - `dnsmasq` or other dns tool. The program will generate local domains with custom TLD (default: `.loc`).
@@ -158,3 +158,5 @@ It exactly download from git repository and run the `install-wf.sh` file again.
     $ find ~/bin -type l -ilname "*/.webtown-workflow/*" -delete
     # Remove files
     $ rm -rf ~/.webtown-workflow
+
+    # @todo Remove source files from shell rc files
