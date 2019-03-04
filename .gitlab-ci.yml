@@ -44,10 +44,12 @@ test:deb:
         - ls -al
         - dpkg-deb -R webtown-workflow.deb /tmp/deb
         - git -C webtown-workflow-package ls-files --exclude-standard -oi --directory > .git/ignores.tmp
-        - rsync -r --delete --delete-excluded --delete-before --force --exclude=.git --exclude-from="$(echo .git/ignores.tmp)" webtown-workflow-package/* /tmp/original
+        - rsync -avvv -r --delete --delete-excluded --delete-before --force --exclude=.git --exclude-from="$(echo .git/ignores.tmp)" webtown-workflow-package/* /tmp/original
         - DIFF=$(diff -qr /tmp/original /tmp/deb) || echo 'There are some differences'
         - cat .git/ignores.tmp
-        - git -C webtown-workflow-package ls-files --exclude-standard -oi
+        - git -C webtown-workflow-package ls-files --exclude-standard -oi --directory
+        - ls -al opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
+        - ls -al /tmp/original/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - rm -rf /tmp/deb
         - rm -rf /tmp/original
         - if [[ ! -z ${DIFF} ]]; then echo $DIFF; echo "\n\nYou didn't refresh the deb package! Run the 'make rebuild_wf' command and commit the new deb package too!"; exit 1; fi
