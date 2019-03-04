@@ -134,7 +134,7 @@ class CommanderTest extends TestCase
                     "There are differencies between the rensponses:\n%s\n---\n%s\n===\nOutput:\n%s\n",
                     json_encode($ioOutput, JSON_PRETTY_PRINT),
                     json_encode($ioManager->getLog(), JSON_PRETTY_PRINT),
-                    $output
+                    $e->getOutput()
                 )
             );
 
