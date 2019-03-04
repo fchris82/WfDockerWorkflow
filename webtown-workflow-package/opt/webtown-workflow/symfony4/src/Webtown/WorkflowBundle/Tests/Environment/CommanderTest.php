@@ -105,20 +105,36 @@ class CommanderTest extends TestCase
                 sprintf('-e %s=%s', 'COMMANDER_TEST', 'test'),
                 $workdir
             );
-            $this->assertEquals(array_map(function ($v) {
-                return substr($v, 0, 30);
-            }, $ioOutput), array_map(function ($v) {
-                return substr($v, 0, 30);
-            }, $ioManager->getLog()));
+            $this->assertEquals(
+                array_map(function ($v) {
+                    return substr($v, 0, 30);
+                }, $ioOutput),
+                array_map(function ($v) {
+                    return substr($v, 0, 30);
+                }, $ioManager->getLog()),
+                sprintf(
+                    "There are differencies between the rensponses:\n%s\n---\n%s",
+                    json_encode($ioOutput, JSON_PRETTY_PRINT),
+                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT)
+                )
+            );
             // We call a "Docker In Docker", so the __DIR__ gets a missing directory from the host. We use the ${HOME},
             // that gets a correct directory, but we don't know the contents, so we don't compare it.
             //$this->assertEquals(trim($result), trim($output));
         } catch (CommanderRunException $e) {
-            $this->assertEquals(array_map(function ($v) {
-                return substr($v, 0, 30);
-            }, $ioOutput), array_map(function ($v) {
-                return substr($v, 0, 30);
-            }, $ioManager->getLog()));
+            $this->assertEquals(
+                array_map(function ($v) {
+                    return substr($v, 0, 30);
+                }, $ioOutput),
+                array_map(function ($v) {
+                    return substr($v, 0, 30);
+                }, $ioManager->getLog()),
+                sprintf(
+                    "There are differencies between the rensponses:\n%s\n---\n%s",
+                    json_encode($ioOutput, JSON_PRETTY_PRINT),
+                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT)
+                )
+            );
 
             throw $e;
         }
