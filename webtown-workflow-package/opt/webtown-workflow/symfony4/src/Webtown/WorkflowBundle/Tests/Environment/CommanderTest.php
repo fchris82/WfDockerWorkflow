@@ -143,13 +143,13 @@ class CommanderTest extends TestCase
     public function dpRunCmdInContainer()
     {
         return [
-            ['${HOME}', 'ls', [
-                '[exec] <comment>cd ${HOME} <question>&&</question> ls</comment>',
-                '[<info>OK</info>] cd ${HOME} <question>&&</question> ls',
+            ['/tmp', 'ls', [
+                '[exec] <comment>cd /tmp <question>&&</question> ls</comment>',
+                '[<info>OK</info>] cd /tmp <question>&&</question> ls',
             ], ''],
-            ['${HOME}', 'ls -e', [
-                '[exec] <comment>cd ${HOME} <question>&&</question> ls -e</comment>',
-                '[<error>ERROR</error> (2)] cd ' . __DIR__ . ' <question>&&</question> ls -e',
+            ['/tmp', 'ls -e', [
+                '[exec] <comment>cd /tmp <question>&&</question> ls -e</comment>',
+                '[<error>ERROR</error> (2)] cd /tmp <question>&&</question> ls -e',
             ], new CommanderRunException('ls -e', '')],
         ];
     }
