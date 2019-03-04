@@ -45,7 +45,8 @@ test:deb:
         - dpkg-deb -R webtown-workflow.deb /tmp/deb
         - git -C webtown-workflow-package ls-files --exclude-standard -oi --directory > .git/ignores.tmp
         - rsync -r --delete --delete-excluded --delete-before --force --exclude=.git --exclude-from="$(echo .git/ignores.tmp)" webtown-workflow-package/* /tmp/original
-        - which diff
+        - diff --help
+        - diff -qr /tmp/original /tmp/deb
         - DIFF=$(diff -qr /tmp/original /tmp/deb)
         - rm -rf /tmp/deb
         - rm -rf /tmp/original
