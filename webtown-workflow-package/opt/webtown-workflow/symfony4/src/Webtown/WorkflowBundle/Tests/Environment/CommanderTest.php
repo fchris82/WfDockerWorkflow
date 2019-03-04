@@ -113,9 +113,10 @@ class CommanderTest extends TestCase
                     return substr($v, 0, 30);
                 }, $ioManager->getLog()),
                 sprintf(
-                    "There are differencies between the rensponses:\n%s\n---\n%s",
+                    "There are differencies between the rensponses:\n%s\n---\n%s\n===\nOutput:\n%s\n",
                     json_encode($ioOutput, JSON_PRETTY_PRINT),
-                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT)
+                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT),
+                    $output
                 )
             );
             // We call a "Docker In Docker", so the __DIR__ gets a missing directory from the host. We use the ${HOME},
@@ -130,9 +131,10 @@ class CommanderTest extends TestCase
                     return substr($v, 0, 30);
                 }, $ioManager->getLog()),
                 sprintf(
-                    "There are differencies between the rensponses:\n%s\n---\n%s",
+                    "There are differencies between the rensponses:\n%s\n---\n%s\n===\nOutput:\n%s\n",
                     json_encode($ioOutput, JSON_PRETTY_PRINT),
-                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT)
+                    json_encode($ioManager->getLog(), JSON_PRETTY_PRINT),
+                    $output
                 )
             );
 
