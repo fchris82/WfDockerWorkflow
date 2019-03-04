@@ -26,9 +26,11 @@ build:
         - cp .wf.gitlab-ci.yml .wf.yml
 #        - 'sed -e "s|image: fchris82/wf|image: ${TEST_IMAGE}|" -i .wf.yml'
         - cat .wf.yml
+        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - wf reconfigure
         - wf debug-docker-config
         - wf sfcmd composer install
+        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - echo "Build 'install-wf.sh' to downlaod."
     artifacts:
         name: "$CI_JOB_NAME"
@@ -63,6 +65,7 @@ test:sh:
     stage: test
     <<: *all_jobs
     script:
+        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - ./test/functions.sh
     # Change cache policy to make faster the CI pipeline
     cache:
@@ -74,6 +77,7 @@ test:phpunit:
     stage: test
     <<: *all_jobs
     script:
+        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - wf sfcmd vendor/bin/phpunit
     # Change cache policy to make faster the CI pipeline
     cache:
@@ -85,6 +89,7 @@ test:phpcsfix:
     stage: test
     <<: *all_jobs
     script:
+        - ls -al webtown-workflow-package/opt/webtown-workflow/symfony4/src/Webtown/WfBaseSystemRecipesBundle
         - wf sfcmd vendor/bin/php-cs-fixer fix --dry-run
     # Change cache policy to make faster the CI pipeline
     cache:
