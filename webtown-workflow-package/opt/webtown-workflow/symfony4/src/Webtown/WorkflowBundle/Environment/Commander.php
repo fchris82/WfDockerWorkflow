@@ -133,7 +133,7 @@ class Commander
                 'WF_DEBUG'              => '0',
                 'CI'                    => '0',
                 'DOCKER_RUN'            => '1',
-                'WF_TTY'                => '1',
+                'WF_TTY'                => $this->isTtyEnvironment() ? '1' : '0',
             ];
             $envParameters = [];
             foreach ($environments as $name => $value) {
@@ -142,12 +142,13 @@ class Commander
 
             // Example: `docker run -it -w $(pwd) -v $(pwd):$(pwd) -e TTY=1 -e WF_DEBUG=0 /bin/bash -c "ls -al && php -i"
             $containerCmd = sprintf(
-                'docker run -it -u ${LOCAL_USER_ID}:${USER_GROUP} -w %1$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %1$s:%1$s %2$s %3$s %4$s %5$s',
-                $workdir,
-                implode(' ', $envParameters),
-                $extraParameters,
-                $image,
-                $cmd
+                'docker run %1$s -u ${LOCAL_USER_ID}:${USER_GROUP} -w %2$s -v ${COMPOSER_HOME}:${COMPOSER_HOME} -v %2$s:%2$s %3$s %4$s %5$s %6$s',
+                $this->isTtyEnvironment() ? '-it' : '', // 1
+                $workdir,                                    // 2
+                implode(' ', $envParameters),               // 3
+                $extraParameters,                            // 4
+                $image,                                      // 5
+                $cmd                                         // 6
             );
         }
 
@@ -219,5 +220,10 @@ class Commander
             'exit_status'  => (int) ($matches[0]),
             'output'       => rtrim(str_replace('Exit status : ' . $matches[0], '', $complete_output)),
         ];
+    }
+
+    protected function isTtyEnvironment()
+    {
+        return stream_isatty(STDERR);
     }
 }
