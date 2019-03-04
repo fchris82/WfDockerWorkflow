@@ -43,6 +43,8 @@ class PreProcessConfigurationEvent extends Event
 
     /**
      * @return array
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getConfig(): array
     {
@@ -53,6 +55,8 @@ class PreProcessConfigurationEvent extends Event
      * @param array $config
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setConfig(array $config)
     {
@@ -63,6 +67,8 @@ class PreProcessConfigurationEvent extends Event
 
     /**
      * @return string
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getProjectPath(): string
     {
@@ -73,6 +79,8 @@ class PreProcessConfigurationEvent extends Event
      * @param string $projectPath
      *
      * @return $this
+     *
+     * @codeCoverageIgnore Simple setter
      */
     public function setProjectPath(string $projectPath)
     {
@@ -83,6 +91,8 @@ class PreProcessConfigurationEvent extends Event
 
     /**
      * @return string|null
+     *
+     * @codeCoverageIgnore Simple getter
      */
     public function getWfVersion(): ?string
     {
