@@ -30,8 +30,8 @@ class PreProcessConfigurationEvent extends Event
     /**
      * PreProcessConfigurationEvent constructor.
      *
-     * @param array  $config
-     * @param string $projectPath
+     * @param array       $config
+     * @param string      $projectPath
      * @param string|null $wfVersion
      */
     public function __construct(array $config, string $projectPath, ?string $wfVersion)
