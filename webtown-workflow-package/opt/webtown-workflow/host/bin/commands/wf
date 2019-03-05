@@ -16,7 +16,7 @@ WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
 set -a
 [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ] && . ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env
 set +a
-WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:webtown/webtown-workflow.git}
+WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:pub/wf.git}
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #

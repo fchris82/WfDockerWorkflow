@@ -72,7 +72,7 @@ Webtown Workflow Installer
 
 1. Download the `deb` package from repository
     ```bash
-    cd /tmp && git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git HEAD webtown-workflow.deb | tar -x
+    cd /tmp && git archive --remote=git@gitlab.webtown.hu:pub/wf.git HEAD webtown-workflow.deb | tar -x
     ```
 2. Install package:
 

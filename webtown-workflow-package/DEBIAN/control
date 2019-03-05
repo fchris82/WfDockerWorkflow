@@ -8,5 +8,5 @@ Essential: no
 Depends: git, curl, jq, make
 Maintainer: Webtown <info@webtown.hu>
 Description: Webtown GitFlow workflow supporter package
-Homepage: https://gitlab.webtown.hu/webtown/webtown-workflow
+Homepage: https://gitlab.webtown.hu/pub/wf
 Installed-Size: 30000

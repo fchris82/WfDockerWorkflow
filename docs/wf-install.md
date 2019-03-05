@@ -32,13 +32,13 @@ It was a target that you can use it without root permission. It is a "local" ins
 
 > Add user to docker group: `sudo usermod -aG docker $USER` - https://docs.docker.com/install/linux/linux-postinstall/
 
-And you need to have a right access to `gitlab.webtown.hu` and to the `webtown/webtown-workflow.git` project.
+And you need to have a right access to `gitlab.webtown.hu` and to the `pub/wf.git` project.
 
 ## Install
 
 Use the `install-wf.sh` installer:
 
-    git archive --remote=git@gitlab.webtown.hu:webtown/webtown-workflow.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
+    git archive --remote=git@gitlab.webtown.hu:pub/wf.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
     chmod +x /tmp/install-wf.sh
     /tmp/install-wf.sh
     rm /tmp/install-wf.sh
