@@ -36,12 +36,28 @@ And you need to have a right access to `gitlab.webtown.hu` and to the `pub/wf.gi
 
 ## Install
 
-Use the `install-wf.sh` installer:
+Use the `install-wf.sh` installer. There are 3 options:
 
-    git archive --remote=git@gitlab.webtown.hu:pub/wf.git ${2:-HEAD} install-wf.sh | tar xO > /tmp/install-wf.sh
-    chmod +x /tmp/install-wf.sh
-    /tmp/install-wf.sh
-    rm /tmp/install-wf.sh
+```shell
+# Use curl
+bash -c "$(curl -fsSL https://gitlab.webtown.hu/pub/wf/raw/master/install-wf.sh?inline=false)"
+
+# Use wget
+bash -c "$(wget https://gitlab.webtown.hu/pub/wf/raw/master/install-wf.sh?inline=false -O -)"
+
+# OR use git
+bash -c "$(git archive --remote=git@gitlab.webtown.hu:pub/wf.git ${2:-HEAD} install-wf.sh | tar xO)"
+```
+
+After run, you have reload the shell. You will see a message, like this:
+
+    You have to run to reload shell: source ~/.profile
+
+The file after `source` command may be different:
+
+- `~/.profile`
+- `~/.bashrc`
+- `~/.bash_profile`
 
 ### `PATH` upgrade
 
