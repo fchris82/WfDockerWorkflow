@@ -25,8 +25,7 @@ Ha használni szeretnéd a Yarn-t, akkor a `.wf.yml` fájlodban importáld be a 
 Alapból települ az **XDebug**. A probléma, hogy az eZ admin felülettel nem túl hatékony a működése, ezért alapból ki van kapcsolva.
 
 1. A `Languages & Frameworks > PHP > Servers` résznél a zöld `+` jellel adj hozzá egy szervert.
-    - Amit itt megadsz **Name**-nek, azt kell majd megadnod a `.project.env` fájlban a `XDEBUG_IDE_SERVER_NAME` értékének. Javaslat: `Docker`
-    - Alul pipáld ki a **Use path mappgins** részt. Itt kell beállítanod, hogy a docker image fájlrendszerében melyik könyvtár felel meg a local-ban. A projekt gyökerének add meg a `/var/www` értéket (nyomj entert!)
+    - Amit itt megadsz **Name**-nek, azt kell majd megadnod a `.wf.yml` fájlban a `XDEBUG_IDE_SERVER_NAME` értékének. Javaslat: `Docker`
 2. Menü: `Run > Edit configurations` résznél a zöld `+` jellel adj hozzá egy **PHP Web Application**-t
     - Válaszd ki az előbb megadott szervert
     - Adj meg egy tetszőleges nevet

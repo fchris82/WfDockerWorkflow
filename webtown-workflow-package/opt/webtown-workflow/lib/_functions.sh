@@ -221,7 +221,7 @@ function _get_hash_from_cache {
 #
 # @param $1 Parsing config file
 function _parseConfigFileList {
-    if [ ! -z $(grep "imports:" ${1}) ]; then
+    if [ ! -z "$(grep "imports:" ${1})" ] && [ ! -z "$(cat ${1} | shyaml keys | grep "^imports$")" ]; then
         local IMPORT_FILES_CKSUM=$(cat ${1} \
             | shyaml get-values-0 imports \
             | while IFS='' read -r -d '' value; do

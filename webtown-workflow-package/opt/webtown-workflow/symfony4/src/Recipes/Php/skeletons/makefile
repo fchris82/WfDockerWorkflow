@@ -1,5 +1,5 @@
 DOCKER_CLI_NAME		:= {{ names.engine }}
-DOCKER_DOC_ROOT		:= /var/www
+DOCKER_DOC_ROOT		:= {{ project_path }}
 
 XDEBUG_IDE_SERVER_NAME := {{ environment.XDEBUG_IDE_SERVER_NAME | default(server.xdebug_ide_server_name) }}
 PHP_IDE_CONFIG := "serverName=${XDEBUG_IDE_SERVER_NAME}"

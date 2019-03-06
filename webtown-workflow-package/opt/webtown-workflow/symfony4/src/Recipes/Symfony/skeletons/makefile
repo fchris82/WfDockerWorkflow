@@ -1,5 +1,5 @@
 DOCKER_CLI_NAME		:= {{ names.engine }}
-DOCKER_DOC_ROOT		:= /var/www
+DOCKER_DOC_ROOT		:= {{ project_path }}
 SF_CONSOLE_CMD		:= {{ sf_console_command }}
 SF_BIN_DIR			:= {{ sf_bin_dir }}
 SHARED_DIRS			:= var
