@@ -105,6 +105,10 @@ endef
 
 > Use the define instead of `:=` solution!
 
+#### `autocomplete.bash`
+
+<!-- @TODO Példa, elérhető változók, stb -->
+
 #### `autocomplete.zsh`
 
 You can write autocomplete file to **ZSH**. More info: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org

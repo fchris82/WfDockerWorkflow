@@ -7,6 +7,7 @@ Documentations
     - [Configuration](/docs/wf-configuration.md)
     - [Basic commands and project configuration](/docs/wf-basic-commands.md)
     - [Included recipes](/docs/wf-included-recipes.md)
+    - [Create aliases](/docs/wf-aliases.md)
 - Cookbook
     - [Using custom recipes](/docs/wf-cookbook-custom-recipes.md)
     - [Using custom Dockerfile in project](/docs/wf-cookbook-custom-dockerfile.md)
