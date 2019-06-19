@@ -1,5 +1,4 @@
-# @todo A 7.3-as verzióhoz még nincs normális xdebug, szóval a 7.2-t kell használni, amíg az kijön.
-FROM php:7.2-alpine
+FROM php:7.3-alpine
 
 LABEL workflow-base=true
 
@@ -20,8 +19,11 @@ ENV RECIPES_PATH=$SYMFONY_PATH/src/Recipes
 # @todo (Chris) Ha erre lesz jobb ötlet, hogy itt töltsük le a deb-et, akkor azt kellene használni
 COPY webtown-workflow.deb /root/webtown-workflow.deb
 
+# Only because of su-exec: python2-dev gcc openssl-dev libffi-dev musl-dev
 RUN apk update && \
-    apk add bash dpkg jq make ca-certificates curl git su-exec docker py-pip php7-xdebug shadow openssh && \
+    apk --no-cache add --update bash dpkg jq make ca-certificates curl git \
+    python2-dev gcc openssl-dev libffi-dev musl-dev su-exec \
+    docker py-pip php7-xdebug shadow openssh && \
     apk add --upgrade coreutils grep && \
     echo "zend_extension=/usr/lib/php7/modules/xdebug.so" > $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_enable=on" >> $XDEBUG_CONFIG_FILE && \
