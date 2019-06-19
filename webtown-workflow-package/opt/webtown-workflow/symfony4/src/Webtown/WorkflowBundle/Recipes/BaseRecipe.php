@@ -83,6 +83,7 @@ abstract class BaseRecipe
         }
 
         return array_merge([
+            'recipe' => $this->getName(),
             'config' => $globalConfig,
             'project_path' => $projectPath,
             'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/' . $this->getName(),

@@ -8,4 +8,19 @@ Project repository: https://github.com/mailhog/MailHog
 | `1025` | SMTP |
 | `8025` | Web UI |
 
-There is no way to set other ports. I got "permission denied" message.
+Enable this recipe:
+
+```yaml
+recipes:
+    mailhog: ~
+```
+
+Default domain: `mailhog.[project].loc`
+
+You can change the domain:
+
+```yaml
+recipes:
+    mailhog:
+        nginx_reverse_proxy_host: mailhog.custom.loc
+```
