@@ -198,7 +198,7 @@ function _calc_cksum {
 function _check_config_hash_cache {
     local CACHE_FILE_PATH="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/.chksum.cache"
 
-    [[ -f ${CACHE_FILE_PATH} ]] && [[ "$(_calc_cksum $(head -n 1 ${CACHE_FILE_PATH}))" == $(tail -n +2 ${CACHE_FILE_PATH}) ]]
+    [ "${FORCE_OVERRIDE}" != "1" ] && [[ -f ${CACHE_FILE_PATH} ]] && [[ "$(_calc_cksum $(head -n 1 ${CACHE_FILE_PATH}))" == $(tail -n +2 ${CACHE_FILE_PATH}) ]]
 }
 
 # Create the hash cache file to `[project]/.wf/.chksum.cache`
