@@ -119,6 +119,31 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                         ->end()
                     ->end()
                 ->end()
+                ->arrayNode('nginx')
+                    ->addDefaultsIfNotSet()
+                    ->info('<comment>You can register an nginx config file that will be inculded into the <info>server</info> block.</comment>')
+                    ->children()
+                        ->booleanNode('use_defaults')
+                            ->defaultTrue()
+                            ->info('<comment>If you want to use custom locals or anything else, you can switch off to use default "local settings" in the <info>server</info> block.</comment>')
+                        ->end()
+                        ->scalarNode('include_file')
+                            ->cannotBeEmpty()
+                            ->defaultNull()
+                            ->info('<comment>You have to use a custom <info>server</info> block. You have to use docker <info>volumes</info> format!</comment>')
+                            ->example('%wf.project_path%/.docker/web/error_pages.conf:/etc/nginx/error_pages.conf')
+                        ->end()
+                    ->end()
+                    ->validate()
+                        ->always(function ($v) {
+                            if (!$v['use_defaults'] && !$v['include_file']) {
+                                throw new InvalidConfigurationException('If you disable the `nginx.use defaults` option you have to set an `nginx.include_file`!');
+                            }
+
+                            return $v;
+                        })
+                    ->end()
+                ->end()
                 ->booleanNode('share_base_user_configs')
                     ->info('<comment>Here you can switch off or on to use user\'s .gitconfig, .ssh and .composer configs. Maybe you should switch off on CI.</comment>')
                     ->defaultTrue()

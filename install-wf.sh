@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# @todo (Chris) Ellenőrizni, hogy a user tagja-e a Docker csoportnak, különben elhal az egész, de nem ad erről elég infót
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
     [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"

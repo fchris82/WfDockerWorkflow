@@ -10,6 +10,7 @@ namespace App\Recipes\Php;
 
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -58,6 +59,31 @@ class PhpRecipe extends BaseRecipe
                             ->cannotBeEmpty()
                             ->defaultNull()
                         ->end()
+                    ->end()
+                ->end()
+                ->arrayNode('nginx')
+                    ->addDefaultsIfNotSet()
+                    ->info('<comment>You can register an nginx config file that will be inculded into the <info>server</info> block.</comment>')
+                    ->children()
+                        ->booleanNode('use_defaults')
+                            ->defaultTrue()
+                            ->info('<comment>If you want to use custom locals or anything else, you can switch off to use default "local settings" in the <info>server</info> block.</comment>')
+                        ->end()
+                        ->scalarNode('include_file')
+                            ->cannotBeEmpty()
+                            ->defaultNull()
+                            ->info('<comment>You have to use a custom <info>server</info> block. You have to use docker <info>volumes</info> format!</comment>')
+                            ->example('%wf.project_path%/.docker/web/error_pages.conf:/etc/nginx/error_pages.conf')
+                        ->end()
+                    ->end()
+                    ->validate()
+                        ->always(function ($v) {
+                            if (!$v['use_defaults'] && !$v['include_file']) {
+                                throw new InvalidConfigurationException('If you disable the `nginx.use defaults` option you have to set an `nginx.include_file`!');
+                            }
+
+                            return $v;
+                        })
                     ->end()
                 ->end()
                 ->booleanNode('share_base_user_configs')
@@ -125,6 +151,7 @@ class PhpRecipe extends BaseRecipe
                             ->cannotBeEmpty()
                             ->defaultValue('Docker')
                         ->end()
+                        // @todo (Chris) Ezt és az nginx_debug-ot átmozgatni az nginx-be, de úgy, hogy visszafele kompatibilis legyen!
                         ->booleanNode('error_log')
                             ->defaultTrue()
                             ->info('<comment>You can switch on and off the PHP error log. (default is ON!)</comment>')

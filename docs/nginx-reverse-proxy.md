@@ -23,6 +23,12 @@ files will be loaded by nginx. You can create here a `.htpasswd` file for exampl
 page.
 After that you have to create a `http-auth.conf` file by `http-auth.conf.example`.
 
+#### Change the 503 page
+
+Default 503 page lists every available hosts. If you are using this proxy on a prod server maybe you want to change it.
+You can find the page template in `/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl` . There is a backup file if you want
+restore the original version (`/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl.orig`)
+
 ## Developing
 
 After you changed files in the `nginx-reverse-proxy-package` directory you can rebuild the deb package with the following command:

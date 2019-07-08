@@ -14,6 +14,7 @@ Documentations
     - [Gitlab CI Deploy(er)](/docs/wf-cookbook-gitlab-ci-deploy.md)
     - [Truncate too long log](/docs/wf-cookbook-truncate-log.md)
     - [Create custom docker repository](/docs/wf-cookbook-custom-repo.md)
+    - [Create custom nginx error pages (Symfony recipe!)](/docs/wf-cookbook-custom-nginx-error-pages.md)
 - Develop WF
     - [How it works?](/docs/wf-develop-base.md)
     - [Start developing, debug environments](/docs/wf-develop-starting.md)

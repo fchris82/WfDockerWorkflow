@@ -66,7 +66,7 @@ class DockerComposeExtensionRecipe extends SystemRecipe
                     ->scalarPrototype()->end()
                     ->defaultValue([])
                 ->end()
-                ->variableNode('extension')
+                ->arrayNode('extension')
                     ->info('<comment>Docker Compose yaml configuration. You mustn\'t use the <info>version</info> parameter, it will be automatically.</comment>')
                     ->example([
                         'services' => [
@@ -76,16 +76,7 @@ class DockerComposeExtensionRecipe extends SystemRecipe
                             ],
                         ],
                     ])
-                    ->beforeNormalization()
-                        ->ifNull()
-                        ->thenEmptyArray()
-                    ->end()
-                    ->validate()
-                        ->ifTrue(function ($v) {
-                            return !\is_array($v);
-                        })
-                        ->thenInvalid('You have to set array value!')
-                    ->end()
+                    ->variablePrototype()->end()
                     ->defaultValue([])
                 ->end()
             ->end()
