@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -28,8 +30,8 @@ class TemplateTwigFileInfoTest extends TestCase
         $relativePathName = trim($relativePath . '/' . basename($filePath), '/');
         $baseFileInfo = new SplFileInfo($filePath, $relativePath, $relativePathName);
         $templateTwigFileInfo = $directory
-            ? new TemplateTwigFileInfo($baseFileInfo, $relativePath, $relativePathName, $twigNamespace, $directory)
-            : new TemplateTwigFileInfo($baseFileInfo, $relativePath, $relativePathName, $twigNamespace)
+            ? new TemplateTwigFileInfo($baseFileInfo->getRelativePath(), $relativePath, $relativePathName, $twigNamespace, $directory)
+            : new TemplateTwigFileInfo($baseFileInfo->getRelativePath(), $relativePath, $relativePathName, $twigNamespace)
         ;
 
         $response = $templateTwigFileInfo->getTwigPath();

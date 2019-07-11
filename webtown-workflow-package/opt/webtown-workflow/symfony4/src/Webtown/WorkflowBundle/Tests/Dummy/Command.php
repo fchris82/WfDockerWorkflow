@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -25,7 +27,7 @@ class Command extends BaseCommand
             'question' => new QuestionHelper($this->questionResponses),
         ];
 
-        if (!array_key_exists($name, $helpers)) {
+        if (!\array_key_exists($name, $helpers)) {
             throw new \Exception(sprintf('Invalid helper calling: `%s`.', $name));
         }
 

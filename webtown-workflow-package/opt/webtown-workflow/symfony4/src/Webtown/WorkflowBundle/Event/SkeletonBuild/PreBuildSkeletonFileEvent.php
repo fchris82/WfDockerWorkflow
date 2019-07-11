@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -110,7 +112,7 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
      */
     public function getSkeletonVar(string $key, $default = null)
     {
-        if (!array_key_exists($key, $this->skeletonVars)) {
+        if (!\array_key_exists($key, $this->skeletonVars)) {
             return $default;
         }
 

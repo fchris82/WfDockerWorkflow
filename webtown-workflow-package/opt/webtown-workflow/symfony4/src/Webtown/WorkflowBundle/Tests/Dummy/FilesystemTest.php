@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -16,6 +18,8 @@ class FilesystemTest extends TestCase
 {
     protected $appCacheContent = <<<EOS
 <?php
+
+declare(strict_types=1);
 
 /*
  * This file is part of the Symfony package.

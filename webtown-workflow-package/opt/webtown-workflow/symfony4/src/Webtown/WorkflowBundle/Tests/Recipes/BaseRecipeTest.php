@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -57,6 +59,7 @@ class BaseRecipeTest extends TestCase
                 'project_path' => '',
                 'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/simple',
                 'env' => $_ENV,
+                'recipe' => 'simple',
             ]],
             // Simple 2
             ['project_path', ['config_key' => 'value'], ['global' => true], [
@@ -65,6 +68,7 @@ class BaseRecipeTest extends TestCase
                 'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/simple',
                 'env' => $_ENV,
                 'config_key' => 'value',
+                'recipe' => 'simple',
             ]],
             // String config
             ['', 'string config value', [], [
@@ -73,6 +77,7 @@ class BaseRecipeTest extends TestCase
                 'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/simple',
                 'env' => $_ENV,
                 'value' => 'string config value',
+                'recipe' => 'simple',
             ]],
         ];
     }

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -307,7 +309,7 @@ class ConfigurationTest extends TestCase
         $base1Wizard = new Base1Wizard();
 
         return [
-            ['empty.yml', null, new ConfigurationItemNotFoundException('none')],
+            ['empty.yml', '', new ConfigurationItemNotFoundException('none')],
             ['empty.yml', Base1Wizard::class, new ConfigurationItemNotFoundException('none')],
             ['base.yml', Base1Wizard::class, Base1Wizard::class],
             ['base.yml', $base1Wizard, Base1Wizard::class],

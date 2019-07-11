@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -29,7 +31,7 @@ class Environment
     public function getConfigValue($name, $default = null)
     {
         $config = $this->getEnv();
-        if (!array_key_exists($name, $config)) {
+        if (!\array_key_exists($name, $config)) {
             return $default;
         }
 

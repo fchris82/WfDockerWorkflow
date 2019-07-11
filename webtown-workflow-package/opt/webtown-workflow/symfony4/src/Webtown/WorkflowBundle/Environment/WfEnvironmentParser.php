@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -52,7 +54,7 @@ class WfEnvironmentParser
             throw new \InvalidArgumentException('Missing configuration files!');
         }
 
-        if (!array_key_exists($workingDirectory, $this->workflowConfigurationCache)) {
+        if (!\array_key_exists($workingDirectory, $this->workflowConfigurationCache)) {
             $wfFiles = [
                 '.wf.yml',
                 '.wf.yml.dist',

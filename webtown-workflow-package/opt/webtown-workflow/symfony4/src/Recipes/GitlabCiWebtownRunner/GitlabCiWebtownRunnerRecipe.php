@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Recipes\GitlabCiWebtownRunner;
 
 use App\Recipes\GitlabCi\GitlabCiRecipe;

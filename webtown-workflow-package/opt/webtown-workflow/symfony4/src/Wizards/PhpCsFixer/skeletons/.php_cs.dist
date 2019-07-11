@@ -1,7 +1,8 @@
 <?php
 $srcDir = __DIR__ . DIRECTORY_SEPARATOR . 'src';
+$testDir = __DIR__ . DIRECTORY_SEPARATOR . 'tests';
 $finder = PhpCsFixer\Finder::create()
-    ->in($srcDir)
+    ->in([$srcDir, $testDir])
     // Skip auto generated migration files.
     ->exclude('Migrations')
 ;
@@ -30,6 +31,7 @@ return PhpCsFixer\Config::create()
             "=" => null,
         ]],
         'heredoc_to_nowdoc' => false,
+        'declare_strict_types' => true,
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)

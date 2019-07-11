@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -52,7 +54,7 @@ class Manager
 
     public function getWizard($class)
     {
-        if (!array_key_exists($class, $this->allWizards)) {
+        if (!\array_key_exists($class, $this->allWizards)) {
             throw new \Exception(sprintf('Missing wizard: `%s`', $class));
         }
 

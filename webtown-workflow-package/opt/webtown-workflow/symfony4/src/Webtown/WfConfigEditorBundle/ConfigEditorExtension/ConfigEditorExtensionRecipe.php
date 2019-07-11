@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -141,7 +143,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         $services = [];
         foreach ($this->dockerComposeFiles as $dockerComposeFilePath) {
             $config = Yaml::parse(file_get_contents($dockerComposeFilePath));
-            if (array_key_exists('services', $config)) {
+            if (\array_key_exists('services', $config)) {
                 $services = array_merge($services, array_keys($config['services']));
             }
         }

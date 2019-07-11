@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -241,7 +243,7 @@ class Configuration implements ConfigurationInterface
     protected function handleImports($baseConfig, $baseConfigYmlFullPath)
     {
         $sourceDirectory = \dirname($baseConfigYmlFullPath);
-        if (array_key_exists('imports', $baseConfig)) {
+        if (\array_key_exists('imports', $baseConfig)) {
             // Ebbe gyűjtjük össze az import configokat.
             $fullImportConfig = [];
             foreach ($baseConfig['imports'] as $importYml) {
@@ -278,7 +280,7 @@ class Configuration implements ConfigurationInterface
     protected function configDeepMerge($baseConfig, $overrideConfig)
     {
         foreach ($overrideConfig as $key => $value) {
-            if ($this->isConfigLeaf($value) || !array_key_exists($key, $baseConfig)) {
+            if ($this->isConfigLeaf($value) || !\array_key_exists($key, $baseConfig)) {
                 $baseConfig[$key] = $value;
             } else {
                 $baseConfig[$key] = $this->configDeepMerge($baseConfig[$key], $value);

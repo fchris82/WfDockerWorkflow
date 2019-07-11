@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -71,7 +73,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
                 ->always(function ($v) {
                     if (\is_array($v)) {
                         // Handle defaults
-                        if (array_key_exists('defaults', $v) && \is_array($v['defaults'])) {
+                        if (\array_key_exists('defaults', $v) && \is_array($v['defaults'])) {
                             foreach ($v['defaults'] as $key => $defaultValue) {
                                 foreach ($v['databases'] as $dockerContainerName => $config) {
                                     // If the config empty, then we use only defaults
@@ -86,7 +88,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
                                             \gettype($config)
                                         ));
                                     }
-                                    if (!array_key_exists($key, $config) || null === $config[$key]) {
+                                    if (!\array_key_exists($key, $config) || null === $config[$key]) {
                                         $v['databases'][$dockerContainerName][$key] = $defaultValue;
                                     }
                                 }

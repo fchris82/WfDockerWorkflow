@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Webtown\WorkflowBundle\Recipes;
 
 use App\Webtown\WorkflowBundle\DependencyInjection\Compiler\CollectRecipesPass;

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -98,7 +100,7 @@ class BuildWizardEvent extends Event
      */
     public function getSkeletonVar(string $key, $default = null)
     {
-        if (!array_key_exists($key, $this->skeletonVars)) {
+        if (!\array_key_exists($key, $this->skeletonVars)) {
             return $default;
         }
 
@@ -154,7 +156,7 @@ class BuildWizardEvent extends Event
      */
     public function getParameter($key, $defaultValue = null)
     {
-        if (array_key_exists($key, $this->parameters)) {
+        if (\array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
         }
 

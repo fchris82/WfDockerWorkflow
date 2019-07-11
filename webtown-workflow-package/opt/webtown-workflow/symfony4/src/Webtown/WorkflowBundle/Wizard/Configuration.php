@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -247,7 +249,7 @@ class Configuration implements ConfigurationInterface
             return \count($this->changes) > 0;
         }
 
-        return array_key_exists($changeType, $this->changes) && \count($this->changes[$changeType]) > 0;
+        return \array_key_exists($changeType, $this->changes) && \count($this->changes[$changeType]) > 0;
     }
 
     public function saveConfigurationList()

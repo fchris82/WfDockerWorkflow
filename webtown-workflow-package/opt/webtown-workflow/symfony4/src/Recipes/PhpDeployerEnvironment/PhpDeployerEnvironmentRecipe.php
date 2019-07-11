@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Recipes\PhpDeployerEnvironment;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as BaseRecipe;

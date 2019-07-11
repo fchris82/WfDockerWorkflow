@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -40,7 +42,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
         $keys = explode('.', $infoPath);
         $current = $this->getComposerJsonConfig($workingDirectory);
         foreach ($keys as $key) {
-            if (!\is_array($current) || !array_key_exists($key, $current)) {
+            if (!\is_array($current) || !\array_key_exists($key, $current)) {
                 return $default;
             }
             $current = $current[$key];
@@ -58,7 +60,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
      */
     protected function getComposerJsonConfig($workingDirectory)
     {
-        if (!array_key_exists($workingDirectory, $this->composerJsonConfig)) {
+        if (!\array_key_exists($workingDirectory, $this->composerJsonConfig)) {
             $composerJsonPath = $workingDirectory . '/composer.json';
             if (!$this->fileSystem->exists($composerJsonPath)) {
                 throw new FileNotFoundException(sprintf(
@@ -87,7 +89,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
      *
      * @return string
      */
-    public function readComposerVersion($versionText)
+    public function readComposerVersion(string $versionText): string
     {
         if (preg_match('{[\d\.]*\d}', $versionText, $matches)) {
             return $matches[0];

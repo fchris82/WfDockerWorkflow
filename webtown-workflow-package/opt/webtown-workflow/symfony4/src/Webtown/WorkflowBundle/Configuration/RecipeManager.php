@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -21,7 +23,7 @@ class RecipeManager
 
     public function addRecipe(BaseRecipe $recipe)
     {
-        if (array_key_exists($recipe->getName(), $this->recipes)) {
+        if (\array_key_exists($recipe->getName(), $this->recipes)) {
             throw new InvalidConfigurationException(sprintf(
                 'The `%s` recipe has been already existed! [`%s` vs `%s`]',
                 $recipe->getName(),
@@ -50,7 +52,7 @@ class RecipeManager
     public function getRecipe($recipeName)
     {
         $recipes = $this->getRecipes();
-        if (!array_key_exists($recipeName, $recipes)) {
+        if (!\array_key_exists($recipeName, $recipes)) {
             throw new MissingRecipeException(sprintf('The `%s` recipe is missing!', $recipeName));
         }
 

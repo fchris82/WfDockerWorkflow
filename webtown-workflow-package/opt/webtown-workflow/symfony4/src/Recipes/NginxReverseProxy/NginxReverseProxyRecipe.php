@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -89,8 +91,8 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
 
                                 return [
                                     // If the project name: `project` --> `project.loc`
-                                    'host' => \is_array($v) && array_key_exists('host', $v) ? $v['host'] : $defaultHost,
-                                    'port' => (int) (\is_array($v) && array_key_exists('port', $v) ? $v['port'] : (!\is_array($v) && $v ? $v : $defaultPort)),
+                                    'host' => \is_array($v) && \array_key_exists('host', $v) ? $v['host'] : $defaultHost,
+                                    'port' => (int) (\is_array($v) && \array_key_exists('port', $v) ? $v['port'] : (!\is_array($v) && $v ? $v : $defaultPort)),
                                 ];
                             })
                             ->end()

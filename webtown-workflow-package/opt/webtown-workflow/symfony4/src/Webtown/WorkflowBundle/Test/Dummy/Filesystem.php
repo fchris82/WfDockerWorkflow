@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -159,7 +161,7 @@ class Filesystem extends BaseFilesystem
                     $newContents[$newPath] = $content;
                 }
             } else {
-                if (!array_key_exists($path, $newContents)) {
+                if (!\array_key_exists($path, $newContents)) {
                     $newContents[$path] = $content;
                 }
             }

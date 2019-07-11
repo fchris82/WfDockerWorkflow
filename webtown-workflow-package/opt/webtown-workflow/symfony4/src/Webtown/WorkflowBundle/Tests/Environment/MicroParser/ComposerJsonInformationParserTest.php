@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -82,7 +84,7 @@ class ComposerJsonInformationParserTest extends TestCase
      *
      * @dataProvider getVersions
      */
-    public function testReadComposerVersion($version, $result)
+    public function testReadComposerVersion(string $version, $result)
     {
         $parser = new ComposerJsonInformationParser(new SfFilesystem());
 
@@ -99,7 +101,6 @@ class ComposerJsonInformationParserTest extends TestCase
     public function getVersions()
     {
         return [
-            [null, new InvalidComposerVersionNumber()],
             ['', new InvalidComposerVersionNumber()],
             ['text', new InvalidComposerVersionNumber()],
             ['1', '1'],

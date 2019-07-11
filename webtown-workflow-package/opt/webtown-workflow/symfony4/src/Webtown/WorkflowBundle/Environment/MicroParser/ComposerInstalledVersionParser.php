@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -49,13 +51,13 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
             }
         } catch (FileNotFoundException $e) {
             $requires = parent::get($workingDirectory, 'require', []);
-            if (array_key_exists($packageName, $requires)) {
+            if (\array_key_exists($packageName, $requires)) {
                 $version = $requires[$packageName];
 
                 return $this->readComposerVersion($version);
             }
             $devRequires = parent::get($workingDirectory, 'require-dev', []);
-            if (array_key_exists($packageName, $devRequires)) {
+            if (\array_key_exists($packageName, $devRequires)) {
                 $version = $devRequires[$packageName];
 
                 return $this->readComposerVersion($version);
@@ -74,7 +76,7 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
             $current = [];
         }
         foreach ($keys as $key) {
-            if (!\is_array($current) || !array_key_exists($key, $current)) {
+            if (!\is_array($current) || !\array_key_exists($key, $current)) {
                 return parent::get($workingDirectory, $infoPath, $default);
             }
             $current = $current[$key];
@@ -92,7 +94,7 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
      */
     protected function getComposerLockConfig($workingDirectory)
     {
-        if (!array_key_exists($workingDirectory, $this->composerLockConfig)) {
+        if (!\array_key_exists($workingDirectory, $this->composerLockConfig)) {
             $composerJsonPath = $workingDirectory . '/composer.lock';
             if (!$this->fileSystem->exists($composerJsonPath)) {
                 throw new FileNotFoundException(sprintf(

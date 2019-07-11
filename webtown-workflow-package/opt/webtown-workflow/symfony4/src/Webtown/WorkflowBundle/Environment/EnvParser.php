@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -23,6 +25,6 @@ class EnvParser
      */
     public function get($name, $default = null)
     {
-        return array_key_exists($name, $_ENV) ? $_ENV[$name] : $default;
+        return \array_key_exists($name, $_ENV) ? $_ENV[$name] : $default;
     }
 }

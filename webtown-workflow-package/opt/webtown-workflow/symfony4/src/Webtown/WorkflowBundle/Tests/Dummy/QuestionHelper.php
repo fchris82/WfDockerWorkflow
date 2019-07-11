@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -52,7 +54,7 @@ class QuestionHelper extends BaseQuestionHelper
 
     public function ask(InputInterface $input, OutputInterface $output, Question $question)
     {
-        if (!array_key_exists(trim($question->getQuestion()), $this->responses)) {
+        if (!\array_key_exists(trim($question->getQuestion()), $this->responses)) {
             throw new \Exception(sprintf('Invalid configuration, the `%s` question\'s response doesn\'t exist!', $question->getQuestion()));
         }
 

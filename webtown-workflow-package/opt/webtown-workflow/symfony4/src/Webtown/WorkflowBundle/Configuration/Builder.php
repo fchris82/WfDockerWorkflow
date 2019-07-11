@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -97,7 +99,7 @@ class Builder
 
         // INIT
         $this->initEventListeners($projectPath);
-        if (array_key_exists('recipes', $config)) {
+        if (\array_key_exists('recipes', $config)) {
             foreach ($config['recipes'] as $recipeName => $recipeConfig) {
                 $this->addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $config);
             }
@@ -117,7 +119,7 @@ class Builder
         }
 
         // PUBLIC RECIPES
-        if (array_key_exists('recipes', $config)) {
+        if (\array_key_exists('recipes', $config)) {
             foreach ($config['recipes'] as $recipeName => $recipeConfig) {
                 $this->buildRecipe($projectPath, $recipeName, $recipeConfig, $config);
             }

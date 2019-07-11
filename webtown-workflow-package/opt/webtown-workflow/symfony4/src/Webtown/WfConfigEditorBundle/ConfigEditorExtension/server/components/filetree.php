@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 if (!array_key_exists('HTTP_REFERER', $_SERVER)) {
     exit('No direct script access allowed');
 }
