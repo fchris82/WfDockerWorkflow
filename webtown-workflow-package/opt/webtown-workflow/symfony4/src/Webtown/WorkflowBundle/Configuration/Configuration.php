@@ -24,7 +24,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Parser;
 
@@ -92,7 +92,7 @@ class Configuration implements ConfigurationInterface
         $baseConfig = $this->readConfig($ymlFilePath);
 
         $event = new PreProcessConfigurationEvent($baseConfig, $pwd, $wfVersion);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::PRE_PROCESS_CONFIGURATION, $event);
+        $this->eventDispatcher->dispatch($event, ConfigurationEvents::PRE_PROCESS_CONFIGURATION);
 
         $processor = new Processor();
         $fullConfig = $processor->processConfiguration($this, [self::ROOT_NODE => $event->getConfig()]);

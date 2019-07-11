@@ -21,7 +21,7 @@ use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class EzBuildWizard extends BaseWizard implements WizardInterface
 {

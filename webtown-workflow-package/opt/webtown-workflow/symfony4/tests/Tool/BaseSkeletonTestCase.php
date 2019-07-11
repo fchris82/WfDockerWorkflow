@@ -16,6 +16,8 @@ use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
 use App\Webtown\WorkflowBundle\Tests\TestCase;
 use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class BaseSkeletonTestCase extends TestCase
 {
@@ -55,9 +57,9 @@ class BaseSkeletonTestCase extends TestCase
             $path = $this->getBaseDir();
         }
 
-        $loader = new \Twig_Loader_Filesystem($path);
+        $loader = new FilesystemLoader($path);
         $loader->addPath($this->getBaseDir(), TwigExtendingPass::WIZARD_TWIG_NAMESPACE);
-        $twig = new \Twig_Environment($loader);
+        $twig = new Environment($loader);
 
         return $twig;
     }

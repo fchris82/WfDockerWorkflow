@@ -21,7 +21,8 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment as TwigEnvironment;
 
 class Recipe extends SystemRecipe implements RegisterEventListenersInterface
 {
@@ -50,10 +51,11 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
     /**
      * Recipe constructor.
      *
-     * @param \Twig_Environment $twig
-     * @param Environment       $environment
+     * @param TwigEnvironment          $twig
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param Environment              $environment
      */
-    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
+    public function __construct(TwigEnvironment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
         parent::__construct($twig, $eventDispatcher);
         $this->environment = $environment;

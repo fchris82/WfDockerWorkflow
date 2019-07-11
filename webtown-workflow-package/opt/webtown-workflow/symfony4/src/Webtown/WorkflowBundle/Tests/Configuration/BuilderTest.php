@@ -25,6 +25,8 @@ use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class BuilderTest extends TestCase
 {
@@ -72,11 +74,11 @@ class BuilderTest extends TestCase
         $eventDispatcher = new EventDispatcher();
         $filesystem = new Filesystem($projectPath, 'alias');
         $recipeManager = new RecipeManager();
-        $twigFileLoader = new \Twig_Loader_Filesystem();
+        $twigFileLoader = new FilesystemLoader();
         $twigFileLoader->setPaths(__DIR__ . '/../Dummy/Recipes/SimpleEventListener', 'AppWebtownWorkflowBundleTestsDummyRecipesSimpleEventListenerSimpleEventListenerRecipe');
         $twigFileLoader->setPaths(__DIR__ . '/../Dummy/Recipes/SystemRecipe', 'AppWebtownWorkflowBundleTestsDummyRecipesSystemRecipeSystemRecipe');
         $twigFileLoader->setPaths(__DIR__ . '/../Dummy/Recipes/SimpleSkipFile', 'AppWebtownWorkflowBundleTestsDummyRecipesSimpleSkipFileSimpleSkipFileRecipe');
-        $twig = new \Twig_Environment($twigFileLoader);
+        $twig = new Environment($twigFileLoader);
         // Build recipes
         foreach ($preSystemRecipes as $recipeName => $configDefinition) {
             $preSystemRecipe = new SystemRecipe($recipeName, $configDefinition, $twig, $eventDispatcher);

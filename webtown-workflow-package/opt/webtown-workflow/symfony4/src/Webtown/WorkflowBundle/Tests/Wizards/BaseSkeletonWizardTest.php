@@ -19,6 +19,7 @@ use App\Webtown\WorkflowBundle\Tests\SkeletonTestCase;
 use Mockery as m;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\SplFileInfo;
+use Twig\Environment;
 
 class BaseSkeletonWizardTest extends SkeletonTestCase
 {
@@ -45,7 +46,7 @@ class BaseSkeletonWizardTest extends SkeletonTestCase
             m::mock(IoManager::class),
             m::mock(Commander::class),
             new EventDispatcher(),
-            m::mock(\Twig_Environment::class),
+            m::mock(Environment::class),
             new Filesystem($workDir)
         );
         $skeletonWizard->setBuiltCheckFile($checkFile);
@@ -69,7 +70,7 @@ class BaseSkeletonWizardTest extends SkeletonTestCase
             $ioManager,
             m::mock(Commander::class),
             new EventDispatcher(),
-            m::mock(\Twig_Environment::class),
+            m::mock(Environment::class),
             new Filesystem($targetProjectDirectory)
         );
         $skeletonWizard->setReadVariables([
@@ -101,7 +102,7 @@ class BaseSkeletonWizardTest extends SkeletonTestCase
             m::mock(IoManager::class),
             m::mock(Commander::class),
             new EventDispatcher(),
-            m::mock(\Twig_Environment::class),
+            m::mock(Environment::class),
             m::mock(Filesystem::class)
         );
         $response = $this->executeProtectedMethod($skeletonWizard, 'isWfConfigYamlFile', [$skeletonFile]);

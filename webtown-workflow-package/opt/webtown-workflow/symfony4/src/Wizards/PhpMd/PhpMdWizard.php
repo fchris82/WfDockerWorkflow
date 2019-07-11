@@ -18,8 +18,9 @@ use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 class PhpMdWizard extends BaseSkeletonWizard
 {
@@ -39,7 +40,7 @@ class PhpMdWizard extends BaseSkeletonWizard
         IoManager $ioManager,
         Commander $commander,
         EventDispatcherInterface $eventDispatcher,
-        \Twig_Environment $twig,
+        Environment $twig,
         Filesystem $filesystem
     ) {
         parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);

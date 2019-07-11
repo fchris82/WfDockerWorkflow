@@ -15,7 +15,8 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Test\Dummy\Filesystem;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment;
 
 /**
  * With this recipe we can test the SkeletonBuildBaseEvents::BEFORE_DUMP_TARGET_EXISTS event. This recipe create a
@@ -33,7 +34,7 @@ class ConflictWithSimpleEventListenerRecipe extends BaseRecipe implements Regist
      *
      * @param Filesystem $filesystem
      */
-    public function __construct(Filesystem $filesystem, \Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Filesystem $filesystem, Environment $twig, EventDispatcherInterface $eventDispatcher)
     {
         $this->filesystem = $filesystem;
         parent::__construct($twig, $eventDispatcher);

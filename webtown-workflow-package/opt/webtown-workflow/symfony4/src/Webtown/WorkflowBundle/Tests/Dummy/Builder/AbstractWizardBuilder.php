@@ -24,6 +24,8 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 /**
  * Class AbstractWizardBuilder
@@ -48,7 +50,7 @@ abstract class AbstractWizardBuilder
     protected $eventDispatcher;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -133,8 +135,8 @@ abstract class AbstractWizardBuilder
 
     protected function initTwig()
     {
-        $twigLoader = new \Twig_Loader_Filesystem();
-        $this->twig = new \Twig_Environment($twigLoader);
+        $twigLoader = new FilesystemLoader();
+        $this->twig = new Environment($twigLoader);
         $this->twig->addExtension(new TextExtension());
     }
 
@@ -201,19 +203,19 @@ abstract class AbstractWizardBuilder
     }
 
     /**
-     * @return \Twig_Environment
+     * @return Environment
      */
-    public function getTwig(): \Twig_Environment
+    public function getTwig(): Environment
     {
         return $this->twig;
     }
 
     /**
-     * @param \Twig_Environment $twig
+     * @param Environment $twig
      *
      * @return $this
      */
-    public function setTwig(\Twig_Environment $twig)
+    public function setTwig(Environment $twig)
     {
         $this->twig = $twig;
 

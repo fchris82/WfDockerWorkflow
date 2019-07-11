@@ -11,7 +11,7 @@ declare(strict_types=1);
 namespace App\Webtown\WorkflowBundle\Event\Configuration;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class RegisterEvent extends Event
 {

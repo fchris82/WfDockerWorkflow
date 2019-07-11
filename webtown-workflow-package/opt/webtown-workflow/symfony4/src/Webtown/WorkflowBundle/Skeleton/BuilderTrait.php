@@ -48,11 +48,11 @@ trait BuilderTrait
             $event = new DumpFileEvent($this, $skeletonFile, $this->fileSystem);
             try {
                 $this->eventBeforeDumpFile($event);
-                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_DUMP_FILE, $event);
+                $this->eventDispatcher->dispatch($event, SkeletonBuildBaseEvents::BEFORE_DUMP_FILE);
 
                 if ($this->fileSystem->exists($skeletonFile->getFullTargetPathname())) {
                     $this->eventBeforeDumpTargetExists($event);
-                    $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_DUMP_TARGET_EXISTS, $event);
+                    $this->eventDispatcher->dispatch($event, SkeletonBuildBaseEvents::BEFORE_DUMP_TARGET_EXISTS);
                 }
 
                 $skeletonFile = $event->getSkeletonFile();
@@ -74,11 +74,11 @@ trait BuilderTrait
                     $this->fileSystem->chmod($skeletonFile->getRelativePathname(), $skeletonFile->getPermission());
                 }
 
-                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_DUMP_FILE, $event);
+                $this->eventDispatcher->dispatch($event, SkeletonBuildBaseEvents::AFTER_DUMP_FILE);
                 $this->eventAfterDumpFile($event);
             } catch (SkipSkeletonFileException $e) {
                 $this->eventSkipDumpFile($event);
-                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::SKIP_DUMP_FILE, $event);
+                $this->eventDispatcher->dispatch($event, SkeletonBuildBaseEvents::SKIP_DUMP_FILE);
             }
         }
     }

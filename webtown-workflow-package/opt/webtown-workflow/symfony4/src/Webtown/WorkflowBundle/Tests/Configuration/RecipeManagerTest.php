@@ -16,7 +16,8 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment;
 
 class RecipeManagerTest extends TestCase
 {
@@ -67,6 +68,8 @@ class RecipeManagerTest extends TestCase
      * @param string          $getName
      * @param \Exception|null $result
      *
+     * @throws MissingRecipeException
+     *
      * @dataProvider getGets
      */
     public function testGetRecipe(array $recipeNames, string $getName, $result = null)
@@ -107,7 +110,7 @@ class TestRecipe extends BaseRecipe
     public function __construct($name)
     {
         $this->name = $name;
-        $twigEnv = m::mock(\Twig_Environment::class);
+        $twigEnv = m::mock(Environment::class);
         $eventDispatcher = m::mock(EventDispatcherInterface::class);
         parent::__construct($twigEnv, $eventDispatcher);
     }

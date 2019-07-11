@@ -27,7 +27,7 @@ class NginxReverseProxyTest extends TestCase
      */
     public function testDefaultHostIsSet($recipeConfig, $defaultHost, $result)
     {
-        $twig = m::mock(\Twig_Environment::class);
+        $twig = m::mock(\Twig\Environment::class);
         $environment = new Environment();
         $recipe = new NginxReverseProxyRecipe($twig, new EventDispatcher(), $environment);
 
@@ -111,7 +111,7 @@ class NginxReverseProxyTest extends TestCase
      */
     public function testSetTheDefaultHostIfNotSet($recipeConfig, $globalConfig, $result)
     {
-        $twig = m::mock(\Twig_Environment::class);
+        $twig = m::mock(\Twig\Environment::class);
         $environment = m::mock(Environment::class, [
             'getConfigValue' => '.loc',
         ]);

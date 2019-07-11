@@ -16,7 +16,8 @@ use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * Class Recipe
@@ -44,11 +45,11 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
     /**
      * Recipe constructor.
      *
-     * @param \Twig_Environment        $twig
+     * @param TwigEnvironment          $twig
      * @param EventDispatcherInterface $eventDispatcher
      * @param Environment              $environment
      */
-    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
+    public function __construct(TwigEnvironment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
         parent::__construct($twig, $eventDispatcher);
         $this->environment = $environment;

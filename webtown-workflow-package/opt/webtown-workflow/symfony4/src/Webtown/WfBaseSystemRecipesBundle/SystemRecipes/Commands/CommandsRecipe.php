@@ -20,7 +20,7 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 
 class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInterface

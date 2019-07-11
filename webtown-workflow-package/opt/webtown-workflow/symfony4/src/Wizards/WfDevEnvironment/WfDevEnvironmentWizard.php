@@ -15,8 +15,9 @@ use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 /**
  * Class DevEnvironment.
@@ -42,7 +43,7 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
         IoManager $ioManager,
         Commander $commander,
         EventDispatcherInterface $eventDispatcher,
-        \Twig_Environment $twig,
+        Environment $twig,
         Filesystem $filesystem
     ) {
         parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);

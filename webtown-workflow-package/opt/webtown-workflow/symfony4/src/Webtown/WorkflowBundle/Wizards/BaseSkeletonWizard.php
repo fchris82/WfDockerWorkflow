@@ -23,8 +23,9 @@ use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 /**
  * Class BaseSkeleton.
@@ -46,14 +47,14 @@ abstract class BaseSkeletonWizard extends BaseWizard
      *
      * @param IoManager                $ioManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param \Twig_Environment        $twig
+     * @param Environment              $twig
      * @param Filesystem               $filesystem
      */
     public function __construct(
         IoManager $ioManager,
         Commander $commander,
         EventDispatcherInterface $eventDispatcher,
-        \Twig_Environment $twig,
+        Environment $twig,
         Filesystem $filesystem
     ) {
         $this->twig = $twig;

@@ -14,12 +14,13 @@ use App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Hidden\HiddenRecipe;
 use Mockery as m;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Twig\Environment;
 
 class HiddenRecipeTest extends TestCase
 {
     public function testGetConfig()
     {
-        $twigEnv = m::mock(\Twig_Environment::class);
+        $twigEnv = m::mock(Environment::class);
         $eventDispatcher = new EventDispatcher();
         $hiddenRecipe = new HiddenRecipe($twigEnv, $eventDispatcher);
 

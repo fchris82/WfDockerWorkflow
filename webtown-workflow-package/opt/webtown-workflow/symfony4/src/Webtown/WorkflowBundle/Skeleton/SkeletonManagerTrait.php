@@ -21,11 +21,12 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Twig\Environment;
 
 trait SkeletonManagerTrait
 {
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
@@ -57,7 +58,7 @@ trait SkeletonManagerTrait
     {
         $preBuildEvent = new PreBuildSkeletonFilesEvent($this, $templateVars, $buildConfig);
         $this->eventBeforeBuildFiles($preBuildEvent);
-        $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_BUILD_FILES, $preBuildEvent);
+        $this->eventDispatcher->dispatch($preBuildEvent, SkeletonBuildBaseEvents::BEFORE_BUILD_FILES);
 
         $skeletonFiles = [];
         $baseSkeletonFileInfos = $preBuildEvent->getSkeletonFileInfos() ?: $this->getSkeletonFiles($buildConfig);
@@ -69,7 +70,7 @@ trait SkeletonManagerTrait
             try {
                 $preEvent = new PreBuildSkeletonFileEvent($this, $skeletonFileInfo, $templateVars, $buildConfig);
                 $this->eventBeforeBuildFile($preEvent);
-                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::BEFORE_BUILD_FILE, $preEvent);
+                $this->eventDispatcher->dispatch($preEvent, SkeletonBuildBaseEvents::BEFORE_BUILD_FILE);
                 $skeletonFile = $preEvent->getSkeletonFile()
                     ?: $this->buildSkeletonFile($preEvent->getSourceFileInfo(), $preEvent->getBuildConfig());
                 $skeletonFile->setContents($this->parseTemplateFile(
@@ -77,7 +78,7 @@ trait SkeletonManagerTrait
                     $preEvent->getSkeletonVars()
                 ));
                 $postEvent = new PostBuildSkeletonFileEvent($this, $skeletonFile, $skeletonFileInfo, $preEvent->getSkeletonVars(), $preEvent->getBuildConfig());
-                $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_BUILD_FILE, $postEvent);
+                $this->eventDispatcher->dispatch($postEvent, SkeletonBuildBaseEvents::AFTER_BUILD_FILE);
                 $this->eventAfterBuildFile($postEvent);
                 $skeletonFiles[] = $postEvent->getSkeletonFile();
             } catch (SkipSkeletonFileException $exception) {
@@ -85,7 +86,7 @@ trait SkeletonManagerTrait
         }
 
         $postBuildEvent = new PostBuildSkeletonFilesEvent($this, $skeletonFiles, $templateVars, $buildConfig);
-        $this->eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_BUILD_FILES, $postBuildEvent);
+        $this->eventDispatcher->dispatch($postBuildEvent, SkeletonBuildBaseEvents::AFTER_BUILD_FILES);
         $this->eventAfterBuildFiles($postBuildEvent);
 
         return $postBuildEvent->getSkeletonFiles();

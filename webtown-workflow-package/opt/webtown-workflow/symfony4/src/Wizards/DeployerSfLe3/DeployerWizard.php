@@ -20,8 +20,9 @@ use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
 use App\Wizards\Deployer\DeployerWizard as BaseDeployerWizard;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 class DeployerWizard extends BaseDeployerWizard
 {
@@ -38,7 +39,7 @@ class DeployerWizard extends BaseDeployerWizard
         IoManager $ioManager,
         Commander $commander,
         EventDispatcherInterface $eventDispatcher,
-        \Twig_Environment $twig,
+        Environment $twig,
         Filesystem $filesystem
     ) {
         parent::__construct(

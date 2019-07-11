@@ -26,8 +26,9 @@ use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
 
 class ConfigurationTest extends TestCase
 {
@@ -182,7 +183,7 @@ class ConfigurationTest extends TestCase
 
     protected function buildRecipeManager()
     {
-        $twigEnv = m::mock(\Twig_Environment::class);
+        $twigEnv = m::mock(Environment::class);
         $eventDispatcher = m::mock(EventDispatcherInterface::class);
         $manager = new RecipeManager();
         $manager->addRecipe(new SystemRecipe('system', new ArrayNodeDefinition('system'), $twigEnv, $eventDispatcher));

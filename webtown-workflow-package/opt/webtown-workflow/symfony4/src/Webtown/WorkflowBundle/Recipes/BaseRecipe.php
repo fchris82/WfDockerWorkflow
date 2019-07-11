@@ -22,25 +22,26 @@ use App\Webtown\WorkflowBundle\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
+use Twig\Environment;
 
 abstract class BaseRecipe
 {
     use SkeletonManagerTrait;
 
     /**
-     * @var \Twig_Environment
+     * @var Environment
      */
     protected $twig;
 
     /**
      * BaseRecipe constructor.
      *
-     * @param \Twig_Environment        $twig
+     * @param Environment              $twig
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Environment $twig, EventDispatcherInterface $eventDispatcher)
     {
         $this->twig = $twig;
         $this->eventDispatcher = $eventDispatcher;

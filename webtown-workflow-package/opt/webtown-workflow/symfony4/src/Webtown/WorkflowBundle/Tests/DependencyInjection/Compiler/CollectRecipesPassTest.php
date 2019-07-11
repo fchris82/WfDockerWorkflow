@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Twig\Loader\FilesystemLoader;
 
 class CollectRecipesPassTest extends TestCase
 {
@@ -43,7 +44,7 @@ class CollectRecipesPassTest extends TestCase
         $recipeManagerDefinition = new Definition(RecipeManager::class);
         $containerBuilder->setDefinition(RecipeManager::class, $recipeManagerDefinition);
         // TwigLoader
-        $twigLoaderDefinition = new Definition(\Twig_Loader_Filesystem::class);
+        $twigLoaderDefinition = new Definition(FilesystemLoader::class);
         $containerBuilder->setDefinition(AbstractTwigSkeletonPass::DEFAULT_TWIG_LOADER, $twigLoaderDefinition);
 
         foreach ($recipes as $recipeClass) {

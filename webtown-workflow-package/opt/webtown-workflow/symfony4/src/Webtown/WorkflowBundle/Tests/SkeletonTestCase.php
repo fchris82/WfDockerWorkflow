@@ -14,27 +14,29 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
 
 class SkeletonTestCase extends TestCase
 {
     /**
      * @param array $classes
      *
-     * @throws \ReflectionException
-     * @throws \Twig_Error_Loader
+     * @return Environment
      *
-     * @return \Twig_Environment
+     * @throws \ReflectionException
+     * @throws \Twig\Error\LoaderError
      */
     protected function buildTwig(array $classes = [])
     {
-        $twigLoader = new \Twig_Loader_Filesystem();
+        $twigLoader = new FilesystemLoader();
         foreach ($classes as $class) {
             $reflClass = new \ReflectionClass($class);
             $path = \dirname($reflClass->getFileName());
             $namespace = SkeletonHelper::generateTwigNamespace($reflClass);
             $twigLoader->addPath($path, $namespace);
         }
-        $twig = new \Twig_Environment($twigLoader);
+        $twig = new Environment($twigLoader);
 
         return $twig;
     }

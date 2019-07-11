@@ -19,8 +19,9 @@ use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Twig\Environment;
 
 class GitlabCIProjectWizard extends BaseSkeletonWizard
 {
@@ -44,7 +45,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
      *
      * @param EnvParser                $envParser
      * @param EventDispatcherInterface $eventDispatcher
-     * @param \Twig_Environment        $twig
+     * @param Environment              $twig
      * @param Filesystem               $filesystem
      */
     public function __construct(
@@ -54,7 +55,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         IoManager $ioManager,
         Commander $commander,
         EventDispatcherInterface $eventDispatcher,
-        \Twig_Environment $twig,
+        Environment $twig,
         Filesystem $filesystem
     ) {
         parent::__construct($ioManager, $commander, $eventDispatcher, $twig, $filesystem);

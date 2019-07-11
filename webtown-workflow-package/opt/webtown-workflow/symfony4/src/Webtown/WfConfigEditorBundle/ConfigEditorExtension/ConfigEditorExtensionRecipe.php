@@ -19,9 +19,10 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\ArrayNode;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
 
 /**
  * Class ConfigEditorExtensionRecipe
@@ -56,7 +57,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
      */
     protected $dockerComposeFiles = [];
 
-    public function __construct(Configuration $configuration, ArrayDumper $jsonDumper, \Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
+    public function __construct(Configuration $configuration, ArrayDumper $jsonDumper, Environment $twig, EventDispatcherInterface $eventDispatcher)
     {
         parent::__construct($twig, $eventDispatcher);
         $this->configuration = $configuration;

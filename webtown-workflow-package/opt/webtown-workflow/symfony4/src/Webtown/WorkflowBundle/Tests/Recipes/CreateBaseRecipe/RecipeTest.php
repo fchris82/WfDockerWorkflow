@@ -33,7 +33,7 @@ class RecipeTest extends SkeletonTestCase
     public function testGetDirectoryName()
     {
         $recipe = new Recipe(
-            m::mock(\Twig_Environment::class),
+            m::mock(\Twig\Environment::class),
             m::mock(EventDispatcher::class),
             m::mock(Environment::class)
         );
@@ -74,10 +74,10 @@ class RecipeTest extends SkeletonTestCase
         $globalConfig = Yaml::parseFile(static::BASE_PATH . $projectPath . '/.wf.yml');
 
         if ($buildInitEvent) {
-            $eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $buildInitEvent);
+            $eventDispatcher->dispatch($buildInitEvent, ConfigurationEvents::BUILD_INIT);
         }
         foreach ($dumpFileEvents as $dumpFileEvent) {
-            $eventDispatcher->dispatch(SkeletonBuildBaseEvents::AFTER_DUMP_FILE, $dumpFileEvent);
+            $eventDispatcher->dispatch($dumpFileEvent, SkeletonBuildBaseEvents::AFTER_DUMP_FILE);
         }
 
         $skeletonFiles = $recipe->build(

@@ -23,7 +23,7 @@ use App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 
@@ -105,7 +105,7 @@ class Builder
             }
         }
         $initEvent = new BuildInitEvent($config, $projectPath, $this->targetDirectoryName, $configHash);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::BUILD_INIT, $initEvent);
+        $this->eventDispatcher->dispatch($initEvent, ConfigurationEvents::BUILD_INIT);
         $initEvent->setConfig($this->configReplaceParameters($initEvent->getConfig(), $initEvent->getParameters()));
         // Init the directory structure
         $this->initDirectoryStructure($initEvent);
@@ -113,7 +113,7 @@ class Builder
 
         // PRE recipes
         $registerEventPre = new RegisterEvent($projectPath, $config);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::REGISTER_EVENT_PREBUILD, $registerEventPre);
+        $this->eventDispatcher->dispatch($registerEventPre, ConfigurationEvents::REGISTER_EVENT_PREBUILD);
         foreach ($registerEventPre->getRecipes() as $recipe) {
             $this->buildRecipe($projectPath, $recipe->getName(), $config, $config);
         }
@@ -127,7 +127,7 @@ class Builder
 
         // POST recipes
         $registerEventPost = new RegisterEvent($projectPath, $config);
-        $this->eventDispatcher->dispatch(ConfigurationEvents::REGISTER_EVENT_POSTBUILD, $registerEventPost);
+        $this->eventDispatcher->dispatch($registerEventPost, ConfigurationEvents::REGISTER_EVENT_POSTBUILD);
         foreach ($registerEventPost->getRecipes() as $recipe) {
             $this->buildRecipe($projectPath, $recipe->getName(), $config, $config);
         }
@@ -323,7 +323,7 @@ class Builder
      */
     protected function verboseInfo($info)
     {
-        $this->eventDispatcher->dispatch(ConfigurationEvents::VERBOSE_INFO, new VerboseInfoEvent($info));
+        $this->eventDispatcher->dispatch(new VerboseInfoEvent($info), ConfigurationEvents::VERBOSE_INFO);
     }
 
     /**

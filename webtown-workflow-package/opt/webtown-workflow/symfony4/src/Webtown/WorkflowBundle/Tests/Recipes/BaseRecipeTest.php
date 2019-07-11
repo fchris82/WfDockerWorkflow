@@ -20,12 +20,14 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Yaml\Yaml;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class BaseRecipeTest extends TestCase
 {
     public function testGetConfig()
     {
-        $recipe = new SimpleRecipe(new \Twig_Environment(new \Twig_Loader_Filesystem()), new EventDispatcher());
+        $recipe = new SimpleRecipe(new Environment(new FilesystemLoader()), new EventDispatcher());
         $dumper = new YamlReferenceDumper();
         $rootNode = $recipe->getConfig();
         $ymlTree = $dumper->dumpNode($rootNode->getNode(true));
@@ -44,7 +46,7 @@ class BaseRecipeTest extends TestCase
      */
     public function testGetSkeletonVars(string $projectPath, $recipeConfig, array $globalConfig, array $result)
     {
-        $recipe = new SimpleRecipe(new \Twig_Environment(new \Twig_Loader_Filesystem()), new EventDispatcher());
+        $recipe = new SimpleRecipe(new Environment(new FilesystemLoader()), new EventDispatcher());
         $response = $recipe->getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
         $this->assertEquals($result, $response);
@@ -99,7 +101,7 @@ class BaseRecipeTest extends TestCase
      */
     public function testBuild(array $parents, string $projectPath, array $recipeConfig, array $globalConfig, array $result)
     {
-        $twigLoader = new \Twig_Loader_Filesystem();
+        $twigLoader = new FilesystemLoader();
         $twigLoader->setPaths(
             [realpath(__DIR__ . '/../Dummy/Recipes/Simple')],
             'AppWebtownWorkflowBundleTestsDummyRecipesSimpleSimpleRecipe'
@@ -108,7 +110,7 @@ class BaseRecipeTest extends TestCase
             [realpath(__DIR__ . '/../Dummy/Recipes/SimpleSkeletonParent')],
             'AppWebtownWorkflowBundleTestsDummyRecipesSimpleSkeletonParentSimpleSkeletonParent'
         );
-        $recipe = new SimpleRecipe(new \Twig_Environment($twigLoader), new EventDispatcher());
+        $recipe = new SimpleRecipe(new Environment($twigLoader), new EventDispatcher());
         SimpleRecipe::setSkeletonParents($parents);
         $response = $recipe->build($projectPath, $recipeConfig, $globalConfig);
 
@@ -153,7 +155,7 @@ class BaseRecipeTest extends TestCase
      */
     public function testMakefileMultilineFormatter(string $pattern, array $items, string $result)
     {
-        $recipe = new SimpleRecipe(new \Twig_Environment(new \Twig_Loader_Filesystem()), new EventDispatcher());
+        $recipe = new SimpleRecipe(new Environment(new FilesystemLoader()), new EventDispatcher());
         $response = $recipe->makefileFormat($pattern, $items);
 
         $this->assertEquals($result, $response);

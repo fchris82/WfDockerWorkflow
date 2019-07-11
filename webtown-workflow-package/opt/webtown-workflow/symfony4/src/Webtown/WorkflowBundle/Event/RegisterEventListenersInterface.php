@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Webtown\WorkflowBundle\Event;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Interface RegisterEventListenersInterface

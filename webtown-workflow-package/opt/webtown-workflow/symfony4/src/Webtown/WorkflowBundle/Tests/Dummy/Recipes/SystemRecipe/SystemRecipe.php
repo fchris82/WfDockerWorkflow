@@ -11,7 +11,8 @@ declare(strict_types=1);
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\SystemRecipe;
 
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Twig\Environment;
 
 class SystemRecipe extends \App\Webtown\WorkflowBundle\Recipes\SystemRecipe
 {
@@ -30,10 +31,10 @@ class SystemRecipe extends \App\Webtown\WorkflowBundle\Recipes\SystemRecipe
      *
      * @param string                   $name
      * @param NodeDefinition           $configuration
-     * @param \Twig_Environment        $twig
+     * @param Environment              $twig
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct($name, $configuration, \Twig_Environment $twig, EventDispatcherInterface $eventDispatcher)
+    public function __construct($name, $configuration, Environment $twig, EventDispatcherInterface $eventDispatcher)
     {
         $this->name = $name;
         $this->configuration = $configuration;

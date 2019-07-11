@@ -10,7 +10,7 @@ declare(strict_types=1);
 
 namespace App\Webtown\WorkflowBundle\Event\Configuration;
 
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Filesystem\Filesystem;
 
 class FinishEvent extends Event

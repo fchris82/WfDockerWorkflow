@@ -22,6 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use Symfony\Component\DependencyInjection\Reference;
+use Twig\Loader\FilesystemLoader;
 
 class CollectWizardsPassTest extends TestCase
 {
@@ -43,7 +44,7 @@ class CollectWizardsPassTest extends TestCase
         $wizardManagerDefinition = new Definition(Manager::class);
         $containerBuilder->setDefinition(Manager::class, $wizardManagerDefinition);
         // TwigLoader
-        $twigLoaderDefinition = new Definition(\Twig_Loader_Filesystem::class);
+        $twigLoaderDefinition = new Definition(FilesystemLoader::class);
         $containerBuilder->setDefinition(AbstractTwigSkeletonPass::DEFAULT_TWIG_LOADER, $twigLoaderDefinition);
 
         foreach ($wizards as $wizadClass) {

@@ -14,8 +14,9 @@ use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
 use App\Webtown\WorkflowBundle\Configuration\Environment;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
+use Twig\Environment as TwigEnvironment;
 
 /**
  * Class Recipe
@@ -34,11 +35,11 @@ class MailHogRecipe extends BaseRecipe
     /**
      * Recipe constructor.
      *
-     * @param \Twig_Environment        $twig
+     * @param TwigEnvironment          $twig
      * @param EventDispatcherInterface $eventDispatcher
      * @param Environment              $environment
      */
-    public function __construct(\Twig_Environment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
+    public function __construct(TwigEnvironment $twig, EventDispatcherInterface $eventDispatcher, Environment $environment)
     {
         parent::__construct($twig, $eventDispatcher);
         $this->environment = $environment;

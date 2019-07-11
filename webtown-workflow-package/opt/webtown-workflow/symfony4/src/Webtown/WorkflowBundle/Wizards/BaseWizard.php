@@ -18,7 +18,7 @@ use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class BaseSkeleton.
