@@ -19,11 +19,11 @@ return PhpCsFixer\Config::create()
         'no_unreachable_default_argument_value' => true,
         'braces' => ['allow_single_line_closure' => true],
         'phpdoc_order' => true,
-        // Problémát okozhat, ha törli nevet, pláne, ha többet szeretnénk megadni pl egy for ciklus előtt.
+        // It may cause problems if eg. there are more variable before a for cycle
         'phpdoc_var_without_name' => false,
-        // Nem szeretnénk '.'-ot minden doccomment végére
+        // We don't want '.' for every end of doccomment
         'phpdoc_summary' => false,
-        // Erre azért van szükség, mert pl a JMSTranslationBundle miatt elhelyezhetünk a kódon belül pl /** @Ignore */ -t
+        // Because of eg. /** @Ignore */ of JMSTranslation Bundle
         'phpdoc_to_comment' => false,
         // Néha bizony van értelme behúzni a tömböknél az értéket, ezért kikapcsoljuk, hogy levágja a "szóközöket" a => operátor körül.
         'binary_operator_spaces' => ['operators' => [
@@ -32,6 +32,8 @@ return PhpCsFixer\Config::create()
         ]],
         'heredoc_to_nowdoc' => false,
         'declare_strict_types' => true,
+        // It is important because of `declare_strict_types`
+        'blank_line_after_opening_tag' => false,
     ])
     ->setRiskyAllowed(true)
     ->setFinder($finder)
