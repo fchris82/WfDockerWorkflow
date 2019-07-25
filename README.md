@@ -1,5 +1,29 @@
-Documentations
-==============
+Webtown Workflow Framework for Docker Compose
+=============================================
+
+Easy to build an environment for projects.
+
+## Requires
+
+- Linux system, **bash** . Installed **Oh-My-Zsh** is the best. Please read how you can install it: https://github.com/robbyrussell/oh-my-zsh
+- **Docker**, **Docker Compose**
+- **dnsmasq**
+- Developing: **make**, **jq**, **git**
+
+```shell
+$ sudo apt-get update
+# Install base
+$ sudo apt-get install docker docker-compose zsh dnsmasq
+# Use it for dev:
+# $ sudo apt-get install docker docker-compose zsh dnsmasq make jq git
+
+# Config for `loc` TLD
+$ echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
+# Restart
+$ sudo service network-manager restart
+```
+
+## Documentations
 
 - [Nginx reverse proxy](/docs/nginx-reverse-proxy.md)
 - Using WF
