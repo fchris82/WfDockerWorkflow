@@ -65,6 +65,10 @@ alias php='docker run --rm --interactive --tty \
 
 https://hub.docker.com/_/composer
 
+> Composer can be a little bit tricky, `composer.json` file sometimes contains the minimum or required PHP version and extensions, 
+> you should use the same minimum environment while you are running the `composer install/require/update` command! That's
+> why highly recommended to create custom composer image(s) for different environments. 
+
 ```bash
 alias composer='COMPOSER_HOME=$HOME/.config/composer \
                 COMPOSER_CACHE_DIR=$HOME/.cache/composer \

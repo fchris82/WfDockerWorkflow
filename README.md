@@ -3,24 +3,42 @@ Webtown Workflow Framework for Docker Compose
 
 Easy to build an environment for projects.
 
-## Requires
+## Requirements
 
 - Linux system, **bash** . Installed **Oh-My-Zsh** is the best. Please read how you can install it: https://github.com/robbyrussell/oh-my-zsh
-- **Docker**, **Docker Compose**. Please follow the installation description: https://docs.docker.com/install/ . Do not forget set permissions: https://docs.docker.com/install/linux/linux-postinstall/
+- **Docker**. Please follow the installation description: https://docs.docker.com/install/ . Do not forget set permissions: https://docs.docker.com/install/linux/linux-postinstall/ **Docker Compose** isn't required but recommended.
 - **dnsmasq**
 - Developing: **make**, **jq**, **git**
 
+> **IMPORTANT!** You need permission to run `docker`! See above!
+
 ```shell
-$ sudo apt-get update
-# Install base
-$ sudo apt-get install docker docker-compose zsh dnsmasq
+$ sudo apt update
+# Minimal install:
+$ sudo apt install docker zsh dnsmasq
 # Use it for dev:
-# $ sudo apt-get install docker docker-compose zsh dnsmasq make jq git
+# $ sudo apt install docker docker-compose zsh dnsmasq make jq git
 
 # Config for `loc` TLD
 $ echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
 # Restart
 $ sudo service network-manager restart
+```
+
+### Ubuntu
+
+On **Ubuntu** - since **18.xx** version - `dnsmasq` won't be able to start!
+
+```shell
+# Reconfigure the NetworkManager
+sudo sed -i '/^plugins=.*/a dns=dnsmasq' /etc/NetworkManager/NetworkManager.conf
+# Stop systemd-resolved
+sudo systemctl disable systemd-resolved.service
+sudo systemctl stop systemd-resolved
+sudo rm /etc/resolv.conf ; sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf
+# Restart
+sudo service dnsmasq start
+sudo service network-manager restart
 ```
 
 ## Documentations

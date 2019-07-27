@@ -15,22 +15,13 @@ The **wf** is exactly a docker image: `fchris82/wf` , https://hub.docker.com/r/f
 - `GIT` or `Mercurial` version controller
 - `dnsmasq` or other dns tool. The program will generate local domains with custom TLD (default: `.loc`).
 
-`dnsmasq` install and config:
-
-```shell
-# Install
-$ sudo apt-get install dnsmasq
-# Config for `loc` TLD
-$ echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
-# Restart
-$ sudo service network-manager restart
-```
+> You can read **more** about these on [first page](/README.md)
 
 **User permissions**
 
 It was a target that you can use it without root permission. It is a "local" installation, each user needs to install itself and each user must have permission to use docker (== user is member of `docker` group)
 
-> Add user to docker group: `sudo usermod -aG docker $USER` - https://docs.docker.com/install/linux/linux-postinstall/
+> Add user to docker group: `sudo usermod -aG docker $USER` - https://docs.docker.com/install/linux/linux-postinstall/ . **After it you have to logout and login again!** 
 
 And you need to have a right access to `gitlab.webtown.hu` and to the `pub/wf.git` project.
 
