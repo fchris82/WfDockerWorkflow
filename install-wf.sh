@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# @todo (Chris) Ellenőrizni, hogy a user tagja-e a Docker csoportnak, különben elhal az egész, de nem ad erről elég infót
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
     [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
@@ -32,6 +31,24 @@ BOLD=$'\x1B[1m'
 CLREOL=$'\x1B[K'
 #-- Vars
 RESTORE=$'\x1B[0m'
+
+# --> PRE CHECK
+# Docker is installed?
+if ! $(dpkg -l | grep -E '^ii' | grep -qw docker); then
+    echo "${RED}${BOLD}You need installed ${YELLOW}${BOLD}docker${RED}${BOLD}! First install it!${RESTORE}";
+    echo "${RED}${BOLD}Installation failed!${RESTORE}"
+    exit 1
+fi
+# Current user is member in docker group?
+if ! $(id -Gn ${USER} | grep -qw "docker"); then
+    echo "${RED}${BOLD}You have to be member in ${GREEN}${BOLD}docker${RED}${BOLD} group!${RESTORE}";
+    echo "${YELLOW}  1. Run the ${WHITE}sudo usermod -aG docker \$USER${YELLOW} command.${RESTORE}"
+    echo "${YELLOW}  2. ${BOLD}Logout${YELLOW} and ${BOLD}login${YELLOW} again! If it doesn't help, you should restart the computer.${RESTORE}"
+    echo ""
+    echo "${RED}${BOLD}Installation failed!${RESTORE}"
+    exit 1
+fi
+# <-- PRE CHECK
 
 BASE_IMAGE=${1:-"fchris82/wf"}
 # Refresh
