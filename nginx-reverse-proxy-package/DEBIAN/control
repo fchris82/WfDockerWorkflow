@@ -5,8 +5,8 @@ Section: devel
 Priority: optional
 Architecture: all
 Essential: no
-Depends: docker-ce
-Maintainer: Webtown <info@webtown.hu>
+Pre-Depends: docker | docker-ce | docker-ee
+Maintainer: Krisztián Ferenczi <ferenczi.krisztian@gmail.com>
 Description: Webtown GitFlow workflow supporter package
 Homepage: https://gitlab.webtown.hu/pub/wf
 Installed-Size: 30000
