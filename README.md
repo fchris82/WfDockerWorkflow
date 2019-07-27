@@ -6,7 +6,7 @@ Easy to build an environment for projects.
 ## Requires
 
 - Linux system, **bash** . Installed **Oh-My-Zsh** is the best. Please read how you can install it: https://github.com/robbyrussell/oh-my-zsh
-- **Docker**, **Docker Compose**
+- **Docker**, **Docker Compose**. Please follow the installation description: https://docs.docker.com/install/
 - **dnsmasq**
 - Developing: **make**, **jq**, **git**
 
