@@ -70,7 +70,8 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
     public function isBuilt($targetProjectDirectory)
     {
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)
-            || $this->fileSystem->exists($targetProjectDirectory . '/.git');
+            || $this->fileSystem->exists($targetProjectDirectory . '/.git')
+            || $this->fileSystem->exists($targetProjectDirectory . '/composer.json');
     }
 
     protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
