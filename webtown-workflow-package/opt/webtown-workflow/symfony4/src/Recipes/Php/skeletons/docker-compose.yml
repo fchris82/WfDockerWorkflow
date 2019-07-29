@@ -13,7 +13,7 @@ services:
 {% if nginx.include_file %}
             - "{{ nginx.include_file }}:ro"
 {% endif %}
-        working_dir: {{ project_path }}
+        working_dir: {{ project_path }}{{ pd ? '/' ~ pd : '' }}
         command: {{ server.nginx_debug ? 'nginx-debug' : 'nginx' }} -g 'daemon off;'
 
     {{ names.engine }}:
@@ -42,7 +42,7 @@ services:
             WF_XDEBUG_ENABLED: {{ server.xdebug ? '1' : '0' }}
             XDEBUG_ENABLED: {{ server.xdebug ? '1' : '0' }}
             ERROR_LOG_ENABLED: {{ server.error_log ? '1' : '0' }}
-        working_dir: {{ project_path }}
+        working_dir: {{ project_path }}{{ pd ? '/' ~ pd : '' }}
         volumes:
             # Full project files
             - "${BASE_DIRECTORY}{{ pd ? '/' ~ pd : '' }}:${DOCKER_DOC_ROOT}{{ pd ? '/' ~ pd : '' }}"
