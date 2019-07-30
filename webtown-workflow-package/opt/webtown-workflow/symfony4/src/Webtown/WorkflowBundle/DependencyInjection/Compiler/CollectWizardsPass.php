@@ -14,11 +14,11 @@ class CollectWizardsPass extends AbstractTwigSkeletonPass
     /**
      * Register all Wizard service.
      *
-     * @throws InvalidArgumentException
-     * @throws ServiceNotFoundException
+     * @param ContainerBuilder $container
+     *
      * @throws \ReflectionException
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(Manager::class);
         $twigFilesystemLoaderDefinition = $container->getDefinition(parent::DEFAULT_TWIG_LOADER);

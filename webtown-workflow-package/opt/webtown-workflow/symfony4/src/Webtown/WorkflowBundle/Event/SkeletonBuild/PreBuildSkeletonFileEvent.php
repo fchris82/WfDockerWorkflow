@@ -10,12 +10,12 @@ namespace App\Webtown\WorkflowBundle\Event\SkeletonBuild;
 
 use App\Webtown\WorkflowBundle\Event\NamespacedEvent;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use App\Webtown\WorkflowBundle\Skeleton\SkeletonTwigFileInfo;
+use Symfony\Component\Finder\SplFileInfo;
 
 class PreBuildSkeletonFileEvent extends NamespacedEvent
 {
     /**
-     * @var SkeletonTwigFileInfo
+     * @var SplFileInfo
      */
     protected $sourceFileInfo;
 
@@ -37,14 +37,14 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     /**
      * PreBuildSkeletonFileEvent constructor.
      *
-     * @param string|object        $namespace
-     * @param SkeletonTwigFileInfo $sourceFileInfo
-     * @param array                $skeletonVars
-     * @param array                $buildConfig
+     * @param string|object $namespace
+     * @param SplFileInfo   $sourceFileInfo
+     * @param array         $skeletonVars
+     * @param array         $buildConfig
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function __construct($namespace, SkeletonTwigFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
+    public function __construct($namespace, SplFileInfo $sourceFileInfo, array $skeletonVars, array $buildConfig)
     {
         parent::__construct($namespace);
         $this->sourceFileInfo = $sourceFileInfo;
@@ -53,23 +53,23 @@ class PreBuildSkeletonFileEvent extends NamespacedEvent
     }
 
     /**
-     * @return SkeletonTwigFileInfo
+     * @return SplFileInfo
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getSourceFileInfo(): SkeletonTwigFileInfo
+    public function getSourceFileInfo(): SplFileInfo
     {
         return $this->sourceFileInfo;
     }
 
     /**
-     * @param SkeletonTwigFileInfo $sourceFileInfo
+     * @param SplFileInfo $sourceFileInfo
      *
      * @return $this
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSourceFileInfo(SkeletonTwigFileInfo $sourceFileInfo)
+    public function setSourceFileInfo(SplFileInfo $sourceFileInfo): self
     {
         $this->sourceFileInfo = $sourceFileInfo;
 

@@ -33,13 +33,13 @@ trait SkeletonManagerTrait
      */
     protected $eventDispatcher;
 
-    abstract protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event);
+    abstract protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event): void;
 
-    abstract protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $event);
+    abstract protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $event): void;
 
-    abstract protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event);
+    abstract protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $event): void;
 
-    abstract protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event);
+    abstract protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event): void;
 
     /**
      * @param $templateVars
@@ -52,7 +52,7 @@ trait SkeletonManagerTrait
      *
      * @return array|SkeletonFile[]
      */
-    protected function buildSkeletonFiles($templateVars, $buildConfig = [])
+    protected function buildSkeletonFiles(array $templateVars, array $buildConfig = []): array
     {
         $preBuildEvent = new PreBuildSkeletonFilesEvent($this, $templateVars, $buildConfig);
         $this->eventBeforeBuildFiles($preBuildEvent);
@@ -95,10 +95,10 @@ trait SkeletonManagerTrait
      * @param array       $buildRecipeConfig
      *
      * @return SkeletonFile
-     *@throws SkipSkeletonFileException
      *
+     * @throws SkipSkeletonFileException
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildRecipeConfig = [])
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $buildRecipeConfig = []): SkeletonFile
     {
         return new SkeletonFile($fileInfo);
     }
@@ -107,19 +107,26 @@ trait SkeletonManagerTrait
      * @param SkeletonTwigFileInfo $templateFile
      * @param array                $templateVariables
      *
-     * @throws \Exception
-     * @throws \Twig_Error_Loader
-     * @throws \Twig_Error_Runtime
-     * @throws \Twig_Error_Syntax
-     *
      * @return string
+     *
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
      */
-    protected function parseTemplateFile(SkeletonTwigFileInfo $templateFile, $templateVariables)
+    protected function parseTemplateFile(SkeletonTwigFileInfo $templateFile, array $templateVariables): string
     {
         return $this->twig->render($templateFile->getTwigPath(), $templateVariables);
     }
 
-    protected function getSkeletonFiles($buildConfig)
+    /**
+     * @param array $buildConfig
+     *
+     * @return array|SkeletonTwigFileInfo[]
+     *
+     * @throws CircularReferenceException
+     * @throws \ReflectionException
+     */
+    protected function getSkeletonFiles(array $buildConfig): array
     {
         $pathsWithTwigNamespace = static::getSkeletonPaths($buildConfig);
         if (0 == \count($pathsWithTwigNamespace)) {
@@ -150,7 +157,7 @@ trait SkeletonManagerTrait
      *
      * @return array|string[]
      */
-    public static function getSkeletonPaths($buildConfig = [])
+    public static function getSkeletonPaths(array $buildConfig = []): array
     {
         $skeletonPaths = [];
         foreach (static::getSkeletonParents() as $class) {
@@ -173,7 +180,7 @@ trait SkeletonManagerTrait
     /**
      * @return array|string[]
      */
-    public static function getSkeletonParents()
+    public static function getSkeletonParents(): array
     {
         return [];
     }

@@ -45,7 +45,7 @@ class Filesystem extends BaseFilesystem
         }
     }
 
-    protected function aliasMask($path)
+    protected function aliasMask(string $path): string
     {
         if (null !== $this->alias) {
             return str_replace($this->initDirectory, $this->alias, $path);
@@ -54,14 +54,19 @@ class Filesystem extends BaseFilesystem
         return $path;
     }
 
-    public function getContents()
+    public function getContents(): array
     {
         ksort($this->contents);
 
         return $this->contents;
     }
 
-    public function exists($files)
+    /**
+     * @param iterable|string $files
+     *
+     * @return bool
+     */
+    public function exists($files): bool
     {
         $files = $this->pathsToArray($files);
         $hits = [];
@@ -191,6 +196,11 @@ class Filesystem extends BaseFilesystem
         // @todo (Chris)
     }
 
+    /**
+     * @param string|array|string[]|iterable $paths
+     *
+     * @return array|iterable
+     */
     protected function pathsToArray($paths)
     {
         return \is_array($paths) || $paths instanceof \IteratorAggregate

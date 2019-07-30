@@ -31,14 +31,14 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * PostBuildSkeletonFilesEvent constructor.
      *
-     * @param $namespace
+     * @param string|object        $namespace
      * @param array                $skeletonVars
      * @param array                $buildConfig
      * @param SkeletonFile[]|array $skeletonFiles
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function __construct($namespace, $skeletonFiles, array $skeletonVars, array $buildConfig)
+    public function __construct($namespace, array $skeletonFiles, array $skeletonVars, array $buildConfig)
     {
         parent::__construct($namespace);
         $this->skeletonFiles = $skeletonFiles;
@@ -51,12 +51,12 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getSkeletonFiles()
+    public function getSkeletonFiles(): array
     {
         return $this->skeletonFiles;
     }
 
-    public function addSkeletonFile(SkeletonFile $skeletonFile)
+    public function addSkeletonFile(SkeletonFile $skeletonFile): self
     {
         $this->skeletonFiles[] = $skeletonFile;
 
@@ -70,7 +70,7 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSkeletonFiles($skeletonFiles)
+    public function setSkeletonFiles($skeletonFiles): self
     {
         $this->skeletonFiles = $skeletonFiles;
 
@@ -94,7 +94,7 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSkeletonVars(array $skeletonVars)
+    public function setSkeletonVars(array $skeletonVars): self
     {
         $this->skeletonVars = $skeletonVars;
 
@@ -118,7 +118,7 @@ class PostBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setBuildConfig(array $buildConfig)
+    public function setBuildConfig(array $buildConfig): self
     {
         $this->buildConfig = $buildConfig;
 

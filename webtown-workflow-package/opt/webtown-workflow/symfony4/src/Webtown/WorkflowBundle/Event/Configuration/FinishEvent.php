@@ -35,7 +35,7 @@ class FinishEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getFileSystem()
+    public function getFileSystem(): Filesystem
     {
         return $this->fileSystem;
     }

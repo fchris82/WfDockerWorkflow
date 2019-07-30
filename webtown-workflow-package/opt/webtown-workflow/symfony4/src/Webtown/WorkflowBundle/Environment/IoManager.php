@@ -62,14 +62,14 @@ class IoManager implements EventSubscriberInterface
      *
      * @return array The event names to listen to
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConsoleEvents::COMMAND => 'init',
         ];
     }
 
-    public function init(ConsoleCommandEvent $event)
+    public function init(ConsoleCommandEvent $event): void
     {
         $this->input = $event->getInput();
         $this->output = $event->getOutput();
@@ -77,7 +77,7 @@ class IoManager implements EventSubscriberInterface
         $this->io = new SymfonyStyle($this->input, $this->output);
     }
 
-    public function clearScreen()
+    public function clearScreen(): void
     {
 //        $output->write(sprintf("\033\143"));
         $this->output->write("\n\n\n");
@@ -93,7 +93,7 @@ class IoManager implements EventSubscriberInterface
         return $this->io->askQuestion($question);
     }
 
-    public function writeln($text)
+    public function writeln($text): void
     {
         $this->output->writeln($text);
     }

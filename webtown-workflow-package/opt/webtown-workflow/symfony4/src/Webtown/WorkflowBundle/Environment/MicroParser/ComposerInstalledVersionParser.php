@@ -24,12 +24,11 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
      *
      * @param string $workingDirectory
      * @param string $packageName
-     *
-     * @throws InvalidComposerVersionNumber
+     * @param bool   $default
      *
      * @return string
      */
-    public function get($workingDirectory, $packageName, $default = false)
+    public function get(string $workingDirectory, string $packageName, $default = false)
     {
         try {
             $lockData = $this->getComposerLockConfig($workingDirectory);
@@ -65,7 +64,14 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
         return $default;
     }
 
-    public function read($workingDirectory, $infoPath, $default = false)
+    /**
+     * @param string $workingDirectory
+     * @param string $infoPath
+     * @param bool   $default
+     *
+     * @return array|bool|mixed
+     */
+    public function read(string $workingDirectory, string $infoPath, $default = false)
     {
         $keys = explode('.', $infoPath);
         try {
@@ -90,7 +96,7 @@ class ComposerInstalledVersionParser extends ComposerJsonInformationParser
      *
      * @return mixed
      */
-    protected function getComposerLockConfig($workingDirectory)
+    protected function getComposerLockConfig(string $workingDirectory)
     {
         if (!\array_key_exists($workingDirectory, $this->composerLockConfig)) {
             $composerJsonPath = $workingDirectory . '/composer.lock';

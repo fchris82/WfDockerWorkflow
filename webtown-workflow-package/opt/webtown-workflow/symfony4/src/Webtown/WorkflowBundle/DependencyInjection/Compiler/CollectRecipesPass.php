@@ -16,11 +16,11 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
     /**
      * Register all Recipe service.
      *
-     * @throws InvalidArgumentException
-     * @throws ServiceNotFoundException
+     * @param ContainerBuilder $container
+     *
      * @throws \ReflectionException
      */
-    public function process(ContainerBuilder $container)
+    public function process(ContainerBuilder $container): void
     {
         $definition = $container->getDefinition(RecipeManager::class);
         $twigFilesystemLoaderDefinition = $container->getDefinition(parent::DEFAULT_TWIG_LOADER);
@@ -39,7 +39,14 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
         }
     }
 
-    protected function isTheServiceAbstract(Definition $serviceDefinition)
+    /**
+     * @param Definition $serviceDefinition
+     *
+     * @return bool
+     *
+     * @throws \ReflectionException
+     */
+    protected function isTheServiceAbstract(Definition $serviceDefinition): bool
     {
         $refClass = new \ReflectionClass($serviceDefinition->getClass());
 

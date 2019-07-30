@@ -40,13 +40,13 @@ class WfEnvironmentParser
         $this->fileSystem = $fileSystem;
     }
 
-    public function wfIsInitialized($projectDirectory)
+    public function wfIsInitialized(string $projectDirectory): bool
     {
         return $this->fileSystem->exists($projectDirectory . '/.wf.yml.dist')
             || $this->fileSystem->exists($projectDirectory . '/.wf.yml');
     }
 
-    public function getWorkflowConfiguration($workingDirectory)
+    public function getWorkflowConfiguration(string $workingDirectory): array
     {
         if (!$this->wfIsInitialized($workingDirectory)) {
             throw new \InvalidArgumentException('Missing configuration files!');

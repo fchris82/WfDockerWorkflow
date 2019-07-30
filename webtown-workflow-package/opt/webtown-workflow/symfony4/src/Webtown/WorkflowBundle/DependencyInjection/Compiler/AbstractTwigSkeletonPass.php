@@ -39,7 +39,7 @@ abstract class AbstractTwigSkeletonPass implements CompilerPassInterface
      *
      * @throws \ReflectionException
      */
-    protected function registerSkeletonService(string $twigDefaultPath, Definition $serviceDefinition, Definition $twigLoaderDefinition)
+    protected function registerSkeletonService(string $twigDefaultPath, Definition $serviceDefinition, Definition $twigLoaderDefinition): void
     {
         $refClass = new \ReflectionClass($serviceDefinition->getClass());
 

@@ -26,7 +26,7 @@ class Environment
      */
     protected $env;
 
-    public function getConfigValue($name, $default = null)
+    public function getConfigValue(string $name, $default = null)
     {
         $config = $this->getEnv();
         if (!\array_key_exists($name, $config)) {
@@ -36,7 +36,7 @@ class Environment
         return $config[$name];
     }
 
-    protected function getEnv()
+    protected function getEnv(): array
     {
         if (null === $this->env) {
             $this->env = $_ENV;

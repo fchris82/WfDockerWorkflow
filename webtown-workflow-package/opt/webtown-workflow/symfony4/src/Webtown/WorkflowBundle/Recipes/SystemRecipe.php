@@ -18,7 +18,7 @@ abstract class SystemRecipe extends HiddenRecipe
      *
      * @see ConfigurationEvents::REGISTER_EVENT_PREBUILD
      */
-    public function onAppConfigurationEventRegisterPrebuild(RegisterEvent $event)
+    public function onAppConfigurationEventRegisterPrebuild(RegisterEvent $event): void
     {
         $event->addRecipe($this);
     }
@@ -28,7 +28,7 @@ abstract class SystemRecipe extends HiddenRecipe
      *
      * @see ConfigurationEvents::REGISTER_EVENT_POSTBUILD
      */
-    public function onAppConfigurationEventRegisterPostbuild(RegisterEvent $event)
+    public function onAppConfigurationEventRegisterPostbuild(RegisterEvent $event): void
     {
         $event->addRecipe($this);
     }

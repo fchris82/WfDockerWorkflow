@@ -18,7 +18,7 @@ class ExecutableSkeletonFile extends SkeletonFile
     /**
      * @return int
      */
-    public function getPermission()
+    public function getPermission(): int
     {
         return $this->baseFileInfo->isExecutable() ? $this->baseFileInfo->getPerms() : $this->permission;
     }
@@ -30,7 +30,7 @@ class ExecutableSkeletonFile extends SkeletonFile
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setPermission($permission)
+    public function setPermission(int $permission): self
     {
         $this->permission = $permission;
 

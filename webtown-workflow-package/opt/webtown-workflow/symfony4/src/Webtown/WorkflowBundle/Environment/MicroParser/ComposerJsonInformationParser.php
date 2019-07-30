@@ -35,7 +35,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
         $this->fileSystem = $fileSystem;
     }
 
-    public function get($workingDirectory, $infoPath, $default = false)
+    public function get(string $workingDirectory, string $infoPath, $default = false)
     {
         $keys = explode('.', $infoPath);
         $current = $this->getComposerJsonConfig($workingDirectory);
@@ -50,13 +50,13 @@ class ComposerJsonInformationParser implements MicroParserInterface
     }
 
     /**
-     * @param $workingDirectory
+     * @param string $workingDirectory
      *
      * @throws FileNotFoundException
      *
      * @return mixed
      */
-    protected function getComposerJsonConfig($workingDirectory)
+    protected function getComposerJsonConfig(string $workingDirectory)
     {
         if (!\array_key_exists($workingDirectory, $this->composerJsonConfig)) {
             $composerJsonPath = $workingDirectory . '/composer.json';
@@ -73,7 +73,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
         return $this->composerJsonConfig[$workingDirectory];
     }
 
-    public function has($workingDirectory, $infoPath)
+    public function has(string $workingDirectory, string $infoPath): bool
     {
         $value = $this->get($workingDirectory, $infoPath, new ValueIsMissingException());
 
@@ -101,7 +101,7 @@ class ComposerJsonInformationParser implements MicroParserInterface
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getFilesystem()
+    public function getFilesystem(): Filesystem
     {
         return $this->fileSystem;
     }

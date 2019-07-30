@@ -9,13 +9,14 @@
 namespace App\Webtown\WorkflowBundle\Recipes;
 
 use App\Webtown\WorkflowBundle\Exception\RecipeHasNotConfigurationException;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 abstract class HiddenRecipe extends BaseRecipe
 {
     /**
      * @deprecated We don't call it if the recipe is based on HiddenRecipe
      */
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         throw new RecipeHasNotConfigurationException('The hidden recipes don\'t have and don\'t need config!');
     }

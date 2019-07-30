@@ -80,7 +80,7 @@ class RegisterEvent extends Event
      *
      * @return $this
      */
-    public function addRecipe(BaseRecipe $recipe)
+    public function addRecipe(BaseRecipe $recipe): self
     {
         $this->recipes[] = $recipe;
 
@@ -94,7 +94,7 @@ class RegisterEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setRecipes($recipes)
+    public function setRecipes($recipes): self
     {
         $this->recipes = $recipes;
 

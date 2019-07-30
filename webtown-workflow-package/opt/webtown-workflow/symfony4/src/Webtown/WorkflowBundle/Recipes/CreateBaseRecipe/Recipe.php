@@ -59,7 +59,7 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
         $this->environment = $environment;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
@@ -73,7 +73,7 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
      *
      * @see Builder::build()
      */
-    public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $targetPath, array $recipeConfig, array $globalConfig): array
     {
         $dockerComposeFiles = array_map(function ($v) {
             // If the path start with `/` or `~` we won't change, else we put the project path before it
@@ -89,12 +89,12 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
         ]);
     }
 
-    public function init(BuildInitEvent $event)
+    public function init(BuildInitEvent $event): void
     {
         $this->makefileName = $event->getConfigHash() . '.mk';
     }
 
-    public function collectFiles(DumpFileEvent $event)
+    public function collectFiles(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
 
@@ -108,7 +108,7 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
         }
     }
 
-    protected function renameMakefile(PostBuildSkeletonFileEvent $event)
+    protected function renameMakefile(PostBuildSkeletonFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
         if ('makefile' == $skeletonFile->getFileName()) {
@@ -116,18 +116,18 @@ class Recipe extends SystemRecipe implements RegisterEventListenersInterface
         }
     }
 
-    public function getDirectoryName()
+    public function getDirectoryName(): string
     {
         return '';
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(ConfigurationEvents::BUILD_INIT, [$this, 'init']);
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::AFTER_DUMP_FILE, [$this, 'collectFiles']);
     }
 
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent): void
     {
         $this->renameMakefile($postBuildSkeletonFileEvent);
         parent::eventAfterBuildFile($postBuildSkeletonFileEvent);

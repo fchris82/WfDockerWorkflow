@@ -49,7 +49,7 @@ class Commander
     /**
      * @param $workdir
      */
-    public function cd($workdir)
+    public function cd(string $workdir): void
     {
         $this->runCommandsWorkdir = $workdir;
     }
@@ -173,7 +173,7 @@ class Commander
      *
      * @return $this
      */
-    public function setLiveEcho(bool $liveEcho)
+    public function setLiveEcho(bool $liveEcho): self
     {
         $this->liveEcho = $liveEcho;
 
@@ -222,7 +222,7 @@ class Commander
         ];
     }
 
-    protected function isTtyEnvironment()
+    protected function isTtyEnvironment(): bool
     {
         return stream_isatty(STDERR);
     }

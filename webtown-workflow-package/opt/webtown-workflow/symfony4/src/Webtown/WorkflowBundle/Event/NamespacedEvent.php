@@ -20,7 +20,7 @@ class NamespacedEvent extends Event
     /**
      * NamespacedEvent constructor.
      *
-     * @param $namespace
+     * @param string|object $namespace
      */
     public function __construct($namespace)
     {
@@ -47,7 +47,7 @@ class NamespacedEvent extends Event
      *
      * @codeCoverageIgnore Simple compare
      */
-    public function isNamespace($namespace)
+    public function isNamespace($namespace): bool
     {
         if (\is_object($namespace)) {
             $namespace = \get_class($namespace);

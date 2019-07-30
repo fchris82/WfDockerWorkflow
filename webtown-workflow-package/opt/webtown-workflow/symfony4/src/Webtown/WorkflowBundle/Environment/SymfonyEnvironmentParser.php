@@ -49,7 +49,7 @@ class SymfonyEnvironmentParser
      *
      * @return bool|string
      */
-    public function getSymfonyVersion($projectWorkDir)
+    public function getSymfonyVersion(string $projectWorkDir)
     {
         $symfonyPackages = [
             'symfony/symfony',
@@ -66,7 +66,7 @@ class SymfonyEnvironmentParser
         return false;
     }
 
-    public function readSymfonyBinDir($projectWorkDir, $default = null)
+    public function readSymfonyBinDir(string $projectWorkDir, string $default = null)
     {
         $byExtra = $this->composerParser->read($projectWorkDir, 'extra.symfony-bin-dir');
         if ($byExtra) {
@@ -78,7 +78,7 @@ class SymfonyEnvironmentParser
         return $byConfig ?: $default;
     }
 
-    public function getSymfonyEnvironmentVariables($projectWorkDir)
+    public function getSymfonyEnvironmentVariables(string $projectWorkDir): array
     {
         // Megpróbáljuk kiolvasni a használt SF verziót, már ha létezik
         try {

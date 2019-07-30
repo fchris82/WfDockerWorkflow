@@ -58,7 +58,7 @@ class PreProcessConfigurationEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setConfig(array $config)
+    public function setConfig(array $config): self
     {
         $this->config = $config;
 
@@ -82,7 +82,7 @@ class PreProcessConfigurationEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setProjectPath(string $projectPath)
+    public function setProjectPath(string $projectPath): self
     {
         $this->projectPath = $projectPath;
 

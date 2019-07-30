@@ -18,5 +18,5 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
  */
 interface RegisterEventListenersInterface
 {
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher);
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void;
 }

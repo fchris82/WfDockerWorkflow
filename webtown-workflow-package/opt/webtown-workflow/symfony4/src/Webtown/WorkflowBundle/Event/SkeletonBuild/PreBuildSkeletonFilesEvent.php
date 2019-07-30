@@ -31,8 +31,9 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * PreBuildSkeletonFilesEvent constructor.
      *
-     * @param array $skeletonVars
-     * @param array $buildConfig
+     * @param string|object $namespace
+     * @param array         $skeletonVars
+     * @param array         $buildConfig
      *
      * @codeCoverageIgnore Simple setter
      */
@@ -60,7 +61,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSkeletonVars(array $skeletonVars)
+    public function setSkeletonVars(array $skeletonVars): self
     {
         $this->skeletonVars = $skeletonVars;
 
@@ -84,7 +85,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setBuildConfig(array $buildConfig)
+    public function setBuildConfig(array $buildConfig): self
     {
         $this->buildConfig = $buildConfig;
 
@@ -94,11 +95,15 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * @param SkeletonTwigFileInfo $fileInfo
      *
+     * @return PreBuildSkeletonFilesEvent
+     *
      * @codeCoverageIgnore Simple setter
      */
-    public function addSkeletonFileInfo(SkeletonTwigFileInfo $fileInfo)
+    public function addSkeletonFileInfo(SkeletonTwigFileInfo $fileInfo): self
     {
         $this->skeletonFileInfos[] = $fileInfo;
+
+        return $this;
     }
 
     /**
@@ -106,7 +111,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getSkeletonFileInfos()
+    public function getSkeletonFileInfos(): array
     {
         return $this->skeletonFileInfos;
     }
@@ -118,7 +123,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSkeletonFileInfos($skeletonFileInfos)
+    public function setSkeletonFileInfos($skeletonFileInfos): self
     {
         $this->skeletonFileInfos = $skeletonFileInfos;
 

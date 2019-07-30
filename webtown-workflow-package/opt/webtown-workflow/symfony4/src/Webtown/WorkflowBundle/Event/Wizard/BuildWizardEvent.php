@@ -56,7 +56,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setWorkingDirectory(string $workingDirectory)
+    public function setWorkingDirectory(string $workingDirectory): self
     {
         $this->workingDirectory = $workingDirectory;
 
@@ -81,7 +81,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function addSkeletonVar($key, $value)
+    public function addSkeletonVar(string $key, $value): self
     {
         $this->skeletonVars[$key] = $value;
 
@@ -112,7 +112,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setSkeletonVars(array $skeletonVars)
+    public function setSkeletonVars(array $skeletonVars): self
     {
         $this->skeletonVars = $skeletonVars;
 
@@ -137,7 +137,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function addParameter($key, $value)
+    public function addParameter(string $key, $value): self
     {
         $this->parameters[$key] = $value;
 
@@ -152,7 +152,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getParameter($key, $defaultValue = null)
+    public function getParameter(string $key, $defaultValue = null): self
     {
         if (\array_key_exists($key, $this->parameters)) {
             return $this->parameters[$key];
@@ -168,7 +168,7 @@ class BuildWizardEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setParameters(array $parameters)
+    public function setParameters(array $parameters): self
     {
         $this->parameters = $parameters;
 

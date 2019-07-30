@@ -19,7 +19,7 @@ class RecipeManager
      */
     protected $recipes = [];
 
-    public function addRecipe(BaseRecipe $recipe)
+    public function addRecipe(BaseRecipe $recipe): void
     {
         if (\array_key_exists($recipe->getName(), $this->recipes)) {
             throw new InvalidConfigurationException(sprintf(
@@ -35,7 +35,7 @@ class RecipeManager
     /**
      * @return BaseRecipe[]
      */
-    public function getRecipes()
+    public function getRecipes(): array
     {
         return $this->recipes;
     }
@@ -47,7 +47,7 @@ class RecipeManager
      *
      * @return BaseRecipe
      */
-    public function getRecipe($recipeName)
+    public function getRecipe(string $recipeName): BaseRecipe
     {
         $recipes = $this->getRecipes();
         if (!\array_key_exists($recipeName, $recipes)) {

@@ -20,7 +20,7 @@ class VerboseInfoEvent extends Event
     /**
      * VerboseInfoEvent constructor.
      *
-     * @param string $info
+     * @param string|array|null $info
      *
      * @codeCoverageIgnore Simple setter
      */
@@ -30,7 +30,7 @@ class VerboseInfoEvent extends Event
     }
 
     /**
-     * @return string
+     * @return string|array|null
      *
      * @codeCoverageIgnore Simple getter
      */

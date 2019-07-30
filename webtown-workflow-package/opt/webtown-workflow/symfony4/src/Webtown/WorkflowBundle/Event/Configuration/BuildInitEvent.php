@@ -45,7 +45,7 @@ class BuildInitEvent extends Event
      * @param string $targetDirectory
      * @param string $configHash
      */
-    public function __construct(array $config, $projectPath, $targetDirectory, $configHash)
+    public function __construct(array $config, string $projectPath, string $targetDirectory, string $configHash)
     {
         $this->config = $config;
         $this->projectPath = $projectPath;
@@ -58,7 +58,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getConfig()
+    public function getConfig(): array
     {
         return $this->config;
     }
@@ -70,7 +70,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setConfig($config)
+    public function setConfig(array $config): self
     {
         $this->config = $config;
 
@@ -82,7 +82,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getProjectPath()
+    public function getProjectPath(): string
     {
         return $this->projectPath;
     }
@@ -92,7 +92,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getTargetDirectory()
+    public function getTargetDirectory(): string
     {
         return $this->targetDirectory;
     }
@@ -102,7 +102,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getConfigHash()
+    public function getConfigHash(): string
     {
         return $this->configHash;
     }
@@ -110,7 +110,7 @@ class BuildInitEvent extends Event
     /**
      * @return array
      */
-    public function getParameters()
+    public function getParameters(): array
     {
         $baseParameters = [
             '%wf.project_path%'     => $this->projectPath,
@@ -139,7 +139,7 @@ class BuildInitEvent extends Event
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setParameter($name, $value)
+    public function setParameter(string $name, $value): self
     {
         $this->parameters[$name] = $value;
 

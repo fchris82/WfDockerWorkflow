@@ -59,7 +59,7 @@ class SkeletonFile
     /**
      * @return SplFileInfo
      */
-    public function getBaseFileInfo()
+    public function getBaseFileInfo(): SplFileInfo
     {
         return $this->baseFileInfo;
     }
@@ -71,7 +71,7 @@ class SkeletonFile
      *
      * @codeCoverageIgnore Simple setter
      */
-    public function setBaseFileInfo($baseFileInfo)
+    public function setBaseFileInfo($baseFileInfo): self
     {
         $this->baseFileInfo = $baseFileInfo;
 
@@ -81,7 +81,7 @@ class SkeletonFile
     /**
      * @return string|null
      */
-    public function getRelativePath()
+    public function getRelativePath(): ?string
     {
         return $this->relativePath ?: $this->getBaseFileInfo()->getRelativePath();
     }
@@ -93,7 +93,7 @@ class SkeletonFile
      *
      * @deprecated Use move() instead
      */
-    public function setRelativePath($relativePath)
+    public function setRelativePath(?string $relativePath): self
     {
         $this->relativePath = rtrim($relativePath, \DIRECTORY_SEPARATOR);
 
@@ -103,7 +103,7 @@ class SkeletonFile
     /**
      * @return string|null
      */
-    public function getFileName()
+    public function getFileName(): ?string
     {
         return $this->fileName ?: $this->getBaseFileInfo()->getFilename();
     }
@@ -115,7 +115,7 @@ class SkeletonFile
      *
      * @deprecated Use the rename() instead
      */
-    public function setFileName($newFileName)
+    public function setFileName(?string $newFileName): self
     {
         $relativeDirectory = rtrim($this->getRelativePath(), \DIRECTORY_SEPARATOR);
         $this->setRelativePathname($relativeDirectory . \DIRECTORY_SEPARATOR . $newFileName);
@@ -128,7 +128,7 @@ class SkeletonFile
     /**
      * @return string|null
      */
-    public function getRelativePathname()
+    public function getRelativePathname(): ?string
     {
         return $this->relativePath
             ? $this->getRelativePath() . \DIRECTORY_SEPARATOR . $this->getFileName()
@@ -142,7 +142,7 @@ class SkeletonFile
      *
      * @deprecated Use the move() instead
      */
-    public function setRelativePathname($relativePathname)
+    public function setRelativePathname(?string $relativePathname): self
     {
         $this->relativePathname = $relativePathname;
 
@@ -164,7 +164,7 @@ class SkeletonFile
      *
      * @deprecated Use the move() instead
      */
-    public function setFullTargetPathname(?string $fullTargetPathname)
+    public function setFullTargetPathname(?string $fullTargetPathname): self
     {
         $this->fullTargetPathname = $fullTargetPathname;
 
@@ -174,7 +174,7 @@ class SkeletonFile
     /**
      * @return string
      */
-    public function getContents()
+    public function getContents(): string
     {
         return null === $this->contents ? $this->baseFileInfo->getContents() : $this->contents;
     }
@@ -184,7 +184,7 @@ class SkeletonFile
      *
      * @return $this
      */
-    public function setContents($contents)
+    public function setContents(string $contents): self
     {
         $this->contents = $contents;
 
@@ -204,14 +204,14 @@ class SkeletonFile
      *
      * @return $this
      */
-    public function setHandleExisting(int $handleExisting)
+    public function setHandleExisting(int $handleExisting): self
     {
         $this->handleExisting = $handleExisting;
 
         return $this;
     }
 
-    public function move($directory)
+    public function move(string $directory): self
     {
         $directory = rtrim($directory, \DIRECTORY_SEPARATOR);
         $this->setFullTargetPathname($directory . \DIRECTORY_SEPARATOR . $this->getRelativePathname());
@@ -219,7 +219,7 @@ class SkeletonFile
         return $this;
     }
 
-    public function rename($newFilename)
+    public function rename(string $newFilename): void
     {
         $this->setFileName($newFilename);
         if ($this->fullTargetPathname) {

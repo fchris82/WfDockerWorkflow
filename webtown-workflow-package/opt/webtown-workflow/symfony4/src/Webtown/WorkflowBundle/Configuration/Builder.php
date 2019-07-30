@@ -60,7 +60,7 @@ class Builder
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getTargetDirectoryName()
+    public function getTargetDirectoryName(): string
     {
         return $this->targetDirectoryName;
     }
@@ -70,7 +70,7 @@ class Builder
      *
      * @return $this
      */
-    public function setTargetDirectoryName($targetDirectoryName)
+    public function setTargetDirectoryName(string $targetDirectoryName): self
     {
         $this->targetDirectoryName = $targetDirectoryName;
 
@@ -89,7 +89,7 @@ class Builder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    public function build($config, $projectPath, $configHash)
+    public function build(array $config, string $projectPath, string $configHash): void
     {
         if (!$this->targetDirectoryName) {
             throw new \InvalidArgumentException('You have to call first the `setTargetDirectoryName` function!');
@@ -143,7 +143,7 @@ class Builder
      *
      * @return mixed
      */
-    protected function configReplaceParameters($config, $parameters)
+    protected function configReplaceParameters($config, array $parameters)
     {
         if (\is_array($config)) {
             foreach ($config as $key => $value) {
@@ -164,7 +164,7 @@ class Builder
      *
      * @param BuildInitEvent $initEvent
      */
-    protected function initDirectoryStructure(BuildInitEvent $initEvent)
+    protected function initDirectoryStructure(BuildInitEvent $initEvent): void
     {
         $config = $initEvent->getConfig();
         $fullTargetPath = $initEvent->getProjectPath() . '/' . $initEvent->getTargetDirectory();
@@ -242,8 +242,12 @@ class Builder
      *
      * @throws \App\Webtown\WorkflowBundle\Exception\MissingRecipeException
      */
-    protected function addRecipeEventListeners($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
-    {
+    protected function addRecipeEventListeners(
+        string $projectPath,
+        string $recipeName,
+        array $recipeConfig,
+        array $globalConfig = []
+    ) {
         $this->verboseInfo(sprintf(
             "\n<info>Register event listeners of <comment>%s</comment> recipe</info>",
             $recipeName
@@ -272,7 +276,7 @@ class Builder
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    protected function buildRecipe($projectPath, $recipeName, $recipeConfig, $globalConfig = [])
+    protected function buildRecipe(string $projectPath, string $recipeName, array $recipeConfig, array $globalConfig = []): void
     {
         $this->verboseInfo(sprintf(
             "\n<info>Starting build <comment>%s</comment> recipe</info>",
@@ -300,7 +304,7 @@ class Builder
      * @param AncestorBaseRecipe $recipe
      * @param SkeletonFile[]     $skeletonFiles
      */
-    protected function fixFilePath($projectPath, AncestorBaseRecipe $recipe, $skeletonFiles)
+    protected function fixFilePath(string $projectPath, AncestorBaseRecipe $recipe, array $skeletonFiles): void
     {
         foreach ($skeletonFiles as $skeletonFile) {
             $relativeTargetPath = sprintf(
@@ -317,9 +321,9 @@ class Builder
     /**
      * Print verbose informations. The $info may be array or string.
      *
-     * @parameter string|array|null $info
+     * @param string|array|null $info
      */
-    protected function verboseInfo($info)
+    protected function verboseInfo($info): void
     {
         $this->eventDispatcher->dispatch(new VerboseInfoEvent($info), ConfigurationEvents::VERBOSE_INFO);
     }
@@ -329,7 +333,7 @@ class Builder
      *
      * @throws \App\Webtown\WorkflowBundle\Exception\MissingRecipeException
      */
-    protected function initEventListeners($projectPath)
+    protected function initEventListeners(string $projectPath): void
     {
         $this->eventDispatcher->addListener(
             SkeletonBuildBaseEvents::AFTER_DUMP_FILE,
@@ -345,21 +349,21 @@ class Builder
         }
     }
 
-    public function fileVerboseInfo(DumpFileEvent $event)
+    public function fileVerboseInfo(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
         $this->verboseInfo(sprintf('    <comment>%-40s</comment> # %s', $skeletonFile->getRelativePath(), \get_class($skeletonFile)));
     }
 
-    protected function eventBeforeDumpFile(DumpFileEvent $event)
+    protected function eventBeforeDumpFile(DumpFileEvent $event): void
     {
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void
     {
     }
 
-    protected function eventAfterDumpFile(DumpFileEvent $event)
+    protected function eventAfterDumpFile(DumpFileEvent $event): void
     {
     }
 

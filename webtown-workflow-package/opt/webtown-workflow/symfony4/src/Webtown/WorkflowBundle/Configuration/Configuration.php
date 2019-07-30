@@ -79,7 +79,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    public function loadConfig($configFile, $pwd = null, $wfVersion = null)
+    public function loadConfig(string $configFile, string $pwd = null, string $wfVersion = null): array
     {
         if (null === $pwd) {
             $pwd = \dirname($configFile);
@@ -104,9 +104,9 @@ class Configuration implements ConfigurationInterface
     /**
      * Generates the configuration tree builder.
      *
-     * @return \Symfony\Component\Config\Definition\Builder\TreeBuilder The tree builder
+     * @return TreeBuilder The tree builder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
         /** @var ArrayNodeDefinition $rootNode */
@@ -178,7 +178,7 @@ class Configuration implements ConfigurationInterface
         return $treeBuilder;
     }
 
-    protected function getYmlParser()
+    protected function getYmlParser(): Parser
     {
         if (!$this->ymlParser) {
             $this->ymlParser = new Parser();
@@ -194,7 +194,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    protected function readConfig($ymlFilePath)
+    protected function readConfig($ymlFilePath): array
     {
         $baseConfig = $this->getYmlParser()->parseFile($ymlFilePath);
         $baseConfig = $this->handleImports($baseConfig, $ymlFilePath);
@@ -210,13 +210,13 @@ class Configuration implements ConfigurationInterface
      *
      * @throws InvalidWfVersionException
      *
-     * @return bool|void
+     * @return void
      */
-    protected function validateWfVersion($config, $wfVersion)
+    protected function validateWfVersion(array $config, string $wfVersion): void
     {
         // We call the loadConfiguration from Wizard too, and then it isn't important this
         if (null === $wfVersion) {
-            return true;
+            return;
         }
 
         $wfMinimumVersion = $config['version']['wf_minimum_version'];
@@ -238,7 +238,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return array
      */
-    protected function handleImports($baseConfig, $baseConfigYmlFullPath)
+    protected function handleImports(array $baseConfig, string $baseConfigYmlFullPath): array
     {
         $sourceDirectory = \dirname($baseConfigYmlFullPath);
         if (\array_key_exists('imports', $baseConfig)) {
@@ -275,7 +275,7 @@ class Configuration implements ConfigurationInterface
         return $baseConfig;
     }
 
-    protected function configDeepMerge($baseConfig, $overrideConfig)
+    protected function configDeepMerge(array $baseConfig, array $overrideConfig): array
     {
         foreach ($overrideConfig as $key => $value) {
             if ($this->isConfigLeaf($value) || !\array_key_exists($key, $baseConfig)) {
@@ -288,7 +288,7 @@ class Configuration implements ConfigurationInterface
         return $baseConfig;
     }
 
-    protected function isConfigLeaf($value)
+    protected function isConfigLeaf($value): bool
     {
         // Not array or empty array
         if (!\is_array($value) || $value === []) {
@@ -296,7 +296,7 @@ class Configuration implements ConfigurationInterface
         }
         // It is a sequential array, like a list
         if (array_keys($value) === range(0, \count($value) - 1)) {
-            return $value;
+            return true;
         }
 
         return false;
@@ -307,7 +307,7 @@ class Configuration implements ConfigurationInterface
      *
      * @param ArrayNodeDefinition $rootNode
      */
-    protected function addSystemRecipeNodes(ArrayNodeDefinition $rootNode)
+    protected function addSystemRecipeNodes(ArrayNodeDefinition $rootNode): void
     {
         foreach ($this->recipeManager->getRecipes() as $recipe) {
             if ($recipe instanceof SystemRecipe) {
@@ -325,7 +325,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return ArrayNodeDefinition
      */
-    protected function addRecipesNode()
+    protected function addRecipesNode(): ArrayNodeDefinition
     {
         $treeBuilder = new TreeBuilder('recipes');
         /** @var ArrayNodeDefinition $node */

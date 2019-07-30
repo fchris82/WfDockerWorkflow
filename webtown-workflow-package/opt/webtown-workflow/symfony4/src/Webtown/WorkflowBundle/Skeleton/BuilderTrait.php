@@ -29,18 +29,18 @@ trait BuilderTrait
      */
     protected $eventDispatcher;
 
-    abstract protected function eventBeforeDumpFile(DumpFileEvent $event);
+    abstract protected function eventBeforeDumpFile(DumpFileEvent $event): void;
 
-    abstract protected function eventBeforeDumpTargetExists(DumpFileEvent $event);
+    abstract protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void;
 
-    abstract protected function eventAfterDumpFile(DumpFileEvent $event);
+    abstract protected function eventAfterDumpFile(DumpFileEvent $event): void;
 
-    abstract protected function eventSkipDumpFile(DumpFileEvent $event);
+    abstract protected function eventSkipDumpFile(DumpFileEvent $event): void;
 
     /**
      * @param array|SkeletonFile[] $skeletonFiles
      */
-    protected function dumpSkeletonFiles($skeletonFiles)
+    protected function dumpSkeletonFiles(array $skeletonFiles): void
     {
         foreach ($skeletonFiles as $skeletonFile) {
             $event = new DumpFileEvent($this, $skeletonFile, $this->fileSystem);

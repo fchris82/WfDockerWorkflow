@@ -21,7 +21,7 @@ class EnvParser
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function get($name, $default = null)
+    public function get(string $name, string $default = null): ?string
     {
         return \array_key_exists($name, $_ENV) ? $_ENV[$name] : $default;
     }

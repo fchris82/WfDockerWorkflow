@@ -13,7 +13,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class EzEnvironmentParser extends SymfonyEnvironmentParser
 {
-    public function isEzProject($workingDirectory)
+    public function isEzProject($workingDirectory): bool
     {
         $ezVersion = false;
         $kaliopVersion = false;
@@ -43,7 +43,7 @@ class EzEnvironmentParser extends SymfonyEnvironmentParser
      *
      * @codeCoverageIgnore Simple extender
      */
-    public function getSymfonyEnvironmentVariables($projectWorkDir)
+    public function getSymfonyEnvironmentVariables(string $projectWorkDir): array
     {
         $variables = parent::getSymfonyEnvironmentVariables($projectWorkDir);
         $variables['is_ez'] = $this->isEzProject($projectWorkDir);

@@ -10,7 +10,7 @@ namespace App\Webtown\WorkflowBundle\Environment\MicroParser;
 
 interface MicroParserInterface
 {
-    public function get($workingDirectory, $key, $default);
+    public function get(string $workingDirectory, string $key, $default = false);
 
-    public function has($workingDirectory, $key);
+    public function has(string $workingDirectory, string $key): bool;
 }
