@@ -17,7 +17,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
 {
     const NAME = 'mysql_multiple';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
@@ -27,7 +27,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
      *
      * @return ArrayNodeDefinition|NodeDefinition
      */
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $parentReflection = new \ReflectionClass(parent::class);
         $grandparentClass = $parentReflection->getParentClass()->getName();
@@ -103,7 +103,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
         return $rootNode;
     }
 
-    protected function needPortSkeletonFile($config)
+    protected function needPortSkeletonFile(array $config): bool
     {
         foreach ($config['databases'] as $name => $dbConfig) {
             if (isset($dbConfig['port']) && false !== $dbConfig['port']) {
@@ -114,7 +114,7 @@ class MysqlMultipleRecipe extends MysqlRecipe
         return false;
     }
 
-    protected function needVolumeSkeletonFile($config)
+    protected function needVolumeSkeletonFile(array $config): bool
     {
         foreach ($config['databases'] as $name => $dbConfig) {
             if (isset($dbConfig['local_volume']) && $dbConfig['local_volume']) {

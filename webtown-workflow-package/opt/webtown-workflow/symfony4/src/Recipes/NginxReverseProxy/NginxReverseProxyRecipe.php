@@ -14,6 +14,7 @@ use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment as TwigEnvironment;
 
@@ -53,12 +54,12 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         $this->environment = $environment;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 
@@ -120,12 +121,12 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
         return $rootNode;
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(ConfigurationEvents::BUILD_INIT, [$this, 'findProjectName']);
     }
 
-    public function findProjectName(BuildInitEvent $buildInitEvent)
+    public function findProjectName(BuildInitEvent $buildInitEvent): void
     {
         $config = $buildInitEvent->getConfig();
         $buildInitEvent->setParameter(static::PROJECT_NAME_PARAMETER_NAME, $config['name']);
@@ -134,8 +135,10 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
 
     /**
      * Create default host (only [project_name].[default_tld] for the FIRST service)
+     *
+     * @param PreBuildSkeletonFilesEvent $event
      */
-    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event): void
     {
         parent::eventBeforeBuildFiles($event);
 
@@ -180,7 +183,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
      *
      * @return array
      */
-    protected function setTheDefaultHostIfNotSet($projectPath, $recipeConfig, $globalConfig)
+    protected function setTheDefaultHostIfNotSet(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         $defaultTld = trim(
             $this->environment->getConfigValue(Environment::CONFIG_DEFAULT_LOCAL_TLD, '.loc'),
@@ -211,7 +214,7 @@ class NginxReverseProxyRecipe extends BaseRecipe implements RegisterEventListene
      *
      * @return bool
      */
-    protected function defaultHostIsSet($recipeConfig, $defaultHost)
+    protected function defaultHostIsSet(array $recipeConfig, string $defaultHost): bool
     {
         foreach ($recipeConfig['settings'] as $serviceName => $settings) {
             $hosts = explode(' ', $settings['host']);

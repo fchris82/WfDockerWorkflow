@@ -45,12 +45,12 @@ abstract class BaseRecipe
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    abstract public function getName();
+    abstract public function getName(): string;
 
     /**
      * @return ArrayNodeDefinition|NodeDefinition
      */
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $treeBuilder = new TreeBuilder($this->getName());
 
@@ -70,14 +70,14 @@ abstract class BaseRecipe
      *
      * @return array|SkeletonFile[]
      */
-    public function build($projectPath, $recipeConfig, $globalConfig)
+    public function build(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         $templateVars = $this->getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
         return $this->buildSkeletonFiles($templateVars, $recipeConfig);
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         if (\is_string($recipeConfig)) {
             $recipeConfig = ['value' => $recipeConfig];
@@ -94,11 +94,11 @@ abstract class BaseRecipe
 
     /**
      * @param SplFileInfo $fileInfo
-     * @param $config
+     * @param $recipeConfig
      *
      * @return DockerComposeSkeletonFile|ExecutableSkeletonFile|MakefileSkeletonFile|SkeletonFile
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         if ($this->isDockerComposeFile($fileInfo)) {
             return new DockerComposeSkeletonFile($fileInfo);
@@ -113,23 +113,23 @@ abstract class BaseRecipe
         return new SkeletonFile($fileInfo);
     }
 
-    protected function isMakefile(SplFileInfo $fileInfo)
+    protected function isMakefile(SplFileInfo $fileInfo): bool
     {
         return 'makefile' == $fileInfo->getFilename();
     }
 
-    protected function isDockerComposeFile(SplFileInfo $fileInfo)
+    protected function isDockerComposeFile(SplFileInfo $fileInfo): bool
     {
         return 0 === strpos($fileInfo->getFilename(), 'docker-compose')
             && 'yml' == $fileInfo->getExtension();
     }
 
-    protected function isExecutableFile(SplFileInfo $fileInfo)
+    protected function isExecutableFile(SplFileInfo $fileInfo): bool
     {
         return $fileInfo->isExecutable();
     }
 
-    public function getDirectoryName()
+    public function getDirectoryName(): string
     {
         return $this->getName();
     }
@@ -148,7 +148,7 @@ abstract class BaseRecipe
      *
      * @return string
      */
-    protected function makefileMultilineFormatter($pattern, $array)
+    protected function makefileMultilineFormatter($pattern, $array): string
     {
         $emptyPattern = sprintf($pattern, '');
         $glue = sprintf(" \\\n%s", str_repeat(' ', \strlen($emptyPattern)));
@@ -156,19 +156,19 @@ abstract class BaseRecipe
         return sprintf($pattern, implode($glue, $array));
     }
 
-    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event): void
     {
     }
 
-    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent)
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent): void
     {
     }
 
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent): void
     {
     }
 
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event): void
     {
     }
 }

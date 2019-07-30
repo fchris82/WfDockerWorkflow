@@ -3,6 +3,7 @@
 namespace App\Recipes\Mail;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**
  * Class Recipe
@@ -13,12 +14,12 @@ class MailRecipe extends BaseRecipe
 {
     const NAME = 'mail';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 

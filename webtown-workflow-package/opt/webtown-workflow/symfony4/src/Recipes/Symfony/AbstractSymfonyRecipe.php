@@ -13,6 +13,8 @@ use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Finder\SplFileInfo;
@@ -34,12 +36,12 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
      */
     protected $projectPath;
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         return array_merge(
             [
@@ -68,19 +70,19 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
      *
      * @return array The event names to listen to
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConfigurationEvents::PRE_PROCESS_CONFIGURATION => 'preProcessConfiguration',
         ];
     }
 
-    public function preProcessConfiguration(PreProcessConfigurationEvent $event)
+    public function preProcessConfiguration(PreProcessConfigurationEvent $event): void
     {
         $this->projectPath = $event->getProjectPath();
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
         // The default locale
@@ -263,17 +265,17 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
         return $rootNode;
     }
 
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         switch ($fileInfo->getFilename()) {
             // Volume settings
             case 'docker-compose.user-volumes.yml':
-                if (!isset($config['share_base_user_configs']) || !$config['share_base_user_configs']) {
+                if (!isset($recipeConfig['share_base_user_configs']) || !$recipeConfig['share_base_user_configs']) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }

@@ -19,12 +19,12 @@ class SimpleSkipFileRecipe extends BaseRecipe
         return 'simple_skip_file';
     }
 
-    public function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    public function buildSkeletonFile(SplFileInfo $fileInfo, $recipeConfig)
     {
         if ('skip.txt' == $fileInfo->getFilename()) {
             throw new SkipSkeletonFileException();
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }

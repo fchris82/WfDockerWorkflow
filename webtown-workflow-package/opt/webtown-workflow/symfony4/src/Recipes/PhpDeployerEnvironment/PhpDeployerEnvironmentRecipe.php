@@ -3,17 +3,18 @@
 namespace App\Recipes\PhpDeployerEnvironment;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 class PhpDeployerEnvironmentRecipe extends BaseRecipe
 {
     const NAME = 'php_deployer_environment';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 

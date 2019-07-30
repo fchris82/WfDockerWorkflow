@@ -22,7 +22,7 @@ class Symfony2Recipe extends AbstractSymfonyRecipe
     const SF_BIN_DIR = 'bin';
     const DEFAULT_VERSION = 'php7.1';
 
-    public static function getSkeletonParents()
+    public static function getSkeletonParents(): array
     {
         return [AbstractSymfonyRecipe::class];
     }

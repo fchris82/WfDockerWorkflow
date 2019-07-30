@@ -12,6 +12,8 @@ use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
 use App\Webtown\WorkflowBundle\Configuration\Environment;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
 use Twig\Environment as TwigEnvironment;
@@ -43,12 +45,12 @@ class MailHogRecipe extends BaseRecipe
         $this->environment = $environment;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 
@@ -80,16 +82,16 @@ class MailHogRecipe extends BaseRecipe
     /**
      * {@inheritdoc}
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         switch ($fileInfo->getFilename()) {
             case 'docker-compose.nginx-reverse-proxy.yml':
-                if (!isset($config['nginx_reverse_proxy_host']) || !$config['nginx_reverse_proxy_host']) {
+                if (!isset($recipeConfig['nginx_reverse_proxy_host']) || !$recipeConfig['nginx_reverse_proxy_host']) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }

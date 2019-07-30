@@ -12,6 +12,7 @@ use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -19,12 +20,12 @@ class MysqlRecipe extends BaseRecipe
 {
     const NAME = 'mysql';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 
@@ -36,7 +37,7 @@ class MysqlRecipe extends BaseRecipe
         return $rootNode;
     }
 
-    protected function configureDbConnection(ArrayNodeDefinition $node)
+    protected function configureDbConnection(ArrayNodeDefinition $node): void
     {
         $node
             ->children()
@@ -106,41 +107,41 @@ class MysqlRecipe extends BaseRecipe
         ;
     }
 
-    protected function needPortSkeletonFile($config)
+    protected function needPortSkeletonFile(array $config): bool
     {
         return isset($config['port']) && false !== $config['port'];
     }
 
-    protected function needVolumeSkeletonFile($config)
+    protected function needVolumeSkeletonFile(array $config): bool
     {
         return isset($config['local_volume']) && $config['local_volume'];
     }
 
     /**
      * @param SplFileInfo $fileInfo
-     * @param $config
-     *
-     * @throws SkipSkeletonFileException
+     * @param $recipeConfig
      *
      * @return SkeletonFile
+     *
+     * @throws SkipSkeletonFileException
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         switch ($fileInfo->getFilename()) {
             // Port settings
             case 'docker-compose.port.yml':
-                if (!$this->needPortSkeletonFile($config)) {
+                if (!$this->needPortSkeletonFile($recipeConfig)) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
             // Volume settings
             case 'docker-compose.volume.yml':
-                if (!$this->needVolumeSkeletonFile($config)) {
+                if (!$this->needVolumeSkeletonFile($recipeConfig)) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }

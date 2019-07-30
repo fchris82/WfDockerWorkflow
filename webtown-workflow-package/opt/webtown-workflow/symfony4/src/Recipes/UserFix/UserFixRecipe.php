@@ -9,6 +9,7 @@
 namespace App\Recipes\UserFix;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**
  * Class Recipe
@@ -37,12 +38,12 @@ class UserFixRecipe extends BaseRecipe
 {
     const NAME = 'user_fix';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 

@@ -92,13 +92,13 @@ trait SkeletonManagerTrait
 
     /**
      * @param SplFileInfo $fileInfo
-     * @param array       $buildConfig
-     *
-     * @throws SkipSkeletonFileException
+     * @param array       $buildRecipeConfig
      *
      * @return SkeletonFile
+     *@throws SkipSkeletonFileException
+     *
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildConfig = [])
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, $buildRecipeConfig = [])
     {
         return new SkeletonFile($fileInfo);
     }

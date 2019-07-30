@@ -5,6 +5,7 @@ namespace App\Recipes\GitlabCiWebtownRunner;
 use App\Recipes\GitlabCi\GitlabCiRecipe;
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -12,17 +13,17 @@ class GitlabCiWebtownRunnerRecipe extends GitlabCiRecipe
 {
     const NAME = 'gitlab_ci_webtown_runner';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public static function getSkeletonParents()
+    public static function getSkeletonParents(): array
     {
         return [GitlabCiRecipe::class];
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 
@@ -75,7 +76,7 @@ class GitlabCiWebtownRunnerRecipe extends GitlabCiRecipe
         return $rootNode;
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         $baseVars = parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
@@ -89,27 +90,27 @@ class GitlabCiWebtownRunnerRecipe extends GitlabCiRecipe
 
     /**
      * @param SplFileInfo $fileInfo
-     * @param $config
-     *
-     * @throws SkipSkeletonFileException
+     * @param $recipeConfig
      *
      * @return SkeletonFile
+     *
+     * @throws SkipSkeletonFileException
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         switch ($fileInfo->getFilename()) {
             case 'docker-compose.home.yml':
-                if (!isset($config['share_home_with']) || 0 == \count($config['share_home_with'])) {
+                if (0 === \count($recipeConfig['share_home_with'] ?? [])) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
             case 'docker-compose.volumes.yml':
-                if (!isset($config['volumes']) || 0 == \count($config['volumes'])) {
+                if (0 === \count($recipeConfig['volumes'] ?? [])) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }

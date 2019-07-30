@@ -8,7 +8,7 @@ class GitlabCiRecipe extends BaseRecipe
 {
     const NAME = 'gitlab_ci';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }

@@ -9,6 +9,7 @@
 namespace App\Recipes\GitFlow;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**
  * Class Recipe
@@ -19,12 +20,12 @@ class GitFlowRecipe extends BaseRecipe
 {
     const NAME = 'git_flow';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
 

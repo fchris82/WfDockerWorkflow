@@ -10,6 +10,8 @@ namespace App\Recipes\Php;
 
 use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Finder\SplFileInfo;
 
@@ -21,14 +23,14 @@ use Symfony\Component\Finder\SplFileInfo;
 class PhpRecipe extends BaseRecipe
 {
     const NAME = 'php';
-    const DEFAULT_VERSION = 'php7.2';
+    const DEFAULT_VERSION = 'php7.3';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
         // The default locale
@@ -192,16 +194,16 @@ class PhpRecipe extends BaseRecipe
     /**
      * {@inheritdoc}
      */
-    protected function buildSkeletonFile(SplFileInfo $fileInfo, $config)
+    protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {
         switch ($fileInfo->getFilename()) {
             case 'docker-compose.user-volumes.yml':
-                if (!isset($config['share_base_user_configs']) || !$config['share_base_user_configs']) {
+                if (!isset($recipeConfig['share_base_user_configs']) || !$recipeConfig['share_base_user_configs']) {
                     throw new SkipSkeletonFileException();
                 }
                 break;
         }
 
-        return parent::buildSkeletonFile($fileInfo, $config);
+        return parent::buildSkeletonFile($fileInfo, $recipeConfig);
     }
 }
