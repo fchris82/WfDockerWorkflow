@@ -93,7 +93,7 @@ class ProjectWizardConfigCommand extends Command
         }
     }
 
-    protected function getIcon(ConfigurationItem $configurationItem)
+    protected function getIcon(ConfigurationItem $configurationItem): string
     {
         if ($configurationItem->isEnabled()) {
             return static::ENABLED_SIGN;
@@ -102,7 +102,7 @@ class ProjectWizardConfigCommand extends Command
         return static::DISABLED_SIGN;
     }
 
-    protected function getStyle(ConfigurationItem $configurationItem)
+    protected function getStyle(ConfigurationItem $configurationItem): ?string
     {
         if ($this->wizardManager->wizardIsNew($configurationItem)) {
             return 'info';
@@ -114,7 +114,7 @@ class ProjectWizardConfigCommand extends Command
         return null;
     }
 
-    protected function renderSummaryTable()
+    protected function renderSummaryTable(): void
     {
         $table = new Table($this->ioManager->getIo());
         $table->setHeaders([
@@ -145,7 +145,7 @@ class ProjectWizardConfigCommand extends Command
         $table->render();
     }
 
-    protected function getSummaryQuestion()
+    protected function getSummaryQuestion(): ChoiceQuestion
     {
         $choices = [
             '' => '<comment>Exit</comment>',
@@ -158,7 +158,7 @@ class ProjectWizardConfigCommand extends Command
         return $question;
     }
 
-    protected function renderItemSummaryTable($class, OutputInterface $output)
+    protected function renderItemSummaryTable($class, OutputInterface $output): void
     {
         $table = new Table($output);
         $table->setHeaders([
@@ -175,7 +175,7 @@ class ProjectWizardConfigCommand extends Command
         $table->render();
     }
 
-    protected function editConfigItem($wizardClass)
+    protected function editConfigItem($wizardClass): void
     {
         $this->ioManager->clearScreen();
         $configurationItem = $this->wizardManager->getConfiguration()->get($wizardClass);
@@ -250,7 +250,7 @@ class ProjectWizardConfigCommand extends Command
         $this->ioManager->clearScreen();
     }
 
-    protected function getAllExistingGroups()
+    protected function getAllExistingGroups(): array
     {
         $existingGroups = [];
         foreach ($this->wizardManager->getConfiguration()->getConfigurationList() as $configurationItem) {

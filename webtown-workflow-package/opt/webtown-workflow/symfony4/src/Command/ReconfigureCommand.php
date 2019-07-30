@@ -99,7 +99,14 @@ class ReconfigureCommand extends Command
     /**
      * {@inheritdoc}
      *
-     * @throws \Symfony\Component\Console\Exception\RuntimeException
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     *
+     * @throws \ReflectionException
+     * @throws \Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException
+     * @throws \Twig_Error_Loader
+     * @throws \Twig_Error_Runtime
+     * @throws \Twig_Error_Syntax
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -133,7 +140,7 @@ class ReconfigureCommand extends Command
         }
     }
 
-    protected function writeTitle(OutputInterface $output, $title, $colorStyle = 'fg=white')
+    protected function writeTitle(OutputInterface $output, string $title, string $colorStyle = 'fg=white'): void
     {
         // 2 sort kihagyunk
         $output->writeln("\n");
@@ -145,7 +152,7 @@ class ReconfigureCommand extends Command
     /**
      * Registering event listeners.
      */
-    protected function registerEventListeners()
+    protected function registerEventListeners(): void
     {
         if ($this->ioManager->getOutput()->isVerbose()) {
             $this->eventDispatcher->addListener(
@@ -169,7 +176,7 @@ class ReconfigureCommand extends Command
      *
      * @param VerboseInfoEvent $event
      */
-    public function verboseInfo(VerboseInfoEvent $event)
+    public function verboseInfo(VerboseInfoEvent $event): void
     {
         $info = $event->getInfo();
         if (\is_array($info)) {
@@ -178,7 +185,7 @@ class ReconfigureCommand extends Command
         $this->ioManager->writeln($info);
     }
 
-    public function parametersInfo(BuildInitEvent $event)
+    public function parametersInfo(BuildInitEvent $event): void
     {
         $this->ioManager->getIo()->title('Replacing placeholders');
         $parameters = [];
@@ -200,7 +207,7 @@ class ReconfigureCommand extends Command
      *
      * @param DumpFileEvent $event
      */
-    public function insertGeneratedFileWarning(DumpFileEvent $event)
+    public function insertGeneratedFileWarning(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
         $warning = sprintf(

@@ -39,6 +39,7 @@ class ConfigYamlDumpCommand extends Command
      *
      * @param Configuration $configuration
      * @param RecipeManager $recipeManager
+     * @param IoManager     $ioManager
      */
     public function __construct(Configuration $configuration, RecipeManager $recipeManager, IoManager $ioManager)
     {
@@ -129,7 +130,7 @@ class ConfigYamlDumpCommand extends Command
      *
      * @return BaseRecipe
      */
-    protected function getRecipeByNameOrClass($nameOrClass)
+    protected function getRecipeByNameOrClass($nameOrClass): BaseRecipe
     {
         foreach ($this->recipeManager->getRecipes() as $name => $recipe) {
             if (\get_class($recipe) == $nameOrClass

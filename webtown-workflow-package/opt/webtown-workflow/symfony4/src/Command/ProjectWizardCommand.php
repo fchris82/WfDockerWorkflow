@@ -89,6 +89,7 @@ EOS
      * {@inheritdoc}
      *
      * @throws \Symfony\Component\Console\Exception\RuntimeException
+     * @throws \App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
@@ -98,7 +99,6 @@ EOS
         $output->writeln(' <comment>!> If the <question>CTRL-C</question> doesn\'t work, you can use the <question>^P + ^Q + ^C</question> (^ == CTRL).</comment>');
         $output->writeln(' <comment>!> You can edit the enabled wizards and sort order with the <info>wizard --config</info> command.</comment>');
 
-        // @todo (Chris) Ezt inkább option-ből beszedni!
         $targetProjectDirectory = $input->getOption('target-dir');
         $isForce = $input->getOption('force');
         $isFull = $input->getOption('full');
@@ -224,7 +224,7 @@ EOS
         }
     }
 
-    protected function writeNote($note, $colorStyle = 'fg=white;bg=yellow;options=bold')
+    protected function writeNote(string $note, string $colorStyle = 'fg=white;bg=yellow;options=bold'): void
     {
         $this->ioManager->getIo()->block($note, 'NOTE', $colorStyle, ' ', true);
     }
@@ -238,12 +238,19 @@ EOS
      * @param bool            $padding
      * @param bool            $escape
      *
-     * @return array
+     * @return array|string[]
      *
      * @todo (Chris) Az itt megvalósított, WordWrapper-rel kivitelezett megoldást implementálni a Symfony repo-ba. Itt: \Symfony\Component\Console\Style\SymfonyStyle::createBlock() kell a wordwrap()-ot lecserélni.
      */
-    protected function createBlock(OutputInterface $output, string $message, string $type = null, string $style = null, string $prefix = ' ', bool $padding = false, bool $escape = false)
-    {
+    protected function createBlock(
+        OutputInterface $output,
+        string $message,
+        string $type = null,
+        string $style = null,
+        string $prefix = ' ',
+        bool $padding = false,
+        bool $escape = false
+    ): array {
         $indentLength = 0;
         $prefixLength = Helper::strlenWithoutDecoration($output->getFormatter(), $prefix);
 
