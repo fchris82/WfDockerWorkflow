@@ -17,6 +17,7 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
@@ -30,12 +31,12 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
      */
     protected $globalConfig;
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = BaseRecipe::getConfig();
 
@@ -48,12 +49,12 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
         return $rootNode;
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(ConfigurationEvents::BUILD_INIT, [$this, 'init']);
     }
 
-    public function init(BuildInitEvent $event)
+    public function init(BuildInitEvent $event): void
     {
         $this->globalConfig = $event->getConfig();
     }
@@ -70,7 +71,7 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
      *
      * @return SkeletonFile[]|array
      */
-    protected function buildSkeletonFiles($templateVars, $buildConfig = [])
+    protected function buildSkeletonFiles(array $templateVars, array $buildConfig = []): array
     {
         // Start creating .sh files
         $tmpSkeletonFileInfo = $this->getTempSkeletonFileInfo('bin.sh');
@@ -97,9 +98,9 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
     /**
      * Create an ExecutableSkeletonFile from a template FileInfo and other parameters.
      *
-     * @param SplFileInfo $tmpFileInfo
-     * @param string      $commandName
-     * @param array       $templateVars
+     * @param TemplateTwigFileInfo $tmpFileInfo
+     * @param string               $commandName
+     * @param array                $templateVars
      *
      * @throws \Exception
      * @throws \Twig_Error_Loader
@@ -108,7 +109,7 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
      *
      * @return ExecutableSkeletonFile
      */
-    protected function createSkeletonFile(SplFileInfo $tmpFileInfo, $commandName, $templateVars)
+    protected function createSkeletonFile(TemplateTwigFileInfo $tmpFileInfo, string $commandName, array $templateVars): ExecutableSkeletonFile
     {
         $fileName = $commandName . '.sh';
         $newSplFileInfo = new SplFileInfo($fileName, '', $fileName);
@@ -126,11 +127,11 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
     /**
      * @param string $tempFile the template filename
      *
-     * @throws \ReflectionException
+     * @return TemplateTwigFileInfo
      *
-     * @return SplFileInfo
+     * @throws \ReflectionException
      */
-    protected function getTempSkeletonFileInfo($tempFile)
+    protected function getTempSkeletonFileInfo($tempFile): TemplateTwigFileInfo
     {
         $refClass = new \ReflectionClass($this);
         $skeletonsPath = \dirname($refClass->getFileName()) . \DIRECTORY_SEPARATOR . SkeletonHelper::TEMPLATES_DIR;

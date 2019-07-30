@@ -12,6 +12,7 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 
 /**
@@ -27,12 +28,12 @@ class MakefileExtensionRecipe extends SystemRecipe
 {
     const NAME = 'makefile';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = BaseRecipe::getConfig();
 
@@ -50,7 +51,7 @@ class MakefileExtensionRecipe extends SystemRecipe
      *
      * @param PostBuildSkeletonFilesEvent $event
      */
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event): void
     {
         $buildConfig = $event->getBuildConfig();
 

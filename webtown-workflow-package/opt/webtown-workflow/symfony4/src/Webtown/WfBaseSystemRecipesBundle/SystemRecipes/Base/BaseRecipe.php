@@ -19,7 +19,7 @@ class BaseRecipe extends SystemRecipe
 {
     const NAME = 'base';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }

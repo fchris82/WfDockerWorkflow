@@ -55,14 +55,18 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
      */
     protected $dockerComposeFiles = [];
 
-    public function __construct(Configuration $configuration, ArrayDumper $jsonDumper, Environment $twig, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        Configuration $configuration,
+        ArrayDumper $jsonDumper,
+        Environment $twig,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         parent::__construct($twig, $eventDispatcher);
         $this->configuration = $configuration;
         $this->arrayDumper = $jsonDumper;
     }
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
@@ -85,7 +89,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
      *
      * @return array The event names to listen to
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             ConfigurationEvents::BUILD_INIT => ['registerAvailableParameters', -99],
@@ -93,7 +97,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         ];
     }
 
-    public function registerAvailableParameters(BuildInitEvent $event)
+    public function registerAvailableParameters(BuildInitEvent $event): void
     {
         $this->availableParameters = $event->getParameters();
     }
@@ -103,7 +107,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
      *
      * @param DumpFileEvent $event
      */
-    public function collectDockerFiles(DumpFileEvent $event)
+    public function collectDockerFiles(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
 
@@ -112,7 +116,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         }
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         $baseConfig = parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig);
 
@@ -124,7 +128,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         ], $baseConfig);
     }
 
-    protected function getConfigurationArray()
+    protected function getConfigurationArray(): array
     {
         /** @var ArrayNode $rootNode */
         $rootNode = $this->configuration->getConfigTreeBuilder()->buildTree();
@@ -137,7 +141,7 @@ class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscribe
         return ['children' => $configs];
     }
 
-    protected function getDockerComposeServices()
+    protected function getDockerComposeServices(): array
     {
         $services = [];
         foreach ($this->dockerComposeFiles as $dockerComposeFilePath) {

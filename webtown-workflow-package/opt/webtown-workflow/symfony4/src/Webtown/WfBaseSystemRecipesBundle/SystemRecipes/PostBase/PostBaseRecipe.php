@@ -30,17 +30,17 @@ class PostBaseRecipe extends SystemRecipe implements RegisterEventListenersInter
      */
     protected $dockerComposeFiles = [];
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::AFTER_DUMP_FILE, [$this, 'collectFiles']);
     }
 
-    public function collectFiles(DumpFileEvent $event)
+    public function collectFiles(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
 
@@ -49,7 +49,7 @@ class PostBaseRecipe extends SystemRecipe implements RegisterEventListenersInter
         }
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         return array_merge(parent::getSkeletonVars($projectPath, $recipeConfig, $globalConfig), [
             'services' => $this->parseAllDockerServices($projectPath),
@@ -61,7 +61,7 @@ class PostBaseRecipe extends SystemRecipe implements RegisterEventListenersInter
      *
      * @return array
      */
-    protected function parseAllDockerServices($projectPath)
+    protected function parseAllDockerServices(string $projectPath): array
     {
         $services = [];
         foreach ($this->dockerComposeFiles as $dockerComposeFile) {

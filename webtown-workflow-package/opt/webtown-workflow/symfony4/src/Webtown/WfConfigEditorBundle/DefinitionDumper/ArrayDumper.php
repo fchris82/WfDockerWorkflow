@@ -29,12 +29,12 @@ class ArrayDumper
         $this->yamlReferenceDumper = new YamlReferenceDumper();
     }
 
-    public function dump(ConfigurationInterface $configuration)
+    public function dump(ConfigurationInterface $configuration): array
     {
         return $this->dumpNode($configuration->getConfigTreeBuilder()->buildTree());
     }
 
-    public function dumpNode(NodeInterface $node)
+    public function dumpNode(NodeInterface $node): array
     {
         // Sometimes the $this->yamlReferenceDumper->dumpNode() command gets a Notice.
         error_reporting(E_WARNING);

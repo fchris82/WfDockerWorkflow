@@ -14,6 +14,7 @@ use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
 
@@ -42,12 +43,12 @@ class DockerComposeExtensionRecipe extends SystemRecipe
 
     const DEFAULT_VERSION = '3.4';
 
-    public function getName()
+    public function getName(): string
     {
         return static::NAME;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = BaseRecipe::getConfig();
 
@@ -96,7 +97,7 @@ class DockerComposeExtensionRecipe extends SystemRecipe
      *
      * @see Builder::build()
      */
-    public function getSkeletonVars($targetPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $targetPath, array $recipeConfig, array $globalConfig): array
     {
         if (empty($globalConfig['docker_compose']['extension'])) {
             throw new SkipRecipeException();
@@ -118,7 +119,7 @@ class DockerComposeExtensionRecipe extends SystemRecipe
      *
      * @param PostBuildSkeletonFilesEvent $event
      */
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event): void
     {
         $buildConfig = $event->getBuildConfig();
 
