@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 /**
  * Created by IntelliJ IDEA.
  * User: chris
@@ -17,9 +15,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 class FilesystemTest extends TestCase
 {
     protected $appCacheContent = <<<EOS
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 /*
  * This file is part of the Symfony package.

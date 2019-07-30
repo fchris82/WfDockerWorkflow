@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 $projectPath = $_ENV['PWD'];
 $filePath = realpath($projectPath . $_POST['file']);

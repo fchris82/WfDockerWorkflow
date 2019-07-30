@@ -1,12 +1,4 @@
-<?php
-
-declare(strict_types=1);
-/**
- * Created by IntelliJ IDEA.
- * User: chris
- * Date: 2018.03.14.
- * Time: 22:23
- */
+<?php declare(strict_types=1);
 
 namespace App\Recipes\Mail;
 
