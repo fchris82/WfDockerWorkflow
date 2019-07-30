@@ -23,7 +23,7 @@ class WordWrapper
         $this->break = $break;
     }
 
-    protected function closeLine()
+    protected function closeLine(): void
     {
         if (\count($this->newLineTokens)) {
             $this->newLines[] = implode(' ', $this->newLineTokens);
@@ -32,7 +32,7 @@ class WordWrapper
         }
     }
 
-    protected function addTokenToLine($token, $virtualTokenLength)
+    protected function addTokenToLine($token, $virtualTokenLength): void
     {
         if ($token) {
             $this->newLineTokens[] = $token;
@@ -40,25 +40,25 @@ class WordWrapper
         }
     }
 
-    protected function finish()
+    protected function finish(): string
     {
         $this->closeLine();
 
         return implode($this->break, $this->newLines);
     }
 
-    protected function reset()
+    protected function reset(): void
     {
         $this->newLineTokens = [];
         $this->newLines = [];
     }
 
-    protected function getCurrentLineLength()
+    protected function getCurrentLineLength(): int
     {
         return $this->currentLength + \count($this->newLineTokens) - 1;
     }
 
-    protected function getVirtualTokenLength($token)
+    protected function getVirtualTokenLength(string $token): int
     {
         $virtualTokenLength = mb_strlen($token);
         if (false !== strpos($token, '<')) {
@@ -69,7 +69,7 @@ class WordWrapper
         return $virtualTokenLength;
     }
 
-    public function formattedStringWordwrap($string, $cut = true)
+    public function formattedStringWordwrap(string $string, $cut = true): string
     {
         $this->reset();
         $lines = explode($this->break, $string);
@@ -99,7 +99,7 @@ class WordWrapper
         return $this->finish();
     }
 
-    protected function handleLongToken($token)
+    protected function handleLongToken($token): void
     {
         $freeChars = $this->width - ($this->getCurrentLineLength() + 1);
         if ($freeChars < 5) {
@@ -127,7 +127,7 @@ class WordWrapper
         $this->addTokenToLine($slicedToken, $slicedTokenVirtualLength);
     }
 
-    protected function sliceToken($token, $freeChars)
+    protected function sliceToken($token, $freeChars): array
     {
         if ('<' == $token[0] && '>' == mb_substr($token, -1)) {
             return [$token, '', 0];
