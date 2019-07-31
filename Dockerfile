@@ -1,7 +1,8 @@
 # You can test the build with `docker run --rm -it php:7.3-alpine /bin/sh` command
-FROM php:7.3-alpine
+FROM php:7.3-cli-alpine
 
 LABEL workflow-base=true
+ENV WF_VERSION=2.322
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -16,16 +17,14 @@ ENV SYMFONY_CONSOLE=$SYMFONY_PATH/bin/console
 ENV WIZARDS_PATH=$SYMFONY_PATH/src/Wizards
 ENV RECIPES_PATH=$SYMFONY_PATH/src/Recipes
 
-# Ez direkt a legelejére kerül, hogy már itt hibát dobjon, ha hiányzik a deb!
-# @todo (Chris) Ha erre lesz jobb ötlet, hogy itt töltsük le a deb-et, akkor azt kellene használni
-COPY webtown-workflow.deb /root/webtown-workflow.deb
+# We want to get an error if it is missing!
+COPY tmp/opt/webtown-workflow /opt/webtown-workflow
 
 # Docker compose needs: https://docs.docker.com/compose/install/
-RUN apk update && \
-    apk --no-cache add --update bash dpkg jq make ca-certificates curl git su-exec \
-        docker py-pip python-dev libffi-dev openssl-dev gcc libc-dev make \
-        shadow openssh $PHPIZE_DEPS && \
-    apk add --upgrade coreutils grep && \
+RUN set -x && apk update && \
+    apk --no-cache --virtual .build-deps add --update dpkg $PHPIZE_DEPS && \
+    apk --no-cache add --update bash jq ca-certificates curl git su-exec \
+        docker-cli make shadow openssh coreutils grep && \
     pecl install xdebug && docker-php-ext-enable xdebug && \
     echo "zend_extension=/usr/lib/php7/modules/xdebug.so" > $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_enable=on" >> $XDEBUG_CONFIG_FILE && \
@@ -33,14 +32,30 @@ RUN apk update && \
     echo "xdebug.remote_port=9000" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_handler=dbgp" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_connect_back=0" >> $XDEBUG_CONFIG_FILE && \
-    pip install --upgrade pip && \
-    pip install docker-compose shyaml && \
+    apk --no-cache --virtual .dc-deps add python3-dev libffi-dev openssl-dev gcc libc-dev && \
+    pip3 install --upgrade pip && \
+    pip3 install docker-compose && \
+    # Install yq.
+    # http://mikefarah.github.io/yq/
+    YQ_URL=https://github.com$(wget -q -O- https://github.com/mikefarah/yq/releases/latest \
+        | grep -Eo 'href="[^"]+yq_linux_amd64' \
+        | sed 's/^href="//' \
+        | head -n1) && \
+    wget -q -O /usr/local/bin/yq $YQ_URL && \
+    chmod a+rx /usr/local/bin/yq && \
     chmod +s $(which su-exec) && \
     curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer && \
     touch /var/lib/dpkg/status && \
-    dpkg -i --ignore-depends=git --ignore-depends=jq --ignore-depends=curl --ignore-depends=make /root/webtown-workflow.deb || echo "Done" && \
-    rm -f /root/webtown-workflow.deb
+    apk del --purge .build-deps && \
+    pip3 uninstall -y pip setuptools
+
+RUN APP_ENV=prod WF_SYMFONY_ENV=prod /opt/webtown-workflow/workflow.sh --composer-install --no-dev && \
+    chmod -R 777 /opt/webtown-workflow/symfony4/var/cache && \
+    chmod -R 777 /opt/webtown-workflow/symfony4/var/log && \
+    ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf && \
+    ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard && \
+    ln -sf /opt/webtown-workflow/lib/wf-composer-require.sh /usr/local/bin/wf-composer-require
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

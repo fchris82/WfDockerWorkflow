@@ -148,8 +148,6 @@ function get_project_configuration_file {
 function create_makefile_from_config {
     # Config version
     local CONFIG_HASH=$(get_project_config_hash)
-    # Program "version"
-    local WF_VERSION=$(dpkg-query --showformat='${Version}' --show webtown-workflow)
     PROJECT_MAKEFILE="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/${CONFIG_HASH}.${WF_VERSION}.mk"
     if [ ! -f "${PROJECT_MAKEFILE}" ] || [ "${FORCE_OVERRIDE}" == "1" ]; then
         php ${SYMFONY_CONSOLE} app:config \
@@ -172,10 +170,10 @@ function create_makefile_from_config {
 #  - second line: calculated checksum
 function get_project_config_hash {
     if ! _check_config_hash_cache; then
-        local CKSUM_CONFIG_FILES=$(_parseConfigFileList ${PROJECT_CONFIG_FILE})
-        local CKSUM=$(_calc_cksum ${CKSUM_CONFIG_FILES})
+        local CONFIG_FILES=$(_parseConfigFileList ${PROJECT_CONFIG_FILE})
+        local CKSUM=$(_calc_cksum ${CONFIG_FILES})
 
-        _create_config_hash_cache "${CKSUM_CONFIG_FILES}" "${CKSUM}"
+        _create_config_hash_cache "${CONFIG_FILES}" "${CKSUM}"
 
         echo ${CKSUM}
     else
@@ -198,7 +196,7 @@ function _calc_cksum {
 function _check_config_hash_cache {
     local CACHE_FILE_PATH="${PROJECT_ROOT_DIR}/${WF_WORKING_DIRECTORY_NAME}/.chksum.cache"
 
-    [ "${FORCE_OVERRIDE}" != "1" ] && [[ -f ${CACHE_FILE_PATH} ]] && [[ "$(_calc_cksum $(head -n 1 ${CACHE_FILE_PATH}))" == $(tail -n +2 ${CACHE_FILE_PATH}) ]]
+    [[ "${FORCE_OVERRIDE}" != "1" ]] && [[ -f ${CACHE_FILE_PATH} ]] && [[ "$(_calc_cksum $(head -n 1 ${CACHE_FILE_PATH}))" == $(tail -n +2 ${CACHE_FILE_PATH}) ]]
 }
 
 # Create the hash cache file to `[project]/.wf/.chksum.cache`
@@ -221,10 +219,10 @@ function _get_hash_from_cache {
 #
 # @param $1 Parsing config file
 function _parseConfigFileList {
-    if [ ! -z "$(grep "imports:" ${1})" ] && [ ! -z "$(cat ${1} | shyaml keys | grep "^imports$")" ]; then
-        local IMPORT_FILES_CKSUM=$(cat ${1} \
-            | shyaml get-values-0 imports \
-            | while IFS='' read -r -d '' value; do
+    if [[ ! -z "$(grep -F "imports:" ${1})" ]] && [[ "null" != "$(yq r ${1} imports)" ]]; then
+        local IMPORT_FILES=$(yq r ${1} imports \
+            | while read -r value; do
+                value=${value:2}
                 # Absolute path
                 if [[ "${value:0:1}" == "/" ]]; then
                     _parseConfigFileList ${value};
@@ -235,7 +233,7 @@ function _parseConfigFileList {
               done)
     fi
 
-    echo "${1} ${IMPORT_FILES_CKSUM}";
+    echo "${1} ${IMPORT_FILES}";
 }
 
 # Handle CTRL + C

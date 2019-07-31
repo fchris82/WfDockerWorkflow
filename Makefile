@@ -41,15 +41,6 @@ init-developing:
 	@echo "$$DEV_SH_FILE_CONTENT" > ~/bin/wfdev && chmod +x ~/bin/wfdev
 	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
 
-.PHONY: rebuild_wf
-rebuild_wf: __build_wf __build_cleanup
-
-# It works in the tmp directory!
-.PHONY: __build_wf
-__build_wf: PACKAGE := webtown-workflow-package
-__build_wf: __versionupgrade __build_rsync
-	dpkg -b tmp webtown-workflow.deb
-
 # Upgrade the version number. It needs a PACKAGE version!!!
 .PHONY: __versionupgrade
 __versionupgrade:
@@ -63,8 +54,9 @@ __versionupgrade:
     ifeq (,$(KEEPVERSION))
         ifeq (,$(VERSION))
             # Original Version + New Version
-			@if [ -z "$(nochange)" ]; then ov=$$(grep Version $(PACKAGE)/DEBIAN/control | egrep -o '[0-9\.]*'); \
+			@if [ -z "$(nochange)" ]; then ov=$$(grep WF_VERSION Dockerfile | egrep -o '[0-9\.]*'); \
 				nv=$$(echo "$${ov%.*}.$$(($${ov##*.}+1))"); \
+				sed -i -e "s/ENV WF_VERSION=*$${ov}/ENV WF_VERSION=$${nv}/" Dockerfile; \
 				sed -i -e "s/Version: *$${ov}/Version: $${nv}/" $(PACKAGE)/DEBIAN/control; \
 				echo "Version: $${nv}"; \
 			fi
@@ -117,9 +109,13 @@ __get_image_tag:
     endif
 
 # Create a docker image
-.PHONY: build_docker
-build_docker: __get_image_tag
+.PHONY: __build_docker
+__build_docker: __versionupgrade __get_image_tag
 	docker build --no-cache -t $(IMAGE) .
+
+# Create a docker image
+.PHONY: build_docker
+build_docker: __build_rsync __build_docker __build_cleanup
 
 # Create a docker image with cache
 .PHONY: fast_build_docker

@@ -64,7 +64,7 @@ case $1 in
         showHelp
     ;;
     --version)
-        dpkg -l | grep webtown-workflow | awk '{ print "Webtown Workflow " $3 }'
+        echo "Webtown Workflow ${WF_VERSION}"
     ;;
     -ps|--docker-ps)
         docker inspect -f "{{printf \"%-30s\" .Name}} {{printf \"%.12s\t\" .Id}}{{index .Config.Labels \"com.wf.basedirectory\"}}" $(docker ps -a -q)

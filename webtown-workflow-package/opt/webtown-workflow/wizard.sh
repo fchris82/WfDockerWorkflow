@@ -23,7 +23,7 @@ case $1 in
         echo "${WHITE}SYMFONY COMMAND HELP${RESTORE}"
         echo ""
         php ${SYMFONY_CONSOLE} app:wizard \
-            --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
+            --wf-version ${WF_VERSION} \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
     --config)
@@ -35,7 +35,7 @@ case $1 in
     *)
         #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
         php ${SYMFONY_CONSOLE} app:wizard \
-            --wf-version $(dpkg-query --showformat='${Version}' --show webtown-workflow) \
+            --wf-version ${WF_VERSION} \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}
     ;;
 esac

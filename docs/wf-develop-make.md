@@ -47,10 +47,6 @@ It is an alias, equal to `build_proxy`.
 
 Create an alias into your `~/bin` directory that helps you in developing. See: [starting section](wf-develop-starting.md)
 
-### `rebuild_wf`
-
-If you change something in the `webtown-workflow-package`, you have to rebuild the `webtown-workflow.deb` .
-
 #### Versioning and examples
 
 It is same as `build_proxy`. You can read everything in that section about versioning and samples.

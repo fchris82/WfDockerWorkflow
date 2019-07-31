@@ -94,7 +94,7 @@ You can reload your image:
 ```bash
 $ wf --rebuild
 
-$ make rebuild_wf build_docker 
+$ make build_docker 
 $ wf --rebuild --no-pull
 ``` 
 
