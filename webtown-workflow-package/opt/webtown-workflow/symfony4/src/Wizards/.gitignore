@@ -1,6 +1,7 @@
 /*
 !.gitignore
 
+!ComposerCreateProject
 !Deployer
 !DeployerSfLe3
 !DeployerSfGe4
