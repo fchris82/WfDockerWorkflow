@@ -18,8 +18,8 @@ use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonDirectory;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * The recipe as an event listener too.

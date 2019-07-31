@@ -94,9 +94,9 @@ trait SkeletonManagerTrait
      * @param SplFileInfo $fileInfo
      * @param array       $buildRecipeConfig
      *
-     * @return SkeletonFile
-     *
      * @throws SkipSkeletonFileException
+     *
+     * @return SkeletonFile
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, array $buildRecipeConfig = []): SkeletonFile
     {
@@ -107,11 +107,11 @@ trait SkeletonManagerTrait
      * @param SkeletonTwigFileInfo $templateFile
      * @param array                $templateVariables
      *
-     * @return string
-     *
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
+     *
+     * @return string
      */
     protected function parseTemplateFile(SkeletonTwigFileInfo $templateFile, array $templateVariables): string
     {
@@ -121,10 +121,10 @@ trait SkeletonManagerTrait
     /**
      * @param array $buildConfig
      *
-     * @return array|SkeletonTwigFileInfo[]
-     *
      * @throws CircularReferenceException
      * @throws \ReflectionException
+     *
+     * @return array|SkeletonTwigFileInfo[]
      */
     protected function getSkeletonFiles(array $buildConfig): array
     {

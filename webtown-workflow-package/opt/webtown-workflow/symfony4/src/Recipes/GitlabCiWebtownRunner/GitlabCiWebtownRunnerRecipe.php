@@ -92,9 +92,9 @@ class GitlabCiWebtownRunnerRecipe extends GitlabCiRecipe
      * @param SplFileInfo $fileInfo
      * @param $recipeConfig
      *
-     * @return SkeletonFile
-     *
      * @throws SkipSkeletonFileException
+     *
+     * @return SkeletonFile
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {

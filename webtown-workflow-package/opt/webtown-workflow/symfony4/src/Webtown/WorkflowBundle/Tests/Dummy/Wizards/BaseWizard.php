@@ -62,7 +62,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
         $this->registerCall($event, __METHOD__);
     }
 
-    private function registerCall(BuildWizardEvent $event, string $method):  void
+    private function registerCall(BuildWizardEvent $event, string $method): void
     {
         $parameters = $event->getParameters();
         $parameters[$method] = true;

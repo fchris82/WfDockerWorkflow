@@ -21,8 +21,8 @@ use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonManagerTrait;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 
 /**

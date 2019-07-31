@@ -13,8 +13,8 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
 use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Class Recipe

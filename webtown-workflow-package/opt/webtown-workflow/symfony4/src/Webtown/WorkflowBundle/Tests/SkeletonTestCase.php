@@ -12,18 +12,18 @@ use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
-use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 class SkeletonTestCase extends TestCase
 {
     /**
      * @param array $classes
      *
-     * @return Environment
-     *
      * @throws \ReflectionException
      * @throws \Twig\Error\LoaderError
+     *
+     * @return Environment
      */
     protected function buildTwig(array $classes = []): Environment
     {

@@ -159,8 +159,9 @@ class Configuration implements ConfigurationInterface
     /**
      * @param object|string $class
      *
-     * @return ConfigurationItem|mixed
      * @throws ConfigurationItemNotFoundException
+     *
+     * @return ConfigurationItem|mixed
      */
     public function get($class)
     {

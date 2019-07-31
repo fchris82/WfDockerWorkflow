@@ -22,9 +22,9 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
 use Symfony\Component\EventDispatcher\EventDispatcher;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Parser;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Configuration implements ConfigurationInterface
 {
@@ -205,12 +205,10 @@ class Configuration implements ConfigurationInterface
     /**
      * Check that the current installed WF version is compatibel with this project or you have to upgrade!
      *
-     * @param array  $config
+     * @param array       $config
      * @param string|null $wfVersion
      *
      * @throws InvalidWfVersionException
-     *
-     * @return void
      */
     protected function validateWfVersion(array $config, ?string $wfVersion): void
     {

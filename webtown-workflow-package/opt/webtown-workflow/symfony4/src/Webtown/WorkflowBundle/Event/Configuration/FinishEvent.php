@@ -8,8 +8,8 @@
 
 namespace App\Webtown\WorkflowBundle\Event\Configuration;
 
-use Symfony\Contracts\EventDispatcher\Event;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\EventDispatcher\Event;
 
 class FinishEvent extends Event
 {

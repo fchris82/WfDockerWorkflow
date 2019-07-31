@@ -181,7 +181,7 @@ class Manager
     }
 
     /**
-     * @param string $changeType
+     * @param string                                   $changeType
      * @param WizardInterface|ConfigurationItem|string $wizardOrClass
      *
      * @return bool

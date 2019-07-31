@@ -7,8 +7,6 @@ use App\Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
 use App\Webtown\WorkflowBundle\WebtownWorkflowBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class CollectRecipesPass extends AbstractTwigSkeletonPass
@@ -42,9 +40,9 @@ class CollectRecipesPass extends AbstractTwigSkeletonPass
     /**
      * @param Definition $serviceDefinition
      *
-     * @return bool
-     *
      * @throws \ReflectionException
+     *
+     * @return bool
      */
     protected function isTheServiceAbstract(Definition $serviceDefinition): bool
     {

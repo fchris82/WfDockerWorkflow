@@ -17,9 +17,9 @@ use App\Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
 use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\ArrayNode;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 
 /**

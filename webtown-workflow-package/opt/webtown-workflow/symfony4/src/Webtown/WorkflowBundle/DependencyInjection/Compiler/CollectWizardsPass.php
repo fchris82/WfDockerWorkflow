@@ -5,8 +5,6 @@ namespace App\Webtown\WorkflowBundle\DependencyInjection\Compiler;
 use App\Webtown\WorkflowBundle\WebtownWorkflowBundle;
 use App\Webtown\WorkflowBundle\Wizard\Manager;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException;
 use Symfony\Component\DependencyInjection\Reference;
 
 class CollectWizardsPass extends AbstractTwigSkeletonPass

@@ -13,8 +13,8 @@ use App\Webtown\WorkflowBundle\Environment\IoManager;
 use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
 use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
 use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;
 
 /**

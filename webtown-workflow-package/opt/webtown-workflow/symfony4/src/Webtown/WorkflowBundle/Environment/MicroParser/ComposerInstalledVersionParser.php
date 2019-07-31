@@ -8,7 +8,6 @@
 
 namespace App\Webtown\WorkflowBundle\Environment\MicroParser;
 
-use App\Webtown\WorkflowBundle\Exception\InvalidComposerVersionNumber;
 use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class ComposerInstalledVersionParser extends ComposerJsonInformationParser

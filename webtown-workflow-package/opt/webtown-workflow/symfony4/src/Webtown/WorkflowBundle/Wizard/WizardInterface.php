@@ -17,7 +17,7 @@ interface WizardInterface
 
     public function getDefaultGroup(): string;
 
-    public function getInfo(): string ;
+    public function getInfo(): string;
 
     public function isHidden(): bool;
 

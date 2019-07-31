@@ -121,9 +121,9 @@ class MysqlRecipe extends BaseRecipe
      * @param SplFileInfo $fileInfo
      * @param $recipeConfig
      *
-     * @return SkeletonFile
-     *
      * @throws SkipSkeletonFileException
+     *
+     * @return SkeletonFile
      */
     protected function buildSkeletonFile(SplFileInfo $fileInfo, array $recipeConfig): SkeletonFile
     {

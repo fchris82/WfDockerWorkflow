@@ -21,9 +21,9 @@ use App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe;
 use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\BuilderTrait;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class Builder
 {

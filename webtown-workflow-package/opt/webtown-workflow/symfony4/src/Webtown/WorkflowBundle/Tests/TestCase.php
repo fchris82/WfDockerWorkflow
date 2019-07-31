@@ -33,7 +33,7 @@ class TestCase extends BaseTestCase
 
     /**
      * @param string|object $class
-     * @param string $methodName
+     * @param string        $methodName
      *
      * @throws \ReflectionException
      *

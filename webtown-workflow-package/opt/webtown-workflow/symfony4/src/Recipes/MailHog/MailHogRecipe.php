@@ -14,8 +14,8 @@ use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment as TwigEnvironment;
 
 /**

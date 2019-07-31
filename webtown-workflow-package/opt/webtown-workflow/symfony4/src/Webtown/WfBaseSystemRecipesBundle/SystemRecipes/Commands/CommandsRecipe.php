@@ -19,8 +19,8 @@ use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
 use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Console\Formatter\OutputFormatter;
-use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Finder\SplFileInfo;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInterface
 {
@@ -127,9 +127,9 @@ class CommandsRecipe extends SystemRecipe implements RegisterEventListenersInter
     /**
      * @param string $tempFile the template filename
      *
-     * @return TemplateTwigFileInfo
-     *
      * @throws \ReflectionException
+     *
+     * @return TemplateTwigFileInfo
      */
     protected function getTempSkeletonFileInfo($tempFile): TemplateTwigFileInfo
     {
