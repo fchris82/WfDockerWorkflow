@@ -30,7 +30,7 @@ use Twig\Environment;
 
 class ConfigurationTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }

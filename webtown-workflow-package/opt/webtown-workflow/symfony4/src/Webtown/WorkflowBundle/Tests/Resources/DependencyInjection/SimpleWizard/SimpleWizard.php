@@ -13,12 +13,12 @@ use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
 
 class SimpleWizard extends BaseWizard
 {
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Simple wizard';
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
     }
 }

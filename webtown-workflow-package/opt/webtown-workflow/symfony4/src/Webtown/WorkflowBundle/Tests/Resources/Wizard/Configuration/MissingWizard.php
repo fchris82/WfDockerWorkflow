@@ -20,12 +20,12 @@ class MissingWizard extends BaseWizard
         $this->eventDispatcher = null;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Missing Wizard';
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         return null;
     }

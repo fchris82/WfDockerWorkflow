@@ -12,7 +12,7 @@ use App\Webtown\WorkflowBundle\Recipes\HiddenRecipe as BaseHiddenRecipe;
 
 class HiddenRecipe extends BaseHiddenRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'hidden';
     }

@@ -38,12 +38,12 @@ class ConflictWithSimpleEventListenerRecipe extends BaseRecipe implements Regist
         parent::__construct($twig, $eventDispatcher);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return 'conflict_with_simple_event_listener';
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::BEFORE_BUILD_FILES, [$this, 'createFiles']);
     }

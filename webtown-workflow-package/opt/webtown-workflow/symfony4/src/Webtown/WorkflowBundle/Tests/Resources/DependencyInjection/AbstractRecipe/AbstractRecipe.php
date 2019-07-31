@@ -13,7 +13,7 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class AbstractRecipe extends BaseRecipe implements AbstractTemplateRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'Abstract recipe';
     }

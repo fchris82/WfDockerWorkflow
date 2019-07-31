@@ -20,12 +20,12 @@ class DisabledWizard extends BaseWizard
         $this->eventDispatcher = null;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Disabled Wizard';
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         return null;
     }

@@ -41,7 +41,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($orderedClasses, $wizardClasses);
     }
 
-    public function getGetAllEnabled()
+    public function getGetAllEnabled(): array
     {
         return [
             ['empty.yml', []],
@@ -68,7 +68,7 @@ class ConfigurationTest extends TestCase
         $this->assertEquals($orderedClasses, $wizardClasses);
     }
 
-    public function dpGetConfigurationList()
+    public function dpGetConfigurationList(): array
     {
         return [
             ['empty.yml', []],
@@ -128,7 +128,7 @@ class ConfigurationTest extends TestCase
         file_put_contents(static::TEST_PATH, '');
     }
 
-    public function dpChanges()
+    public function dpChanges(): array
     {
         $base1Wizard = new Base1Wizard();
         $base1Item = new ConfigurationItem($base1Wizard, $base1Wizard->getDefaultName(), !$base1Wizard->isHidden(), 'Builder');
@@ -302,7 +302,7 @@ class ConfigurationTest extends TestCase
         }
     }
 
-    public function dpGet()
+    public function dpGet(): array
     {
         $base1Wizard = new Base1Wizard();
 

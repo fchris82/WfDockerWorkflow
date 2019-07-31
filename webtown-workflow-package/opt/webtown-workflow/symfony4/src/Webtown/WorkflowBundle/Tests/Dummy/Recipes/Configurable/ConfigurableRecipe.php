@@ -9,15 +9,16 @@
 namespace App\Webtown\WorkflowBundle\Tests\Dummy\Recipes\Configurable;
 
 use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 class ConfigurableRecipe extends BaseRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'configurable';
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         $rootNode = parent::getConfig();
         $rootNode

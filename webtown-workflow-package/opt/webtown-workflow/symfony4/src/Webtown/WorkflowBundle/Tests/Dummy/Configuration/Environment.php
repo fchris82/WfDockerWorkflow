@@ -10,7 +10,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Dummy\Configuration;
 
 class Environment extends \App\Webtown\WorkflowBundle\Configuration\Environment
 {
-    public function setEnv($env)
+    public function setEnv($env): void
     {
         $this->env = $env;
     }

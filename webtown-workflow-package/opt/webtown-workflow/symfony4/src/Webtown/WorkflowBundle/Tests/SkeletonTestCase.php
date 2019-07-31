@@ -25,7 +25,7 @@ class SkeletonTestCase extends TestCase
      * @throws \ReflectionException
      * @throws \Twig\Error\LoaderError
      */
-    protected function buildTwig(array $classes = [])
+    protected function buildTwig(array $classes = []): Environment
     {
         $twigLoader = new FilesystemLoader();
         foreach ($classes as $class) {
@@ -59,7 +59,7 @@ class SkeletonTestCase extends TestCase
      *
      * @return array
      */
-    protected function convertSkeletonFilesToArray(array $skeletonFiles)
+    protected function convertSkeletonFilesToArray(array $skeletonFiles): array
     {
         $array = [];
         foreach ($skeletonFiles as $skeletonFile) {
@@ -77,7 +77,12 @@ class SkeletonTestCase extends TestCase
         return $array;
     }
 
-    protected function convertDirectoryToArray($directory)
+    /**
+     * @param string|string[] $directory
+     *
+     * @return array
+     */
+    protected function convertDirectoryToArray($directory): array
     {
         $files = Finder::create()
             ->files()
@@ -94,12 +99,12 @@ class SkeletonTestCase extends TestCase
         return $array;
     }
 
-    protected function cleanFileContents($contents)
+    protected function cleanFileContents(string $contents): string
     {
         return str_replace(' ', '', $contents);
     }
 
-    protected function buildSkeletonFile($skeletonClass, $relativePathname, $content)
+    protected function buildSkeletonFile(string $skeletonClass, string $relativePathname, string $content): SkeletonFile
     {
         $fileinfo = new SplFileInfo($relativePathname, \dirname($relativePathname), $relativePathname);
         /** @var SkeletonFile $skeletonFile */

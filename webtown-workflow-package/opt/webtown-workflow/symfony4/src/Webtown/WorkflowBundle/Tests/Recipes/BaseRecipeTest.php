@@ -50,7 +50,7 @@ class BaseRecipeTest extends TestCase
         $this->assertEquals($result, $response);
     }
 
-    public function dpGetSkeletonVars()
+    public function dpGetSkeletonVars(): array
     {
         return [
             // Simple 1

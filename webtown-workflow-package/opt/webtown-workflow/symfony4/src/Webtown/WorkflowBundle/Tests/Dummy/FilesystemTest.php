@@ -54,7 +54,7 @@ EOS;
         $this->assertEquals($result, $response);
     }
 
-    public function dpExists()
+    public function dpExists(): array
     {
         return [
             ['test1', '/composer.json', true],
@@ -87,7 +87,7 @@ EOS;
         $this->assertEquals($fileContent, $contents[$file]);
     }
 
-    public function dpDumpFiles()
+    public function dpDumpFiles(): array
     {
         return [
             ['test1', '/composer.json', ''],
@@ -118,7 +118,7 @@ EOS;
         $this->assertEquals($result, $contents[$file]);
     }
 
-    public function dpAppendToFiles()
+    public function dpAppendToFiles(): array
     {
         return [
             ['test1', '/.gitignore', '*.iml', '*.iml'],
@@ -150,7 +150,7 @@ EOS;
         $this->assertEquals($fileContent, $contents[$testFile]);
     }
 
-    public function dpTouches()
+    public function dpTouches(): array
     {
         $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
@@ -203,7 +203,7 @@ EOS;
         }
     }
 
-    public function dpCopies()
+    public function dpCopies(): array
     {
         $path = implode(\DIRECTORY_SEPARATOR, [
             __DIR__,
@@ -378,7 +378,7 @@ EOS;
         }
     }
 
-    public function dpMkdir()
+    public function dpMkdir(): array
     {
         return [
             ['test1', '/app', true],

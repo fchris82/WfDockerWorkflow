@@ -23,7 +23,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
     private $isHidden;
 
     /**
-     * @var bool
+     * @var string|null
      */
     private $builtCheckFile;
 
@@ -42,18 +42,18 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
      */
     private $readVariables;
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return '';
     }
 
-    protected function init(BuildWizardEvent $event)
+    protected function init(BuildWizardEvent $event): void
     {
         parent::init($event);
         $this->registerCall($event, __METHOD__);
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         $this->registerCall($event, __METHOD__);
         if (\is_callable($this->buildCall)) {
@@ -61,13 +61,13 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
         }
     }
 
-    protected function cleanUp(BuildWizardEvent $event)
+    protected function cleanUp(BuildWizardEvent $event): void
     {
         parent::cleanUp($event);
         $this->registerCall($event, __METHOD__);
     }
 
-    private function registerCall(BuildWizardEvent $event, $method)
+    private function registerCall(BuildWizardEvent $event, string $method): void
     {
         $parameters = $event->getParameters();
         $parameters[$method] = true;
@@ -75,7 +75,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
         $this->event = $event;
     }
 
-    public function getBuildWizardEvent()
+    public function getBuildWizardEvent(): BuildWizardEvent
     {
         return $this->event;
     }
@@ -85,7 +85,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
      *
      * @return $this
      */
-    public function setCheckRequires($checkRequires)
+    public function setCheckRequires($checkRequires): self
     {
         $this->checkRequires = $checkRequires;
 
@@ -97,7 +97,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
      *
      * @return $this
      */
-    public function setIsHidden(bool $isHidden)
+    public function setIsHidden(bool $isHidden): self
     {
         $this->isHidden = $isHidden;
 
@@ -105,18 +105,18 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
     }
 
     /**
-     * @param string $builtCheckFile
+     * @param string|null $builtCheckFile
      *
      * @return $this
      */
-    public function setBuiltCheckFile(string $builtCheckFile)
+    public function setBuiltCheckFile(?string $builtCheckFile): self
     {
         $this->builtCheckFile = $builtCheckFile;
 
         return $this;
     }
 
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): ?string
     {
         return $this->builtCheckFile;
     }
@@ -126,7 +126,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
      *
      * @return $this
      */
-    public function setBuildCall(callable $buildCall)
+    public function setBuildCall(callable $buildCall): self
     {
         $this->buildCall = $buildCall;
 
@@ -138,21 +138,21 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
      *
      * @return $this
      */
-    public function setReadVariables(array $readVariables)
+    public function setReadVariables(array $readVariables): self
     {
         $this->readVariables = $readVariables;
 
         return $this;
     }
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return null === $this->isHidden
             ? parent::isHidden()
             : $this->isHidden;
     }
 
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires($targetProjectDirectory): bool
     {
         if ($this->checkRequires instanceof \Exception) {
             throw $this->checkRequires;
@@ -163,7 +163,7 @@ class BaseSkeletonWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseSkeleto
             : $this->checkRequires;
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         return null === $this->readVariables
             ? parent::readSkeletonVars($event)

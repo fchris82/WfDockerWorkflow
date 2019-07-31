@@ -19,7 +19,7 @@ use Twig\Environment;
 
 class RecipeManagerTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -113,7 +113,7 @@ class TestRecipe extends BaseRecipe
         parent::__construct($twigEnv, $eventDispatcher);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }

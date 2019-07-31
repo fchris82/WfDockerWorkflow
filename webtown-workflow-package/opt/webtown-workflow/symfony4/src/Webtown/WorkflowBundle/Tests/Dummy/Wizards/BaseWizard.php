@@ -37,18 +37,18 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      */
     private $buildCall;
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return static::class;
     }
 
-    protected function init(BuildWizardEvent $event)
+    protected function init(BuildWizardEvent $event): void
     {
         parent::init($event);
         $this->registerCall($event, __METHOD__);
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         $this->registerCall($event, __METHOD__);
         if (\is_callable($this->buildCall)) {
@@ -56,13 +56,13 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
         }
     }
 
-    protected function cleanUp(BuildWizardEvent $event)
+    protected function cleanUp(BuildWizardEvent $event): void
     {
         parent::cleanUp($event);
         $this->registerCall($event, __METHOD__);
     }
 
-    private function registerCall(BuildWizardEvent $event, $method)
+    private function registerCall(BuildWizardEvent $event, string $method):  void
     {
         $parameters = $event->getParameters();
         $parameters[$method] = true;
@@ -70,7 +70,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
         $this->event = $event;
     }
 
-    public function getBuildWizardEvent()
+    public function getBuildWizardEvent(): BuildWizardEvent
     {
         return $this->event;
     }
@@ -80,7 +80,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      *
      * @return $this
      */
-    public function setCheckRequires($checkRequires)
+    public function setCheckRequires($checkRequires): self
     {
         $this->checkRequires = $checkRequires;
 
@@ -92,7 +92,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      *
      * @return $this
      */
-    public function setIsHidden(bool $isHidden)
+    public function setIsHidden(bool $isHidden): self
     {
         $this->isHidden = $isHidden;
 
@@ -104,7 +104,7 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      *
      * @return $this
      */
-    public function setIsBuilt(bool $isBuilt)
+    public function setIsBuilt(bool $isBuilt): self
     {
         $this->isBuilt = $isBuilt;
 
@@ -116,28 +116,28 @@ class BaseWizard extends \App\Webtown\WorkflowBundle\Wizards\BaseWizard
      *
      * @return $this
      */
-    public function setBuildCall(callable $buildCall)
+    public function setBuildCall(callable $buildCall): self
     {
         $this->buildCall = $buildCall;
 
         return $this;
     }
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return null === $this->isHidden
             ? parent::isHidden()
             : $this->isHidden;
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return null === $this->isBuilt
             ? parent::isBuilt($targetProjectDirectory)
             : $this->isBuilt;
     }
 
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         if ($this->checkRequires instanceof \Exception) {
             throw $this->checkRequires;

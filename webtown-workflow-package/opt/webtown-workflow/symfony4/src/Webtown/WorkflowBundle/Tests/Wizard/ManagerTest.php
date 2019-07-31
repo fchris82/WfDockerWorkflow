@@ -46,7 +46,7 @@ class ManagerTest extends TestCase
         }
     }
 
-    public function dpGetWizard()
+    public function dpGetWizard(): array
     {
         $base1Wizard = new Base1Wizard();
         $base2Wizard = new Base2Wizard();

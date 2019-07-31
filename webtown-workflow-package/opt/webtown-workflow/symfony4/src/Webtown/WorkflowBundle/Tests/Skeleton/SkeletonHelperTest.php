@@ -29,7 +29,7 @@ class SkeletonHelperTest extends TestCase
         $this->assertEquals($result, $response);
     }
 
-    public function getNamespaces()
+    public function getNamespaces(): array
     {
         return [
             [\Exception::class, 'Exception'],

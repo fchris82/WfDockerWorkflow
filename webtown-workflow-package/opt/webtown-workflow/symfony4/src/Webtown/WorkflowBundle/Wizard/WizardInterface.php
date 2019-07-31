@@ -13,18 +13,20 @@ interface WizardInterface
     /**
      * @return string
      */
-    public function getDefaultName();
+    public function getDefaultName(): string;
 
-    public function getDefaultGroup();
+    public function getDefaultGroup(): string;
 
-    public function getInfo();
+    public function getInfo(): string ;
 
-    public function isHidden();
+    public function isHidden(): bool;
 
-    public function isBuilt($targetProjectDirectory);
+    public function isBuilt(string $targetProjectDirectory): bool;
 
     /**
-     * @return string
+     * @param string $targetProjectDirectory
+     *
+     * @return string Get the $targetProjectDirectory, it may be changed
      */
-    public function runBuild($targetProjectDirectory);
+    public function runBuild(string $targetProjectDirectory): string;
 }

@@ -21,7 +21,7 @@ class CommanderTest extends TestCase
 {
     const TEST_DOCKER_IMAGE = 'fchris82/wf';
 
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -61,7 +61,7 @@ class CommanderTest extends TestCase
         }
     }
 
-    public function dpRun()
+    public function dpRun(): array
     {
         return [
             [__DIR__, 'ls', [
@@ -142,7 +142,7 @@ class CommanderTest extends TestCase
         }
     }
 
-    public function dpRunCmdInContainer()
+    public function dpRunCmdInContainer(): array
     {
         return [
             ['/tmp', 'ls', [

@@ -13,12 +13,12 @@ use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 
 class SimpleSkeletonWizard extends BaseSkeletonWizard
 {
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Simple skeleton wizard';
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
     }
 }

@@ -39,12 +39,12 @@ class SystemRecipe extends \App\Webtown\WorkflowBundle\Recipes\SystemRecipe
         parent::__construct($twig, $eventDispatcher);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getConfig()
+    public function getConfig(): NodeDefinition
     {
         return $this->configuration;
     }

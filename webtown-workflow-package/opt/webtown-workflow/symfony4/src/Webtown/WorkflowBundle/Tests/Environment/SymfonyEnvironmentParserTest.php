@@ -20,7 +20,7 @@ use Symfony\Component\Filesystem\Exception\FileNotFoundException;
 
 class SymfonyEnvironmentParserTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -54,7 +54,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getVersions()
+    public function getVersions(): array
     {
         return [
             ['env_empty', new FileNotFoundException()],
@@ -96,7 +96,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getBinDirs()
+    public function getBinDirs(): array
     {
         return [
             ['env_empty', new FileNotFoundException()],
@@ -145,7 +145,7 @@ class SymfonyEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getVariables()
+    public function getVariables(): array
     {
         $variables = [
             '2' => [

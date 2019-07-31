@@ -13,12 +13,12 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class SimpleSkipRecipe extends BaseRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'simple_skip';
     }
 
-    public function getSkeletonVars($projectPath, $recipeConfig, $globalConfig)
+    public function getSkeletonVars(string $projectPath, array $recipeConfig, array $globalConfig): array
     {
         throw new SkipRecipeException();
     }

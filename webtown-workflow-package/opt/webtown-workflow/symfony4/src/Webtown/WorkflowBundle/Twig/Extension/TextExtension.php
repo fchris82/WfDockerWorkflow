@@ -9,6 +9,7 @@
 namespace App\Webtown\WorkflowBundle\Twig\Extension;
 
 use Twig\Extension\AbstractExtension;
+use Twig\TwigFilter;
 
 class TextExtension extends AbstractExtension
 {
@@ -20,12 +21,12 @@ class TextExtension extends AbstractExtension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('base64', 'base64_encode'),
-            new \Twig_SimpleFilter('md_underline', [$this, 'underline']),
+            new TwigFilter('base64', 'base64_encode'),
+            new TwigFilter('md_underline', [$this, 'underline']),
         ];
     }
 
-    public function underline($title, $lineChar = '=')
+    public function underline(string $title, string $lineChar = '='): string
     {
         return str_repeat($lineChar, mb_strlen($title));
     }

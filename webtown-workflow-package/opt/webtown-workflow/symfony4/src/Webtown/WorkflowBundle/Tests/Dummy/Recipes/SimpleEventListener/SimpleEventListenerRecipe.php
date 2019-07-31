@@ -34,12 +34,12 @@ class SimpleEventListenerRecipe extends BaseRecipe implements RegisterEventListe
      */
     protected $files = [];
 
-    public function getName()
+    public function getName(): string
     {
         return 'simple_event_listener';
     }
 
-    public function registerEventListeners(EventDispatcherInterface $eventDispatcher)
+    public function registerEventListeners(EventDispatcherInterface $eventDispatcher): void
     {
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::BEFORE_DUMP_FILE, [$this, 'skipFile']);
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::BEFORE_DUMP_TARGET_EXISTS, [$this, 'handleExisting']);
@@ -47,18 +47,18 @@ class SimpleEventListenerRecipe extends BaseRecipe implements RegisterEventListe
         $eventDispatcher->addListener(SkeletonBuildBaseEvents::AFTER_BUILD_FILES, [$this, 'addExtraSkeletonFiles']);
     }
 
-    public function collectFiles(DumpFileEvent $event)
+    public function collectFiles(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
         $this->files[] = $skeletonFile->getRelativePathname();
     }
 
-    public function getFiles()
+    public function getFiles(): array
     {
         return $this->files;
     }
 
-    public function addExtraSkeletonFiles(PostBuildSkeletonFilesEvent $event)
+    public function addExtraSkeletonFiles(PostBuildSkeletonFilesEvent $event): void
     {
         $reflectionClass = new \ReflectionClass($event->getNamespace());
         if ($reflectionClass->isSubclassOf(BaseRecipe::class) && !$reflectionClass->isSubclassOf(HiddenRecipe::class)) {

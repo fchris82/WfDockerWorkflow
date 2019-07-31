@@ -18,7 +18,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class WizardWfIsRequiredExceptionTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -40,7 +40,7 @@ class WizardWfIsRequiredExceptionTest extends TestCase
         $this->assertEquals($resultMessage, $exception->getMessage());
     }
 
-    public function dp__construct()
+    public function dp__construct(): array
     {
         $baseWizard = new \App\Webtown\WorkflowBundle\Tests\Dummy\Wizards\BaseWizard(
             m::mock(IoManager::class),

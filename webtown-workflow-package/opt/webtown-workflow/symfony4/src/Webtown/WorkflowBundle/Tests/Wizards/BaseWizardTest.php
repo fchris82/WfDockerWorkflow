@@ -20,7 +20,7 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class BaseWizardTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -140,7 +140,7 @@ class BaseWizardTest extends TestCase
         $this->assertEquals($output, $ioManager->getLog());
     }
 
-    public function dpCall()
+    public function dpCall(): array
     {
         $ioManagerMock = new IoManagerDummy();
         $commanderMock = m::mock(Commander::class);

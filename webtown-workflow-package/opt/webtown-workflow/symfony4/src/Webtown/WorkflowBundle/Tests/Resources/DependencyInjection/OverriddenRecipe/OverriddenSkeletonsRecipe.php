@@ -12,7 +12,7 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class OverriddenSkeletonsRecipe extends BaseRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'overridden';
     }

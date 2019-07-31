@@ -40,7 +40,7 @@ class ComposerJsonInformationParserTest extends TestCase
         }
     }
 
-    public function getGets()
+    public function getGets(): array
     {
         return [
             ['env_empty', '', new FileNotFoundException()],
@@ -96,7 +96,7 @@ class ComposerJsonInformationParserTest extends TestCase
         }
     }
 
-    public function getVersions()
+    public function getVersions(): array
     {
         return [
             ['', new InvalidComposerVersionNumber()],

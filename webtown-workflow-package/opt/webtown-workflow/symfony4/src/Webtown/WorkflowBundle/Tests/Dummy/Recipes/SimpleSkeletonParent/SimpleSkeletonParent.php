@@ -13,7 +13,7 @@ use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class SimpleSkeletonParent extends BaseRecipe implements AbstractTemplateRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'simple_parent';
     }

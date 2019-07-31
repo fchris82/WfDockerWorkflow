@@ -90,7 +90,7 @@ class RecipeTest extends SkeletonTestCase
         );
     }
 
-    public function dpBuild()
+    public function dpBuild(): array
     {
         $envContent = file_get_contents(__DIR__ . '/../../../../../../../host/config/env');
         preg_match_all('/^([A-Z_-]+)=(.*)$/m', $envContent, $matches, PREG_SET_ORDER);

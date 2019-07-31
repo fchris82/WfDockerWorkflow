@@ -63,7 +63,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
     /**
      * Here you can ask data and variables from user or set them.
      */
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         return [];
     }
@@ -74,7 +74,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
      * @throws WizardHasAlreadyBuiltException
      * @throws \Exception
      */
-    protected function initBuild(BuildWizardEvent $event)
+    protected function initBuild(BuildWizardEvent $event): void
     {
         parent::initBuild($event);
 
@@ -92,13 +92,13 @@ abstract class BaseSkeletonWizard extends BaseWizard
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
      */
-    protected function doBuildFiles(BuildWizardEvent $event)
+    protected function doBuildFiles(BuildWizardEvent $event): void
     {
         $skeletonFiles = $this->buildSkeletonFiles($event->getSkeletonVars());
         $this->dumpSkeletonFiles($skeletonFiles);
     }
 
-    protected function printHeader(BuildWizardEvent $event)
+    protected function printHeader(BuildWizardEvent $event): void
     {
         $output = $this->ioManager->getOutput();
         $output->writeln("\n <comment>⏲</comment> <info>Start build...</info>\n");
@@ -117,7 +117,7 @@ abstract class BaseSkeletonWizard extends BaseWizard
         $table->render();
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         if ($this->getBuiltCheckFile()) {
             return $this->fileSystem->exists($targetProjectDirectory . '/' . $this->getBuiltCheckFile());
@@ -126,28 +126,28 @@ abstract class BaseSkeletonWizard extends BaseWizard
         return false;
     }
 
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): ?string
     {
         return null;
     }
 
-    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event)
+    protected function eventBeforeBuildFiles(PreBuildSkeletonFilesEvent $event): void
     {
     }
 
-    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent)
+    protected function eventBeforeBuildFile(PreBuildSkeletonFileEvent $preBuildSkeletonFileEvent): void
     {
     }
 
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent): void
     {
     }
 
-    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event)
+    protected function eventAfterBuildFiles(PostBuildSkeletonFilesEvent $event): void
     {
     }
 
-    protected function eventBeforeDumpFile(DumpFileEvent $event)
+    protected function eventBeforeDumpFile(DumpFileEvent $event): void
     {
         if ($this->isWfConfigYamlFile($event->getSkeletonFile())) {
             $content = $event->getSkeletonFile()->getContents();
@@ -177,20 +177,20 @@ EOS;
         }
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void
     {
     }
 
-    protected function eventAfterDumpFile(DumpFileEvent $event)
+    protected function eventAfterDumpFile(DumpFileEvent $event): void
     {
         $this->printDumpedFile($event);
     }
 
-    protected function eventSkipDumpFile(DumpFileEvent $event)
+    protected function eventSkipDumpFile(DumpFileEvent $event): void
     {
     }
 
-    protected function printDumpedFile(DumpFileEvent $event)
+    protected function printDumpedFile(DumpFileEvent $event): void
     {
         $skeletonFile = $event->getSkeletonFile();
         $status = SkeletonFile::HANDLE_EXISTING_APPEND == $skeletonFile->getHandleExisting()
@@ -206,7 +206,7 @@ EOS;
         ));
     }
 
-    protected function isWfConfigYamlFile(SkeletonFile $skeletonFile)
+    protected function isWfConfigYamlFile(SkeletonFile $skeletonFile): bool
     {
         $filename = $skeletonFile->getFileName();
         $extension = $skeletonFile->getBaseFileInfo()->getExtension();

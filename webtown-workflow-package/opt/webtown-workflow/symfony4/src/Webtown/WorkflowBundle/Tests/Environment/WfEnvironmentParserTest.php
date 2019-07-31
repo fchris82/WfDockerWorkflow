@@ -25,7 +25,7 @@ class WfEnvironmentParserTest extends TestCase
      *
      * @dataProvider getInitTests
      */
-    public function testWfIsInitialized($directory, $result, $removeFiles = [])
+    public function testWfIsInitialized(string $directory, $result, array $removeFiles = [])
     {
         $workingDirectory = __DIR__ . '/../Resources/Environment/' . $directory;
         $filesystem = new Filesystem($workingDirectory);
@@ -46,7 +46,7 @@ class WfEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getInitTests()
+    public function getInitTests(): array
     {
         return [
             ['env_empty', false],
@@ -63,7 +63,7 @@ class WfEnvironmentParserTest extends TestCase
      *
      * @dataProvider getConfigurations
      */
-    public function testGetWorkflowConfiguration($directory, $result, $removeFiles = [])
+    public function testGetWorkflowConfiguration(string $directory, $result, array $removeFiles = [])
     {
         $workingDirectory = __DIR__ . '/../Resources/Environment/' . $directory;
         $filesystem = new Filesystem($workingDirectory);
@@ -84,7 +84,7 @@ class WfEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getConfigurations()
+    public function getConfigurations(): array
     {
         // Full
         $config = [

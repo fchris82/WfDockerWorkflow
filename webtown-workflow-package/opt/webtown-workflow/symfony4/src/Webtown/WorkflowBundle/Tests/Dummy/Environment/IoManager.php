@@ -22,17 +22,17 @@ class IoManager extends \App\Webtown\WorkflowBundle\Environment\IoManager
      */
     protected $outputLog = [];
 
-    public function writeln($text)
+    public function writeln($text): void
     {
         $this->outputLog[] = $text;
     }
 
-    public function getLog()
+    public function getLog(): array
     {
         return $this->outputLog;
     }
 
-    public function getLogAsString()
+    public function getLogAsString(): string
     {
         return implode("\n", $this->outputLog);
     }

@@ -45,23 +45,28 @@ abstract class BaseWizard implements WizardInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    abstract public function getDefaultName();
+    abstract public function getDefaultName(): string;
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return '';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return '';
     }
 
-    public function isHidden()
+    public function isHidden(): bool
     {
         return false;
     }
 
+    /**
+     * @param Question $question
+     *
+     * @return mixed
+     */
     public function ask(Question $question)
     {
         return $this->ioManager->ask($question);
@@ -83,7 +88,7 @@ abstract class BaseWizard implements WizardInterface
      *
      * @return string
      */
-    public function runBuild($targetProjectDirectory)
+    public function runBuild(string $targetProjectDirectory): string
     {
         $event = new BuildWizardEvent($targetProjectDirectory);
         $this->initBuild($event);
@@ -98,7 +103,7 @@ abstract class BaseWizard implements WizardInterface
      *
      * @throws WizardHasAlreadyBuiltException
      */
-    protected function initBuild(BuildWizardEvent $event)
+    protected function initBuild(BuildWizardEvent $event): void
     {
         $this->checkRequires($event->getWorkingDirectory());
         if ($this->isBuilt($event->getWorkingDirectory())) {
@@ -107,19 +112,19 @@ abstract class BaseWizard implements WizardInterface
         $this->init($event);
     }
 
-    protected function init(BuildWizardEvent $event)
+    protected function init(BuildWizardEvent $event): void
     {
         // User function
     }
 
-    abstract protected function build(BuildWizardEvent $event);
+    abstract protected function build(BuildWizardEvent $event): void;
 
-    protected function cleanUp(BuildWizardEvent $event)
+    protected function cleanUp(BuildWizardEvent $event): void
     {
         // User function
     }
 
-    protected function call($workingDirectory, self $wizard)
+    protected function call(string $workingDirectory, self $wizard): void
     {
         try {
             $wizard->checkRequires($workingDirectory);
@@ -135,7 +140,7 @@ abstract class BaseWizard implements WizardInterface
         }
     }
 
-    public function runCmdInContainer($cmd, $workdir = null)
+    public function runCmdInContainer(string $cmd, string $workdir = null): string
     {
         return $this->commander->runCmdInContainer(
             $cmd,
@@ -145,7 +150,7 @@ abstract class BaseWizard implements WizardInterface
         );
     }
 
-    protected function getDockerCmdExtraParameters($targetProjectDirectory)
+    protected function getDockerCmdExtraParameters(string $targetProjectDirectory): string
     {
         return '';
     }
@@ -157,17 +162,17 @@ abstract class BaseWizard implements WizardInterface
      *
      * @see BaseWizard::runCmdInContainer()
      */
-    protected function getDockerImage()
+    protected function getDockerImage(): string
     {
         return 'fchris82/wf';
     }
 
-    protected function getDockerShell()
+    protected function getDockerShell(): string
     {
         return '/bin/bash';
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return false;
     }
@@ -179,7 +184,7 @@ abstract class BaseWizard implements WizardInterface
      *
      * @throw WizardSomethingIsRequiredException
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires($targetProjectDirectory): bool
     {
         return true;
     }

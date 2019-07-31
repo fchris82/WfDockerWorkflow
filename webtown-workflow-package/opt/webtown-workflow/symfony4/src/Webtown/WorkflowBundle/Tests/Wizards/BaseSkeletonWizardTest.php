@@ -21,7 +21,7 @@ use Twig\Environment;
 
 class BaseSkeletonWizardTest extends SkeletonTestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
@@ -52,7 +52,7 @@ class BaseSkeletonWizardTest extends SkeletonTestCase
         $this->assertEquals($result, $skeletonWizard->isBuilt($workDir));
     }
 
-    public function dpIsBuilt()
+    public function dpIsBuilt(): array
     {
         return [
             [__DIR__ . '/../Resources/Wizards/isBuiltTest', 'test.txt', true],
@@ -107,7 +107,7 @@ class BaseSkeletonWizardTest extends SkeletonTestCase
         $this->assertEquals($result, $response);
     }
 
-    public function dpIsWfConfigYamlFile()
+    public function dpIsWfConfigYamlFile(): array
     {
         return [
             ['',                    false],

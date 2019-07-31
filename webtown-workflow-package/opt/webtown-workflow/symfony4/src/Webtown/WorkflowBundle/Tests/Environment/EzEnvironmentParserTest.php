@@ -20,6 +20,7 @@ class EzEnvironmentParserTest extends TestCase
     /**
      * @param string          $directory
      * @param bool|\Exception $result
+     * @param array           $removeFiles
      *
      * @dataProvider getProjects
      */
@@ -45,7 +46,7 @@ class EzEnvironmentParserTest extends TestCase
         }
     }
 
-    public function getProjects()
+    public function getProjects(): array
     {
         return [
             ['env_empty', false],

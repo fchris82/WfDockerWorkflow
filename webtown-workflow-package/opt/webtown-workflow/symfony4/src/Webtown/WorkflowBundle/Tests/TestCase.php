@@ -17,12 +17,12 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
  */
 class TestCase extends BaseTestCase
 {
-    protected function executeProtectedMethod($object, $method, $args)
+    protected function executeProtectedMethod(object $object, string $method, array $args)
     {
         return $this->getMethod(\get_class($object), $method)->invokeArgs($object, $args);
     }
 
-    protected function getProtectedProperty($object, $propertyName)
+    protected function getProtectedProperty(object $object, string $propertyName)
     {
         $class = new \ReflectionClass(\get_class($object));
         $property = $class->getProperty($propertyName);
@@ -39,7 +39,7 @@ class TestCase extends BaseTestCase
      *
      * @return \ReflectionMethod
      */
-    protected function getMethod($class, $methodName)
+    protected function getMethod(string $class, string $methodName): \ReflectionMethod
     {
         $class = new \ReflectionClass($class);
         $method = $class->getMethod($methodName);

@@ -30,7 +30,7 @@ class TextExtensionTest extends TestCase
         $this->assertEquals($result, $response);
     }
 
-    public function getUnderlines()
+    public function getUnderlines(): array
     {
         return [
             ['', ''],

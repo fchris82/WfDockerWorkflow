@@ -36,7 +36,7 @@ class TemplateTwigFileInfoTest extends TestCase
         $this->assertEquals($result, $response);
     }
 
-    public function getPaths()
+    public function getPaths(): array
     {
         return [
             [

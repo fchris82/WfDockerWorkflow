@@ -44,13 +44,13 @@ class Manager
     /**
      * @param WizardInterface $wizard
      */
-    public function addWizard(WizardInterface $wizard)
+    public function addWizard(WizardInterface $wizard): void
     {
         $this->allWizards[\get_class($wizard)] = $wizard;
         $this->configurationIsSynced = false;
     }
 
-    public function getWizard($class)
+    public function getWizard(string $class): WizardInterface
     {
         if (!\array_key_exists($class, $this->allWizards)) {
             throw new \Exception(sprintf('Missing wizard: `%s`', $class));
@@ -59,7 +59,7 @@ class Manager
         return $this->allWizards[$class];
     }
 
-    public function syncConfiguration()
+    public function syncConfiguration(): void
     {
         if (!$this->configurationIsSynced) {
             foreach ($this->allWizards as $installedWizard) {
@@ -93,7 +93,7 @@ class Manager
     /**
      * @return WizardInterface[]
      */
-    public function getAllWizards()
+    public function getAllWizards(): array
     {
         return $this->allWizards;
     }
@@ -103,7 +103,7 @@ class Manager
      *
      * @codeCoverageIgnore Alias
      */
-    public function getAllAvailableWizardItems()
+    public function getAllAvailableWizardItems(): array
     {
         $this->syncConfiguration();
 
@@ -115,7 +115,7 @@ class Manager
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getConfiguration()
+    public function getConfiguration(): Configuration
     {
         return $this->configuration;
     }
@@ -125,7 +125,7 @@ class Manager
      *
      * @codeCoverageIgnore Alias
      */
-    public function getAllEnabledWizardItems()
+    public function getAllEnabledWizardItems(): array
     {
         $this->syncConfiguration();
 
@@ -133,37 +133,37 @@ class Manager
     }
 
     /**
-     * @param null $changeType
+     * @param string|null $changeType
      *
      * @return ConfigurationItem[]|array
      *
      * @codeCoverageIgnore Alias
      */
-    public function getConfigurationUnsavedChanges($changeType = null)
+    public function getConfigurationUnsavedChanges(string $changeType = null): array
     {
         return $this->configuration->getChanges($changeType);
     }
 
     /**
-     * @param $wizardOrClass
+     * @param WizardInterface|ConfigurationItem|string $wizardOrClass
      *
      * @return bool
      *
      * @codeCoverageIgnore Alias
      */
-    public function wizardIsNew($wizardOrClass)
+    public function wizardIsNew($wizardOrClass): bool
     {
         return $this->wizardIs(Configuration::CHANGES_ADDED, $wizardOrClass);
     }
 
     /**
-     * @param $wizardOrClass
+     * @param WizardInterface|ConfigurationItem|string $wizardOrClass
      *
      * @return bool
      *
      * @codeCoverageIgnore Alias
      */
-    public function wizardIsUpdated($wizardOrClass)
+    public function wizardIsUpdated($wizardOrClass): bool
     {
         return $this->wizardIs(Configuration::CHANGES_UPDATED, $wizardOrClass);
     }
@@ -181,12 +181,12 @@ class Manager
     }
 
     /**
-     * @param $changeType
-     * @param $wizardOrClass
+     * @param string $changeType
+     * @param WizardInterface|ConfigurationItem|string $wizardOrClass
      *
      * @return bool
      */
-    protected function wizardIs($changeType, $wizardOrClass)
+    protected function wizardIs(string $changeType, $wizardOrClass): bool
     {
         $this->syncConfiguration();
 

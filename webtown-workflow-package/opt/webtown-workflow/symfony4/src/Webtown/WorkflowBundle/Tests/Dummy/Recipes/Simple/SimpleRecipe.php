@@ -19,7 +19,7 @@ class SimpleRecipe extends BaseRecipe
      */
     protected static $skeletonParents = [];
 
-    public function getName()
+    public function getName(): string
     {
         return 'simple';
     }
@@ -27,7 +27,7 @@ class SimpleRecipe extends BaseRecipe
     /**
      * @return array|string[]
      */
-    public static function getSkeletonParents()
+    public static function getSkeletonParents(): array
     {
         return array_merge(parent::getSkeletonParents(), self::$skeletonParents);
     }
@@ -35,12 +35,12 @@ class SimpleRecipe extends BaseRecipe
     /**
      * @param array|string[] $skeletonParents
      */
-    public static function setSkeletonParents($skeletonParents)
+    public static function setSkeletonParents($skeletonParents): void
     {
         self::$skeletonParents = $skeletonParents;
     }
 
-    public function makefileFormat(string $pattern, array $items)
+    public function makefileFormat(string $pattern, array $items): string
     {
         return $this->makefileMultilineFormatter($pattern, $items);
     }

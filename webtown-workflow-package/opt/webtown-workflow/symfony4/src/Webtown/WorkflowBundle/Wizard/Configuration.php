@@ -59,7 +59,7 @@ class Configuration implements ConfigurationInterface
      *
      * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(static::CONFIG_ROOT_MASK);
         $rootNode = $treeBuilder->getRootNode();
@@ -100,7 +100,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @return array|ConfigurationItem[]
      */
-    public function getAllEnabled()
+    public function getAllEnabled(): array
     {
         return array_filter($this->getConfigurationList(), function (ConfigurationItem $item) {
             return $item->isEnabled();
@@ -110,7 +110,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @return array|ConfigurationItem[]
      */
-    public function getConfigurationList()
+    public function getConfigurationList(): array
     {
         if (null === $this->configurationList) {
             $baseConfig = file_exists($this->configurationFilePath) ? Yaml::parseFile($this->configurationFilePath) : [];
@@ -136,7 +136,7 @@ class Configuration implements ConfigurationInterface
         return $this->configurationList;
     }
 
-    public function add(ConfigurationItem $item)
+    public function add(ConfigurationItem $item): self
     {
         $this->configurationList[] = $item;
         $this->addChanges(static::CHANGES_ADDED, $item);
@@ -144,7 +144,7 @@ class Configuration implements ConfigurationInterface
         return $this;
     }
 
-    public function set(ConfigurationItem $item)
+    public function set(ConfigurationItem $item): self
     {
         foreach ($this->getConfigurationList() as $n => $configurationItem) {
             if ($configurationItem->getClass() == $item->getClass()) {
@@ -156,6 +156,12 @@ class Configuration implements ConfigurationInterface
         return $this;
     }
 
+    /**
+     * @param object|string $class
+     *
+     * @return ConfigurationItem|mixed
+     * @throws ConfigurationItemNotFoundException
+     */
     public function get($class)
     {
         if (\is_object($class)) {
@@ -171,7 +177,12 @@ class Configuration implements ConfigurationInterface
         throw new ConfigurationItemNotFoundException($class);
     }
 
-    public function has($class)
+    /**
+     * @param object|string $class
+     *
+     * @return bool
+     */
+    public function has($class): bool
     {
         if (\is_object($class)) {
             $class = \get_class($class);
@@ -189,7 +200,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @param string|object|ConfigurationItem $classOrItem
      */
-    public function remove($classOrItem)
+    public function remove($classOrItem): void
     {
         $class = $classOrItem;
         if (\is_object($classOrItem)) {
@@ -208,7 +219,7 @@ class Configuration implements ConfigurationInterface
         }
     }
 
-    protected function addChanges($changeType, ConfigurationItem $configurationItem)
+    protected function addChanges(string $changeType, ConfigurationItem $configurationItem): void
     {
         foreach ($this->changes as $type => $items) {
             if (\is_array($items)) {
@@ -224,11 +235,11 @@ class Configuration implements ConfigurationInterface
     }
 
     /**
-     * @param null $changeType
+     * @param string|null $changeType
      *
      * @return array|ConfigurationItem[]
      */
-    public function getChanges($changeType = null)
+    public function getChanges(string $changeType = null): array
     {
         if (null === $changeType) {
             return $this->changes;
@@ -241,7 +252,7 @@ class Configuration implements ConfigurationInterface
         return $this->changes[$changeType];
     }
 
-    public function hasChanges($changeType = null)
+    public function hasChanges(string $changeType = null): bool
     {
         if (null === $changeType) {
             return \count($this->changes) > 0;
@@ -250,7 +261,7 @@ class Configuration implements ConfigurationInterface
         return \array_key_exists($changeType, $this->changes) && \count($this->changes[$changeType]) > 0;
     }
 
-    public function saveConfigurationList()
+    public function saveConfigurationList(): void
     {
         $configs = [];
         foreach ($this->getConfigurationList() as $configurationItem) {
@@ -266,7 +277,7 @@ class Configuration implements ConfigurationInterface
         file_put_contents($this->configurationFilePath, $content);
     }
 
-    public static function sort(ConfigurationItem $a, ConfigurationItem $b)
+    public static function sort(ConfigurationItem $a, ConfigurationItem $b): int
     {
         if ($a->getGroup() == $b->getGroup()) {
             if ($a->getPriority() == $b->getPriority()) {
@@ -294,7 +305,7 @@ class Configuration implements ConfigurationInterface
      *
      * @codeCoverageIgnore Simple getter
      */
-    public function getConfigurationFilePath()
+    public function getConfigurationFilePath(): string
     {
         return $this->configurationFilePath;
     }

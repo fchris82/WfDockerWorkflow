@@ -12,7 +12,7 @@ use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
 
 class SystemWithoutConfigurationRecipe extends SystemRecipe
 {
-    public function getName()
+    public function getName(): string
     {
         return 'system_without_configuration';
     }

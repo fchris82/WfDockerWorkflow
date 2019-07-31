@@ -38,7 +38,7 @@ class ComposerInstalledVersionParserTest extends TestCase
         }
     }
 
-    public function getGets()
+    public function getGets(): array
     {
         return [
             ['env_empty', '', new FileNotFoundException()],
@@ -79,7 +79,7 @@ class ComposerInstalledVersionParserTest extends TestCase
         }
     }
 
-    public function getReads()
+    public function getReads(): array
     {
         return [
             ['env_empty', '', new FileNotFoundException()],

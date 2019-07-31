@@ -28,16 +28,14 @@ use Twig\Loader\FilesystemLoader;
 
 class BuilderTest extends TestCase
 {
-    public function tearDown()
+    public function tearDown(): void
     {
         m::close();
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testBuildException()
     {
+        $this->expectException(\InvalidArgumentException::class);
         $eventDispatcher = new EventDispatcher();
         $filesystem = new Filesystem(__DIR__, 'alias');
         $recipeManager = new RecipeManager();
@@ -59,6 +57,7 @@ class BuilderTest extends TestCase
      * @throws \Twig_Error_Loader
      * @throws \Twig_Error_Runtime
      * @throws \Twig_Error_Syntax
+     *
      * @dataProvider dpBuild
      */
     public function testBuild(
