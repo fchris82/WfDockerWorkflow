@@ -14,12 +14,12 @@ use App\Wizards\DeployerSfLe3\DeployerWizard as BaseDeployerWizard;
 
 class DeployerWizard extends BaseDeployerWizard
 {
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Deployer (SF >= 4)';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Add Deployer for a Symfony project (SF >= 4)';
     }
@@ -32,7 +32,7 @@ class DeployerWizard extends BaseDeployerWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         parent::checkRequires($targetProjectDirectory);
 

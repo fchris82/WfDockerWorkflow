@@ -58,17 +58,17 @@ class DeployerWizard extends BaseSkeletonWizard
         $this->envParser = $envParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Deployer (base)';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Add Deployer';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Composer';
     }
@@ -81,7 +81,7 @@ class DeployerWizard extends BaseSkeletonWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
@@ -93,13 +93,13 @@ class DeployerWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt($targetProjectDirectory): bool
     {
         return parent::isBuilt($targetProjectDirectory)
             && $this->composerInstalledVersionParser->get($targetProjectDirectory, 'deployer/deployer');
     }
 
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): string
     {
         return 'deploy.php';
     }
@@ -107,12 +107,12 @@ class DeployerWizard extends BaseSkeletonWizard
     /**
      * @param BuildWizardEvent $event
      */
-    public function build(BuildWizardEvent $event)
+    public function build(BuildWizardEvent $event): void
     {
         $this->runCmdInContainer('composer require --dev deployer/deployer', $event->getWorkingDirectory());
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
 
@@ -135,7 +135,7 @@ class DeployerWizard extends BaseSkeletonWizard
         return $variables;
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void
     {
         parent::eventBeforeDumpTargetExists($event);
 

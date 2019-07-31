@@ -41,7 +41,11 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
     /**
      * GitlabCIProjectWizard constructor.
      *
+     * @param EzEnvironmentParser      $ezEnvironmentParser
+     * @param WfEnvironmentParser      $wfEnvironmentParser
      * @param EnvParser                $envParser
+     * @param IoManager                $ioManager
+     * @param Commander                $commander
      * @param EventDispatcherInterface $eventDispatcher
      * @param Environment              $twig
      * @param Filesystem               $filesystem
@@ -62,22 +66,22 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         $this->envParser = $envParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'GitlabCI';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Initialize projet to Gitlab CI';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Composer';
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
         $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
@@ -96,7 +100,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
         ]);
     }
 
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): string
     {
         return '.gitlab-ci.yml';
     }
@@ -109,7 +113,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
@@ -126,7 +130,7 @@ class GitlabCIProjectWizard extends BaseSkeletonWizard
      *
      * @return string
      */
-    public function build(BuildWizardEvent $event)
+    public function build(BuildWizardEvent $event): void
     {
         $workingDirectory = $event->getWorkingDirectory();
         // Ha létezik parameters.yml, akkor annak is létrehozunk egy gitlab verziót

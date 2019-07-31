@@ -53,12 +53,12 @@ class DeployerWizard extends BaseDeployerWizard
         $this->ezEnvironmentParser = $ezEnvironmentParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Deployer (SF <= 3)';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Add Deployer for a Symfony project (SF <= 3)';
     }
@@ -71,7 +71,7 @@ class DeployerWizard extends BaseDeployerWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         parent::checkRequires($targetProjectDirectory);
 
@@ -87,7 +87,7 @@ class DeployerWizard extends BaseDeployerWizard
      *
      * @throws WizardSomethingIsRequiredException
      */
-    protected function checkSfVersion($targetProjectDirectory, $version, $operator)
+    protected function checkSfVersion(string $targetProjectDirectory, string $version, string $operator): void
     {
         $sfVersion = $this->ezEnvironmentParser->getSymfonyVersion($targetProjectDirectory);
         if ($sfVersion && !version_compare($sfVersion, $version, $operator)) {
@@ -100,7 +100,7 @@ class DeployerWizard extends BaseDeployerWizard
         }
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
 
@@ -111,7 +111,7 @@ class DeployerWizard extends BaseDeployerWizard
         return $variables;
     }
 
-    public static function getSkeletonParents()
+    public static function getSkeletonParents(): array
     {
         return [BaseDeployerWizard::class];
     }

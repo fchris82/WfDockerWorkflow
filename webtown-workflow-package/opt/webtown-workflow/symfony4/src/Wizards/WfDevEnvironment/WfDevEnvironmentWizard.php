@@ -48,35 +48,35 @@ class WfDevEnvironmentWizard extends BaseSkeletonWizard
         $this->wfEnvironmentParser = $wfEnvironmentParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'WF Environment - Git ignored/outside';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Create a WF environment for a project, hidden from git. You have to register the <info>/.wf.yml</info>' .
             ' in your <comment>global .gitignore</comment> file! You must use this with third party bundles or other components.';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'WF';
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         return [
             'project_name' => basename($event->getWorkingDirectory()),
         ];
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         $this->ioManager->writeln('<comment>We created a simple and "empty" <info>.wf.yml</info> file, you have to edit it!</comment>');
         $this->ioManager->writeln('');

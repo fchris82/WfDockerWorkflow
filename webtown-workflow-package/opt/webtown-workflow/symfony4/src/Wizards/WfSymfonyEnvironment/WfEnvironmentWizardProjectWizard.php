@@ -59,22 +59,22 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
         $this->envParser = $envParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'WF Symfony Environment';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Create a Symfony WF environment for the existing project.';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'WF';
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         // TODO: Implement build() method.
     }
@@ -89,12 +89,12 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
      *
      * @return string
      */
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): string
     {
         return '.wf.yml.dist';
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $targetProjectDirectory = $event->getWorkingDirectory();
         $variables = $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($targetProjectDirectory);
@@ -108,7 +108,7 @@ class WfEnvironmentWizardProjectWizard extends BaseSkeletonWizard
         return $variables;
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void
     {
         parent::eventBeforeDumpTargetExists($event);
 

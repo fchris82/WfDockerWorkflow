@@ -26,28 +26,28 @@ use Symfony\Component\Console\Question\Question;
  */
 class WfPhpDevEnvironmentWizard extends WfDevEnvironmentWizard
 {
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'WF PHP Environment - Git ignored/outside';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Create a WF environment for a project, hidden from git. You have to register the <info>/.wf.yml</info>' .
             ' in your <comment>global .gitignore</comment> file! You must use this with third party bundles or other components.';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'WF';
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $variables = parent::readSkeletonVars($event);
 

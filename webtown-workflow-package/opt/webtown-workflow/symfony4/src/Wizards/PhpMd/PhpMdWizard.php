@@ -46,22 +46,22 @@ class PhpMdWizard extends BaseSkeletonWizard
         $this->wfEnvironmentParser = $wfEnvironmentParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'PhpMd install';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Add PhpMd to the project.';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Composer';
     }
 
-    public function getBuiltCheckFile()
+    public function getBuiltCheckFile(): string
     {
         return 'phpmd.xml';
     }
@@ -74,7 +74,7 @@ class PhpMdWizard extends BaseSkeletonWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
@@ -86,7 +86,7 @@ class PhpMdWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         return $this->ezEnvironmentParser->getSymfonyEnvironmentVariables($event->getWorkingDirectory());
     }
@@ -94,7 +94,7 @@ class PhpMdWizard extends BaseSkeletonWizard
     /**
      * @param BuildWizardEvent $event
      */
-    public function build(BuildWizardEvent $event)
+    public function build(BuildWizardEvent $event): void
     {
         $this->runCmdInContainer('composer require --dev phpmd/phpmd', $event->getWorkingDirectory());
     }

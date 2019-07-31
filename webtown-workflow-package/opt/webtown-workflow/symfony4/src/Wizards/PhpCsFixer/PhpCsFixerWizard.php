@@ -48,17 +48,17 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
         $this->symfonyEnvironmentParser = $symfonyEnvironmentParser;
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'PhpCsFixer install';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Add PhpCsFixer to the project.';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Composer';
     }
@@ -71,7 +71,7 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
      *
      * @return bool
      */
-    public function checkRequires($targetProjectDirectory)
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         if (!file_exists($targetProjectDirectory . '/composer.json')) {
             throw new WizardSomethingIsRequiredException(sprintf('Initialized composer is required for this!'));
@@ -83,7 +83,7 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
         return parent::checkRequires($targetProjectDirectory);
     }
 
-    protected function getBuiltCheckFile()
+    protected function getBuiltCheckFile(): string
     {
         return '.php_cs.dist';
     }
@@ -91,12 +91,12 @@ class PhpCsFixerWizard extends BaseSkeletonWizard
     /**
      * @param BuildWizardEvent $event
      */
-    public function build(BuildWizardEvent $event)
+    public function build(BuildWizardEvent $event): void
     {
         $this->runCmdInContainer('composer require --dev friendsofphp/php-cs-fixer', $event->getWorkingDirectory());
     }
 
-    protected function eventBeforeDumpTargetExists(DumpFileEvent $event)
+    protected function eventBeforeDumpTargetExists(DumpFileEvent $event): void
     {
         parent::eventBeforeDumpTargetExists($event);
 

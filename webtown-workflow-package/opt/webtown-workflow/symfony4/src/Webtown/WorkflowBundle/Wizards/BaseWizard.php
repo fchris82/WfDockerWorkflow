@@ -184,7 +184,7 @@ abstract class BaseWizard implements WizardInterface
      *
      * @throw WizardSomethingIsRequiredException
      */
-    public function checkRequires($targetProjectDirectory): bool
+    public function checkRequires(string $targetProjectDirectory): bool
     {
         return true;
     }

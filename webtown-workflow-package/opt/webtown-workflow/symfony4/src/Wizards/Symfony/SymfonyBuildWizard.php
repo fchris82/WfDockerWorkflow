@@ -50,36 +50,36 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
      */
     protected $workingDirectory;
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'Symfony builder';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Create a symfony project';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Builder';
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory)
             || $this->fileSystem->exists($targetProjectDirectory . '/.git')
             || $this->fileSystem->exists($targetProjectDirectory . '/composer.json');
     }
 
-    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent)
+    protected function eventAfterBuildFile(PostBuildSkeletonFileEvent $postBuildSkeletonFileEvent): void
     {
         parent::eventAfterBuildFile($postBuildSkeletonFileEvent);
 
         $postBuildSkeletonFileEvent->getSkeletonFile()->move($this->workingDirectory);
     }
 
-    protected function readSkeletonVars(BuildWizardEvent $event)
+    protected function readSkeletonVars(BuildWizardEvent $event): array
     {
         $directoryQuestion = new Question('Add meg a könyvtárat, ahová szeretnéd telepíteni: [<info>.</info>] ', '.');
         $versionQuestion = new Question('Add meg verziót [Üresen hagyva a legutóbbi stabil verziót szedi le, egyébként: <info>x.x</info>] ');
@@ -105,7 +105,7 @@ class SymfonyBuildWizard extends BaseSkeletonWizard
         return $this->config;
     }
 
-    protected function build(BuildWizardEvent $event)
+    protected function build(BuildWizardEvent $event): void
     {
         // Alapértelmezett adatok
         $package = 'symfony/website-skeleton';

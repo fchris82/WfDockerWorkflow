@@ -47,17 +47,17 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         parent::__construct($ioManager, $commander, $eventDispatcher);
     }
 
-    public function getDefaultName()
+    public function getDefaultName(): string
     {
         return 'eZ Project Builder';
     }
 
-    public function getInfo()
+    public function getInfo(): string
     {
         return 'Create an eZ project';
     }
 
-    public function getDefaultGroup()
+    public function getDefaultGroup(): string
     {
         return 'Builder';
     }
@@ -67,7 +67,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
      *
      * @throws CommanderRunException
      */
-    public function build(BuildWizardEvent $event)
+    public function build(BuildWizardEvent $event): void
     {
         $directoryQuestion = new Question('Installation directory: ', '.');
         $directory = $this->askDirectory
@@ -128,7 +128,7 @@ class EzBuildWizard extends BaseWizard implements WizardInterface
         }
     }
 
-    protected function createAuthJson($targetProjectDirectory)
+    protected function createAuthJson($targetProjectDirectory): void
     {
         $this->ioManager->writeln('');
         $usernameQuestion = new Question('<comment>Username</comment> for <info>updates.ez.no</info> repository: ');
@@ -151,7 +151,7 @@ EOL;
         $this->ioManager->writeln('The <info>auth.json</info> is created');
     }
 
-    public function isBuilt($targetProjectDirectory)
+    public function isBuilt(string $targetProjectDirectory): bool
     {
         return $this->ezEnvironmentParser->isEzProject($targetProjectDirectory)
             || $this->wfEnvironmentParser->wfIsInitialized($targetProjectDirectory);
@@ -160,7 +160,7 @@ EOL;
     /**
      * {@inheritdoc}
      */
-    protected function getDockerImage()
+    protected function getDockerImage(): string
     {
         return 'fchris82/symfony:ez2';
     }
