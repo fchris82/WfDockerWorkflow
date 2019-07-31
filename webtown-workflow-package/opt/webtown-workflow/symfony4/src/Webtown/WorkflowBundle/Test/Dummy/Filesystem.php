@@ -71,7 +71,7 @@ class Filesystem extends BaseFilesystem
         $files = $this->pathsToArray($files);
         $hits = [];
         foreach ($files as $file) {
-            $file = $this->aliasMask($file);
+            $file = $this->aliasMask((string) $file);
             foreach ($this->contents as $path => $content) {
                 if ($path == $file || 0 === strpos($path, $file . \DIRECTORY_SEPARATOR)) {
                     $hits[] = $file;
@@ -108,7 +108,7 @@ class Filesystem extends BaseFilesystem
     {
         $dirs = $this->pathsToArray($dirs);
         foreach ($dirs as $dir) {
-            $targetDir = $this->aliasMask($dir);
+            $targetDir = $this->aliasMask((string) $dir);
             if (!$this->exists($targetDir)) {
                 $this->dumpFile($targetDir, static::DIRECTORY_ID);
             }
@@ -121,7 +121,7 @@ class Filesystem extends BaseFilesystem
     {
         $files = $this->pathsToArray($files);
         foreach ($files as $file) {
-            $targetFile = $this->aliasMask($file);
+            $targetFile = $this->aliasMask((string) $file);
             if (!$this->exists($targetFile)) {
                 $this->dumpFile($targetFile, '');
             }
@@ -181,7 +181,7 @@ class Filesystem extends BaseFilesystem
     {
         $files = $this->pathsToArray($files);
         foreach ($files as $file) {
-            $file = $this->aliasMask($file);
+            $file = $this->aliasMask((string) $file);
             foreach ($this->contents as $path => $content) {
                 if ($path == $file || 0 === strpos($path, $file . \DIRECTORY_SEPARATOR)) {
                     unset($this->contents[$path]);
@@ -199,9 +199,9 @@ class Filesystem extends BaseFilesystem
     /**
      * @param string|array|string[]|iterable $paths
      *
-     * @return array|iterable
+     * @return array|iterable|\SplFileObject[]
      */
-    protected function pathsToArray($paths)
+    protected function pathsToArray($paths): iterable
     {
         return \is_array($paths) || $paths instanceof \IteratorAggregate
             ? $paths

@@ -206,13 +206,13 @@ class Configuration implements ConfigurationInterface
      * Check that the current installed WF version is compatibel with this project or you have to upgrade!
      *
      * @param array  $config
-     * @param string $wfVersion
+     * @param string|null $wfVersion
      *
      * @throws InvalidWfVersionException
      *
      * @return void
      */
-    protected function validateWfVersion(array $config, string $wfVersion): void
+    protected function validateWfVersion(array $config, ?string $wfVersion): void
     {
         // We call the loadConfiguration from Wizard too, and then it isn't important this
         if (null === $wfVersion) {

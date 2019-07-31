@@ -70,15 +70,6 @@ class BaseRecipeTest extends TestCase
                 'config_key' => 'value',
                 'recipe' => 'simple',
             ]],
-            // String config
-            ['', 'string config value', [], [
-                'config' => [],
-                'project_path' => '',
-                'recipe_path' => '${BASE_DIRECTORY}/${PROJECT_DIR_NAME}/${WF_TARGET_DIRECTORY}/simple',
-                'env' => $_ENV,
-                'value' => 'string config value',
-                'recipe' => 'simple',
-            ]],
         ];
     }
 

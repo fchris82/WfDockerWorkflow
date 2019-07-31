@@ -10,6 +10,7 @@ namespace App\Webtown\WorkflowBundle\Tests\Wizards;
 
 use App\Webtown\WorkflowBundle\Environment\Commander;
 use App\Webtown\WorkflowBundle\Environment\IoManager;
+use App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException;
 use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Environment\IoManager as IoManagerDummy;
 use App\Webtown\WorkflowBundle\Tests\Dummy\Wizards\BaseWizard;
@@ -83,10 +84,11 @@ class BaseWizardTest extends TestCase
     }
 
     /**
-     * @expectedException \App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
+     * @throws WizardHasAlreadyBuiltException
      */
     public function testRunBuild2()
     {
+        $this->expectException(WizardHasAlreadyBuiltException::class);
         $baseWizard = new BaseWizard(
             m::mock(IoManager::class),
             m::mock(Commander::class),

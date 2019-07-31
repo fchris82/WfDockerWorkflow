@@ -32,14 +32,14 @@ class TestCase extends BaseTestCase
     }
 
     /**
-     * @param string $class
+     * @param string|object $class
      * @param string $methodName
      *
      * @throws \ReflectionException
      *
      * @return \ReflectionMethod
      */
-    protected function getMethod(string $class, string $methodName): \ReflectionMethod
+    protected function getMethod($class, string $methodName): \ReflectionMethod
     {
         $class = new \ReflectionClass($class);
         $method = $class->getMethod($methodName);

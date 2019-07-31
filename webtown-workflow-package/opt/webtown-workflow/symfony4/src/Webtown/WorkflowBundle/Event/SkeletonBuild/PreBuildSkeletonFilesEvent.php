@@ -26,7 +26,7 @@ class PreBuildSkeletonFilesEvent extends NamespacedEvent
     /**
      * @var array|SkeletonTwigFileInfo[]
      */
-    protected $skeletonFileInfos;
+    protected $skeletonFileInfos = [];
 
     /**
      * PreBuildSkeletonFilesEvent constructor.

@@ -27,6 +27,6 @@ class Base1Wizard extends BaseWizard
 
     protected function build(BuildWizardEvent $event): void
     {
-        return null;
+        // do nothing
     }
 }
