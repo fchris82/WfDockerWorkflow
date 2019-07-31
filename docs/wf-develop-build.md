@@ -12,3 +12,5 @@ After modifications you have to create a new `.deb` package, and a new `fchris82
 OR:
 
     make -s rebuild_wf build_docker push_docker
+
+> Keep the current version: KEEPVERSION=1 make rebuild_wf
