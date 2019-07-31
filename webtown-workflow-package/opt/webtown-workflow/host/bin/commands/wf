@@ -38,7 +38,7 @@ case $1 in
     ;;
     --rebuild)
         PULL="--pull"
-        if [ ${2} == "--no-pull" ]; then
+        if [[ ${2} == "--no-pull" ]]; then
             PULL=""
         fi
         docker build --no-cache ${PULL} -t ${USER}/wf-user ~/.webtown-workflow
