@@ -137,7 +137,11 @@ push_docker: __get_image_tag
 
 .PHONY: phpunit
 phpunit:
-	~/bin/wfdev wf --sf-run bin/phpunit
+	~/bin/wfdev wf --sf-run vendor/bin/phpunit
+
+phpunit-coverage:
+	~/bin/wfdev wf --sf-run vendor/bin/phpunit --coverage-html phpcoverage \
+	&& echo "Coverage dir: \033[33mwebtown-workflow-package/opt/webtown-workflow/symfony4/phpcoverage\033[0m❌"
 
 .PHONY: phpcsfix
 phpcsfix:

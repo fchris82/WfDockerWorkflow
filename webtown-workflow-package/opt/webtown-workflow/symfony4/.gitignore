@@ -19,3 +19,6 @@
 /phpunit.xml
 /.phpunit.result.cache
 ###< phpunit/phpunit ###
+
+# PHP-Unit coverage directory: make phpunit-coverage
+/phpcoverage
