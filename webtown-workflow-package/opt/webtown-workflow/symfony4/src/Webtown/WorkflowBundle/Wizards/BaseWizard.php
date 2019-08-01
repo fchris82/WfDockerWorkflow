@@ -75,7 +75,7 @@ abstract class BaseWizard implements WizardInterface
     /**
      * runBuild()
      *      ├── initBuild()
-     *      │   ├── checkReuires()
+     *      │   ├── checkRequires()
      *      │   └── init()
      *      │
      *      ├── build()
