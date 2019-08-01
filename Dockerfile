@@ -32,6 +32,7 @@ RUN set -x && apk update && \
     echo "xdebug.remote_port=9000" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_handler=dbgp" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_connect_back=0" >> $XDEBUG_CONFIG_FILE && \
+    # @todo Ez a megoldás +200 MB, de elméletileg kihozható ennél kisebbre is.
     apk --no-cache --virtual .dc-deps add python3-dev libffi-dev openssl-dev gcc libc-dev && \
     pip3 install --upgrade pip && \
     pip3 install docker-compose && \
