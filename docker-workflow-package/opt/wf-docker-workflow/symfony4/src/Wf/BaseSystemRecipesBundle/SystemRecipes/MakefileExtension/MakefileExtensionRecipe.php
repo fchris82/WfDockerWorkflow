@@ -8,10 +8,10 @@
 
 namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\MakefileExtension;
 
-use Wf\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
-use Wf\WorkflowBundle\Recipes\SystemRecipe;
-use Wf\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Recipes\SystemRecipe;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 

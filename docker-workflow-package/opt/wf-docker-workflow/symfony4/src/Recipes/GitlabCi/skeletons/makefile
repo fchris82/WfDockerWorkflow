@@ -1,2 +1,0 @@
-DOCKER_PSEUDO_TTY := -T
-DOCKER_BASENAME   := $${LOCAL_USER_NAME:-gitlabci}p$${PWD\#\#*/}

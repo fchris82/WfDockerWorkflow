@@ -3,10 +3,10 @@
 namespace App\Command;
 
 use App\Helper\WordWrapper;
-use Wf\WorkflowBundle\Environment\IoManager;
-use Wf\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use Wf\WorkflowBundle\Wizard\Manager;
-use Wf\WorkflowBundle\Wizards\BaseWizard;
+use Wf\DockerWorkflowBundle\Environment\IoManager;
+use Wf\DockerWorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Wf\DockerWorkflowBundle\Wizard\Manager;
+use Wf\DockerWorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Helper;
@@ -89,7 +89,7 @@ EOS
      * {@inheritdoc}
      *
      * @throws \Symfony\Component\Console\Exception\RuntimeException
-     * @throws \Wf\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
+     * @throws \Wf\DockerWorkflowBundle\Exception\WizardHasAlreadyBuiltException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

@@ -1,8 +1,0 @@
-version: "{{ config.docker_compose.version }}"
-
-services:
-{% for service in share_home_with %}
-    {{ service }}:
-        volumes:
-            - "${RUNNER_HOME}:${HOME}"
-{% endfor %}

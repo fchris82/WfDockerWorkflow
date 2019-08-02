@@ -8,10 +8,10 @@
 
 namespace App\Command;
 
-use Wf\WorkflowBundle\Environment\IoManager;
-use Wf\WorkflowBundle\Wizard\Configuration;
-use Wf\WorkflowBundle\Wizard\ConfigurationItem;
-use Wf\WorkflowBundle\Wizard\Manager;
+use Wf\DockerWorkflowBundle\Environment\IoManager;
+use Wf\DockerWorkflowBundle\Wizard\Configuration;
+use Wf\DockerWorkflowBundle\Wizard\ConfigurationItem;
+use Wf\DockerWorkflowBundle\Wizard\Manager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;

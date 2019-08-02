@@ -8,7 +8,7 @@
 
 namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\Base;
 
-use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\DockerWorkflowBundle\Recipes\SystemRecipe;
 
 /**
  * Class Recipe

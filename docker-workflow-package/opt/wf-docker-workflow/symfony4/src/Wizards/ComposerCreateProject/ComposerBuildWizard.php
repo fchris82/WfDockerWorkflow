@@ -8,12 +8,12 @@
 
 namespace App\Wizards\ComposerCreateProject;
 
-use Wf\WorkflowBundle\Environment\Commander;
-use Wf\WorkflowBundle\Environment\IoManager;
-use Wf\WorkflowBundle\Environment\WfEnvironmentParser;
-use Wf\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use Wf\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use Wf\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Wf\DockerWorkflowBundle\Environment\Commander;
+use Wf\DockerWorkflowBundle\Environment\IoManager;
+use Wf\DockerWorkflowBundle\Environment\WfEnvironmentParser;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use Wf\DockerWorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Wf\DockerWorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Filesystem\Filesystem;

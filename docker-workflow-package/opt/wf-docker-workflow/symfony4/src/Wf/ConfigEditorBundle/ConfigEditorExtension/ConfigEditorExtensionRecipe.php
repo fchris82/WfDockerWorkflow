@@ -9,13 +9,13 @@
 namespace App\Wf\ConfigEditorBundle\ConfigEditorExtension;
 
 use App\Wf\ConfigEditorBundle\DefinitionDumper\ArrayDumper;
-use Wf\WorkflowBundle\Configuration\Configuration;
-use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Wf\WorkflowBundle\Event\ConfigurationEvents;
-use Wf\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use Wf\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use Wf\WorkflowBundle\Recipes\SystemRecipe;
-use Wf\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Wf\DockerWorkflowBundle\Configuration\Configuration;
+use Wf\DockerWorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\DockerWorkflowBundle\Event\ConfigurationEvents;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuildBaseEvents;
+use Wf\DockerWorkflowBundle\Recipes\SystemRecipe;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Yaml\Yaml;

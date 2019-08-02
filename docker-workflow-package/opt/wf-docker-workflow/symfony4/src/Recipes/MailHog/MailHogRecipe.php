@@ -9,10 +9,10 @@
 namespace App\Recipes\MailHog;
 
 use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
-use Wf\WorkflowBundle\Configuration\Environment;
-use Wf\WorkflowBundle\Exception\SkipSkeletonFileException;
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
-use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\DockerWorkflowBundle\Configuration\Environment;
+use Wf\DockerWorkflowBundle\Exception\SkipSkeletonFileException;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

@@ -8,15 +8,15 @@
 
 namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\Commands;
 
-use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Wf\WorkflowBundle\Event\ConfigurationEvents;
-use Wf\WorkflowBundle\Event\RegisterEventListenersInterface;
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
-use Wf\WorkflowBundle\Recipes\SystemRecipe;
-use Wf\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
-use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Wf\WorkflowBundle\Skeleton\SkeletonHelper;
-use Wf\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
+use Wf\DockerWorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\DockerWorkflowBundle\Event\ConfigurationEvents;
+use Wf\DockerWorkflowBundle\Event\RegisterEventListenersInterface;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Recipes\SystemRecipe;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\DockerWorkflowBundle\Skeleton\SkeletonHelper;
+use Wf\DockerWorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Finder\SplFileInfo;

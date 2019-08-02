@@ -8,14 +8,14 @@
 
 namespace App\Wizards\WfSymfonyEnvironment;
 
-use Wf\WorkflowBundle\Environment\Commander;
-use Wf\WorkflowBundle\Environment\EnvParser;
-use Wf\WorkflowBundle\Environment\EzEnvironmentParser;
-use Wf\WorkflowBundle\Environment\IoManager;
-use Wf\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use Wf\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Wf\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Wf\DockerWorkflowBundle\Environment\Commander;
+use Wf\DockerWorkflowBundle\Environment\EnvParser;
+use Wf\DockerWorkflowBundle\Environment\EzEnvironmentParser;
+use Wf\DockerWorkflowBundle\Environment\IoManager;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Wf\DockerWorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\DockerWorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

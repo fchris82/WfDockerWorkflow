@@ -12,7 +12,8 @@
         "symfony/lts": "^4@dev",
         "symfony/twig-bundle": "^4.0",
         "symfony/yaml": "^4.0",
-        "wf/docker-workflow-bundle": "dev-master"
+        "wf/docker-workflow-bundle": "dev-master",
+        "webtown/wf-extension": "dev-master"
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.13",
@@ -68,7 +69,11 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://ferenczikrisztian@bitbucket.org/fchris82-webtown/webtown-worfklow-bundle.git"
+            "url": "https://bitbucket.org/fchris82-webtown/webtown-worfklow-bundle.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/webtown-php/wf-extension.git"
         }
     ]
 }

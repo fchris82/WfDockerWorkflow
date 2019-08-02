@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "af5dc5e7fc45da9ea74c62e27253b198",
+    "content-hash": "0a98f7c27ad0ede06b09507149d219e6",
     "packages": [
         {
             "name": "psr/cache",
@@ -2097,12 +2097,62 @@
             "time": "2019-06-18T15:37:11+00:00"
         },
         {
-            "name": "webtown/workflow-bundle",
+            "name": "webtown/wf-extension",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://ferenczikrisztian@bitbucket.org/fchris82-webtown/webtown-worfklow-bundle.git",
-                "reference": "2b12674e8cdb25fe51c2c2530652cadc3a5f7619"
+                "url": "https://github.com/webtown-php/wf-extension.git",
+                "reference": "5eaacb73e74d682cdc856d3a24317caeda1c86b6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/webtown-php/wf-extension/zipball/5eaacb73e74d682cdc856d3a24317caeda1c86b6",
+                "reference": "5eaacb73e74d682cdc856d3a24317caeda1c86b6",
+                "shasum": ""
+            },
+            "require": {
+                "wf/docker-workflow-bundle": "dev-master"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.15",
+                "mockery/mockery": "^1.2",
+                "phpunit/phpunit": "^8.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wf\\Webtown\\": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Krisztián Ferenczi",
+                    "email": "ferenczi.krisztian@gmail.com"
+                }
+            ],
+            "description": "Add base recipes and wizards to Workflow framework.",
+            "support": {
+                "source": "https://github.com/webtown-php/wf-extension/tree/master",
+                "issues": "https://github.com/webtown-php/wf-extension/issues"
+            },
+            "time": "2019-08-02T14:02:19+00:00"
+        },
+        {
+            "name": "wf/docker-workflow-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://bitbucket.org/fchris82-webtown/webtown-worfklow-bundle.git",
+                "reference": "a13a8c287688f8fd101fe3d9e15fa1a8f0e628ab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://bitbucket.org/fchris82-webtown/webtown-worfklow-bundle/get/a13a8c287688f8fd101fe3d9e15fa1a8f0e628ab.zip",
+                "reference": "a13a8c287688f8fd101fe3d9e15fa1a8f0e628ab",
+                "shasum": ""
             },
             "require": {
                 "php": "^7.3",
@@ -2122,8 +2172,8 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Wf\\WorkflowBundle\\Tests\\": "tests/",
-                    "Wf\\WorkflowBundle\\": "src/"
+                    "Wf\\DockerWorkflowBundle\\Tests\\": "tests/",
+                    "Wf\\DockerWorkflowBundle\\": "src/"
                 }
             },
             "license": [
@@ -2136,7 +2186,11 @@
                 }
             ],
             "description": "Base Workflow Bundle for recipes and wizards",
-            "time": "2019-08-02T09:21:09+00:00"
+            "homepage": "https://bitbucket.org/fchris82-webtown/webtown-worfklow-bundle",
+            "support": {
+                "source": "https://bitbucket.org/fchris82-webtown/webtown-worfklow-bundle/src/a13a8c287688f8fd101fe3d9e15fa1a8f0e628ab/?at=master"
+            },
+            "time": "2019-08-02T14:27:20+00:00"
         }
     ],
     "packages-dev": [
@@ -3303,16 +3357,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.3.1",
+            "version": "8.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "21461ce5b162d0f1a0fa658e27f975517c5d4234"
+                "reference": "e77a49b6da82240f40ddd4be536d30d7dae5c168"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/21461ce5b162d0f1a0fa658e27f975517c5d4234",
-                "reference": "21461ce5b162d0f1a0fa658e27f975517c5d4234",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e77a49b6da82240f40ddd4be536d30d7dae5c168",
+                "reference": "e77a49b6da82240f40ddd4be536d30d7dae5c168",
                 "shasum": ""
             },
             "require": {
@@ -3382,7 +3436,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-08-02T07:54:25+00:00"
+            "time": "2019-08-02T13:42:49+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -4571,7 +4625,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "symfony/lts": 20,
-        "webtown/workflow-bundle": 20
+        "wf/docker-workflow-bundle": 20,
+        "webtown/wf-extension": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

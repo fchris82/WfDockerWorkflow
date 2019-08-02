@@ -8,12 +8,12 @@
 
 namespace App\Recipes\NginxReverseProxy;
 
-use Wf\WorkflowBundle\Configuration\Environment;
-use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Wf\WorkflowBundle\Event\ConfigurationEvents;
-use Wf\WorkflowBundle\Event\RegisterEventListenersInterface;
-use Wf\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Configuration\Environment;
+use Wf\DockerWorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\DockerWorkflowBundle\Event\ConfigurationEvents;
+use Wf\DockerWorkflowBundle\Event\RegisterEventListenersInterface;
+use Wf\DockerWorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment as TwigEnvironment;

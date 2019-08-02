@@ -2,7 +2,7 @@
 
 namespace App\Recipes\Mail;
 
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**

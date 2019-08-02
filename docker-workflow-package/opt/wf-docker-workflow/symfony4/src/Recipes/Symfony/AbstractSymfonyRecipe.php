@@ -8,12 +8,12 @@
 
 namespace App\Recipes\Symfony;
 
-use Wf\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
-use Wf\WorkflowBundle\Event\ConfigurationEvents;
-use Wf\WorkflowBundle\Exception\SkipSkeletonFileException;
-use Wf\WorkflowBundle\Recipes\AbstractTemplateRecipe;
-use Wf\WorkflowBundle\Recipes\BaseRecipe;
-use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\DockerWorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
+use Wf\DockerWorkflowBundle\Event\ConfigurationEvents;
+use Wf\DockerWorkflowBundle\Exception\SkipSkeletonFileException;
+use Wf\DockerWorkflowBundle\Recipes\AbstractTemplateRecipe;
+use Wf\DockerWorkflowBundle\Recipes\BaseRecipe;
+use Wf\DockerWorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

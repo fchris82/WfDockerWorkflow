@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Tool;
 
-use Wf\WorkflowBundle\Tests\Dummy\Command;
-use Wf\WorkflowBundle\Tests\Dummy\Filesystem;
-use Wf\WorkflowBundle\Tests\Dummy\Input;
-use Wf\WorkflowBundle\Tests\TestCase;
-use Wf\WorkflowBundle\Wizard\WizardInterface;
+use Wf\DockerWorkflowBundle\Tests\Dummy\Command;
+use Wf\DockerWorkflowBundle\Tests\Dummy\Filesystem;
+use Wf\DockerWorkflowBundle\Tests\Dummy\Input;
+use Wf\DockerWorkflowBundle\Tests\TestCase;
+use Wf\DockerWorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
