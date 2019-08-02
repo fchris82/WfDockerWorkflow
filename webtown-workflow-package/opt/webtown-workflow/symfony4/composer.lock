@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d12733b838cdb0b60e6af7b14817291",
+    "content-hash": "af5dc5e7fc45da9ea74c62e27253b198",
     "packages": [
         {
             "name": "psr/cache",
@@ -2095,6 +2095,48 @@
                 "templating"
             ],
             "time": "2019-06-18T15:37:11+00:00"
+        },
+        {
+            "name": "webtown/workflow-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://ferenczikrisztian@bitbucket.org/fchris82-webtown/webtown-worfklow-bundle.git",
+                "reference": "2b12674e8cdb25fe51c2c2530652cadc3a5f7619"
+            },
+            "require": {
+                "php": "^7.3",
+                "symfony/config": "^4.3",
+                "symfony/console": "^4.3",
+                "symfony/dependency-injection": "^4.3",
+                "symfony/event-dispatcher": "^4.3",
+                "symfony/filesystem": "^4.3",
+                "symfony/twig-bundle": "^4.3",
+                "symfony/yaml": "^4.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.13",
+                "mockery/mockery": "^1.1",
+                "phpunit/phpunit": "^8"
+            },
+            "type": "symfony-bundle",
+            "autoload": {
+                "psr-4": {
+                    "Webtown\\WorkflowBundle\\Tests\\": "tests/",
+                    "Webtown\\WorkflowBundle\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Krisztián Ferenczi",
+                    "email": "ferenczi.krisztian@gmail.com"
+                }
+            ],
+            "description": "Base Workflow Bundle for recipes and wizards",
+            "time": "2019-08-02T09:21:09+00:00"
         }
     ],
     "packages-dev": [
@@ -3261,16 +3303,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.2.5",
+            "version": "8.3.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c1b8534b3730f20f58600124129197bf1183dc92"
+                "reference": "21461ce5b162d0f1a0fa658e27f975517c5d4234"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c1b8534b3730f20f58600124129197bf1183dc92",
-                "reference": "c1b8534b3730f20f58600124129197bf1183dc92",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/21461ce5b162d0f1a0fa658e27f975517c5d4234",
+                "reference": "21461ce5b162d0f1a0fa658e27f975517c5d4234",
                 "shasum": ""
             },
             "require": {
@@ -3286,7 +3328,7 @@
                 "phar-io/version": "^2.0.1",
                 "php": "^7.2",
                 "phpspec/prophecy": "^1.8.1",
-                "phpunit/php-code-coverage": "^7.0.5",
+                "phpunit/php-code-coverage": "^7.0.7",
                 "phpunit/php-file-iterator": "^2.0.2",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^2.1.2",
@@ -3314,7 +3356,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "8.2-dev"
+                    "dev-master": "8.3-dev"
                 }
             },
             "autoload": {
@@ -3340,7 +3382,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-07-15T06:26:24+00:00"
+            "time": "2019-08-02T07:54:25+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -4528,7 +4570,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "symfony/lts": 20
+        "symfony/lts": 20,
+        "webtown/workflow-bundle": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

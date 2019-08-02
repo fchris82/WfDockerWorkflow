@@ -8,9 +8,6 @@ services:
         public: false       # Allows optimizing the container by removing unused services; this also means
                             # fetching services directly from the container via $container->get() won't work.
                             # The best practice is to be explicit about your dependencies anyway.
-        bind:
-            $wizardUserConfigurationFile: '/opt/webtown-workflow/host/config/wizards.yml'
-#            $hostConfigurationPath: '%env(HOME)%/.webtown-workflow'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -31,29 +28,29 @@ services:
     # PREbuild
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base\BaseRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.prebuild', priority: 999 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.prebuild', priority: 999 }
 
     # POSTbuild
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 999 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 999 }
 
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension\DockerComposeExtensionRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 900 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 900 }
 
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension\MakefileExtensionRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 900 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 900 }
 
     App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase\PostBaseRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: 0 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 0 }
 
     App\Webtown\WfConfigEditorBundle\ConfigEditorExtension\ConfigEditorExtensionRecipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: -99 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -99 }
 
-    App\Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
+    Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
         tags:
-            - { name: 'kernel.event_listener', event: 'app.configuration.event.register.postbuild', priority: -999 }
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -999 }

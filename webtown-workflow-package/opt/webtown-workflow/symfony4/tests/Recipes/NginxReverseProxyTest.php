@@ -11,8 +11,8 @@ declare(strict_types=1);
 namespace App\Tests;
 
 use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
-use App\Webtown\WorkflowBundle\Configuration\Environment;
-use App\Webtown\WorkflowBundle\Tests\TestCase;
+use Webtown\WorkflowBundle\Configuration\Environment;
+use Webtown\WorkflowBundle\Tests\TestCase;
 use Mockery as m;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 

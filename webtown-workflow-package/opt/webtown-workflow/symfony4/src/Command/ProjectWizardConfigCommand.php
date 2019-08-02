@@ -8,10 +8,10 @@
 
 namespace App\Command;
 
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Wizard\Configuration;
-use App\Webtown\WorkflowBundle\Wizard\ConfigurationItem;
-use App\Webtown\WorkflowBundle\Wizard\Manager;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Wizard\Configuration;
+use Webtown\WorkflowBundle\Wizard\ConfigurationItem;
+use Webtown\WorkflowBundle\Wizard\Manager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;

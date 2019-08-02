@@ -283,5 +283,8 @@
     },
     "webmozart/assert": {
         "version": "1.4.0"
+    },
+    "webtown/workflow-bundle": {
+        "version": "dev-master"
     }
 }

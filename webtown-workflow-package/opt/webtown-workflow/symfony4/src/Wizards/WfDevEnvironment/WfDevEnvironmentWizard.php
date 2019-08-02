@@ -8,11 +8,11 @@
 
 namespace App\Wizards\WfDevEnvironment;
 
-use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Webtown\WorkflowBundle\Environment\Commander;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;

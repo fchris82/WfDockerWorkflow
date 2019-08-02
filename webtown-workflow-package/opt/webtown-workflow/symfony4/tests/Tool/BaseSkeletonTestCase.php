@@ -10,11 +10,11 @@ declare(strict_types=1);
 
 namespace App\Tests\Tool;
 
-use App\Webtown\WorkflowBundle\Tests\Dummy\Command;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
-use App\Webtown\WorkflowBundle\Tests\Dummy\Input;
-use App\Webtown\WorkflowBundle\Tests\TestCase;
-use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
+use Webtown\WorkflowBundle\Tests\Dummy\Command;
+use Webtown\WorkflowBundle\Tests\Dummy\Filesystem;
+use Webtown\WorkflowBundle\Tests\Dummy\Input;
+use Webtown\WorkflowBundle\Tests\TestCase;
+use Webtown\WorkflowBundle\Wizard\WizardInterface;
 use Symfony\Component\Console\Tests\Fixtures\DummyOutput;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;

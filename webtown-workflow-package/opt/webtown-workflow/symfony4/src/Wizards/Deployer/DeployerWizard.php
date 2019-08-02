@@ -8,18 +8,18 @@
 
 namespace App\Wizards\Deployer;
 
-use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Environment\EnvParser;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
-use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Exception\CommanderRunException;
-use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use App\Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Webtown\WorkflowBundle\Environment\Commander;
+use Webtown\WorkflowBundle\Environment\EnvParser;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
+use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Webtown\WorkflowBundle\Exception\CommanderRunException;
+use Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

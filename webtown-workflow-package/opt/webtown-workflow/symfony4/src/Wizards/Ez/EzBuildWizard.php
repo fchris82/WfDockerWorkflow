@@ -8,14 +8,14 @@
 
 namespace App\Wizards\Ez;
 
-use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Exception\CommanderRunException;
-use App\Webtown\WorkflowBundle\Wizard\WizardInterface;
-use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
+use Webtown\WorkflowBundle\Environment\Commander;
+use Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Webtown\WorkflowBundle\Exception\CommanderRunException;
+use Webtown\WorkflowBundle\Wizard\WizardInterface;
+use Webtown\WorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Symfony\Component\Console\Question\Question;

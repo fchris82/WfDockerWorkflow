@@ -8,8 +8,8 @@
 
 namespace App\Wizards\DeployerSfGe4;
 
-use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
 use App\Wizards\DeployerSfLe3\DeployerWizard as BaseDeployerWizard;
 
 class DeployerWizard extends BaseDeployerWizard

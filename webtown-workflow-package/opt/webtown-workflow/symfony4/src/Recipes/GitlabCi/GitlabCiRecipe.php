@@ -2,7 +2,7 @@
 
 namespace App\Recipes\GitlabCi;
 
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
 
 class GitlabCiRecipe extends BaseRecipe
 {

@@ -9,10 +9,10 @@
 namespace App\Recipes\MailHog;
 
 use App\Recipes\NginxReverseProxy\NginxReverseProxyRecipe;
-use App\Webtown\WorkflowBundle\Configuration\Environment;
-use App\Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Webtown\WorkflowBundle\Configuration\Environment;
+use Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

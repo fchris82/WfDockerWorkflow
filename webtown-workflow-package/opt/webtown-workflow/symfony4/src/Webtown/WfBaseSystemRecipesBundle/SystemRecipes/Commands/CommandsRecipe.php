@@ -8,15 +8,15 @@
 
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands;
 
-use App\Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use App\Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use App\Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use App\Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
-use App\Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
+use Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use Webtown\WorkflowBundle\Event\ConfigurationEvents;
+use Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
+use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
+use Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Finder\SplFileInfo;

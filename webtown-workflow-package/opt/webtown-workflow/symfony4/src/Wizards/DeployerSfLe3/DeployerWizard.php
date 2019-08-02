@@ -8,15 +8,15 @@
 
 namespace App\Wizards\DeployerSfLe3;
 
-use App\Webtown\WorkflowBundle\Environment\Commander;
-use App\Webtown\WorkflowBundle\Environment\EnvParser;
-use App\Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
-use App\Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use App\Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use Webtown\WorkflowBundle\Environment\Commander;
+use Webtown\WorkflowBundle\Environment\EnvParser;
+use Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser;
+use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
+use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
 use App\Wizards\Deployer\DeployerWizard as BaseDeployerWizard;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

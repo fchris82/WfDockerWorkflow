@@ -3,10 +3,10 @@
 namespace App\Command;
 
 use App\Helper\WordWrapper;
-use App\Webtown\WorkflowBundle\Environment\IoManager;
-use App\Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use App\Webtown\WorkflowBundle\Wizard\Manager;
-use App\Webtown\WorkflowBundle\Wizards\BaseWizard;
+use Webtown\WorkflowBundle\Environment\IoManager;
+use Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Webtown\WorkflowBundle\Wizard\Manager;
+use Webtown\WorkflowBundle\Wizards\BaseWizard;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Console\Helper\Helper;
@@ -89,7 +89,7 @@ EOS
      * {@inheritdoc}
      *
      * @throws \Symfony\Component\Console\Exception\RuntimeException
-     * @throws \App\Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
+     * @throws \Webtown\WorkflowBundle\Exception\WizardHasAlreadyBuiltException
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {

@@ -8,7 +8,7 @@
 
 namespace App\Recipes\UserFix;
 
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 /**

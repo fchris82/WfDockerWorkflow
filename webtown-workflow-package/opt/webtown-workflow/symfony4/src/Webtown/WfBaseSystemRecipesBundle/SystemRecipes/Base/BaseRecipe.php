@@ -8,7 +8,7 @@
 
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base;
 
-use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Webtown\WorkflowBundle\Recipes\SystemRecipe;
 
 /**
  * Class Recipe

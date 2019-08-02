@@ -8,10 +8,10 @@
 
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension;
 
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
+use Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 

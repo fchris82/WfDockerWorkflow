@@ -2,7 +2,7 @@
 
 namespace App\Recipes\PhpDeployerEnvironment;
 
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe as BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe as BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 
 class PhpDeployerEnvironmentRecipe extends BaseRecipe

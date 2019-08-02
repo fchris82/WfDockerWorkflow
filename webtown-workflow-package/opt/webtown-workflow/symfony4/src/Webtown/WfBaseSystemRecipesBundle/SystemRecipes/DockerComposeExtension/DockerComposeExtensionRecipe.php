@@ -8,12 +8,12 @@
 
 namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension;
 
-use App\Webtown\WorkflowBundle\Configuration\Builder;
-use App\Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use App\Webtown\WorkflowBundle\Exception\SkipRecipeException;
-use App\Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use App\Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use App\Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Webtown\WorkflowBundle\Configuration\Builder;
+use Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use Webtown\WorkflowBundle\Exception\SkipRecipeException;
+use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;
