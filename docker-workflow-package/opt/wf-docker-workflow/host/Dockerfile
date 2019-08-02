@@ -4,7 +4,9 @@ FROM fchris82/wf
 #   - SYMFONY_PATH
 #   - SYMFONY_CONSOLE
 
-# Add VCS and the new extension
+# Add VCS and the new extension (OAuth: https://getcomposer.org/doc/articles/troubleshooting.md#api-rate-limit-and-oauth-tokens )
+#ENV WF_SYMFONY_ENV=prod
 #RUN cd ${SYMFONY_PATH} && \
 #    composer config repositories.repo-name vcs https://github.com/custom/wf-extension.git && \
-#    composer require "custom/wf-extension"
+#    composer config -g github-oauth.github.com <oauthtoken> && \
+#    composer require --update-no-dev "custom/wf-extension"
