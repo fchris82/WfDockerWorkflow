@@ -2,12 +2,12 @@
 
 # Here we created an autocomplete bash extension. There are defaults and you can use additional recipe autocompletes.
 # If you want to test it while you are developing, you must to edit the installed file directly in the
-# `~/.webtown-workflow/bash/autocomplete.sh` file.
-# Reload to test: `source ~/.webtown-workflow/bin/bash/autocomplete.sh`
+# `~/.wf-docker-workflow/bash/autocomplete.sh` file.
+# Reload to test: `source ~/.wf-docker-workflow/bin/bash/autocomplete.sh`
 
 _wf() {
     # Get config file
-    local config_file=${HOME}/.webtown-workflow/config/env
+    local config_file=${HOME}/.wf-docker-workflow/config/env
     # We have to reset the words variable
     local words=''
     local cur="${COMP_WORDS[COMP_CWORD]}"

@@ -18,7 +18,7 @@ DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
 # Build command
 function build {
-    docker build --no-cache --pull -t ${USER}/wf-user ~/.webtown-workflow
+    docker build --no-cache --pull -t ${USER}/wf-user ~/.wf-docker-workflow
 }
 
 # Colors
@@ -52,7 +52,7 @@ fi
 
 BASE_IMAGE=${1:-"fchris82/wf"}
 # Refresh
-if [ -f ~/.webtown-workflow/Dockerfile ]; then
+if [ -f ~/.wf-docker-workflow/Dockerfile ]; then
     build
     IMAGE=${USER}/wf-user
 else
@@ -61,8 +61,8 @@ else
 fi
 
 # If we want to use the local and fresh files
-if [ -f ${DIR}/webtown-workflow-package/opt/webtown-workflow/host/copy_binaries_to_host.sh ]; then
-    ${DIR}/webtown-workflow-package/opt/webtown-workflow/host/copy_binaries_to_host.sh
+if [ -f ${DIR}/docker-workflow-package/opt/wf-docker-workflow/host/copy_binaries_to_host.sh ]; then
+    ${DIR}/docker-workflow-package/opt/wf-docker-workflow/host/copy_binaries_to_host.sh
 # If the docker is available
 elif [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
@@ -71,11 +71,11 @@ elif [ -S /var/run/docker.sock ]; then
      -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} -e USER_GROUP=$(stat -c '%g' /var/run/docker.sock) \
      -e BASE_IMAGE=${BASE_IMAGE} \
      ${IMAGE} \
-     /opt/webtown-workflow/host/copy_binaries_to_host.sh
+     /opt/wf-docker-workflow/host/copy_binaries_to_host.sh
 fi
 
 # Add commands to path!
-COMMAND_PATH=~/.webtown-workflow/bin/commands
+COMMAND_PATH=~/.wf-docker-workflow/bin/commands
 mkdir -p ~/bin
 ln -sf $COMMAND_PATH/* ~/bin
 
@@ -97,8 +97,8 @@ for file in $BASH_FILE_TRACES; do
 done
 IFS=$OLDIFS
 if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash_history" ] \
-    && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.webtown-workflow/bin/bash/extension.sh" | wc -l) == 0 ]; then
-        echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/bash/extension.sh\nsource ~/.webtown-workflow/bin/bash/autocomplete.sh\n" >> $BASH_PROFILE_FILE
+    && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.wf-docker-workflow/bin/bash/extension.sh" | wc -l) == 0 ]; then
+        echo -e "\n# WF extension\nsource ~/.wf-docker-workflow/bin/bash/extension.sh\nsource ~/.wf-docker-workflow/bin/bash/autocomplete.sh\n" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
         if [ "$(basename "$SHELL")" == "bash" ]; then
             echo -e "${GREEN}We register the the BASH autoload extension in the ${YELLOW}${BASH_PROFILE_FILE}${GREEN} file!${RESTORE}"
@@ -111,10 +111,10 @@ fi
 # Install ZSH init script and autocomplete
 if [ -f ~/.zshrc ]; then
     mkdir -p ~/.zsh/completion
-    ln -sf ~/.webtown-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
+    ln -sf ~/.wf-docker-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
     if [ $(echo $fpath | egrep ~/.zsh/completion | wc -l) == 0 ] \
-        && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.webtown-workflow/bin/zsh/extension.sh" | wc -l) == 0 ]; then
-            echo -e "\n# WF extension\nsource ~/.webtown-workflow/bin/zsh/extension.sh\n" >> ~/.zshrc
+        && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.wf-docker-workflow/bin/zsh/extension.sh" | wc -l) == 0 ]; then
+            echo -e "\n# WF extension\nsource ~/.wf-docker-workflow/bin/zsh/extension.sh\n" >> ~/.zshrc
             echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
             # Reload the shell if it needs
             [[ "$(basename "$SHELL")" == "zsh" ]] && echo -e "${GREEN}You have to run to reload shell: ${WHITE}${BOLD}source ~/.zshrc${RESTORE}"
@@ -151,15 +151,15 @@ else
 fi
 
 # Clean / Old version upgrade
-[[ -f ~/.webtown-workflow/config/config ]] && rm -f ~/.webtown-workflow/config/config*
-[[ -d ~/.webtown-workflow/recipes ]] \
-    && rsync --remove-source-files -a -v ~/.webtown-workflow/recipes/* ~/.webtown-workflow/extensions/recipes \
-    && rm -rf ~/.webtown-workflow/recipes
-[[ -d ~/.webtown-workflow/wizards ]] \
-    && rsync --remove-source-files -a -v ~/.webtown-workflow/wizards/* ~/.webtown-workflow/extensions/wizards \
-    && rm -rf ~/.webtown-workflow/wizards
-[[ -f ~/.webtown-workflow/bin/zsh_autocomplete.sh ]] && rm -f ~/.webtown-workflow/bin/zsh_autocomplete.sh
-[[ -f ~/.webtown-workflow/bin/zsh/zsh_autocomplete.sh ]] && rm -f ~/.webtown-workflow/bin/zsh/zsh_autocomplete.sh
+[[ -f ~/.wf-docker-workflow/config/config ]] && rm -f ~/.wf-docker-workflow/config/config*
+[[ -d ~/.wf-docker-workflow/recipes ]] \
+    && rsync --remove-source-files -a -v ~/.wf-docker-workflow/recipes/* ~/.wf-docker-workflow/extensions/recipes \
+    && rm -rf ~/.wf-docker-workflow/recipes
+[[ -d ~/.wf-docker-workflow/wizards ]] \
+    && rsync --remove-source-files -a -v ~/.wf-docker-workflow/wizards/* ~/.wf-docker-workflow/extensions/wizards \
+    && rm -rf ~/.wf-docker-workflow/wizards
+[[ -f ~/.wf-docker-workflow/bin/zsh_autocomplete.sh ]] && rm -f ~/.wf-docker-workflow/bin/zsh_autocomplete.sh
+[[ -f ~/.wf-docker-workflow/bin/zsh/zsh_autocomplete.sh ]] && rm -f ~/.wf-docker-workflow/bin/zsh/zsh_autocomplete.sh
 # todo Remove autocomplete from ~/.zshrc file
 
 echo -e "${GREEN}Install success${RESTORE}"

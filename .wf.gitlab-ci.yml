@@ -17,5 +17,5 @@ commands:
         - ${@}
 
     sfcmd:
-        - cd webtown-workflow-package/opt/webtown-workflow/symfony4
+        - cd docker-workflow-package/opt/wf-docker-workflow/symfony4
         - ${@}

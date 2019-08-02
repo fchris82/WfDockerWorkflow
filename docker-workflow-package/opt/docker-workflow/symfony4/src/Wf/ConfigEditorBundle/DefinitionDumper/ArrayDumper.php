@@ -6,7 +6,7 @@
  * Time: 14:19
  */
 
-namespace App\Webtown\WfConfigEditorBundle\DefinitionDumper;
+namespace App\Wf\ConfigEditorBundle\DefinitionDumper;
 
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\BaseNode;

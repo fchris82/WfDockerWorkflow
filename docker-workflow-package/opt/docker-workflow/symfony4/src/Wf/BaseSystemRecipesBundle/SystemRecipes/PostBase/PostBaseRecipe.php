@@ -6,13 +6,13 @@
  * Time: 21:55
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase;
+namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\PostBase;
 
-use Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Wf\WorkflowBundle\Event\RegisterEventListenersInterface;
+use Wf\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Wf\WorkflowBundle\Event\SkeletonBuildBaseEvents;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 

@@ -1,6 +1,6 @@
 ## Install
 
-> Az alábbiakban egy dockeres telepítés leírása látható, ami a **Webtown Workflow**-t használja.
+> Az alábbiakban egy dockeres telepítés leírása látható, ami a **Docker Workflow**-t használja.
 
 ```bash
 wf init

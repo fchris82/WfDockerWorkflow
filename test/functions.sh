@@ -8,7 +8,7 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 
-source ${DIR}/../webtown-workflow-package/opt/webtown-workflow/lib/_functions.sh
+source ${DIR}/../docker-workflow-package/opt/wf-docker-workflow/lib/_functions.sh
 
 # Teszting escape
 TESTS=('teszt1' 'teszt2="ertek"' '--env="prod" --password="ez egy szóközös jelszó"')

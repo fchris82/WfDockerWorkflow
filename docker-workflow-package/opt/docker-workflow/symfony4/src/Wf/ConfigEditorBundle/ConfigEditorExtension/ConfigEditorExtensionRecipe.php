@@ -6,16 +6,16 @@
  * Time: 21:55
  */
 
-namespace App\Webtown\WfConfigEditorBundle\ConfigEditorExtension;
+namespace App\Wf\ConfigEditorBundle\ConfigEditorExtension;
 
-use App\Webtown\WfConfigEditorBundle\DefinitionDumper\ArrayDumper;
-use Webtown\WorkflowBundle\Configuration\Configuration;
-use Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use App\Wf\ConfigEditorBundle\DefinitionDumper\ArrayDumper;
+use Wf\WorkflowBundle\Configuration\Configuration;
+use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\WorkflowBundle\Event\ConfigurationEvents;
+use Wf\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Wf\WorkflowBundle\Event\SkeletonBuildBaseEvents;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -29,7 +29,7 @@ use Twig\Environment;
  *  App\:
  *      resource: ../src
  *      exclude:
- *          - '../src/Webtown/WfBaseSystemRecipesBundle/SystemRecipes/ConfigEditorExtension/server'
+ *          - '../src/Wf/BaseSystemRecipesBundle/SystemRecipes/ConfigEditorExtension/server'
  */
 class ConfigEditorExtensionRecipe extends SystemRecipe implements EventSubscriberInterface
 {

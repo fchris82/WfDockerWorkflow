@@ -8,12 +8,12 @@
 
 namespace App\Wizards\Symfony;
 
-use Webtown\WorkflowBundle\Environment\Commander;
-use Webtown\WorkflowBundle\Environment\IoManager;
-use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
-use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Wf\WorkflowBundle\Environment\Commander;
+use Wf\WorkflowBundle\Environment\IoManager;
+use Wf\WorkflowBundle\Environment\WfEnvironmentParser;
+use Wf\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFileEvent;
+use Wf\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Wf\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Console\Question\Question;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

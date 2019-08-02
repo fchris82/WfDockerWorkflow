@@ -17,7 +17,7 @@ services:
             - '../src/{Entity,Migrations,Tests,Kernel.php}'
             - '../src/{Recipes,Wizards}/*/{skeletons,template}'
             - '../src/*/*/Tests'
-            - '../src/Webtown/WfConfigEditorBundle/ConfigEditorExtension/server'
+            - '../src/Wf/ConfigEditorBundle/ConfigEditorExtension/server'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
@@ -26,31 +26,31 @@ services:
     # Here you can change the pre and post system recipes and change behaviours.
     # ------------------------------------------------------------------------------------------------------------------
     # PREbuild
-    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base\BaseRecipe:
+    App\Wf\WfBaseSystemRecipesBundle\SystemRecipes\Base\BaseRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.prebuild', priority: 999 }
 
     # POSTbuild
-    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe:
+    App\Wf\WfBaseSystemRecipesBundle\SystemRecipes\Commands\CommandsRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 999 }
 
-    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension\DockerComposeExtensionRecipe:
+    App\Wf\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension\DockerComposeExtensionRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 900 }
 
-    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension\MakefileExtensionRecipe:
+    App\Wf\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension\MakefileExtensionRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 900 }
 
-    App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\PostBase\PostBaseRecipe:
+    App\Wf\WfBaseSystemRecipesBundle\SystemRecipes\PostBase\PostBaseRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: 0 }
 
-    App\Webtown\WfConfigEditorBundle\ConfigEditorExtension\ConfigEditorExtensionRecipe:
+    App\Wf\WfConfigEditorBundle\ConfigEditorExtension\ConfigEditorExtensionRecipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -99 }
 
-    Webtown\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
+    Wf\WorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -999 }

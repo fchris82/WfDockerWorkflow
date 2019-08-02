@@ -6,10 +6,10 @@
  * Time: 12:50
  */
 
-namespace App\Webtown\WfConfigEditorBundle;
+namespace App\Wf\ConfigEditorBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class WebtownWfConfigEditorBundle extends Bundle
+class WfConfigEditorBundle extends Bundle
 {
 }

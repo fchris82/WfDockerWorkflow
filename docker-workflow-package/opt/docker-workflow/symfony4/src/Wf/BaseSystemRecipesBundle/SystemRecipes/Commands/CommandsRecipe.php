@@ -6,17 +6,17 @@
  * Time: 16:55
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Commands;
+namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\Commands;
 
-use Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
-use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
-use Webtown\WorkflowBundle\Skeleton\SkeletonHelper;
-use Webtown\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
+use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\WorkflowBundle\Event\ConfigurationEvents;
+use Wf\WorkflowBundle\Event\RegisterEventListenersInterface;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\ExecutableSkeletonFile;
+use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\WorkflowBundle\Skeleton\SkeletonHelper;
+use Wf\WorkflowBundle\Skeleton\TemplateTwigFileInfo;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Console\Formatter\OutputFormatter;
 use Symfony\Component\Finder\SplFileInfo;

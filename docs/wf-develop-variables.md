@@ -9,7 +9,7 @@ Base, makefile variables
 | `PROJECT_INFO` | Defined text / Exported |  | A template of the project info, for the `wf info` command |
 | `PROJECT_HELP` | Defined test / Exported |  | Project help template |
 | `CURDIR` | Makefile var |  | https://www.gnu.org/software/make/manual/html_node/Quick-Reference.html |
-| `VERSION` | String |  | The framework version what we are currently using. See `webtown-workflow-package/opt/webtown-workflow/versions/Makefile.X.X.X` files, where `X.X.X` is the version. |
+| `VERSION` | String |  | The framework version what we are currently using. See `docker-workflow-package/opt/wf-docker-workflow/versions/Makefile.X.X.X` files, where `X.X.X` is the version. |
 | `PROJECT_DIRECOTRY` | String | `.` | Project directory name, if the project is a subdirectory. *Depricated* |
 | `BASE_DIRECTORY` | String | 'VCS root' or `pwd` | The project base directory, where we try to find eg `.wf.yml` file |
 | `DOCKER_DATA_DIR` | String |  | Where the docker put the data files, eg mysql files. You should ignore this directory from jor VCS. |

@@ -25,7 +25,7 @@ FILE_ENVS         := $(shell if [ -f $(WF_ENV_FILE_NAME) ]; then cat $(WF_ENV_FI
 # Ennek muszáj elől lennie, mert szeretnénk, ha ez lenne az első és alapértelmezett "target"
 define PROJECT_HELP
 \033[1;97m
-This is a Webtown Workflow project!
+This is a Docker Workflow project!
 ===================================
 \033[0m
     \033[33mlist\033[0m          \033[32mShow all workflow commands of the project\033[0m

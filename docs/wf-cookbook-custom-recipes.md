@@ -2,11 +2,11 @@
 
 ## Install
 
-Create or download your own recipes what you want to use. You can put them directly to the `~/.webtown-workfow/recipes` directory
-or you can put anywhere and create a symlink to the `~/.webtown-workfow/recipes` directory:
+Create or download your own recipes what you want to use. You can put them directly to the `~/.wf-docker-workflow/recipes` directory
+or you can put anywhere and create a symlink to the `~/.wf-docker-workflow/recipes` directory:
 
 ```shell
-$ ln -s /my/own/recipes/MyOwnRecipe ~/.webtown-workflow/recipes/MyOwnRecipe
+$ ln -s /my/own/recipes/MyOwnRecipe ~/.wf-docker-workflow/recipes/MyOwnRecipe
 ```
 
 You have to reload the cache:
@@ -19,11 +19,11 @@ $ wf --reload
 
 > **Background**
 >
-> The program will share the directories or symlinks of the `~/.webtown-workfow/recipes` directory as docker volumes.
+> The program will share the directories or symlinks of the `~/.wf-docker-workflow/recipes` directory as docker volumes.
 
 ## How to write custom recipe
 
-> You can find the included recipes in the `webtown-workflow-package/opt/webtown-workflow/symfony4/src/Recipes` directory.
+> You can find the included recipes in the `docker-workflow-package/opt/wf-docker-workflow/symfony4/src/Recipes` directory.
 
 **Important**
 

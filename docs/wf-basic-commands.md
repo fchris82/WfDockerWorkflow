@@ -63,7 +63,7 @@ $ wf edit-config
 
 PHP 7.2.14 Development Server started at Tue Feb 26 12:46:37 2019
 Listening on http://172.17.0.4:8000
-Document root is /opt/webtown-workflow/symfony4/src/Webtown/WfConfigEditorBundle/ConfigEditorExtension/server
+Document root is /opt/wf-docker-workflow/symfony4/src/Wf/ConfigEditorBundle/ConfigEditorExtension/server
 Press Ctrl-C to quit.
 ```
 

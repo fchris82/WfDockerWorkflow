@@ -1,7 +1,7 @@
 WF configuration
 ================
 
-In most of case the default configuration is more than enough, but if you have spetial needs, you can change some things in the `~/.webtown-workflow/config/env` file.
+In most of case the default configuration is more than enough, but if you have spetial needs, you can change some things in the `~/.wf-docker-workflow/config/env` file.
 
 **Don't change** these values except you know what are you doing and what will be the results!
 

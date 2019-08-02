@@ -6,14 +6,14 @@
  * Time: 11:31
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension;
+namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\DockerComposeExtension;
 
-use Webtown\WorkflowBundle\Configuration\Builder;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use Webtown\WorkflowBundle\Exception\SkipRecipeException;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
+use Wf\WorkflowBundle\Configuration\Builder;
+use Wf\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use Wf\WorkflowBundle\Exception\SkipRecipeException;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\DockerComposeSkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Yaml\Yaml;

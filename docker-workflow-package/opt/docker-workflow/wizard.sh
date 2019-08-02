@@ -33,7 +33,7 @@ case $1 in
     ;;
     # RUN wizard
     *)
-        #eval "$BASE_PROJECT_RUN cli php /opt/webtown-workflow/symfony4/bin/console app:wizard ${@}"
+        #eval "$BASE_PROJECT_RUN cli php /opt/wf-docker-workflow/symfony4/bin/console app:wizard ${@}"
         php ${SYMFONY_CONSOLE} app:wizard \
             --wf-version ${WF_VERSION} \
             ${@} ${SYMFONY_DISABLE_TTY} ${SYMFONY_COMMAND_DEBUG}

@@ -2,14 +2,14 @@
 
 # Here we created an autocomplete zsh extension. There are defaults and you can use additional recipe autocompletes.
 # If you want to test it while you are developing, you must to edit the installed file directly in the
-# `~/.webtown-workflow/bin/zsh/autocomplete.sh` file.
+# `~/.wf-docker-workflow/bin/zsh/autocomplete.sh` file.
 # Reload to test: `unfunction _wf && autoload -U _wf`
 
 _wf() {
     local state
 
     # Get config file
-    local config_file=${HOME}/.webtown-workflow/config/env
+    local config_file=${HOME}/.wf-docker-workflow/config/env
     if [ -f $config_file ]; then
         local wf_directory_name=$(awk '/^'WF_WORKING_DIRECTORY_NAME'/{split($1,a,"="); print a[2]}' "${config_file}")
 

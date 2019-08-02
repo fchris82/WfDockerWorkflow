@@ -2,10 +2,10 @@
 
 namespace App\Command;
 
-use Webtown\WorkflowBundle\Configuration\Configuration;
-use Webtown\WorkflowBundle\Configuration\RecipeManager;
-use Webtown\WorkflowBundle\Environment\IoManager;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Configuration\Configuration;
+use Wf\WorkflowBundle\Configuration\RecipeManager;
+use Wf\WorkflowBundle\Environment\IoManager;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\ArrayNode;
 use Symfony\Component\Config\Definition\Dumper\YamlReferenceDumper;
 use Symfony\Component\Console\Command\Command;

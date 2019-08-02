@@ -8,10 +8,10 @@
 
 namespace App\Command;
 
-use Webtown\WorkflowBundle\Environment\IoManager;
-use Webtown\WorkflowBundle\Wizard\Configuration;
-use Webtown\WorkflowBundle\Wizard\ConfigurationItem;
-use Webtown\WorkflowBundle\Wizard\Manager;
+use Wf\WorkflowBundle\Environment\IoManager;
+use Wf\WorkflowBundle\Wizard\Configuration;
+use Wf\WorkflowBundle\Wizard\ConfigurationItem;
+use Wf\WorkflowBundle\Wizard\Manager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Helper\Table;
@@ -86,7 +86,7 @@ class ProjectWizardConfigCommand extends Command
             $wantToSave = $this->ioManager->ioAsk($doYouWantToSaveQuestion);
             if ($wantToSave) {
                 $this->wizardManager->getConfiguration()->saveConfigurationList();
-                $this->ioManager->getIo()->success('Wizard configuration is updated! (Default location on host: ~/.webtown-workflow/config/wizards.yml)');
+                $this->ioManager->getIo()->success('Wizard configuration is updated! (Default location on host: ~/.wf-docker-workflow/config/wizards.yml)');
             } else {
                 $this->ioManager->getIo()->writeln('Nothing changed');
             }

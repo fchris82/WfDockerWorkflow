@@ -2,7 +2,7 @@
 # This is a "symlink to a docker" call.
 
 # Debug! Host target, so you can't use the `source` solution, you have to copy the _debug.sh file content directly.
-# << webtown-workflow-package/opt/webtown-workflow/lib/_debug.sh !!!
+# << docker-workflow-package/opt/wf-docker-workflow/lib/_debug.sh !!!
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
     [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
@@ -11,16 +11,16 @@ if [ ${WF_DEBUG:-0} -ge 1 ]; then
 fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
-WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
+DOCKER_WORKFLOW_BASE_PATH=${DOCKER_WORKFLOW_BASE_PATH:-~/.wf-docker-workflow}
 # Load env config
 set -a
-[ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ] && . ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env
+[ -f ${DOCKER_WORKFLOW_BASE_PATH}/config/env ] && . ${DOCKER_WORKFLOW_BASE_PATH}/config/env
 set +a
 WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:pub/wf.git}
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-# YOU SHOULDN'T EDIT THIS FILE! If you want to extend the `wf` command, edit the `webtown-workflow-package/opt/webtown-workflow/workflow.sh`
+# YOU SHOULDN'T EDIT THIS FILE! If you want to extend the `wf` command, edit the `docker-workflow-package/opt/wf-docker-workflow/workflow.sh`
 # file!
 # You have to use this file, when you want to extend `wf` command that needs to use "host" instead of "docker container".
 # Eg: the `--update` needs to use host.
@@ -34,17 +34,17 @@ case $1 in
         /tmp/install-wf.sh
         rm /tmp/install-wf.sh
         echo "Cleaning the cache..."
-        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache >/dev/null
+        ${DOCKER_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf --clean-cache >/dev/null
     ;;
     --rebuild)
         PULL="--pull"
         if [[ ${2} == "--no-pull" ]]; then
             PULL=""
         fi
-        docker build --no-cache ${PULL} -t ${USER}/wf-user ~/.webtown-workflow
+        docker build --no-cache ${PULL} -t ${USER}/wf-user ~/.wf-docker-workflow
     ;;
     # !!! Don't extend here! Read above!
     *)
-        ${WEBTOWN_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf ${@}
+        ${DOCKER_WORKFLOW_BASE_PATH}/bin/workflow_runner.sh wf ${@}
     ;;
 esac

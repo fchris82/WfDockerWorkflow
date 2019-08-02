@@ -8,9 +8,9 @@
 
 namespace App\Recipes\Mysql;
 
-use Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\WorkflowBundle\Exception\SkipSkeletonFileException;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;

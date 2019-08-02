@@ -1,5 +1,5 @@
-Webtown Workflow Framework for Docker Compose
-=============================================
+Docker Workflow Framework for Docker Compose
+============================================
 
 Easy to build an environment for projects.
 
@@ -81,7 +81,7 @@ You can create unit test and run.
 
 If you want to extend the ZSH autocomplete you should read it before: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org It is a short, but fully description about bases.
 
-As you can see in the `webtown-workflow-package/opt/webtown-workflow/host/bin/zsh/autocomplete.sh` file, the script include the outer
+As you can see in the `docker-workflow-package/opt/wf-docker-workflow/host/bin/zsh/autocomplete.sh` file, the script include the outer
 autcomplete files:
 
 ```sh
@@ -101,14 +101,14 @@ The program find and include all of the `autocomplete.zsh` called file.
 
 You can learn from the existing `autocomplete.zsh` files!
 
-> If you want to test it while you are developing, you must to edit the installed file directly in the `~/.webtown-workflow/bin/zsh/autocomplete.sh` file.
+> If you want to test it while you are developing, you must to edit the installed file directly in the `~/.wf-docker-workflow/bin/zsh/autocomplete.sh` file.
 >
 > Reload the edited file: `unfunction _wf && autoload -U _wf`
 
 --------------------------------------------------------------------
 
-Webtown Workflow Installer
-==========================
+Docker Workflow Installer
+=========================
 
 ## Installation
 
@@ -130,10 +130,6 @@ Webtown Workflow Installer
     ```bash
     rm -f webtown-workflow.deb && cd ~
     ```
-
-## Configuration
-
-If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/config` file
 
 ## Usage
 
@@ -205,12 +201,8 @@ részteszteket futtatva ne kelljen mindent előlről létrehozni.
 
 > Mindenképpen figyelj a `<tab>`-okra, a `$$` jelekre és a több soros parancsoknál a `; \` záró részre!
 
-Webtown Project Wizard
-======================
-
-## Configuration
-
-If you wish alternative clone repository, change repository parameter in the `/etc/webtown-workflow/repository.txt` file
+Docker Project Wizard
+=====================
 
 ## Usage
 
@@ -224,7 +216,7 @@ If you wish alternative clone repository, change repository parameter in the `/e
 If you want to run composer command, go to SF directory and run the command:
 
 ```
-cd [project]/package/opt/webtown-workflow/symfony4
+cd [project]/package/opt/wf-docker-workflow/symfony4
 docker run --rm --interactive --tty \
     --volume $PWD/..:/app \
     --workdir /app/symfony4 \
@@ -238,7 +230,7 @@ docker run --rm --interactive --tty \
 Go to the symfony directory and there you can run the commands:
 
 ```bash
-cd package/opt/webtown-workflow
+cd package/opt/wf-docker-workflow
 
 # Run tests
 wizard.sh -t
@@ -256,7 +248,7 @@ wizard.sh -e
 If you want to test in a project, you have to use absolute path to wizard, eg:
 
 ```bash
-/home/chris/www/webtown-workflow/webtown-workflow-package/opt/webtown-workflow/wizard.sh
+/home/chris/www/webtown-workflow/docker-workflow-package/opt/wf-docker-workflow/wizard.sh
 ```
 
 ### Hogyan hozz létre új Wizard-ot?
@@ -266,7 +258,7 @@ Minden Wizard alapvetően arról szól, hogy vmilyen úton-módon fájlokat hoz 
 
 **AppBundle\Wizard\BaseSkeletonWizard**
 
-A Skeleton Wizard-nál létre kell hozni egy könyvtárat a `/package/opt/webtown-workflow/symfony/src/AppBundle/Resources/skeletons` könyvtárban. Ez a könyvtár fog megfelelni a "projekt gyökerének". Az itt található
+A Skeleton Wizard-nál létre kell hozni egy könyvtárat a `/package/opt/wf-docker-workflow/symfony/src/AppBundle/Resources/skeletons` könyvtárban. Ez a könyvtár fog megfelelni a "projekt gyökerének". Az itt található
 könyvtár struktúrát fogja átmásolni a projektbe. Minden fájlt twig-ként kezel, tehát használhatod az `{% if ... %}` vagy a `{{ valtozo }}` megoldásokat. A változók megadását a `setVariables()` metódusban
 tudod megtenni, a `$this->ask()` segítségével bekérhetsz a felhasználótól is adatokat. Ez talán a legalkalmasabb a legtöbb feladatra.
 
@@ -319,7 +311,7 @@ Bármilyen egyéb wizard létrehozható, ehhez használhatjuk a `AppBundle\Wizar
 >
 > The PHPStorm can't detect the symfony project. You have to switch on manually.
 >   - Settings » Languages & Frameworks » PHP » Symfony ⟶ **Enable plugins for this project**
->   - Set the directories with `package/opt/webtown-workflow/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
+>   - Set the directories with `package/opt/wf-docker-workflow/symfony/` prefix, and perhaps you have to change `app/cache` to `var/cache`
 >   - Settings » Other settings » Framework Integration ⟶ Select the **Symfony**
 >
 > You have to set `src` directory as *Source Root directory* and the `tests` directory as *Test Root directory*:

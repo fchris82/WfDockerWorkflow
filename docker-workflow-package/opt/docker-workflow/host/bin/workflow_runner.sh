@@ -3,7 +3,7 @@
 #set -x
 
 # Debug! Host target, so you can't use the `source` solution, you have to copy the _debug.sh file content directly.
-# << webtown-workflow-package/opt/webtown-workflow/lib/_debug.sh !!!
+# << docker-workflow-package/opt/wf-docker-workflow/lib/_debug.sh !!!
 if [ ${WF_DEBUG:-0} -ge 1 ]; then
     [[ -f /.dockerenv ]] && echo -e "\033[1mDocker: \033[33m${WF_DOCKER_HOST_CHAIN}$(hostname)\033[0m"
     echo -e "\033[1mDEBUG\033[33m $(realpath "$0")\033[0m"
@@ -13,7 +13,7 @@ fi
 [[ ${WF_DEBUG:-0} -ge 2 ]] && set -x
 
 # If user defined docker image doesn't exist, we have to build it first of all. It can miss after a docker prune command.
-[ -z "$(docker images -q ${USER}/wf-user)" ] && docker build --no-cache --pull -t ${USER}/wf-user ~/.webtown-workflow
+[ -z "$(docker images -q ${USER}/wf-user)" ] && docker build --no-cache --pull -t ${USER}/wf-user ~/.wf-docker-workflow
 
 # You can use the `--develop` to enable it without edit config
 if [ "$1" == "--develop" ]; then
@@ -26,13 +26,13 @@ if [ "$1" == "--develop" ]; then
     done
     DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
     WF_DEVELOP_PATH="$(realpath ${DIR}/../../../../..)"
-    DOCKER_DEVELOP_PATH_VOLUME="-v ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow:/opt/webtown-workflow"
+    DOCKER_DEVELOP_PATH_VOLUME="-v ${WF_DEVELOP_PATH}/docker-workflow-package/opt/wf-docker-workflow:/opt/wf-docker-workflow"
 
     # Change docker image, if it needs. Maybe you should build first with make command:
     #
     #  $ make -s rebuild_wf build_docker
     #
-    GIT_BRANCH=$(cd ${WF_DEVELOP_PATH}/webtown-workflow-package/opt/webtown-workflow && git rev-parse --abbrev-ref HEAD)
+    GIT_BRANCH=$(cd ${WF_DEVELOP_PATH}/docker-workflow-package/opt/wf-docker-workflow && git rev-parse --abbrev-ref HEAD)
     case $GIT_BRANCH in
         master|HEAD)
             # Do nothing
@@ -74,7 +74,7 @@ fi
 # set defaults
 USER=${USER:-${LOCAL_USER_NAME:-$(id -u -n)}}
 HOME=${HOME:-${LOCAL_USER_HOME}}
-WEBTOWN_WORKFLOW_BASE_PATH=${WEBTOWN_WORKFLOW_BASE_PATH:-~/.webtown-workflow}
+DOCKER_WORKFLOW_BASE_PATH=${DOCKER_WORKFLOW_BASE_PATH:-~/.wf-docker-workflow}
 CI=${CI:-0}
 # WF
 # We look at the TTY existing. If we are in docker then the "-t 1" doesn't work well
@@ -100,7 +100,7 @@ CHAIN_VARIABLE_NAMES=(
     'USER_GROUP'
     'CI'
     'DOCKER_RUN'
-    'WEBTOWN_WORKFLOW_BASE_PATH'
+    'DOCKER_WORKFLOW_BASE_PATH'
     'WF_SYMFONY_ENV'
     'WF_WORKING_DIRECTORY_NAME'
     'WF_CONFIGURATION_FILE_NAME'
@@ -139,16 +139,16 @@ WORKFLOW_CONFIG=" \
     -e WF_XDEBUG_ENABLED=${WF_XDEBUG_ENABLED} \
     -e WF_DEFAULT_LOCAL_TLD=${WF_DEFAULT_LOCAL_TLD}"
 # Change defaults if config file exists
-if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env ]; then
-    WORKFLOW_CONFIG="--env-file ${WEBTOWN_WORKFLOW_BASE_PATH}/config/env"
+if [ -f ${DOCKER_WORKFLOW_BASE_PATH}/config/env ]; then
+    WORKFLOW_CONFIG="--env-file ${DOCKER_WORKFLOW_BASE_PATH}/config/env"
 fi
 if [ "${CI}" == "0" ] && [ "${WF_TTY}" == "1" ]; then
     TTY="-it"
 fi
 if [ "${CI}" == "0" ]; then
     # We use the shared cache only out of cache
-    SHARED_SF_CACHE="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/cache:${SYMFONY_PATH}/var/cache"
-    SHARED_WIZARD_CONFIGURATION="-v ${WEBTOWN_WORKFLOW_BASE_PATH}/config/wizards.yml:/opt/webtown-workflow/host/config/wizards.yml"
+    SHARED_SF_CACHE="-v ${DOCKER_WORKFLOW_BASE_PATH}/cache:${SYMFONY_PATH}/var/cache"
+    SHARED_WIZARD_CONFIGURATION="-v ${DOCKER_WORKFLOW_BASE_PATH}/config/wizards.yml:/opt/wf-docker-workflow/host/config/wizards.yml"
 fi
 
 # If the .wf.yml is a symlink, we put it into directly. It happens forexample if you are using deployer on a server, and
@@ -163,11 +163,11 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
 fi
 
 # @todo (Chris) !!! Az új megoldást adoptálni: /extensions/recipes + /extensions/wizards
-if [ -f ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
-    EXTENSIONS_SHARE=$(cat ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
+if [ -f ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
+    EXTENSIONS_SHARE=$(cat ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
 else
-    if [ -d ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions ]; then
-        RECIPES_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
+    if [ -d ${DOCKER_WORKFLOW_BASE_PATH}/extensions ]; then
+        RECIPES_SHARE=$(find -L ${DOCKER_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${DOCKER_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
             while IFS= read -r -d $'\0' line; do
                 RECIPES_SOURCE=$line
                 if [ -L $RECIPES_SOURCE ]; then
@@ -177,7 +177,7 @@ else
             done
         )
 
-        WIZARDS_SHARE=$(find -L ${WEBTOWN_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${WEBTOWN_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
+        WIZARDS_SHARE=$(find -L ${DOCKER_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${DOCKER_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
             while IFS= read -r -d $'\0' line; do
                 WIZARDS_SOURCE=$line
                 if [ -L $WIZARDS_SOURCE ]; then
@@ -187,7 +187,7 @@ else
             done
         )
         EXTENSIONS_SHARE="${RECIPES_SHARE}${WIZARDS_SHARE}"
-        echo -e "${EXTENSIONS_SHARE}\c" > ${WEBTOWN_WORKFLOW_BASE_PATH}/cache/extensions.volumes
+        echo -e "${EXTENSIONS_SHARE}\c" > ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes
     fi
 fi
 

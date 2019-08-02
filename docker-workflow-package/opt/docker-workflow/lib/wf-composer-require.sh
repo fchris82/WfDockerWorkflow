@@ -3,4 +3,4 @@
 #set -x
 
 cd ${SYMFONY_PATH}
-composer reuire ${@}
+composer require ${@}

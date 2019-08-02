@@ -7,6 +7,6 @@ Architecture: all
 Essential: no
 Pre-Depends: docker | docker-ce | docker-ee
 Maintainer: Krisztián Ferenczi <ferenczi.krisztian@gmail.com>
-Description: Webtown GitFlow workflow supporter package
+Description: WF Docker Workflow supporter package
 Homepage: https://gitlab.webtown.hu/pub/wf
 Installed-Size: 30000

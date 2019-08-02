@@ -6,12 +6,12 @@
  * Time: 11:31
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\MakefileExtension;
+namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\MakefileExtension;
 
-use Webtown\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
+use Wf\WorkflowBundle\Event\SkeletonBuild\PostBuildSkeletonFilesEvent;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\MakefileSkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Finder\SplFileInfo;
 

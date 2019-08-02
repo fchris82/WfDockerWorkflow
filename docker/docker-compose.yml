@@ -15,7 +15,6 @@ services:
             - LOCAL_USER_HOME=${LOCAL_USER_HOME}
             - USER_GROUP=${USER_GROUP}
         volumes:
-            - "/etc/webtown-workflow/config:/etc/webtown-workflow/config"
             - "~/:${LOCAL_USER_HOME}:ro"
             - "/var/run/docker.sock:/var/run/docker.sock"
         working_dir: ${LOCAL_USER_HOME}

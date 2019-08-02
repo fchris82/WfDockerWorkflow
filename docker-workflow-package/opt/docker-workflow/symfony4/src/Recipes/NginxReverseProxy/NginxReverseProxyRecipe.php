@@ -8,12 +8,12 @@
 
 namespace App\Recipes\NginxReverseProxy;
 
-use Webtown\WorkflowBundle\Configuration\Environment;
-use Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use Webtown\WorkflowBundle\Event\RegisterEventListenersInterface;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Configuration\Environment;
+use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\WorkflowBundle\Event\ConfigurationEvents;
+use Wf\WorkflowBundle\Event\RegisterEventListenersInterface;
+use Wf\WorkflowBundle\Event\SkeletonBuild\PreBuildSkeletonFilesEvent;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment as TwigEnvironment;

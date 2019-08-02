@@ -8,12 +8,12 @@
 
 namespace App\Recipes\Symfony;
 
-use Webtown\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
-use Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use Webtown\WorkflowBundle\Exception\SkipSkeletonFileException;
-use Webtown\WorkflowBundle\Recipes\AbstractTemplateRecipe;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
-use Webtown\WorkflowBundle\Skeleton\FileType\SkeletonFile;
+use Wf\WorkflowBundle\Event\Configuration\PreProcessConfigurationEvent;
+use Wf\WorkflowBundle\Event\ConfigurationEvents;
+use Wf\WorkflowBundle\Exception\SkipSkeletonFileException;
+use Wf\WorkflowBundle\Recipes\AbstractTemplateRecipe;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Skeleton\FileType\SkeletonFile;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

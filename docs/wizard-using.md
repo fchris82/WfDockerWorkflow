@@ -1,10 +1,10 @@
 How to use the wizard?
 ======================
 
-You can install wizards that can you help initialize new project or decorate an existing one. You can install new wizards by copy it to `~/.webtown-workflow/wizards` directory:
+You can install wizards that can you help initialize new project or decorate an existing one. You can install new wizards by copy it to `~/.wf-docker-workflow/wizards` directory:
 
 ```shell
-$ git clone [git-url] ~/.webtown-workflow/wizards
+$ git clone [git-url] ~/.wf-docker-workflow/wizards
 ```
 
 ## Configure
@@ -16,7 +16,7 @@ You can fully personalize the wizards:
 - grouping
 - sort order
 
-Use the `wizard --config` command to start configuration command. This command will save your settings in the `~/.webtown-workflow/config/wizards.yml` file.
+Use the `wizard --config` command to start configuration command. This command will save your settings in the `~/.wf-docker-workflow/config/wizards.yml` file.
 
 On the first page you can select one from all available wizard which you want to edit. On the second page you can edit the wizard:
 

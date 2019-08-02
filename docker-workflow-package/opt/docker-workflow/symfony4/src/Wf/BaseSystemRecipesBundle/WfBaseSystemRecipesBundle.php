@@ -6,10 +6,10 @@
  * Time: 20:28
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle;
+namespace App\Wf\BaseSystemRecipesBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
-class WebtownWfBaseSystemRecipesBundle extends Bundle
+class WfBaseSystemRecipesBundle extends Bundle
 {
 }

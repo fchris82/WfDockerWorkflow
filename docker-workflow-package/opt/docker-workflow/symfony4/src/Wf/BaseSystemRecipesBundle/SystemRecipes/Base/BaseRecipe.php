@@ -6,9 +6,9 @@
  * Time: 21:55
  */
 
-namespace App\Webtown\WfBaseSystemRecipesBundle\SystemRecipes\Base;
+namespace App\Wf\BaseSystemRecipesBundle\SystemRecipes\Base;
 
-use Webtown\WorkflowBundle\Recipes\SystemRecipe;
+use Wf\WorkflowBundle\Recipes\SystemRecipe;
 
 /**
  * Class Recipe

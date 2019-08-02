@@ -2,18 +2,18 @@
 
 namespace App\Command;
 
-use Webtown\WorkflowBundle\Configuration\Builder;
-use Webtown\WorkflowBundle\Configuration\Configuration;
-use Webtown\WorkflowBundle\Configuration\RecipeManager;
-use Webtown\WorkflowBundle\Environment\IoManager;
-use Webtown\WorkflowBundle\Event\Configuration\BuildInitEvent;
-use Webtown\WorkflowBundle\Event\Configuration\VerboseInfoEvent;
-use Webtown\WorkflowBundle\Event\ConfigurationEvents;
-use Webtown\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
-use Webtown\WorkflowBundle\Event\SkeletonBuildBaseEvents;
-use Webtown\WorkflowBundle\Exception\InvalidWfVersionException;
-use Webtown\WorkflowBundle\Exception\MissingRecipeException;
-use Webtown\WorkflowBundle\Recipes\BaseRecipe;
+use Wf\WorkflowBundle\Configuration\Builder;
+use Wf\WorkflowBundle\Configuration\Configuration;
+use Wf\WorkflowBundle\Configuration\RecipeManager;
+use Wf\WorkflowBundle\Environment\IoManager;
+use Wf\WorkflowBundle\Event\Configuration\BuildInitEvent;
+use Wf\WorkflowBundle\Event\Configuration\VerboseInfoEvent;
+use Wf\WorkflowBundle\Event\ConfigurationEvents;
+use Wf\WorkflowBundle\Event\SkeletonBuild\DumpFileEvent;
+use Wf\WorkflowBundle\Event\SkeletonBuildBaseEvents;
+use Wf\WorkflowBundle\Exception\InvalidWfVersionException;
+use Wf\WorkflowBundle\Exception\MissingRecipeException;
+use Wf\WorkflowBundle\Recipes\BaseRecipe;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

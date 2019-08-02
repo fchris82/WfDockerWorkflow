@@ -2122,8 +2122,8 @@
             "type": "symfony-bundle",
             "autoload": {
                 "psr-4": {
-                    "Webtown\\WorkflowBundle\\Tests\\": "tests/",
-                    "Webtown\\WorkflowBundle\\": "src/"
+                    "Wf\\WorkflowBundle\\Tests\\": "tests/",
+                    "Wf\\WorkflowBundle\\": "src/"
                 }
             },
             "license": [

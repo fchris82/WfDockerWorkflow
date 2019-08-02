@@ -1,7 +1,7 @@
 read -r -d '' HELP <<-EOM
 ${BOLD}${WHITE}
-↻ Webtown Workflow
-==================
+↻ WF Docker Workflow
+====================
 ${RESTORE}
 Debug modes:
 

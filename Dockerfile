@@ -12,13 +12,13 @@ ENV APP_ENV dev
 ARG LOCALE=en_US
 ENV XDEBUG_CONFIG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disable
 # Useful paths
-ENV SYMFONY_PATH=/opt/webtown-workflow/symfony4
+ENV SYMFONY_PATH=/opt/wf-docker-workflow/symfony4
 ENV SYMFONY_CONSOLE=$SYMFONY_PATH/bin/console
 ENV WIZARDS_PATH=$SYMFONY_PATH/src/Wizards
 ENV RECIPES_PATH=$SYMFONY_PATH/src/Recipes
 
 # We want to get an error if it is missing!
-COPY tmp/opt/webtown-workflow /opt/webtown-workflow
+COPY tmp/opt/wf-docker-workflow /opt/wf-docker-workflow
 
 # Docker compose needs: https://docs.docker.com/compose/install/
 RUN set -x && apk update && \
@@ -51,12 +51,12 @@ RUN set -x && apk update && \
     apk del --purge .build-deps && \
     pip3 uninstall -y pip setuptools
 
-RUN APP_ENV=prod WF_SYMFONY_ENV=prod /opt/webtown-workflow/workflow.sh --composer-install --no-dev && \
-    chmod -R 777 /opt/webtown-workflow/symfony4/var/cache && \
-    chmod -R 777 /opt/webtown-workflow/symfony4/var/log && \
-    ln -sf /opt/webtown-workflow/workflow.sh /usr/local/bin/wf && \
-    ln -sf /opt/webtown-workflow/wizard.sh /usr/local/bin/wizard && \
-    ln -sf /opt/webtown-workflow/lib/wf-composer-require.sh /usr/local/bin/wf-composer-require
+RUN APP_ENV=prod WF_SYMFONY_ENV=prod /opt/wf-docker-workflow/workflow.sh --composer-install --no-dev && \
+    chmod -R 777 /opt/wf-docker-workflow/symfony4/var/cache && \
+    chmod -R 777 /opt/wf-docker-workflow/symfony4/var/log && \
+    ln -sf /opt/wf-docker-workflow/workflow.sh /usr/local/bin/wf && \
+    ln -sf /opt/wf-docker-workflow/wizard.sh /usr/local/bin/wizard && \
+    ln -sf /opt/wf-docker-workflow/lib/wf-composer-require.sh /usr/local/bin/wf-composer-require
 
 COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh

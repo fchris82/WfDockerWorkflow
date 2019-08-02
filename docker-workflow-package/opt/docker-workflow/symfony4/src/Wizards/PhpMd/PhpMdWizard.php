@@ -8,14 +8,14 @@
 
 namespace App\Wizards\PhpMd;
 
-use Webtown\WorkflowBundle\Environment\Commander;
-use Webtown\WorkflowBundle\Environment\EzEnvironmentParser;
-use Webtown\WorkflowBundle\Environment\IoManager;
-use Webtown\WorkflowBundle\Environment\WfEnvironmentParser;
-use Webtown\WorkflowBundle\Event\Wizard\BuildWizardEvent;
-use Webtown\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
-use Webtown\WorkflowBundle\Exception\WizardWfIsRequiredException;
-use Webtown\WorkflowBundle\Wizards\BaseSkeletonWizard;
+use Wf\WorkflowBundle\Environment\Commander;
+use Wf\WorkflowBundle\Environment\EzEnvironmentParser;
+use Wf\WorkflowBundle\Environment\IoManager;
+use Wf\WorkflowBundle\Environment\WfEnvironmentParser;
+use Wf\WorkflowBundle\Event\Wizard\BuildWizardEvent;
+use Wf\WorkflowBundle\Exception\WizardSomethingIsRequiredException;
+use Wf\WorkflowBundle\Exception\WizardWfIsRequiredException;
+use Wf\WorkflowBundle\Wizards\BaseSkeletonWizard;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Twig\Environment;

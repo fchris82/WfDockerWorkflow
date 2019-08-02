@@ -1,5 +1,5 @@
-Webtown Workflow install and uninstall
-======================================
+WF Docker Workflow install and uninstall
+========================================
 
 ## Requirements
 
@@ -94,7 +94,7 @@ You can register the autocomplete function:
 
 ```shell
 $ mkdir -p ~/.zsh/completion
-$ ln -sf ~/.webtown-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
+$ ln -sf ~/.wf-docker-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
 ```
 
 Edit the `~/.zshrc` file:
@@ -115,7 +115,7 @@ You have to register 1 directory and you should register 1 file in your global i
 - `/.wf` --> mandatory!!!
 - `/.wf.yml` --> recommanded
 
-> Both of them you can replace custom in the `~/.webtown-workflow/config/env` file. See [Configuration](/docs/wf-configuration.md).
+> Both of them you can replace custom in the `~/.wf-docker-workflow/config/env` file. See [Configuration](/docs/wf-configuration.md).
 
 **GIT**
 
@@ -162,8 +162,8 @@ It exactly download from git repository and run the `install-wf.sh` file again.
 ## Uninstall
 
     # Remove all symlink
-    $ find ~/bin -type l -ilname "*/.webtown-workflow/*" -delete
+    $ find ~/bin -type l -ilname "*/.wf-docker-workflow/*" -delete
     # Remove files
-    $ rm -rf ~/.webtown-workflow
+    $ rm -rf ~/.wf-docker-workflow
 
     # @todo Remove source files from shell rc files

@@ -43,8 +43,8 @@ if [ ! -z "${LOCAL_USER_NAME}" ]; then
     export HOME=${LOCAL_USER_HOME}
 
     if [ "$USER_ID" != "$CURRENT_USER" ]; then
-        [[ -f /opt/webtown-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/.env
-        [[ -f /opt/webtown-workflow/symfony4/var ]] && chown -R ${USER_ID} /opt/webtown-workflow/symfony4/var
+        [[ -f /opt/wf-docker-workflow/symfony4/.env ]] && chown -R ${USER_ID} /opt/wf-docker-workflow/symfony4/.env
+        [[ -f /opt/wf-docker-workflow/symfony4/var ]] && chown -R ${USER_ID} /opt/wf-docker-workflow/symfony4/var
 
         su-exec ${LOCAL_USER_NAME} "$@"
     else

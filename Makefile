@@ -30,7 +30,7 @@ done
 CMD=$$1
 shift
 
-WF_DEBUG=$${WF_DEBUG} $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop $$CMD $$DEV $$@
+WF_DEBUG=$${WF_DEBUG} $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/docker-workflow-package/opt/wf-docker-workflow/host/bin/workflow_runner.sh --develop $$CMD $$DEV $$@
 endef
 export DEV_SH_FILE_CONTENT
 
@@ -39,7 +39,7 @@ export DEV_SH_FILE_CONTENT
 init-developing:
 	mkdir -p ~/bin
 	@echo "$$DEV_SH_FILE_CONTENT" > ~/bin/wfdev && chmod +x ~/bin/wfdev
-	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
+	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/docker-workflow-package/opt/wf-docker-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
 
 # Upgrade the version number. It needs a PACKAGE version!!!
 .PHONY: __versionupgrade
@@ -73,10 +73,10 @@ __build_rsync:
 	mkdir -p tmp
 	rsync -r --delete --delete-excluded --delete-before --force \
         --exclude=.git \
-        --exclude-from="$$(git -C webtown-workflow-package ls-files \
+        --exclude-from="$$(git -C docker-workflow-package ls-files \
             --exclude-standard -oi --directory >.git/ignores.tmp && \
             echo .git/ignores.tmp)" \
-        webtown-workflow-package/* tmp
+        docker-workflow-package/* tmp
 
 .PHONY: __build_cleanup
 __build_cleanup:
@@ -95,7 +95,7 @@ build_proxy: __versionupgrade
 # DEV!
 .PHONY: enter
 enter:
-	webtown-workflow-package/opt/webtown-workflow/host/bin/workflow_runner.sh /bin/bash
+	docker-workflow-package/opt/wf-docker-workflow/host/bin/workflow_runner.sh /bin/bash
 
 .PHONY: __get_image_tag
 # Don't use this variable in ifeq!!!
@@ -137,7 +137,7 @@ phpunit:
 
 phpunit-coverage:
 	~/bin/wfdev wf --sf-run vendor/bin/phpunit --coverage-html phpcoverage \
-	&& echo "Coverage dir: \033[33mwebtown-workflow-package/opt/webtown-workflow/symfony4/phpcoverage\033[0m❌"
+	&& echo "Coverage dir: \033[33mdocker-workflow-package/opt/wf-docker-workflow/symfony4/phpcoverage\033[0m❌"
 
 .PHONY: phpcsfix
 phpcsfix:
