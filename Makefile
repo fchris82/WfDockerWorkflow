@@ -42,6 +42,7 @@ init-developing:
 	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/docker-workflow-package/opt/wf-docker-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
 
 # Upgrade the version number. It needs a PACKAGE version!!!
+# @todo Ez így nem jó, mert ezt használjuk az nginx-hez és a wf-hez is, de ez mostmár két külön verziószám
 .PHONY: __versionupgrade
 __versionupgrade:
     # We automatically change in master and develop branch!
@@ -137,7 +138,7 @@ phpunit:
 
 phpunit-coverage:
 	~/bin/wfdev wf --sf-run vendor/bin/phpunit --coverage-html phpcoverage \
-	&& echo "Coverage dir: \033[33mdocker-workflow-package/opt/wf-docker-workflow/symfony4/phpcoverage\033[0m❌"
+	&& echo "Coverage dir: \033[33mdocker-workflow-package/opt/wf-docker-workflow/symfony4/phpcoverage\033[0m"
 
 .PHONY: phpcsfix
 phpcsfix:

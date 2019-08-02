@@ -284,10 +284,7 @@
     "webmozart/assert": {
         "version": "1.4.0"
     },
-    "webtown/wf-extension": {
-        "version": "dev-master"
-    },
-    "wf/docker-workflow-bundle": {
-        "version": "dev-master"
+    "wf-chris/docker-workflow-bundle": {
+        "version": "1.0.0"
     }
 }

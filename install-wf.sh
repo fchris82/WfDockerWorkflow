@@ -97,7 +97,7 @@ for file in $BASH_FILE_TRACES; do
 done
 IFS=$OLDIFS
 if [ -f "$BASH_PROFILE_FILE" ] && [ "$(basename "$BASH_PROFILE_FILE")" != ".bash_history" ] \
-    && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]/.wf-docker-workflow/bin/bash/extension.sh" | wc -l) == 0 ]; then
+    && [ $(cat $BASH_PROFILE_FILE | egrep "^[^#]*source[^#]*/.wf-docker-workflow/bin/bash/extension.sh" | wc -l) == 0 ]; then
         echo -e "\n# WF extension\nsource ~/.wf-docker-workflow/bin/bash/extension.sh\nsource ~/.wf-docker-workflow/bin/bash/autocomplete.sh\n" >> $BASH_PROFILE_FILE
         # Reload the shell if it needs
         if [ "$(basename "$SHELL")" == "bash" ]; then
@@ -113,7 +113,7 @@ if [ -f ~/.zshrc ]; then
     mkdir -p ~/.zsh/completion
     ln -sf ~/.wf-docker-workflow/bin/zsh/autocomplete.sh ~/.zsh/completion/_wf
     if [ $(echo $fpath | egrep ~/.zsh/completion | wc -l) == 0 ] \
-        && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]/.wf-docker-workflow/bin/zsh/extension.sh" | wc -l) == 0 ]; then
+        && [ $(cat ~/.zshrc | egrep "^[^#]*source[^#]*/.wf-docker-workflow/bin/zsh/extension.sh" | wc -l) == 0 ]; then
             echo -e "\n# WF extension\nsource ~/.wf-docker-workflow/bin/zsh/extension.sh\n" >> ~/.zshrc
             echo -e "${GREEN}We register the the ZSH autoload extension in the ${YELLOW}~/.zshrc${GREEN} file!${RESTORE}"
             # Reload the shell if it needs

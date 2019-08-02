@@ -162,35 +162,6 @@ if [ -L ${WORKDIR}/${WF_ENV_FILE_NAME} ]; then
     ENV_FILE_SHARE="-v ${env_link}:${env_link}"
 fi
 
-# @todo (Chris) !!! Az új megoldást adoptálni: /extensions/recipes + /extensions/wizards
-if [ -f ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes ]; then
-    EXTENSIONS_SHARE=$(cat ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes)
-else
-    if [ -d ${DOCKER_WORKFLOW_BASE_PATH}/extensions ]; then
-        RECIPES_SHARE=$(find -L ${DOCKER_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${DOCKER_WORKFLOW_BASE_PATH}/extensions/*/Recipes/*" -type d -print0 |
-            while IFS= read -r -d $'\0' line; do
-                RECIPES_SOURCE=$line
-                if [ -L $RECIPES_SOURCE ]; then
-                    RECIPES_SOURCE=$(readlink -f ${RECIPES_SOURCE})
-                fi
-                echo -e "-v ${RECIPES_SOURCE}:${RECIPES_PATH}/$(basename $line) \c"
-            done
-        )
-
-        WIZARDS_SHARE=$(find -L ${DOCKER_WORKFLOW_BASE_PATH}/extensions -mindepth 3 -maxdepth 3 -path "${DOCKER_WORKFLOW_BASE_PATH}/extensions/*/Wizards/*" -type d -print0 |
-            while IFS= read -r -d $'\0' line; do
-                WIZARDS_SOURCE=$line
-                if [ -L $WIZARDS_SOURCE ]; then
-                    WIZARDS_SOURCE=$(readlink -f ${WIZARDS_SOURCE})
-                fi
-                echo -e "-v ${WIZARDS_SOURCE}:${WIZARDS_PATH}/$(basename $line) \c"
-            done
-        )
-        EXTENSIONS_SHARE="${RECIPES_SHARE}${WIZARDS_SHARE}"
-        echo -e "${EXTENSIONS_SHARE}\c" > ${DOCKER_WORKFLOW_BASE_PATH}/cache/extensions.volumes
-    fi
-fi
-
 # You should handle the `WF_DOCKER_HOST_CHAIN` as unique, because the quotes cause some problem if you want to use in an other variable!
 docker run ${TTY} \
             ${DOCKER_COMPOSE_ENV} \
@@ -200,7 +171,6 @@ docker run ${TTY} \
             ${CONFIG_FILE_SHARE} \
             ${ENV_FILE_SHARE} \
             -v ${RUNNER_HOME:-$HOME}:${HOME} \
-            ${EXTENSIONS_SHARE} \
             ${SHARED_SF_CACHE} \
             ${SHARED_WIZARD_CONFIGURATION} \
             -v /var/run/docker.sock:/var/run/docker.sock \

@@ -2,7 +2,7 @@
 FROM php:7.3-cli-alpine
 
 LABEL workflow-base=true
-ENV WF_VERSION=2.323
+ENV WF_VERSION=2.327
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -14,8 +14,6 @@ ENV XDEBUG_CONFIG_FILE=/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini.disab
 # Useful paths
 ENV SYMFONY_PATH=/opt/wf-docker-workflow/symfony4
 ENV SYMFONY_CONSOLE=$SYMFONY_PATH/bin/console
-ENV WIZARDS_PATH=$SYMFONY_PATH/src/Wizards
-ENV RECIPES_PATH=$SYMFONY_PATH/src/Recipes
 
 # We want to get an error if it is missing!
 COPY tmp/opt/wf-docker-workflow /opt/wf-docker-workflow

@@ -31,13 +31,10 @@ Use the `install-wf.sh` installer. There are 3 options:
 
 ```shell
 # Use curl
-bash -c "$(curl -fsSL https://gitlab.webtown.hu/pub/wf/raw/master/install-wf.sh?inline=false)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/fchris82/WfDockerWorkflow/master/install-wf.sh)"
 
 # Use wget
-bash -c "$(wget https://gitlab.webtown.hu/pub/wf/raw/master/install-wf.sh?inline=false -O -)"
-
-# OR use git
-bash -c "$(git archive --remote=git@gitlab.webtown.hu:pub/wf.git ${2:-HEAD} install-wf.sh | tar xO)"
+bash -c "$(wget https://raw.githubusercontent.com/fchris82/WfDockerWorkflow/master/install-wf.sh -O -)"
 ```
 
 After run, you have reload the shell. You will see a message, like this:
