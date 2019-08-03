@@ -1,5 +1,5 @@
 # For self update:
-WF_PROGRAM_REPOSITORY=git@gitlab.webtown.hu:pub/wf.git
+WF_PROGRAM_REPOSITORY=git@github.com:fchris82/WfDockerWorkflow.git
 
 # Directory structure
 WF_WORKING_DIRECTORY_NAME=.wf

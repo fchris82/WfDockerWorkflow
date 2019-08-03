@@ -79,7 +79,7 @@ CI=${CI:-0}
 # WF
 # We look at the TTY existing. If we are in docker then the "-t 1" doesn't work well
 if [ -z "${WF_TTY}" ] && [ -t 1 ]; then WF_TTY=1; else WF_TTY=0; fi
-WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:pub/wf.git}
+WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@github.com:fchris82/WfDockerWorkflow.git}
 WF_SYMFONY_ENV=${WF_SYMFONY_ENV:-prod}
 WF_WORKING_DIRECTORY_NAME=${WF_WORKING_DIRECTORY_NAME:-.wf}
 WF_CONFIGURATION_FILE_NAME=${WF_CONFIGURATION_FILE_NAME:-.wf.yml}

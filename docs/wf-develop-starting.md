@@ -17,7 +17,7 @@ $ sudo apt-get update && sudo apt-get install git makefile jq
 
 ```shell
 # Clone the project
-$ git clone git@gitlab.webtown.hu:pub/wf.git
+$ git clone git@github.com:fchris82/WfDockerWorkflow.git
 # Step into the directory
 $ cd wf
 # Create a `wfdev` helper command to your ~/bin directory and call composer install

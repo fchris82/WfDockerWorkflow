@@ -7,7 +7,7 @@ In most of case the default configuration is more than enough, but if you have s
 
 | Parameter | Default | Description |
 |:--------- |:------- |:----------- |
-| `WF_PROGRAM_REPOSITORY` | `git@gitlab.webtown.hu:pub/wf.git` | The `wf -u` command trys to download the new version from here. |
+| `WF_PROGRAM_REPOSITORY` | `git@github.com:fchris82/WfDockerWorkflow.git` | The `wf -u` command trys to download the new version from here. |
 | `WF_WORKING_DIRECTORY_NAME` | `.wf` | The program will be generate project configuration in this directory. [You have to register this name in the version control global ignore file](/docs/wf-install.md#vcignore)! |
 | `WF_CONFIGURATION_FILE_NAME` | `.wf.yml` | The program will look for this file or its `.dist` version in the project directory. [It is recommanded to register this name in the version control global ignore file](/docs/wf-install.md#vcignore)! |
 | `WF_ENV_FILE_NAME` | `.wf.env` | You can create an environment file for docker containers. |

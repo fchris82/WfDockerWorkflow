@@ -16,7 +16,7 @@ DOCKER_WORKFLOW_BASE_PATH=${DOCKER_WORKFLOW_BASE_PATH:-~/.wf-docker-workflow}
 set -a
 [ -f ${DOCKER_WORKFLOW_BASE_PATH}/config/env ] && . ${DOCKER_WORKFLOW_BASE_PATH}/config/env
 set +a
-WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@gitlab.webtown.hu:pub/wf.git}
+WF_PROGRAM_REPOSITORY=${WF_PROGRAM_REPOSITORY:-git@github.com:fchris82/WfDockerWorkflow.git}
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
