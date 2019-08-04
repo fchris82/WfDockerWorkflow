@@ -61,6 +61,6 @@ I tried as much function to solve as many as I could. Symfony is "slow", I tried
 3. Create base makefile name --> \[HASH].\[WF_VERSION].mk
 4. If the file doesn't exist --> create by Symfony with environments and recipe files
 5. Call the base makefile
-6. In most of case a docker or docker-compose command runs
+6. In most cases a docker or docker-compose command runs
 
 <!-- TODO van egy --dev paraméter, amivel állítólag xdebug-gal futnak a dolgok -->
