@@ -5,8 +5,23 @@ Nginx Reverse Proxy
 
 ### Install the deb package
 
-    git archive --remote=git@github.com:fchris82/WfDockerWorkflow.git ${2:-HEAD} nginx-reverse-proxy.deb | tar xO > /tmp/nginx-reverse-proxy.deb
-    sudo dpkg -i /tmp/nginx-reverse-proxy.deb
+Select you preferred way (`wget` OR `curl` OR `git`):
+
+```shell
+# Use wget
+wget https://raw.githubusercontent.com/fchris82/WfDockerWorkflow/master/nginx-reverse-proxy.deb -P /tmp/
+sudo dpkg -i /tmp/nginx-reverse-proxy.deb
+
+# --------------------
+# Use curl
+curl -o /tmp/nginx-reverse-proxy.deb https://raw.githubusercontent.com/fchris82/WfDockerWorkflow/master/nginx-reverse-proxy.deb
+sudo dpkg -i /tmp/nginx-reverse-proxy.deb
+
+# --------------------
+# Use git
+git archive --remote=git@github.com:fchris82/WfDockerWorkflow.git ${2:-HEAD} nginx-reverse-proxy.deb | tar xO > /tmp/nginx-reverse-proxy.deb
+sudo dpkg -i /tmp/nginx-reverse-proxy.deb
+```
 
 The configuration files are in the `/etc/nginx-reverse-proxy` directory. Eg: you can change the default port in `config` file.
 
