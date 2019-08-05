@@ -141,7 +141,7 @@ alias php5='docker run --rm --interactive --tty \
 
 You can use the `NPM_CONFIG_LOGLEVEL`, eg: `NPM_CONFIG_LOGLEVEL=info` . More information: https://hub.docker.com/_/node and https://github.com/nodejs/docker-node/blob/master/README.md#how-to-use-this-image
 
-```
+```bash
 alias node='docker run --rm --interactive --tty \
                 --env HOME \
                 --env NPM_CONFIG_LOGLEVEL \
@@ -164,7 +164,7 @@ alias npm='docker run --rm --interactive --tty \
 
 https://hub.docker.com/_/iojs
 
-```
+```bash
 alias node='docker run --rm --interactive --tty \
                 --env HOME \
                 --volume "$PWD":/usr/src/app \
@@ -178,7 +178,7 @@ alias node='docker run --rm --interactive --tty \
 
 https://hub.docker.com/_/ruby
 
-```
+```bash
 alias ruby='docker run --rm --interactive --tty \
                 --env HOME \
                 --env LANG \
@@ -194,7 +194,7 @@ https://hub.docker.com/_/mysql
 
 > You have to use the `127.0.0.1` instead of `localhost`! More information about network setting: https://docs.docker.com/engine/reference/run/#network-host
 
-```
+```bash
 alias mysql='docker run --rm --interactive --tty \
                 --network=host \
                 --volume "$PWD":/usr/src/myapp \
@@ -212,7 +212,7 @@ alias mysqldump='docker run --rm --interactive --tty \
 
 https://hub.docker.com/_/mongo
 
-```
+```bash
 alias mysql='docker run --rm --interactive --tty \
                 --network=host \
                 --volume "$PWD":/usr/src/myapp \
