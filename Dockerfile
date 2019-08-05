@@ -2,7 +2,7 @@
 FROM php:7.3-cli-alpine
 
 LABEL workflow-base=true
-ENV WF_VERSION=2.327
+ENV WF_VERSION=2.331
 
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
@@ -30,10 +30,6 @@ RUN set -x && apk update && \
     echo "xdebug.remote_port=9000" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_handler=dbgp" >> $XDEBUG_CONFIG_FILE && \
     echo "xdebug.remote_connect_back=0" >> $XDEBUG_CONFIG_FILE && \
-    # @todo Ez a megoldás +200 MB, de elméletileg kihozható ennél kisebbre is.
-    apk --no-cache --virtual .dc-deps add python3-dev libffi-dev openssl-dev gcc libc-dev && \
-    pip3 install --upgrade pip && \
-    pip3 install docker-compose && \
     # Install yq.
     # http://mikefarah.github.io/yq/
     YQ_URL=https://github.com$(wget -q -O- https://github.com/mikefarah/yq/releases/latest \
@@ -46,10 +42,44 @@ RUN set -x && apk update && \
     curl -sS https://getcomposer.org/installer | php && \
     mv composer.phar /usr/local/bin/composer && \
     touch /var/lib/dpkg/status && \
-    apk del --purge .build-deps && \
-    pip3 uninstall -y pip setuptools
+    apk del --purge .build-deps
 
-RUN APP_ENV=prod WF_SYMFONY_ENV=prod /opt/wf-docker-workflow/workflow.sh --composer-install --no-dev && \
+# Install docker compose -->
+RUN set -x && \
+    apk add --no-cache -t .deps ca-certificates && \
+    # Install glibc on Alpine (required by docker-compose) from
+    # https://github.com/sgerrand/alpine-pkg-glibc
+    # See also https://github.com/gliderlabs/docker-alpine/issues/11
+    wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget https://github.com/sgerrand/alpine-pkg-glibc/releases/download/2.29-r0/glibc-2.29-r0.apk && \
+    apk add glibc-2.29-r0.apk && \
+    rm glibc-2.29-r0.apk && \
+    apk del --purge .deps
+
+# Required for docker-compose to find zlib.
+ENV LD_LIBRARY_PATH=/lib:/usr/lib
+
+RUN set -x && \
+    apk add --no-cache -t .deps ca-certificates && \
+    # Required dependencies.
+    apk add --no-cache zlib libgcc && \
+    # Install docker-compose.
+    # https://docs.docker.com/compose/install/
+    DOCKER_COMPOSE_URL=https://github.com$(wget -q -O- https://github.com/docker/compose/releases/latest \
+        | grep -Eo 'href="[^"]+docker-compose-Linux-x86_64' \
+        | sed 's/^href="//' \
+        | head -n1) && \
+    wget -q -O /usr/local/bin/docker-compose $DOCKER_COMPOSE_URL && \
+    chmod a+rx /usr/local/bin/docker-compose && \
+    \
+    # Clean-up
+    apk del --purge .deps && \
+    \
+    # Basic check it works
+    docker-compose version
+# <-- Install docker compose
+
+RUN APP_ENV=prod WF_SYMFONY_ENV=prod /opt/wf-docker-workflow/workflow.sh --composer-install --optimize-autoloader --no-dev && \
     chmod -R 777 /opt/wf-docker-workflow/symfony4/var/cache && \
     chmod -R 777 /opt/wf-docker-workflow/symfony4/var/log && \
     ln -sf /opt/wf-docker-workflow/workflow.sh /usr/local/bin/wf && \
