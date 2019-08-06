@@ -51,7 +51,7 @@ The `wfdev` adds 2 argument to your calling:
 
 `wfdev wf --help` --> `workflow_runner.sh --develop wf --dev --help`
 
-If you use the `--develop` attribute, the program create a docker volume to override the "original" `opt/wf-docker-workflow` directory with the cloned and edited `[project dir]/docker-workflow-package/opt/wf-docker-workflow` directory. Now you can test and check the working with the new code(s). **It is important**: the program will use your `~/.wf-docker-workflow/config/*` files! If you want to play with configs you have to test with your "host" file, and then you have to copy the changes to "here".
+If you use the `--develop` attribute, the program create a docker volume to override the "original" `opt/wf-docker-workflow` directory with the cloned and edited `[project dir]/packages/wf-docker-workflow/opt/wf-docker-workflow` directory. Now you can test and check the working with the new code(s). **It is important**: the program will use your `~/.wf-docker-workflow/config/*` files! If you want to play with configs you have to test with your "host" file, and then you have to copy the changes to "here".
 
 > There are two useful arguments:
 >
@@ -104,7 +104,7 @@ You can call commands with `WF_DEBUG` environment. Example: you can set it in `.
 then you will be able to analyse the program.
 
 > `make` command arguments: https://www.gnu.org/software/make/manual/html_node/Options-Summary.html
-> You can change the behavior in the **docker-workflow-package/opt/wf-docker-workflow/lib/_functions.sh** file
+> You can change the behavior in the **packages/wf-docker-workflow/opt/wf-docker-workflow/lib/_functions.sh** file
 
 ### Generally, the `WF_DEBUG`
 

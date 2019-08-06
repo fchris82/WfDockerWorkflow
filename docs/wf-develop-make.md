@@ -5,7 +5,7 @@ Make commands
 
 ### `build_proxy`
 
-If you change something in the `nginx-reverse-proxy-package`, you have to rebuild the `nginx-reverse-proxy.dep` file. You can do this with it.
+If you change something in the `packages/nginx-reverse-proxy`, you have to rebuild the `nginx-reverse-proxy.dep` file. You can do this with it.
 
 #### Versioning
 
