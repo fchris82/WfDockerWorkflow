@@ -42,9 +42,32 @@ init-developing:
 	$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))/docker-workflow-package/opt/wf-docker-workflow/host/bin/workflow_runner.sh --develop wf --dev --composer-install --dev
 
 # Upgrade the version number. It needs a PACKAGE version!!!
-# @todo Ez így nem jó, mert ezt használjuk az nginx-hez és a wf-hez is, de ez mostmár két külön verziószám
-.PHONY: __versionupgrade
-__versionupgrade:
+.PHONY: __versionupgrade_deb
+__versionupgrade_deb:
+    # We automatically change in master and develop branch!
+    # Don't use variable in ifeq! The $(shell) is only way!
+    ifneq ($(shell git rev-parse --abbrev-ref HEAD),master)
+        ifneq ($(shell git rev-parse --abbrev-ref HEAD),develop)
+			$(eval nochange = 1)
+        endif
+    endif
+    ifeq (,$(KEEPVERSION))
+        ifeq (,$(VERSION))
+            # Original Version + New Version
+			@if [ -z "$(nochange)" ]; then ov=$$(grep Version $(PACKAGE)/DEBIAN/control | egrep -o '[0-9\.]*'); \
+				nv=$$(echo "$${ov%.*}.$$(($${ov##*.}+1))"); \
+				sed -i -e "s/Version: *$${ov}/Version: $${nv}/" $(PACKAGE)/DEBIAN/control; \
+				echo "Version: $${nv}"; \
+			fi
+        else
+			sed -i -e "s/Version: *[0-9\.]*/Version: $(VERSION)/" $(PACKAGE)/DEBIAN/control; \
+				echo "Version: $(VERSION)"
+        endif
+    endif
+
+# Upgrade the version number.
+.PHONY: __versionupgrade_dockerfile
+__versionupgrade_dockerfile:
     # We automatically change in master and develop branch!
     # Don't use variable in ifeq! The $(shell) is only way!
     ifneq ($(shell git rev-parse --abbrev-ref HEAD),master)
@@ -58,11 +81,10 @@ __versionupgrade:
 			@if [ -z "$(nochange)" ]; then ov=$$(grep WF_VERSION Dockerfile | egrep -o '[0-9\.]*'); \
 				nv=$$(echo "$${ov%.*}.$$(($${ov##*.}+1))"); \
 				sed -i -e "s/ENV WF_VERSION=*$${ov}/ENV WF_VERSION=$${nv}/" Dockerfile; \
-				sed -i -e "s/Version: *$${ov}/Version: $${nv}/" $(PACKAGE)/DEBIAN/control; \
 				echo "Version: $${nv}"; \
 			fi
         else
-			sed -i -e "s/Version: *[0-9\.]*/Version: $(VERSION)/" $(PACKAGE)/DEBIAN/control; \
+			sed -i -e "s/ENV WF_VERSION=*$${ov}/ENV WF_VERSION=$(VERSION)/" Dockerfile; \
 				echo "Version: $(VERSION)"
         endif
     endif
@@ -90,7 +112,7 @@ rebuild_proxy: build_proxy
 # Build nginx proxy deb package
 .PHONY: build_proxy
 build_proxy: PACKAGE := nginx-reverse-proxy-package
-build_proxy: __versionupgrade
+build_proxy: __versionupgrade_deb
 	dpkg -b $(PACKAGE) nginx-reverse-proxy.deb
 
 # DEV!
@@ -111,7 +133,7 @@ __get_image_tag:
 
 # Create a docker image
 .PHONY: __build_docker
-__build_docker: __versionupgrade __get_image_tag
+__build_docker: __versionupgrade_dockerfile __get_image_tag
 	docker build --no-cache -t $(IMAGE) .
 
 # Create a docker image
