@@ -1,0 +1,7 @@
+# You can edit this file with the `wizard --config` command!
+
+Wf\DockerWorkflowBundle\Tests\Resources\Wizard\Configuration\MissingWizard:
+    name: 'Missing class'
+    enabled: true
+    group: ''
+    priority: 0

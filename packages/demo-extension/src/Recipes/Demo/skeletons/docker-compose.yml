@@ -1,0 +1,8 @@
+version: "{{ config.docker_compose.version }}"
+
+services:
+{% for service in services %}
+    {{ service }}:
+        environment:
+            - "DEMO_EXTENSION_ENV={{ value }}"
+{% endfor %}

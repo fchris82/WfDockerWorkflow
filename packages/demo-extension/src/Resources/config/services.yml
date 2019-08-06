@@ -1,0 +1,18 @@
+services:
+    Wf\DemoExtension\Recipes\Demo\DemoRecipe:
+        arguments:
+            - "@twig"
+            - "@Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface"
+        tags:
+            - { name: wf.recipe }
+
+
+    Wf\DemoExtension\Wizards\Demo\DemoWizard:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Environment\\IoManager"
+            - "@Wf\\DockerWorkflowBundle\\Environment\\Commander"
+            - "@Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface"
+            - "@twig"
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+        tags:
+            - { name: wf.wizard }

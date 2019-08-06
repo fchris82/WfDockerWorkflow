@@ -1,0 +1,73 @@
+parameters:
+    wf.wizard_user_configuration_file: '%env(HOME)%/.wf-docker-workflow/config/wizards.yml'
+
+services:
+    _defaults:
+        public: false
+
+    Wf\DockerWorkflowBundle\Configuration\RecipeManager:
+        public: true
+    Wf\DockerWorkflowBundle\Configuration\Environment:
+        public: true
+    Wf\DockerWorkflowBundle\Wizard\Manager:
+        public: true
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Wizard\\Configuration"
+
+    Wf\DockerWorkflowBundle\Configuration\Builder:
+        arguments:
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+            - "@Wf\\DockerWorkflowBundle\\Configuration\\RecipeManager"
+            - "@Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface"
+
+    Wf\DockerWorkflowBundle\Configuration\Configuration:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Configuration\\RecipeManager"
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+            - "@Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface"
+
+    Wf\DockerWorkflowBundle\Environment\Commander:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Environment\\IoManager"
+            - "@Wf\\DockerWorkflowBundle\\Environment\\WfEnvironmentParser"
+
+    Wf\DockerWorkflowBundle\Environment\EnvParser: ~
+
+    Wf\DockerWorkflowBundle\Environment\EzEnvironmentParser:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Environment\\IoManager"
+            - "@Wf\\DockerWorkflowBundle\\Environment\\MicroParser\\ComposerInstalledVersionParser"
+
+    Wf\DockerWorkflowBundle\Environment\IoManager:
+        tags:
+            - { name: 'kernel.event_subscriber' }
+
+    Wf\DockerWorkflowBundle\Environment\SymfonyEnvironmentParser:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Environment\\IoManager"
+            - "@Wf\\DockerWorkflowBundle\\Environment\\MicroParser\\ComposerInstalledVersionParser"
+
+    Wf\DockerWorkflowBundle\Environment\WfEnvironmentParser:
+        arguments:
+            - "@Wf\\DockerWorkflowBundle\\Configuration\\Configuration"
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+
+    Wf\DockerWorkflowBundle\Environment\MicroParser\ComposerInstalledVersionParser:
+        arguments:
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+
+    Wf\DockerWorkflowBundle\Environment\MicroParser\ComposerJsonInformationParser:
+        arguments:
+            - "@Symfony\\Component\\Filesystem\\Filesystem"
+
+    Wf\DockerWorkflowBundle\Wizard\Configuration:
+        arguments:
+            - "%wf.wizard_user_configuration_file%"
+
+    Wf\DockerWorkflowBundle\Recipes\CreateBaseRecipe\Recipe:
+        arguments:
+            - "@twig"
+            - "@Symfony\\Contracts\\EventDispatcher\\EventDispatcherInterface"
+            - "@Wf\\DockerWorkflowBundle\\Configuration\\Environment"
+        tags:
+            - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -999 }
