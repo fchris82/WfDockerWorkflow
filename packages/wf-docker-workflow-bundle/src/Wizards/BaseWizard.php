@@ -150,7 +150,7 @@ abstract class BaseWizard implements WizardInterface
         );
     }
 
-    protected function getDockerCmdExtraParameters(string $targetProjectDirectory): string
+    protected function getDockerCmdExtraParameters(string $targetProjectDirectory = null): string
     {
         return '';
     }
