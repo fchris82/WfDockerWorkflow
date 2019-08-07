@@ -8,7 +8,7 @@
             "email": "ferenczi.krisztian@gmail.com"
         }
     ],
-    "type": "library",
+    "type": "project",
     "require": {
         "ext-iconv": "*",
         "php": "^7.3",
