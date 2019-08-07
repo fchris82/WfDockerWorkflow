@@ -1,0 +1,24 @@
+parameters:
+    package_alias_format: '<major>.<minor>.x-dev' # default: "<major>.<minor>-dev"
+
+    merge_sections:
+        # default values
+        - 'require'
+        - 'require-dev'
+        - 'autoload'
+        - 'autoload-dev'
+        - 'repositories'
+
+    # for "merge" command
+    data_to_append:
+        require-dev:
+            phpunit/phpunit: '^7.3'
+            symplify/monorepo-builder: '^4.7'
+
+    # for "split" command
+    directories_to_repositories:
+        packages/demo-extension: 'git@github.com:fchris82/WfDemoExtension.git'
+        packages/symfony-docker-images: 'git@github.com:fchris82/docker-symfony.git'
+        packages/nginx-reverse-proxy: 'git@github.com:fchris82/WfNginxReverseProxy.git'
+        packages/wf-docker-workflow: 'git@github.com:fchris82/WfPackage.git'
+        packages/wf-docker-workflow-bundle: 'git@github.com:fchris82/WfDockerWorkflowBundle.git'
