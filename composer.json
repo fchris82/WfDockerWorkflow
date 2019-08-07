@@ -1,4 +1,14 @@
 {
+    "name": "wf-chris/docker-workflow",
+    "description": "Docker based workflow support for developing",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Krisztián Ferenczi",
+            "email": "ferenczi.krisztian@gmail.com"
+        }
+    ],
+    "type": "library",
     "require": {
         "ext-iconv": "*",
         "php": "^7.3",
