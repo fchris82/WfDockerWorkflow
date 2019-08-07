@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "wf-chris/docker-workflow-bundle": "^1.1.3"
+        "wf-chris/docker-workflow-bundle": "^1.1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.3",
