@@ -71,3 +71,7 @@ services:
             - "@Wf\\DockerWorkflowBundle\\Configuration\\Environment"
         tags:
             - { name: 'kernel.event_listener', event: 'wf.configuration.event.register.postbuild', priority: -999 }
+
+    Wf\DockerWorkflowBundle\Twig\Extension\TextExtension:
+        tags:
+            - { name: 'twig.extension' }
