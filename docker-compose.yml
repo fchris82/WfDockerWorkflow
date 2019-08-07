@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+
+    develop:
+        build: .
+        command: /bin/bash
+        working_dir: ${PWD}
+        volumes:
+            - ${PWD}:${PWD}:delegated
+        user: ${CURRENT_UID}
