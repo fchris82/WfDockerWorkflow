@@ -17,5 +17,5 @@ commands:
         - ${@}
 
     sfcmd:
-        - cd packages/wf-docker-workflow/opt/wf-docker-workflow/symfony4
+        - cd packages/wf-docker-workflow/src/opt/wf-docker-workflow/symfony4
         - ${@}

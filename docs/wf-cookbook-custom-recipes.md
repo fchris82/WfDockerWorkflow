@@ -23,7 +23,7 @@ $ wf --reload
 
 ## How to write custom recipe
 
-> You can find the included recipes in the `packages/wf-docker-workflow/opt/wf-docker-workflow/symfony4/src/Recipes` directory.
+> You can find the included recipes in the `packages/wf-docker-workflow/src/opt/wf-docker-workflow/symfony4/src/Recipes` directory.
 
 **Important**
 

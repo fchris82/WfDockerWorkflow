@@ -3,7 +3,7 @@ Create ZSH autocomplete file
 
 If you want to extend the ZSH autocomplete you should read it before: https://github.com/zsh-users/zsh-completions/blob/master/zsh-completions-howto.org It is a short, but fully description about bases.
 
-As you can see in the `packages/wf-docker-workflow/opt/wf-docker-workflow/host/bin/zsh/autocomplete.sh` file, the script include the outer
+As you can see in the `packages/wf-docker-workflow/src/opt/wf-docker-workflow/host/bin/zsh/autocomplete.sh` file, the script include the outer
 autcomplete files:
 
 ```sh
