@@ -34,7 +34,7 @@ RESTORE=$'\x1B[0m'
 
 # --> PRE CHECK
 # Docker is installed?
-if ! $(command -v docker); then
+if [[ ! $(command -v docker) ]]; then
     echo "${RED}${BOLD}You need installed ${YELLOW}${BOLD}docker${RED}${BOLD}! First install it!${RESTORE}";
     echo "${RED}${BOLD}Installation failed!${RESTORE}"
     exit 1
