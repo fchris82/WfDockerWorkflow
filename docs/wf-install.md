@@ -164,9 +164,11 @@ It exactly download from git repository and run the `install-wf.sh` file again.
 
 ## Uninstall
 
-    # Remove all symlink
-    $ find ~/bin -type l -ilname "*/.wf-docker-workflow/*" -delete
-    # Remove files
-    $ rm -rf ~/.wf-docker-workflow
+```shell
+# Remove all symlink
+$ find ~/bin -type l -ilname "*/.wf-docker-workflow/*" -delete
+# Remove files
+$ rm -rf ~/.wf-docker-workflow
 
-    # @todo Remove source files from shell rc files
+# @todo Remove source files from shell rc files
+```
