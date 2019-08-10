@@ -1,6 +1,3 @@
-# For self update:
-WF_PROGRAM_REPOSITORY=git@gitlab.webtown.hu:pub/wf.git
-
 # Directory structure
 WF_WORKING_DIRECTORY_NAME=.wf
 WF_CONFIGURATION_FILE_NAME=.wf.yml

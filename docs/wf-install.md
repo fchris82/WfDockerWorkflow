@@ -35,6 +35,12 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/fchris82/WfDockerWorkflo
 
 # Use wget
 bash -c "$(wget https://raw.githubusercontent.com/fchris82/WfDockerWorkflow/master/install-wf.sh -O -)"
+
+# Use git (you can use private repo if you follow this option)
+git archive --remote=git@github.com:fchris82/WfDockerWorkflow.git HEAD install-wf.sh | tar xO > /tmp/install-wf.sh
+chmod +x /tmp/install-wf.sh
+/tmp/install-wf.sh
+rm /tmp/install-wf.sh
 ```
 
 After run, you have reload the shell. You will see a message, like this:
