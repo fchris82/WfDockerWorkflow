@@ -34,7 +34,7 @@ RESTORE=$'\x1B[0m'
 
 # --> PRE CHECK
 # Docker is installed?
-if ! $(dpkg -l | grep -E '^ii' | grep -qw docker); then
+if ! $(command -v docker); then
     echo "${RED}${BOLD}You need installed ${YELLOW}${BOLD}docker${RED}${BOLD}! First install it!${RESTORE}";
     echo "${RED}${BOLD}Installation failed!${RESTORE}"
     exit 1
@@ -68,7 +68,8 @@ elif [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
     docker run -i \
      -v ~/:${HOME} \
-     -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} -e USER_GROUP=$(stat -c '%g' /var/run/docker.sock) \
+     -v /var/run/docker.sock:/var/run/docker.sock \
+     -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} \
      -e BASE_IMAGE=${BASE_IMAGE} \
      ${IMAGE} \
      /opt/wf-docker-workflow/host/copy_binaries_to_host.sh
