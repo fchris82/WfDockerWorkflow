@@ -67,12 +67,12 @@ if [ -f ${DIR}/packages/wf-docker-workflow/src/opt/wf-docker-workflow/host/copy_
 elif [ -S /var/run/docker.sock ]; then
     # Copy files from image to host. YOU CAN'T USE docker cp COMMAND, because it doesn't work with image name, it works with containers!
     docker run -i \
-     -v ~/:${HOME} \
-     -v /var/run/docker.sock:/var/run/docker.sock \
-     -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} \
-     -e BASE_IMAGE=${BASE_IMAGE} \
-     ${IMAGE} \
-     /opt/wf-docker-workflow/host/copy_binaries_to_host.sh
+        -v ~/:${HOME} \
+        -v /var/run/docker.sock:/var/run/docker.sock \
+        -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} \
+        -e BASE_IMAGE=${BASE_IMAGE} \
+        ${IMAGE} \
+        /opt/wf-docker-workflow/host/copy_binaries_to_host.sh
 fi
 
 # Add commands to path!
