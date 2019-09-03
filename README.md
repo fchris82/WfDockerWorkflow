@@ -1,14 +1,13 @@
-Docker Workflow Framework for Docker Compose
-============================================
+Docker AZID Framework
+=====================
 
-Easy to build an environment for projects.
+Easy to build an environment for projects. **AZID** is an acronym: **A**lmost **Z**ero **I**nstallation **D**evelopment. The goal is a simple framework which works with only one YAML configuration file and builds the full environment from it. On your computer or on the production server, anywhere.
 
 ## Requirements
 
 - Linux system, **bash** . Installed **Oh-My-Zsh** is the best. Please read how you can install it: https://github.com/robbyrussell/oh-my-zsh
 - **Docker**. Please follow the installation description: https://docs.docker.com/install/ . Do not forget set permissions: https://docs.docker.com/install/linux/linux-postinstall/ **Docker Compose** isn't required but recommended.
-- **dnsmasq**
-- Developing: **make**, **jq**, **git**
+- **dnsmasq** or other 
 
 > **IMPORTANT!** You need permission to run `docker`! See above!
 
