@@ -7,7 +7,7 @@ Easy to build an environment for projects. **AZID** is an acronym: **A**lmost **
 
 - Linux system, **bash** . Installed **Oh-My-Zsh** is the best. Please read how you can install it: https://github.com/robbyrussell/oh-my-zsh
 - **Docker**. Please follow the installation description: https://docs.docker.com/install/ . Do not forget set permissions: https://docs.docker.com/install/linux/linux-postinstall/ **Docker Compose** isn't required but recommended.
-- **dnsmasq** or other 
+- **dnsmasq** or other - on Ubuntu `dnsmasq-base` is installed, see above...
 
 > **IMPORTANT!** You need permission to run `docker`! See above!
 
@@ -29,15 +29,16 @@ $ sudo service network-manager restart
 On **Ubuntu** - since **18.xx** version - `dnsmasq` won't be able to start!
 
 ```shell
+# Disable systemd-resolved
+sudo systemctl disable systemd-resolved.service
+sudo systemctl stop systemd-resolved.service
+sudo rm /etc/resolv.conf
 # Reconfigure the NetworkManager
 sudo sed -i '/^plugins=.*/a dns=dnsmasq' /etc/NetworkManager/NetworkManager.conf
-# Stop systemd-resolved
-sudo systemctl disable systemd-resolved.service
-sudo systemctl stop systemd-resolved
-sudo rm /etc/resolv.conf ; sudo ln -s /var/run/NetworkManager/resolv.conf /etc/resolv.conf
+# Config for `loc` TLD
+echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
 # Restart
-sudo service dnsmasq start
-sudo service network-manager restart
+sudo systemctl restart network-manager.service
 ```
 
 ## Documentations
