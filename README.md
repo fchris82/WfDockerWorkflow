@@ -22,28 +22,17 @@ $ sudo apt install docker zsh dnsmasq
 $ echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
 # Restart
 $ sudo service network-manager restart
+# ... If it doesn't start then read below!
 ```
 
-### Ubuntu
+### Dnsmasq + Docker, if you have any problem
 
-On **Ubuntu** - since **18.xx** version - `dnsmasq` won't be able to start!
-
-```shell
-# Disable systemd-resolved
-sudo systemctl disable systemd-resolved.service
-sudo systemctl stop systemd-resolved.service
-sudo rm /etc/resolv.conf
-# Reconfigure the NetworkManager
-sudo sed -i '/^plugins=.*/a dns=dnsmasq' /etc/NetworkManager/NetworkManager.conf
-# Config for `loc` TLD
-echo "address=/loc/127.0.0.1" | sudo tee /etc/NetworkManager/dnsmasq.d/loc-tld
-# Restart
-sudo systemctl restart network-manager.service
-```
+If `dnsmasq` doesn't start (eg: you are useing **Ubuntu 18.xx** or **higher**), or docker network doesn't work (well), try here: [dnsmasq troubleshooting](/docs/dnsmasq-troubleshooting.md)
 
 ## Documentations
 
 - [Nginx reverse proxy](/docs/nginx-reverse-proxy.md)
+    - [Dnsmasq troubleshooting](/docs/dnsmasq-troubleshooting.md)
 - Using WF
     - [Install, upgrade and uninstall](/docs/wf-install.md)
     - [Configuration](/docs/wf-configuration.md)

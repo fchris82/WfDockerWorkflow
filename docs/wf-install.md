@@ -12,7 +12,7 @@ The **wf** is exactly a docker image: `fchris82/wf` , https://hub.docker.com/r/f
 
 - `Docker`
 <!-- TODO A mercurial még nincs! -->
-- `GIT` or `Mercurial` version controller
+- `GIT` version controller
 - `dnsmasq` or other dns tool. The program will generate local domains with custom TLD (default: `.loc`).
 
 > You can read **more** about these on [first page](/README.md)

@@ -1,6 +1,16 @@
 Nginx Reverse Proxy
 ===================
 
+## Prerequisite
+
+If you don't want to register custom hosts manually into `/etc/hosts` file to use this then you need eg. the `dnsmasq`. `Dnsmasq` provides for creating custom TLD-s, eg: `.loc`. Sometimes it easy to use, just install:
+
+```shell
+$ sudo apt-get install dnsmasq
+```
+
+Sometimes it won't be able to start or it will ruin the behavior of docker network. You can read more and find solutions here: [dnmasq troubleshooting](/docs/dnsmasq-troubleshooting.md)
+
 ## How to use?
 
 ### Install the deb package
