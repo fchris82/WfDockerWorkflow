@@ -35,6 +35,7 @@
     },
     "autoload": {
         "psr-4": {
+            "WfMonorepo\\": "src/",
             "App\\": "packages/wf-docker-workflow/src/opt/wf-docker-workflow/symfony4/src/",
             "Wf\\DemoExtension\\": "packages/demo-extension/src/",
             "Wf\\DockerWorkflowBundle\\": "packages/wf-docker-workflow-bundle/src/"

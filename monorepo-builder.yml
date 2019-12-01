@@ -22,3 +22,5 @@ parameters:
         packages/nginx-reverse-proxy: 'git@github.com:fchris82/WfNginxReverseProxy.git'
         packages/wf-docker-workflow: 'git@github.com:fchris82/WfPackage.git'
         packages/wf-docker-workflow-bundle: 'git@github.com:fchris82/WfDockerWorkflowBundle.git'
+
+#    enable_default_release_workers: false
