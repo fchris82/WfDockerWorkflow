@@ -59,7 +59,8 @@ restore the original version (`/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl.ori
 After you changed files in the `packages/nginx-reverse-proxy` directory you can rebuild the deb package with the following command:
 
 ```shell
-    $ cd [wf-project-root]
-    $ make rebuild_proxy
+$ cd [wf-project-root]
+$ make rebuild_proxy
+```
 
 This will increase the version number and build the new deb package.
