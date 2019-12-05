@@ -63,7 +63,7 @@ class SymfonyEnvironmentParserTest extends TestCase
             ['env_composer_no_sf_only_json', false],
             ['env_composer_sf2', '2.8.14'],
             ['env_composer_sf3', '3.4.8'],
-            ['env_composer_sf4', '4.1.9'],
+            ['env_composer_sf4', '4.1.12'],
             ['env_composer_sf2', false, true],
             ['env_composer_sf3', '3.4', true],
             ['env_composer_sf4', '4.1', true],

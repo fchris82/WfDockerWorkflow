@@ -46,7 +46,7 @@ class ComposerInstalledVersionParserTest extends TestCase
             ['env_composer_no_sf', '', false],
             ['env_composer_no_sf', 'no_installed', false],
             ['env_composer_no_sf', 'sebastian/version', '2.0.1'],
-            ['env_composer_no_sf', 'jakub-onderka/php-console-highlighter', '0.3.2'],
+            ['env_composer_no_sf', 'jakub-onderka/php-console-highlighter', '0.4'],
             // There isn't in composer.json
             ['env_composer_no_sf_only_json', 'jakub-onderka/php-console-highlighter', false],
             // There is in require
