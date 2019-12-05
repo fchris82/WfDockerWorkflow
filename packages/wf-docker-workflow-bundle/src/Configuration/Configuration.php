@@ -14,7 +14,6 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\Exception\FileLoaderImportCircularReferenceException;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Yaml\Parser;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -261,7 +260,24 @@ class Configuration implements ConfigurationInterface
 
                 $importConfig = $this->readConfig($importYml);
                 // A később importált felülírja a korábbit.
-                $fullImportConfig = $this->configDeepMerge($fullImportConfig, $importConfig);
+                try {
+                    $fullImportConfig = $this->configDeepMerge($fullImportConfig, $importConfig);
+                } catch(ArrayExpectedConfigurationException $e) {
+                    throw $e->setMessage(sprintf(
+                        'We found a problem while importing the `%s` configuration file at `%s` value. It should be' .
+                        ' array but we have `%s`. It doesn\'t mean that the problem is in this imported file. The error could' .
+                        ' be cauesed by the previous import file or the base file too!',
+                        $importYml,
+                        $e->getPath(),
+                        gettype($e->getValue())
+                    ));
+                } catch(InvalidConfigurationException $e) {
+                    throw new InvalidConfigurationException(
+                        sprintf('We found a problem while importing the `%s` configuration file at `%s` value.', $importYml, $e->getPath()),
+                        0,
+                        $e
+                    );
+                }
 
                 array_pop($this->importCache);
             }
@@ -273,10 +289,16 @@ class Configuration implements ConfigurationInterface
         return $baseConfig;
     }
 
+    /**
+     * @param array $baseConfig
+     * @param array $overrideConfig
+     *
+     * @return array
+     */
     protected function configDeepMerge(array $baseConfig, array $overrideConfig): array
     {
         foreach ($overrideConfig as $key => $value) {
-            if ($this->isConfigLeaf($value) || !\array_key_exists($key, $baseConfig)) {
+            if ($this->isConfigLeaf($value) || !\array_key_exists($key, $baseConfig) || $this->isConfigLeaf($baseConfig[$key])) {
                 $baseConfig[$key] = $value;
             } else {
                 $baseConfig[$key] = $this->configDeepMerge($baseConfig[$key], $value);
