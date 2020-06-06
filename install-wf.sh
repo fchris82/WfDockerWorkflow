@@ -71,6 +71,7 @@ elif [ -S /var/run/docker.sock ]; then
         -v /var/run/docker.sock:/var/run/docker.sock \
         -e LOCAL_USER_ID=$(id -u) -e LOCAL_USER_NAME=${USER} -e LOCAL_USER_HOME=${HOME} \
         -e BASE_IMAGE=${BASE_IMAGE} \
+        ${DOCKER_DEBUG:''} \
         ${IMAGE} \
         /opt/wf-docker-workflow/host/copy_binaries_to_host.sh
 fi
