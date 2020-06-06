@@ -97,7 +97,16 @@ alias php='docker run --rm --interactive --tty \
                 --env SSH_AUTH_SOCK=/ssh-auth.sock \
                 --user $(id -u):$(id -g) \
                 --workdir /app \
-                php:7.3-cli php'
+                php:7.4-cli php'
+alias php74='docker run --rm --interactive --tty \
+                --env HOME \
+                --volume "$PWD":/app \
+                --volume "$HOME":"$HOME" \
+                --volume $SSH_AUTH_SOCK:/ssh-auth.sock \
+                --env SSH_AUTH_SOCK=/ssh-auth.sock \
+                --user $(id -u):$(id -g) \
+                --workdir /app \
+                php:7.4-cli php'
 alias php73='docker run --rm --interactive --tty \
                 --env HOME \
                 --volume "$PWD":/app \
