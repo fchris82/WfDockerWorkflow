@@ -89,8 +89,8 @@ class SymfonyEnvironmentParser
 
         if (!$symfonyVersion) {
             $symfonyVersionQuestion = new ChoiceQuestion(
-                'Which symfony version do you want to use? [<info>4.* (LTE)</info>]',
-                ['4.* (LTE)', '3.* (eZ project)', '2.* [deprecated]'],
+                'Which symfony version do you want to use? [<info>5.* (LTE)</info>]',
+                ['5.* (LTE)', '4.*', '3.* (eZ project)', '2.* [deprecated]'],
                 0
             );
             $symfonyVersion = $this->ioManager->ask($symfonyVersionQuestion);
@@ -98,6 +98,14 @@ class SymfonyEnvironmentParser
 
         $variables = [];
         switch (substr($symfonyVersion, 0, 2)) {
+            case '5.':
+                $variables[static::VARIABLE_VERSION]        = 5;
+                $variables[static::VARIABLE_CONSOLE_CMD]    = 'bin/console';
+                $variables[static::VARIABLE_BIN_DIR]        = $this->readSymfonyBinDir($projectWorkDir, 'vendor/bin');
+                $variables[static::VARIABLE_SHARED_DIRS]    = 'var';
+                $variables[static::VARIABLE_WEB_DIRECTORY]  = 'public';
+                $variables[static::VARIABLE_INDEX_FILE]     = 'index.php';
+                break;
             case '4.':
                 $variables[static::VARIABLE_VERSION]        = 4;
                 $variables[static::VARIABLE_CONSOLE_CMD]    = 'bin/console';
@@ -123,7 +131,7 @@ class SymfonyEnvironmentParser
                 $variables[static::VARIABLE_INDEX_FILE]     = 'app.php';
                 break;
             default:
-                throw new \InvalidArgumentException('Invalid selection! Missiong settings!');
+                throw new \InvalidArgumentException(sprintf('Invalid selection! Missing settings for `%s`', $symfonyVersion));
         }
 
         return $variables;
