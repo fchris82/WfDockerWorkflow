@@ -14,6 +14,7 @@ It is a little bit complex but very useful recipe to support Symfony based proje
 | `symfony2` | 7.1 | Add a Symfony 2.x support. |
 | `symfony3` | 7.1 | Add a Symfony 3.x support. |
 | `symfony4` | 7.2 | Add a Symfony 4.x support. |
+| `symfony5` | 7.4 | Add a Symfony 5.x support. |
 | `symfony_ez1` | 7.1 | Add an eZ 1.x support. Based on `symfony2`. |
 | `symfony_ez2` | 7.1 | Add an eZ 2.x support. Based on `symfony3`. |
 
@@ -87,7 +88,7 @@ docker_compose:
 
 ## `gitlab_ci` and `gitlab_ci_webtown_workflow`
 
-The Gitlab CI needs some spetial configuration:
+The Gitlab CI needs some special configuration:
 
 - disable **sudo**
 - enable **pseudo tty** in docker commands with `-T`

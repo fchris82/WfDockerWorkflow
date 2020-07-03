@@ -12,7 +12,7 @@ Sometimes we need a program without any configuration, e.g. we want to create th
 
 ## How can I make custom image?
 
-In most of case you need some extensions, so you will need a custom image. You have to create a `Dockerfile` eg:
+In most cases you need some extensions, so you will need a custom image. You have to create a `Dockerfile` eg:
 
 ```Dockerfile
 FROM php:7.2-cli

@@ -142,7 +142,7 @@ You can create other files, what you want to use during the processes. Eg: confi
 
 #### Skeleton file types
 
-After build the program needs to know which file is which type. In the `Recipes\BaseRecipe::buildSkeletonFile()` function you can sign the spetial files.
+After build the program needs to know which file is which type. In the `Recipes\BaseRecipe::buildSkeletonFile()` function you can sign the special files.
 
 **`App\Skeleton\DockerComposeSkeletonFile`**
 

@@ -171,7 +171,7 @@ imports:
 **Order, value overriding**
 
 1. Imported file
-2. You can override some (or all) values in the "importing" file!
+2. You can override some (or all) values that came from the imported files!
 
 ### `version`
 
@@ -197,11 +197,11 @@ version:
 
 ### `name`
 
-The program will use this name in many places. Eg: docker container names, dynamic domains, etc... And you can use it also in your custom recipes. Keep it clean, don't use spetial characters or white spaces - for your own sake.
+The program will use this name in many places. Eg: docker container names, dynamic domains, etc... And you can use it also in your custom recipes. Keep it clean, don't use special characters or white spaces - for your own sake.
 
 ### `docker_data_dir`
 
-In most of case the default value is perfect. If you want to change it, you have to listen the program run a `rm -rf %wf.target_directory%/*` command! So if you use the `%wf.target_directory%` directory and the first letter of the name of top subdirectory isn't a dot, it would be removed!
+In most of the cases the default value is perfect. If you want to change it, you have to listen the program run a `rm -rf %wf.target_directory%/*` command! So if you use the `%wf.target_directory%` directory and the first letter of the name of top subdirectory isn't a dot, it would be removed!
 
 Correct dirs:
 
@@ -325,11 +325,11 @@ Here you can configure docker compose files.
 
 **docker_compose.version**
 
-De recipes template doesn't contain the `version`, because all docer-compose file must use same version number. So, de `version` parameter is the "globally" *docker-compose configuration version*.
+De recipes template doesn't contain the `version`, because all docer-compose file must use the same version number. So, the `version` parameter is the "global" *docker-compose configuration version*.
 
 **docker_compose.include**
 
-You can add custom docker-comose files. Here there are same limitations what they are at `makefiles` configuration: you can inclue from project path - `%wf.project_path%` - , or your home path - `~`.
+You can add custom docker-comose files. Here are same limitations what they are at `makefiles` configuration: you can include from project path - `%wf.project_path%` - , or your home path - `~`.
 
 **docker_compose.extension**
 
@@ -355,7 +355,7 @@ docker_compose:
 
 **Extension or include?**
 
-Both can be good (or wrong). `docker_compose.extension`'s solution may be readable and helpful if it is short, `docker_compose.include` can be more helpful when it is longer (and you can use the autocomplete despite of the case of `docker_compose.extension`)
+Both can be good (or wrong). `docker_compose.extension`'s solution may be readable and helpful if it is short, `docker_compose.include` can be more helpful when it is longer (and you can use the autocomplete despite the case of `docker_compose.extension`)
 
 ## Basic project commands
 
