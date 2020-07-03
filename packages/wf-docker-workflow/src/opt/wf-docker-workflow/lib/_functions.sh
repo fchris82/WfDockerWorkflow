@@ -220,7 +220,9 @@ function _get_hash_from_cache {
 # @param $1 Parsing config file
 function _parseConfigFileList {
     if [[ ! -z "$(grep -F "imports:" ${1})" ]] && [[ "null" != "$(yq r ${1} imports)" ]]; then
+        # `yq r` gets back the comments too!!! That is why we set `grep '^-'`!
         local IMPORT_FILES=$(yq r ${1} imports \
+            | grep '^-' \
             | while read -r value; do
                 value=${value:2}
                 # Absolute path
