@@ -75,7 +75,7 @@ base-php73:
 base-php74: TARGET_PATH := base/php7.4
 base-php74: TAG := php7.4
 base-php74: PHP_VERSION := 7.4
-base-php74: CUSTOM_CONFIGS := php7.2
+base-php74: CUSTOM_CONFIGS := php7.4
 base-php74: XDEBUG_POSTFIX :=
 base-php74:
 	$(BUILD)
