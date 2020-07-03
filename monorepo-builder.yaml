@@ -23,4 +23,13 @@ parameters:
         packages/wf-docker-workflow: 'git@github.com:fchris82/WfPackage.git'
         packages/wf-docker-workflow-bundle: 'git@github.com:fchris82/WfDockerWorkflowBundle.git'
 
-#    enable_default_release_workers: false
+# monorepo-builder.yaml
+services:
+    # release workers - in order to execute
+    Symplify\MonorepoBuilder\Release\ReleaseWorker\SetCurrentMutualDependenciesReleaseWorker: null
+    Symplify\MonorepoBuilder\Release\ReleaseWorker\AddTagToChangelogReleaseWorker: null
+    Symplify\MonorepoBuilder\Release\ReleaseWorker\TagVersionReleaseWorker: null
+    Symplify\MonorepoBuilder\Release\ReleaseWorker\PushTagReleaseWorker: null
+#    Symplify\MonorepoBuilder\Release\ReleaseWorker\SetNextMutualDependenciesReleaseWorker: null
+#    Symplify\MonorepoBuilder\Release\ReleaseWorker\UpdateBranchAliasReleaseWorker: null
+#    Symplify\MonorepoBuilder\Release\ReleaseWorker\PushNextDevReleaseWorker: null
