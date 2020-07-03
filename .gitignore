@@ -2,4 +2,3 @@
 /packages/wf-docker-workflow-bundle/.wf.yml
 
 /vendor
-composer.lock
