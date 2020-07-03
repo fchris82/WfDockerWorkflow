@@ -7,5 +7,11 @@ services:
         command: /bin/bash
         working_dir: ${PWD}
         volumes:
+            - ${HOME}/.ssh:${HOME}/.ssh
+            - /etc/passwd:/etc/passwd:ro
+            - /etc/group:/etc/group:ro
             - ${PWD}:${PWD}:delegated
+            - $SSH_AUTH_SOCK:/ssh-agent # Forward local machine SSH key to docker
+        environment:
+            SSH_AUTH_SOCK: /ssh-agent
         user: ${CURRENT_UID}
