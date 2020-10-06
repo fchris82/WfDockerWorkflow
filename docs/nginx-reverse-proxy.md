@@ -54,6 +54,20 @@ Default 503 page lists every available hosts. If you are using this proxy on a p
 You can find the page template in `/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl` . There is a backup file if you want
 restore the original version (`/etc/nginx-reverse-proxy/nginx-proxy-503.tmpl.orig`)
 
+### Add SSL cert for host
+
+1. Copy your `[host].crt` & `[host].key` files into the `/etc/nginx-reverse-proxy/certs` directory.
+2. Switch on the `443` port. Edit the `/etc/nginx-reverse-proxy/config` file and set `reverse_proxy_ssl_port`:
+    ```ini
+    reverse_proxy_port = 80
+    reverse_proxy_ssl_port = 443 # <---
+    ```
+3. You have to stop every services and restart everything:
+    ```bash
+    $ wf down
+    $ nginx-reverse-proxy restart
+    ```
+
 ## Developing
 
 After you changed files in the `packages/nginx-reverse-proxy` directory you can rebuild the deb package with the following command:

@@ -1,5 +1,7 @@
-# For proxy port. After change you have to run: 'wf --init-reverse-proxy' command!
+# For proxy port. After change you have to run: 'nginx-reverse-proxy restart' command!
 reverse_proxy_port = 80
+# If you are want to use SSL, you can set SSL port for this.
+reverse_proxy_ssl_port =
 
 # More
 # ----
