@@ -21,6 +21,8 @@ class Symfony3Recipe extends AbstractSymfonyRecipe
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
     const DEFAULT_VERSION = 'php7.1';
+    const DEFAULT_INDEX_PHP = 'app.php';
+    const DEFAULT_NGINX_ROOT = '%wf.project_path%/web';
 
     public static function getSkeletonParents(): array
     {

@@ -21,6 +21,8 @@ class Symfony5Recipe extends AbstractSymfonyRecipe
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
     const DEFAULT_VERSION = 'php7.4';
+    const DEFAULT_INDEX_PHP = 'index.php';
+    const DEFAULT_NGINX_ROOT = '%wf.project_path%/public';
 
     public static function getSkeletonParents(): array
     {

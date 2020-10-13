@@ -29,7 +29,9 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
     const NAME = 'abstract_symfony_dont_use';
     const SF_CONSOLE_COMMAND = 'bin/console';
     const SF_BIN_DIR = 'vendor/bin';
-    const DEFAULT_VERSION = 'php7.2';
+    const DEFAULT_VERSION = 'php7.4';
+    const DEFAULT_INDEX_PHP = 'index.php';
+    const DEFAULT_NGINX_ROOT = '%wf.project_path%/public';
 
     /**
      * @var string
@@ -202,6 +204,18 @@ class AbstractSymfonyRecipe extends BaseRecipe implements AbstractTemplateRecipe
                             ->example('project.docker.company.com')
                             ->cannotBeEmpty()
                             ->defaultValue('localhost')
+                        ->end()
+                        ->scalarNode('root')
+                            ->info('<comment>You can change the nginx config `server.root` value: server { root [this]; ... }</comment>')
+                            ->example('%wf.project_path%/releases/current/public')
+                            ->cannotBeEmpty()
+                            ->defaultValue(static::DEFAULT_NGINX_ROOT)
+                        ->end()
+                        ->scalarNode('php_location')
+                            ->info('<comment>You can change the nginx config `server.location` value at PHP setting: server { location ~ ^/[this](/|$) { ... } ... }</comment>')
+                            ->example('(index|prod).php')
+                            ->cannotBeEmpty()
+                            ->defaultValue(static::DEFAULT_INDEX_PHP)
                         ->end()
                         ->booleanNode('xdebug')
                             ->defaultFalse()
