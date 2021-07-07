@@ -301,7 +301,7 @@ class Configuration implements ConfigurationInterface
             if ($this->isConfigLeaf($value) || !\array_key_exists($key, $baseConfig) || $this->isConfigLeaf($baseConfig[$key])) {
                 $baseConfig[$key] = $value;
             } else {
-                $baseConfig[$key] = $this->configDeepMerge($baseConfig[$key], $value);
+                $baseConfig[$key] = $this->configDeepMerge($baseConfig[$key] ?? [], $value);
             }
         }
 
